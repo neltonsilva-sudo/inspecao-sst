@@ -227,7 +227,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v12</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v13</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -328,7 +328,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v12</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v13</span></div></div>
   </header>
   <div id="phAsk" class="stack">
     <h2>Conectar este celular?</h2>
@@ -424,6 +424,8 @@ const EXAMPLE = {
 /* ---------- utilidades ---------- */
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const clamp = (n,a,b) => Math.max(a, Math.min(b, Number(n) || 0));
+// a IA às vezes devolve lista como objeto ou texto: normaliza para lista
+const asList = x => Array.isArray(x) ? x : (x && typeof x === "object" ? Object.values(x) : (x ? [x] : []));
 function level(sev, prob){
   const r = clamp(sev,1,5) * clamp(prob,1,5);
   if (r >= 15) return {k:"crit", t:"Crítico", r};
@@ -437,7 +439,7 @@ function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; }
 
 /* ---------- render do relatório ---------- */
 function render(d, isExample){
-  const riscos = Array.isArray(d.riscos) ? d.riscos.slice() : [];
+  const riscos = asList(d.riscos).filter(r => r && typeof r === "object");
   riscos.sort((a,b) => level(b.severidade,b.probabilidade).r - level(a.severidade,a.probabilidade).r);
   const score = clamp(d.nota_geral, 0, 100);
   const sc = score >= 75 ? "var(--ok)" : score >= 50 ? "var(--warn)" : "var(--crit)";
@@ -475,11 +477,11 @@ function render(d, isExample){
   }).join("");
 
   const P = d.pdca || {};
-  const quad = (letter, name, arr) => `<div class="q"><h4><b>${letter}</b>${name}</h4><ul>${(arr||[]).map(x=>`<li>${esc(x)}</li>`).join("") || '<li class="empty">—</li>'}</ul></div>`;
+  const quad = (letter, name, arr) => `<div class="q"><h4><b>${letter}</b>${name}</h4><ul>${asList(arr).map(x=>`<li>${esc(x)}</li>`).join("") || '<li class="empty">—</li>'}</ul></div>`;
 
-  const imp = (d.melhorias||[]).map(m => `<div class="it"><span class="tag">${esc(m.metodologia)}</span><div><b>${esc(m.titulo)}</b><div>${esc(m.descricao)}</div></div></div>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
+  const imp = asList(d.melhorias).map(m => `<div class="it"><span class="tag">${esc(m.metodologia)}</span><div><b>${esc(m.titulo)}</b><div>${esc(m.descricao)}</div></div></div>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
 
-  const w2h = (d.plano_5w2h||[]).map(a => `<tr><td><b>${esc(a.what)}</b></td><td>${esc(a.why)}</td><td>${esc(a.where)}</td><td>${esc(a.who)}</td><td>${esc(a.when)}</td><td>${esc(a.how)}</td><td>${esc(a.how_much)}</td></tr>`).join("");
+  const w2h = asList(d.plano_5w2h).map(a => `<tr><td><b>${esc(a.what)}</b></td><td>${esc(a.why)}</td><td>${esc(a.where)}</td><td>${esc(a.who)}</td><td>${esc(a.when)}</td><td>${esc(a.how)}</td><td>${esc(a.how_much)}</td></tr>`).join("");
 
   $("report").innerHTML = `
     ${!isExample && counts.crit ? `<div class="alert" role="alert"><b>Alerta</b><span>${counts.crit} risco(s) crítico(s): ${esc(riscos[0].perigo)}</span></div>` : ""}
@@ -668,7 +670,8 @@ async function viaApi(prompt, blobs, signal){
   if (!res.ok) throw {code:"http", message: (j.error && j.error.message) || ("HTTP " + res.status), status: res.status};
   if (j.stop_reason === "refusal") throw {code:"refused", message:"A análise foi recusada para estas imagens."};
   const text = (j.content || []).filter(c => c.type === "text").map(c => c.text).join("");
-  return parseJSON(text);
+  try{ return parseJSON(text); }
+  catch(e){ throw {code:"http", status:0, message: j.stop_reason === "max_tokens" ? "a resposta foi cortada por tamanho. Tente com menos fotos" : "a IA respondeu fora do formato esperado. Clique em Analisar de novo"}; }
 }
 
 function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
@@ -697,12 +700,15 @@ async function viaGemini(prompt, blobs, signal){
   const j = await res.json().catch(() => ({}));
   if (!res.ok){
     const msg = (j.error && j.error.message) || ("HTTP " + res.status);
-    throw {code:"http", status: /API key/i.test(msg) ? 401 : res.status, message: res.status === 429 ? "limite gratuito do Gemini atingido. Aumente o intervalo ou aguarde alguns minutos." : msg};
+    throw {code:"http", status: /API key/i.test(msg) ? 401 : res.status, message: res.status === 429 ? "limite gratuito do Gemini atingido. Aumente o intervalo ou aguarde alguns minutos" : msg};
   }
   if (j.promptFeedback?.blockReason) throw {code:"refused"};
-  const text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
-  if (!text) throw {code:"refused"};
-  return parseJSON(text);
+  const cand = j.candidates?.[0] || {}, fin = cand.finishReason || "";
+  const text = (cand.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
+  const cut = "a resposta do Gemini foi cortada por tamanho. Tente com menos fotos por análise";
+  if (!text) throw fin === "MAX_TOKENS" ? {code:"http", status:0, message: cut} : (/SAFETY|RECITATION|PROHIBITED|BLOCK/.test(fin) ? {code:"refused"} : {code:"http", status:0, message: "o Gemini não devolveu resposta (" + (fin || "vazia") + "). Tente de novo"});
+  try{ return parseJSON(text); }
+  catch(e){ throw {code:"http", status:0, message: fin === "MAX_TOKENS" ? cut : "a IA respondeu fora do formato esperado. Clique em Analisar de novo"}; }
 }
 
 const ERR = {
@@ -731,8 +737,13 @@ async function callAI(prompt, blobs, signal){
 }
 function handleErr(e){
   if (e?.code === "cancelled" || e?.name === "AbortError") setStatus("Operação interrompida.");
-  else if (e?.code === "http") { setStatus(e.status === 401 ? "Chave da API inválida." : "Erro da API: " + e.message, true); if (e.status === 401 && mon) stopMon(); }
-  else setStatus(ERR[e?.code] || "Falha na análise. Tente de novo em instantes.", true);
+  else if (e?.code === "http") { setStatus(e.status === 401 ? "Chave da API inválida. Copie a chave de novo em aistudio.google.com/apikey." : (e.status ? "Erro da API (" + e.status + "): " : "Falha na análise: ") + e.message + ".", true); if (e.status === 401 && mon) stopMon(); }
+  else if (ERR[e?.code]) setStatus(ERR[e.code], true);
+  else {
+    console.error(e);
+    const m = String(e?.message || e || "");
+    setStatus(/fetch|network|load failed/i.test(m) ? "Falha na análise: sem conexão com o serviço de IA. Verifique a internet e tente de novo." : "Falha na análise: " + (m || "erro desconhecido") + ". Tente de novo.", true);
+  }
 }
 // roda uma análise; devolve os dados ou null se falhou (status já mostra o motivo)
 async function analyze(blobs, label){
@@ -885,7 +896,7 @@ function ishikawaSVG(I){
     const top = i < 3, x0 = 50 + (i % 3) * 245, xe = x0 + 170, y0 = top ? 44 : H - 44;
     s += `<line x1="${x0}" y1="${y0}" x2="${xe}" y2="${SY}" stroke="#1c2328" stroke-width="2"/>`;
     s += `<rect x="${x0-44}" y="${top ? y0-30 : y0+6}" width="120" height="24" rx="3" fill="#1c2328"/><text x="${x0+16}" y="${top ? y0-13 : y0+23}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${label}</text>`;
-    const items = (Array.isArray(I[k]) ? I[k] : []).filter(Boolean).slice(0, 4);
+    const items = asList(I[k]).filter(Boolean).slice(0, 4);
     items.forEach((t, j) => {
       const f = (j + 1) / (items.length + 1) * 0.9, y = y0 + (SY - y0) * f, x = x0 + (xe - x0) * f;
       s += `<line x1="${x}" y1="${y}" x2="${x+12}" y2="${y}" stroke="#5b6770" stroke-width="1.5"/><text x="${x+16}" y="${y+5}" font-size="14" fill="#1c2328">${esc(tr(t, 30))}<title>${esc(t)}</title></text>`;
@@ -936,7 +947,7 @@ function prep5S(R){
   const total = avaliados.reduce((a, r) => a + r.nota, 0), max = avaliados.length * 5, pct = Math.round(total / max * 100);
   const fracos = avaliados.filter(r => r.nota <= 3);
   const necessario = cs.necessario === true || fracos.length > 0;
-  const plano = (R.plano_acao || []).slice();
+  const plano = asList(R.plano_acao).slice();
   if (necessario && !plano.some(a => /5\s*s/i.test(String(a.ferramenta || "")))){
     fracos.forEach(r => plano.push({acao: `5S – ${r.titulo} (${r.jp})`, por_que: `Senso ${r.jp} com nota ${r.nota}/5: ${r.constatacao || "abaixo do padrão"}`, onde: "Setor inspecionado", quem: "Líder do setor e equipe 5S", quando: "30 dias", como: r.acao || r.acaoPadrao, quanto: "Baixo custo (verificar em campo)", prioridade: r.nota <= 2 ? "Alta" : "Média", ferramenta: "5S", auto: true}));
   }
@@ -979,19 +990,19 @@ function scoreSVG(rows){
 }
 function reportHTML(R, photos, meta){
   const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
-  const riscos = (R.riscos || []).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
+  const riscos = asList(R.riscos).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const counts = {crit:0, high:0, warn:0, ok:0}; riscos.forEach(r => counts[level(r.severidade, r.probabilidade).k]++);
   const maxC = Math.max(1, ...Object.values(counts));
-  const gut = (R.gut || []).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
-  const rei = (R.rei || []).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
+  const gut = asList(R.gut).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
+  const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
   const P = R.parecer || {}, sit = String(P.situacao || "Verificar em campo");
   const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LV.crit[1] : /parcial/i.test(sit) ? "#a87f00" : /conforme/i.test(sit) ? LV.ok[1] : "#a87f00";
   const ord = {alta:0, "média":1, media:1, baixa:2};
   const S5 = prep5S(R);
   const SC = scores(riscos, S5);
   const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
-  const plano = (S5 ? S5.plano : (R.plano_acao || [])).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
-  const fotos = R.fotos || [];
+  const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const fotos = asList(R.fotos);
   let mx = "";
   for (let sv = 5; sv >= 1; sv--){
     mx += `<div class="ax">${sv}</div>`;
@@ -1065,7 +1076,7 @@ function reportHTML(R, photos, meta){
   ${para(P.texto)}
   <h3>Fundamentação normativa</h3>
   <div class="tw"><table><thead><tr><th>NR / item</th><th>Constatação</th><th>Exigência normativa</th></tr></thead><tbody>
-  ${(P.fundamentacao || []).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
+  ${asList(P.fundamentacao).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
   </tbody></table></div>
   ${H("Plano de ação (5W2H)")}
   <div class="tw"><table><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê</th><th>Por quê</th><th>Onde</th><th>Quem</th><th>Quando</th><th>Como</th><th>Quanto</th></tr></thead><tbody>
@@ -1073,7 +1084,7 @@ function reportHTML(R, photos, meta){
   </tbody></table></div>
   ${H("Considerações finais")}${para(R.consideracoes_finais)}
   ${H("Referências normativas")}
-  <ol class="refs">${(R.referencias || []).map(x => `<li>${esc(x)}</li>`).join("")}<li>Normas Regulamentadoras: redação vigente publicada pelo Ministério do Trabalho e Emprego (gov.br/trabalho-e-emprego).</li></ol>
+  <ol class="refs">${asList(R.referencias).map(x => `<li>${esc(x)}</li>`).join("")}<li>Normas Regulamentadoras: redação vigente publicada pelo Ministério do Trabalho e Emprego (gov.br/trabalho-e-emprego).</li></ol>
   <div class="sign"><div class="ln"></div><div><b>${esc(meta.resp || "Responsável técnico")}</b></div><small>Assinatura e registro profissional</small></div>
   <p class="disc">Relatório elaborado com apoio de inteligência artificial a partir de imagens do ambiente. As constatações devem ser confirmadas em inspeção de campo, e o documento só tem validade técnica após revisão e assinatura de profissional legalmente habilitado. Confirme a redação vigente e a numeração dos itens das NRs no portal do MTE.</p>
 </article>`;
