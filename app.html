@@ -137,6 +137,12 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .thumb img{width:100%;height:100%;object-fit:contain;background:#0b0f12;display:block}
 .thumb button{position:absolute;top:4px;right:4px;width:22px;height:22px;padding:0;font-size:13px;line-height:1;border-radius:6px;background:rgba(0,0,0,.65);color:#fff;border:0}
 .thumb button:hover{background:var(--crit)}
+.thumb.empty{cursor:pointer;display:grid;place-items:center;transition:border-color .15s,background-color .15s}
+.thumb.empty:hover{border-color:var(--signal);background:color-mix(in srgb,var(--signal) 10%,var(--surface-2))}
+.thumb.empty.first::after{content:"+";font:300 30px/1 var(--f-body);color:var(--muted)}
+.dropz{position:relative;border-radius:8px}
+.dropz .dropmsg{display:none;position:absolute;inset:0;place-items:center;border:2px dashed var(--signal);border-radius:8px;background:color-mix(in srgb,var(--signal) 18%,transparent);font-weight:700;color:var(--ink);pointer-events:none}
+.dropz.over .dropmsg{display:grid}
 .hint{font-size:12.5px;line-height:1.5;color:var(--muted);margin:0}
 .status{font:500 12.5px var(--f-mono);color:var(--muted);min-height:1.4em}
 .status.err{color:var(--crit)}
@@ -846,7 +852,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v43</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v44</span></div>
       </div>
     </div>
     <div class="mode" id="mode" hidden>Modo: <b>verificando…</b></div>
@@ -952,9 +958,14 @@ api:
         <div class="row split">
           <label class="btn">Tirar foto<input id="shoot" type="file" accept="image/*" capture="environment"></label>
           <label class="btn">Enviar fotos<input id="pick" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+          <label class="btn accent">Anexar fotos<input id="attach" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.heic,.heif" multiple></label>
           <button id="clrBtn" type="button" hidden>Remover todas</button>
         </div>
-        <div class="thumbs" id="thumbs"></div>
+        <div class="dropz" id="dropz">
+          <div class="thumbs" id="thumbs"></div>
+          <div class="dropmsg" aria-hidden="true">Solte as fotos aqui</div>
+        </div>
+        <p class="hint" style="margin:0">Anexe fotos do computador ou do celular, <b>arraste e solte</b> as imagens neste quadro, clique em um espaço vazio ou cole com <b>Ctrl + V</b>.</p>
         <p class="hint"><b id="cnt">0</b> de <span id="maxN">50</span> imagens. Fotografe o setor de ângulos diferentes: visão geral, postos de trabalho, máquinas, piso, quadros elétricos, extintores e saídas.</p>
       </div>
 
@@ -1018,7 +1029,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v43</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v44</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1664,6 +1675,7 @@ function refreshThumbs(){
   const slots = Math.min(maxImages, Math.max(4, Math.ceil((frames.length + 1) / 4) * 4));
   for (let i = 0; i < slots; i++){
     const f = frames[i]; const d = document.createElement("div"); d.className = "thumb";
+    if (!f){ d.classList.add("empty"); if (i === frames.length) d.classList.add("first"); d.setAttribute("role", "button"); d.tabIndex = i === frames.length ? 0 : -1; d.setAttribute("aria-label", "Anexar fotos"); d.onclick = () => $("attach").click(); d.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); $("attach").click(); } }; }
     if (f){
       const img = document.createElement("img"); img.src = f.url; img.alt = "Imagem " + (i+1);
       const b = document.createElement("button"); b.type = "button"; b.textContent = "×"; b.setAttribute("aria-label","Remover imagem " + (i+1));
@@ -1698,6 +1710,22 @@ async function onFiles(list){
   }
 }
 $("pick").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
+$("attach").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
+// arrastar e soltar fotos no quadro de imagens
+{
+  const z = $("dropz"); let depth = 0;
+  const isImg = e => [...(e.dataTransfer?.items || [])].some(it => it.kind === "file");
+  z.addEventListener("dragenter", e => { if (!isImg(e)) return; e.preventDefault(); depth++; z.classList.add("over"); });
+  z.addEventListener("dragover", e => { if (!isImg(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = "copy"; });
+  z.addEventListener("dragleave", () => { if (--depth <= 0){ depth = 0; z.classList.remove("over"); } });
+  z.addEventListener("drop", e => { e.preventDefault(); depth = 0; z.classList.remove("over"); const fs = [...(e.dataTransfer?.files || [])].filter(f => /^image\//.test(f.type) || /\.(heic|heif|jpe?g|png|webp|gif|bmp)$/i.test(f.name)); if (fs.length) onFiles(fs); else setStatus("Solte arquivos de imagem (JPG, PNG, WEBP…).", true); });
+}
+// colar imagem com Ctrl + V (fora de campos de texto)
+document.addEventListener("paste", e => {
+  if (e.target.closest?.("input, textarea, [contenteditable]") || !$("phone").hidden) return;
+  const fs = [...(e.clipboardData?.items || [])].filter(it => it.kind === "file" && /^image\//.test(it.type)).map(it => it.getAsFile()).filter(Boolean);
+  if (fs.length){ e.preventDefault(); onFiles(fs); setStatus(`${fs.length} imagem(ns) colada(s).`); }
+});
 $("shoot").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
 
 /* ---------- câmera ---------- */
