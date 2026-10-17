@@ -804,6 +804,11 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .phone .ph-back{justify-self:start;align-self:flex-start;min-height:44px;padding:8px 14px;border-radius:999px;font-size:14px}
 .phone .ph-back::before{content:"‹";font-size:20px;line-height:1;margin-right:6px}
 .phone .ph-gal{justify-content:center;min-height:50px;border-radius:14px;font-weight:600}
+.ph-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:4px 0 -2px}
+.ph-or::before,.ph-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.ph-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phone .ph-quick .ph-gal{flex-direction:column;gap:4px;min-height:84px;text-align:center;line-height:1.2}
+.phone .ph-quick svg{width:26px;height:26px;color:var(--signal-ink)}
 .ph-recwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
 .phone .ph-recbtn{width:84px;height:84px;padding:0;border-radius:50%;border:4px solid var(--line);background:var(--panel);display:grid;place-items:center}
 .phone .ph-recbtn span{width:44px;height:44px;border-radius:50%;background:var(--crit);transition:border-radius .15s,width .15s,height .15s}
@@ -871,7 +876,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v56</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v57</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1052,7 +1057,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v56</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v57</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1068,6 +1073,11 @@ api:
     <div class="ph-inapp" id="phInApp" hidden><b>Abra no Chrome ou no Safari.</b> Este link abriu dentro de outro aplicativo, que pode bloquear a câmera e a conexão. Toque em <b>⋮</b> ou <b>Compartilhar</b> e escolha <b>Abrir no navegador</b>, ou copie o link. <button type="button" id="phCopy">Copiar link</button></div>
     <div class="ph-actions">
       <button class="primary" id="phAllow" type="button">Permitir e conectar</button>
+      <p class="ph-or">ou envie arquivos salvos no celular</p>
+      <div class="ph-quick">
+        <label class="btn ph-gal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.8" fill="currentColor"/><path d="m4.5 17 5-5 4 4 2.5-2.5 3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Enviar fotos da galeria<input id="phQPhoto" type="file" accept="image/*,.heic,.heif" multiple></label>
+        <label class="btn ph-gal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Enviar áudios salvos<input id="phQAudio" type="file" accept="audio/*,.m4a,.mp3,.aac,.wav,.ogg,.oga,.opus,.amr,.3gp,.caf,.flac,.webm" multiple></label>
+      </div>
       <button id="phCancel" type="button">Cancelar</button>
     </div>
   </div>
@@ -1081,6 +1091,7 @@ api:
     </div>
     <div id="phPhotos" class="stack">
     <button class="ph-back" type="button" hidden>Voltar às opções</button>
+    <button id="phCamOn" class="btn ph-gal" type="button" hidden>Ligar a câmera para fotografar</button>
     <div class="ph-cam" id="phBox">
       <video id="phVideo" playsinline muted autoplay></video>
       <span class="rec" id="phRec">● AGUARDANDO</span>
@@ -1092,7 +1103,7 @@ api:
       </div>
     </div>
     <div class="ph-sheet">
-      <label class="btn ph-gal">Escolher fotos da galeria<input id="phGallery" type="file" accept="image/*" multiple></label>
+      <label class="btn ph-gal">Escolher fotos da galeria<input id="phGallery" type="file" accept="image/*,.heic,.heif" multiple></label>
       <div class="ph-recv"><p class="label">Fotos confirmadas</p><span class="ph-count"><b id="phCount">0</b> foto(s) nesta sessão</span></div>
       <div class="ph-strip" id="phStrip" aria-label="Fotos recebidas pelo computador"></div>
       <p class="hint ph-tip">Toque no botão redondo ou no vídeo para capturar. <b>AUTO</b> captura a cada 3 s enquanto você percorre o ambiente.</p>
@@ -1106,7 +1117,7 @@ api:
         <button id="phRecBtn" class="ph-recbtn" type="button" aria-pressed="false" aria-label="Gravar áudio"><span></span></button>
         <div><div class="ph-timer" id="phTimer">0:00</div><div class="hint">Toque para gravar e toque de novo para parar e enviar (até 10 min).</div></div>
       </div>
-      <label class="btn ph-gal">Escolher áudio salvo no celular<input id="phAudioPick" type="file" accept="audio/*" multiple></label>
+      <label class="btn ph-gal">Escolher áudio salvo no celular<input id="phAudioPick" type="file" accept="audio/*,.m4a,.mp3,.aac,.wav,.ogg,.oga,.opus,.amr,.3gp,.caf,.flac,.webm" multiple></label>
     </div>
     <div class="ph-qwrap"><p class="label">Envios para o computador</p><ul class="ph-queue" id="phQueue"></ul></div>
     <button id="phEnd" type="button">Desconectar</button>
@@ -3880,7 +3891,7 @@ function phoneMode(id, k){
       if (d.type === "ok"){
         if (d.r) resumeKey = String(d.r);
         tries = 0;
-        msg(c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
+        msg(!st ? "Conectado. Enviando os arquivos escolhidos…" : c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
         $("phRec").textContent = c.relay ? "● CONECTADO" : "● TRANSMITINDO"; $("phShot").disabled = false;
         if (!c.relay) startCall(); keepAwake();
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
@@ -3973,7 +3984,7 @@ function phoneMode(id, k){
   function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); }
   // foto tirada no próprio celular e enviada como arquivo (quando não há vídeo ao vivo no computador)
   function snapLocal(){
-    const v = $("phVideo"); if (!v.videoWidth){ msg("A câmera ainda não está pronta. Tente de novo.", true); return; }
+    const v = $("phVideo"); if (!st || !v.videoWidth){ msg(st ? "A câmera ainda não está pronta. Tente de novo." : "Para fotografar, toque em Ligar a câmera.", true); return; }
     const cv = document.createElement("canvas"); cv.width = v.videoWidth; cv.height = v.videoHeight;
     cv.getContext("2d").drawImage(v, 0, 0);
     cv.toBlob(b => { if (b){ enqueue(b, "photo", "camera-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".jpg"); msg("Enviando foto…"); } }, "image/jpeg", 0.9);
@@ -3997,6 +4008,23 @@ function phoneMode(id, k){
     catch(e){ done("Câmera indisponível", "Este celular precisa de câmera liberada para conectar. Permita o uso da câmera para este site nas configurações do navegador (ou abra o link no Chrome/Safari) e leia o QR code de novo."); return; }
     msg("Conectando ao computador…");
     connect();
+  };
+  // envio direto da galeria (sem abrir a câmera): os arquivos entram na fila e seguem assim que o computador autorizar
+  function quick(input, kind){
+    const fs = Array.from(input.files || []).slice(0, kind === "audio" ? 10 : 30); input.value = "";
+    if (!fs.length) return;
+    fs.forEach(f => enqueue(f, kind, f.name));
+    show("phLive"); keepAwake();
+    if (!st){ $("phBox").hidden = true; $("phCamOn").hidden = false; }
+    $("phMenu").dataset.seen = "1"; showScreen(kind === "audio" ? "phAudio" : "phPhotos");
+    msg(`${fs.length} ${kind === "audio" ? "áudio(s)" : "foto(s)"} na fila. Conectando ao computador…`);
+    if (!conn) connect();
+  }
+  $("phQPhoto").onchange = e => quick(e.target, "photo");
+  $("phQAudio").onchange = e => quick(e.target, "audio");
+  $("phCamOn").onclick = async () => {
+    try{ await cam(); $("phBox").hidden = false; $("phCamOn").hidden = true; if (live() && !conn.relay) startCall(); }
+    catch(e){ msg("Não foi possível abrir a câmera. Permita o acesso nas configurações do navegador.", true); }
   };
   $("phShot").onclick = shot;
   $("phGoPhotos").onclick = () => showScreen("phPhotos");
