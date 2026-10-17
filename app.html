@@ -326,6 +326,11 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .nrd-off.on button{border-color:#c62828;color:#c62828}
 @media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
 .nrdlg{border:0;border-radius:14px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.facedlg{width:min(980px,calc(100vw - 24px))}
+.facegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
+.facegrid figure{margin:0}
+.facegrid canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair;border:1px solid var(--line)}
+.facegrid figcaption{font-size:12.5px;color:var(--muted);margin-top:4px}
 .nrdlg::backdrop{background:rgba(10,14,18,.55)}
 .nrd-in{padding:20px 22px;overflow:auto;max-height:calc(100vh - 32px)}
 .nrd-h{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
@@ -446,11 +451,16 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .fields{display:grid;gap:12px}
 .fields label{display:grid;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600}
 .fields input{font:400 15px/1.4 var(--f-body)}
+.keyrem{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;margin:2px 0 0}
+.keyrem input{width:16px;height:16px;accent-color:var(--signal)}
 .logo-f{display:grid;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600}
 .logo-f img{height:38px;max-width:140px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px}
 @media (max-width:560px){select,input[type=password],input[type=text],input[type=date],textarea,.fields input{font-size:16px}}
 .tech{margin-top:24px}
 .techbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.edit-tip{margin:-4px 0 12px;padding:9px 12px;border-radius:8px;border:1px dashed var(--signal);background:color-mix(in srgb,var(--signal) 10%,var(--panel))}
+.rep.editing{outline:3px dashed var(--signal);outline-offset:4px;cursor:text}
+.rep.editing :is(p,li,td,h1,h2,h3,div):hover{background:color-mix(in srgb,#f5a623 10%,transparent)}
 /* Relatório: papel claro de propósito (documento para imprimir), cores fixas */
 .rep{background:#fff;color:#1c2328;max-width:900px;margin:0 auto;padding:44px 52px;font:14px/1.6 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.18);border-radius:4px}
 .rep h1{font:700 30px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;margin:6px 0 16px;color:#1c2328;text-wrap:balance}
@@ -675,6 +685,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .qr{display:grid;justify-items:center;gap:10px;padding:16px 14px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .qr::before{content:"Aponte a câmera do celular para o código";font:600 11.5px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:center}
 .qr svg{width:100%;max-width:220px;height:auto;background:#fff;padding:8px;border-radius:10px;display:block;margin:0 auto;box-shadow:var(--qr-shadow)}
+.qr-alt{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;justify-content:center;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.qr-alt>span{width:100%;text-align:center}
+.qr-alt .btn,.qr-alt button{min-height:36px;padding:6px 12px;font-size:13px}
 .qrlink{display:block;max-width:100%;font:500 10.5px/1.45 var(--f-mono);word-break:break-all;color:var(--muted);text-align:center;padding:6px 8px;border:1px dashed var(--line);border-radius:8px;background:var(--panel);-webkit-user-select:all;user-select:all}
 .ask{border:2px solid var(--signal);border-radius:12px;padding:14px;display:grid;gap:10px;background:var(--qr-tint,var(--bg));box-shadow:var(--qr-shadow);animation:qr-pop .45s ease-out}
 .ask-h{display:flex;align-items:center;gap:10px}
@@ -781,6 +794,8 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .ph-done .ph-steps{width:100%;text-align:left}
 .ph-close{font-size:13px;color:var(--muted)}
 .ph-menu{display:grid;gap:14px}
+.ph-inapp{padding:12px 14px;border-radius:12px;border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 14%,var(--panel));font-size:14px;line-height:1.45}
+.ph-inapp button{margin-top:8px;display:block}
 .phone .ph-opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;justify-items:start;text-align:left;padding:18px 16px;min-height:88px;border-radius:16px;background:var(--panel);border:1px solid var(--line);color:var(--ink);box-shadow:var(--ph-shadow)}
 .phone .ph-opt svg{color:var(--signal-ink);background:var(--signal);border-radius:12px;padding:9px;width:52px;height:52px}
 .phone .ph-opt b{display:block;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.03em}
@@ -856,7 +871,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v50</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v53</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -962,15 +977,15 @@ api:
         <div class="phead"><span class="step" aria-hidden="true">2</span><p class="label">Ou use fotos</p><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m3.5 18 5.5-5.5 4 4 2.5-2.5 5 5"/></svg></div>
         <div class="row split">
           <label class="btn">Tirar foto<input id="shoot" type="file" accept="image/*" capture="environment"></label>
-          <label class="btn">Enviar fotos<input id="pick" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
-          <label class="btn accent">Anexar fotos<input id="attach" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.heic,.heif" multiple></label>
+          <label class="btn">Enviar fotos<input id="pick" type="file" accept="image/*,.heic,.heif,.tif,.tiff,.dng,.cr2,.cr3,.nef,.arw,.orf,.rw2,.raf,.pef,.srw" multiple></label>
+          <label class="btn accent">Anexar fotos<input id="attach" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.avif,.svg,.ico,.heic,.heif,.tif,.tiff,.dng,.cr2,.cr3,.crw,.nef,.nrw,.arw,.orf,.rw2,.raf,.pef,.srw,.raw" multiple></label>
           <button id="clrBtn" type="button" hidden>Remover todas</button>
         </div>
         <div class="dropz" id="dropz">
           <div class="thumbs" id="thumbs"></div>
           <div class="dropmsg" aria-hidden="true">Solte as fotos aqui</div>
         </div>
-        <p class="hint" style="margin:0">Anexe fotos do computador ou do celular, <b>arraste e solte</b> as imagens neste quadro, clique em um espaço vazio ou cole com <b>Ctrl + V</b>.</p>
+        <p class="hint" style="margin:0">Aceita todos os tipos de foto (JPG, PNG, WEBP, HEIC do iPhone, TIFF, RAW de câmera, AVIF, GIF, BMP, SVG). Anexe fotos do computador ou do celular, <b>arraste e solte</b> as imagens neste quadro, clique em um espaço vazio ou cole com <b>Ctrl + V</b>.</p>
         <p class="hint"><b id="cnt">0</b> de <span id="maxN">50</span> imagens. Fotografe o setor de ângulos diferentes: visão geral, postos de trabalho, máquinas, piso, quadros elétricos, extintores e saídas.</p>
       </div>
 
@@ -998,9 +1013,11 @@ api:
         <div id="keyBox" class="stack" hidden>
           <label class="label" for="apiKey" style="margin:0">Chave da API (Gemini ou Claude)</label>
           <input id="apiKey" type="password" autocomplete="off" placeholder="AIza... (Gemini, grátis) ou sk-ant-... (Claude)">
-          <p class="hint" id="keyHint">Gemini gratuito: crie a chave em aistudio.google.com/apikey. A chave fica salva só neste navegador.</p>
+          <label class="keyrem"><input type="checkbox" id="keyRem"> Lembrar a chave neste computador</label>
+          <p class="hint" id="keyHint">Gemini gratuito: crie a chave em aistudio.google.com/apikey. Sem "Lembrar", a chave vale só enquanto esta aba estiver aberta (use em computador compartilhado).</p>
         </div>
         <button class="primary" id="goBtn" type="button" disabled>Analisar ambiente</button>
+        <button id="newInsp" type="button" hidden>Nova inspeção (apagar a atual)</button>
         <div class="row" id="stopRow" hidden><button id="stopBtn" type="button">Parar</button></div>
         <div class="status" id="status" role="status"></div>
       </div>
@@ -1028,13 +1045,14 @@ api:
     <section class="panel report" id="report" aria-live="polite"></section>
   </div>
   <section class="tech" id="tech" hidden></section>
+  <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
 </div>
 
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v50</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v53</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1047,6 +1065,7 @@ api:
       <li><b>Capture as fotos</b><span>Toque no botão redondo ou ligue o AUTO.</span></li>
     </ol>
     <p class="ph-note"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 3 8.3 7 9.5 4-1.2 7-5.1 7-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>O acesso vale só para esta sessão. Ao encerrar no computador, ou ao fechar esta página, o celular é desconectado e é preciso ler o QR code de novo.</span></p>
+    <div class="ph-inapp" id="phInApp" hidden><b>Abra no Chrome ou no Safari.</b> Este link abriu dentro de outro aplicativo, que pode bloquear a câmera e a conexão. Toque em <b>⋮</b> ou <b>Compartilhar</b> e escolha <b>Abrir no navegador</b>, ou copie o link. <button type="button" id="phCopy">Copiar link</button></div>
     <div class="ph-actions">
       <button class="primary" id="phAllow" type="button">Permitir e conectar</button>
       <button id="phCancel" type="button">Cancelar</button>
@@ -1722,29 +1741,73 @@ function refreshThumbs(){
     box.append(d);
   }
   $("cnt").textContent = frames.length; $("clrBtn").hidden = !frames.length;
-  updateGo();
+  updateGo(); saveSoon();
 }
 $("clrBtn").onclick = () => { frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0; refreshThumbs(); };
 function addBlob(blob){
   if (frames.length >= maxImages){ setStatus(`Limite de ${maxImages} imagens. Remova uma para adicionar outra.`, true); return; }
   frames.push({blob, url: URL.createObjectURL(blob)}); refreshThumbs(); setStatus("");
 }
+const HEIC_JS = "https://cdn.jsdelivr.net/npm/heic-to@1.5.0/dist/iife/heic-to.js";
+const isHeic = f => /hei[cf]/i.test(f.type || "") || /\.(heic|heif)$/i.test(f.name || "");
+// fotos HEIC do iPhone: o Chrome não abre; converte para JPEG antes
+async function heicToJpeg(file){
+  await loadScript(HEIC_JS);
+  return await window.HeicTo({blob: file, type: "image/jpeg", quality: 0.9});
+}
+// todos os tipos de foto: nativos (JPG, PNG, WEBP, GIF, BMP, AVIF, ICO), HEIC/HEIF, TIFF, SVG e RAW de câmera (prévia JPEG embutida)
+const UTIF_JS = "https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js";
+const RAW_RX = /\.(cr2|cr3|crw|nef|nrw|arw|srf|sr2|dng|orf|rw2|raf|pef|srw|rwl|raw|3fr|erf|kdc|mrw|x3f|iiq)$/i;
+const IMG_EXT = /\.(jpe?g|jfif|pjpeg|png|apng|webp|gif|bmp|dib|avif|ico|cur|svg|heic|heif|tiff?|cr2|cr3|crw|nef|nrw|arw|srf|sr2|dng|orf|rw2|raf|pef|srw|rwl|raw|3fr|erf|kdc|mrw|x3f|iiq)$/i;
+const isImageFile = f => /^image\//.test(f.type || "") || IMG_EXT.test(f.name || "");
+const imgEl = blob => new Promise((res, rej) => { const u = URL.createObjectURL(blob), im = new Image(); im.onload = () => res(im); im.onerror = () => { URL.revokeObjectURL(u); rej(new Error("img")); }; im.src = u; });
+// RAW: a maioria traz uma prévia JPEG em tamanho grande; pega o maior bloco JPEG do arquivo
+async function rawPreview(file){
+  const u8 = new Uint8Array(await file.arrayBuffer()); let best = null;
+  for (let i = 0; i < u8.length - 3; i++){
+    if (u8[i] !== 0xFF || u8[i + 1] !== 0xD8 || u8[i + 2] !== 0xFF) continue;
+    for (let j = i + 2; j < u8.length - 1; j++){
+      if (u8[j] === 0xFF && u8[j + 1] === 0xD9){ const len = j + 2 - i; if (!best || len > best.len) best = {i, len}; if (len > 200000) { i = j; } break; }
+    }
+  }
+  if (!best || best.len < 20000) throw new Error("raw");
+  return new Blob([u8.subarray(best.i, best.i + best.len)], {type: "image/jpeg"});
+}
+async function tiffToCanvas(file){
+  await loadScript(UTIF_JS);
+  const buf = await file.arrayBuffer(), ifds = UTIF.decode(buf); UTIF.decodeImage(buf, ifds[0]);
+  const rgba = UTIF.toRGBA8(ifds[0]), w = ifds[0].width, h = ifds[0].height, c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(rgba.buffer), w, h), 0, 0); return c;
+}
+async function decodeAny(file){
+  try{ return await createImageBitmap(file); }catch(e){}
+  const name = file.name || "";
+  if (isHeic(file)){ setStatus("Convertendo foto HEIC do iPhone…"); return await createImageBitmap(await heicToJpeg(file)); }
+  if (/tiff?/i.test(file.type || "") || /\.tiff?$/i.test(name)){ setStatus("Convertendo foto TIFF…"); return await tiffToCanvas(file); }
+  if (RAW_RX.test(name)){ setStatus("Lendo foto RAW da câmera…"); return await createImageBitmap(await rawPreview(file)); }
+  return await imgEl(file); // SVG, ICO e outros que o navegador abre como imagem
+}
 async function normalize(file){
-  // reduz para ~1280px e converte para JPEG (aceita formatos que o navegador decodifica)
+  // reduz para ~1280px e converte para JPEG; devolve null se o arquivo não for uma imagem legível
   try{
-    const bmp = await createImageBitmap(file);
-    const s = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
-    const c = document.createElement("canvas"); c.width = Math.round(bmp.width*s); c.height = Math.round(bmp.height*s);
-    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    const bmp = await decodeAny(file);
+    const bw = bmp.naturalWidth || bmp.width, bh = bmp.naturalHeight || bmp.height;
+    if (!bw || !bh) throw new Error("vazio");
+    const s = Math.min(1, 1280 / Math.max(bw, bh));
+    const c = document.createElement("canvas"); c.width = Math.round(bw*s); c.height = Math.round(bh*s);
+    const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+    setStatus("");
     return await new Promise(r => c.toBlob(r, "image/jpeg", 0.86));
-  }catch(e){ return file; }
+  }catch(e){ return null; }
 }
 async function onFiles(list){
-  const arr = Array.from(list || []);
+  const arr = Array.from(list || []), bad = [];
   for (const f of arr){
     if (frames.length >= maxImages){ setStatus(`Limite de ${maxImages} imagens atingido. As fotos excedentes foram ignoradas.`, true); break; }
-    addBlob(await normalize(f));
+    const b = await normalize(f);
+    if (b) addBlob(b); else bad.push(f.name || "arquivo");
   }
+  if (bad.length) setStatus(`Não foi possível abrir como foto: ${bad.slice(0, 4).join(", ")}${bad.length > 4 ? "…" : ""}. Envie uma imagem (JPG, PNG, HEIC, RAW, TIFF…).`, true);
 }
 $("pick").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
 $("attach").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
@@ -1755,7 +1818,7 @@ $("attach").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
   z.addEventListener("dragenter", e => { if (!isImg(e)) return; e.preventDefault(); depth++; z.classList.add("over"); });
   z.addEventListener("dragover", e => { if (!isImg(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = "copy"; });
   z.addEventListener("dragleave", () => { if (--depth <= 0){ depth = 0; z.classList.remove("over"); } });
-  z.addEventListener("drop", e => { e.preventDefault(); depth = 0; z.classList.remove("over"); const fs = [...(e.dataTransfer?.files || [])].filter(f => /^image\//.test(f.type) || /\.(heic|heif|jpe?g|png|webp|gif|bmp)$/i.test(f.name)); if (fs.length) onFiles(fs); else setStatus("Solte arquivos de imagem (JPG, PNG, WEBP…).", true); });
+  z.addEventListener("drop", e => { e.preventDefault(); depth = 0; z.classList.remove("over"); const fs = [...(e.dataTransfer?.files || [])].filter(isImageFile); if (fs.length) onFiles(fs); else setStatus("Solte arquivos de imagem (JPG, PNG, HEIC, RAW, TIFF…).", true); });
 }
 // colar imagem com Ctrl + V (fora de campos de texto)
 document.addEventListener("paste", e => {
@@ -1990,7 +2053,8 @@ function openNR(n){
 }
 // implementar NR no relatório: Sim inclui (e, se preciso, a IA monta o checklist); Não exclui
 let nrBusy = 0, nrErr = null;
-function refreshNR(n){ const d = curRender.d, y = scrollY; render(d, curRender.isExample); scrollTo(0, y); if ($("nrDlg").open && Number($("nrDlgBody").dataset.nr) === n) openNR(n); if (report && !$("tech").hidden && d === lastData) showReport(); }
+function refreshReport(d){ if (report && !$("tech").hidden && d === lastData){ if (report.edited){ report.edited = null; setStatus("O checklist mudou: o relatório foi atualizado e as edições manuais de texto foram descartadas.", true); } showReport(); } saveSoon(); }
+function refreshNR(n){ const d = curRender.d, y = scrollY; render(d, curRender.isExample); scrollTo(0, y); if ($("nrDlg").open && Number($("nrDlgBody").dataset.nr) === n) openNR(n); refreshReport(d); }
 async function setNR(n, yes){
   const d = curRender.d; d.__nrOff = d.__nrOff || {}; nrErr = null;
   if (!yes){ d.__nrOff[n] = 1; refreshNR(n); return; }
@@ -2036,10 +2100,11 @@ $("nrDlgBody").addEventListener("click", e => {
   const n = Number($("nrDlgBody").dataset.nr), y = scrollY;
   render(d, curRender.isExample); scrollTo(0, y);
   openNR(n);
-  if (report && !$("tech").hidden && d === lastData) showReport();
+  refreshReport(d);
 });
 $("report").addEventListener("click", e => { const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
 $("nrDlgX").onclick = () => $("nrDlg").close();
+$("faceOk").onclick = async () => { $("faceDlg").close(); if ($("faceBody").dataset.changed){ await applyFaces(); setStatus("Rostos atualizados nas fotos do relatório."); } };
 $("nrDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
 /* ---------- análise ---------- */
@@ -2050,7 +2115,16 @@ function updateGo(){
   if ($("docRun")) $("docRun").disabled = !!ctl || !(sample || (!inViewer && $("apiKey").value.trim()));
   $("repBtn").disabled = !!ctl || !(frames.length || history.length) || !(sample || (!inViewer && $("apiKey").value.trim()));
 }
-$("apiKey").addEventListener("input", e => { store("sst_api_key", e.target.value.trim() || null); geminiModel = null; updateGo(); if (!inViewer) showProvider(); });
+// chave: no computador (localStorage) só se "Lembrar" estiver marcado; senão, só nesta aba (sessionStorage)
+const keyRemember = () => load("sst_key_rem") !== "0";
+function saveKey(v){
+  try{ sessionStorage.setItem("sst_api_key", v || ""); }catch(e){}
+  store("sst_api_key", keyRemember() && v ? v : null);
+}
+function loadKey(){ let v = null; try{ v = sessionStorage.getItem("sst_api_key"); }catch(e){} return v || load("sst_api_key") || ""; }
+$("apiKey").addEventListener("input", e => { saveKey(e.target.value.trim()); geminiModel = null; updateGo(); if (!inViewer) showProvider(); });
+$("keyRem").checked = keyRemember();
+$("keyRem").onchange = e => { store("sst_key_rem", e.target.checked ? null : "0"); saveKey($("apiKey").value.trim()); setStatus(e.target.checked ? "A chave ficará salva neste computador." : "A chave não fica salva: vale só enquanto esta aba estiver aberta."); };
 function showProvider(){ const k = $("apiKey").value.trim(); setMode(!k ? "navegador · informe a chave" : provider() === "claude" ? "navegador + Claude" : "navegador + Gemini"); }
 
 function parseJSON(text){
@@ -2161,7 +2235,7 @@ async function analyze(blobs, label){
   const prompt = buildPrompt($("ctx").value.trim());
   try{
     const data = await callAI(prompt, blobs, ctl.signal);
-    render(data, false); lastData = data;
+    render(data, false); lastData = data; saveSoon();
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
   }catch(e){
@@ -2555,7 +2629,7 @@ function reportHTML(R, photos, meta){
   ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
   <div class="fig flow">${flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
   ${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Proteção de imagem: os rostos das pessoas nas fotos foram cobertos para impedir a identificação.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
@@ -2708,11 +2782,20 @@ function exportDoc(){
   const css = [...document.querySelectorAll("style")].map(x => x.textContent).join("\n");
   const rcss = css.slice(css.indexOf(".rep{"), css.indexOf("@media (max-width:640px)"));
   const mob = css.slice(css.indexOf("@media (max-width:640px)"), css.indexOf("@page"));
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(report.R.titulo || "Relatório Técnico SST")}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"><style>body{margin:0;background:#e9ecef;padding:24px 12px}${rcss}${mob}@page{size:A4;margin:14mm}@media print{body{background:#fff;padding:0}.rep{box-shadow:none;padding:0;max-width:none}.rep h2{break-after:avoid}.rep figure,.rep tr,.rep svg{break-inside:avoid}}</style></head><body>${reportHTML(report.R, report.photos, report.meta)}</body></html>`;
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(report.R.titulo || "Relatório Técnico SST")}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"><style>body{margin:0;background:#e9ecef;padding:24px 12px}${rcss}${mob}@page{size:A4;margin:14mm}@media print{body{background:#fff;padding:0}.rep{box-shadow:none;padding:0;max-width:none}.rep h2{break-after:avoid}.rep figure,.rep tr,.rep svg{break-inside:avoid}}</style></head><body>${report.edited || reportHTML(report.R, report.photos, report.meta)}</body></html>`;
 }
 function showReport(){
   const t = $("tech"); t.hidden = false;
-  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + x.length, 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
+  $("editRep").onclick = () => {
+    const art = t.querySelector(".rep"), on = art.isContentEditable;
+    if (!on){ art.contentEditable = "true"; art.classList.add("editing"); $("editRep").textContent = "Concluir edição"; $("editRep").classList.add("accent"); $("editTip").hidden = false; art.focus(); return; }
+    art.contentEditable = "false"; art.removeAttribute("contenteditable"); art.classList.remove("editing");
+    report.edited = art.outerHTML; $("editRep").textContent = "Editar texto"; $("editRep").classList.remove("accent"); $("editTip").hidden = true; $("undoEdit").hidden = false;
+    saveSoon(); setStatus("Edições salvas no relatório.");
+  };
+  $("faceBtn").onclick = openFaces;
+  $("undoEdit").onclick = () => { if (!confirm("Desfazer todas as edições feitas no texto do relatório?")) return; report.edited = null; saveSoon(); showReport(); setStatus("Edições desfeitas."); };
   if ($("prtBtn")) $("prtBtn").onclick = () => window.print();
   $("dlRep").onclick = downloadReport;
   $("dlDocx").onclick = downloadDocx;
@@ -2758,7 +2841,7 @@ async function buildDocx(R, photos, meta){
   await loadScript(DOCX_JS);
   const D = window.docx;
   const {Paragraph, TextRun, Table, TableRow, TableCell, ImageRun, WidthType, ShadingType, AlignmentType, HeadingLevel, BorderStyle, PageNumber, TabStopType, LevelFormat, VerticalAlign, Header, Footer, LineRuleType} = D;
-  const root = document.createElement("div"); root.innerHTML = reportHTML(R, photos, meta);
+  const root = document.createElement("div"); root.innerHTML = report && report.R === R && report.edited ? report.edited : reportHTML(R, photos, meta);
   const rep = root.querySelector(".rep");
   const GRAY = "707070", NAVY = "0D3B72", LINE = "D6D6D6", ORG = "F5A623", ORG2 = "F26B1D", CREAM = "FDEBD0", BLUE = "1D5FA8", INKB = "222222";
   const logo = load("sst_logo");
@@ -3298,6 +3381,90 @@ async function downloadPptx(toCanva){
   }catch(e){ console.error(e); try{ win?.close(); }catch(x){} setStatus("Não foi possível gerar a apresentação. Verifique a internet e tente de novo.", true); }
   finally{ btn.disabled = false; btn.textContent = old; }
 }
+/* ---------- rostos nas fotos do relatório: círculo opaco (privacidade) ---------- */
+async function detectFaces(blobs, signal){
+  const prompt = `Detecte TODOS os rostos humanos visíveis em cada imagem anexada (na ordem de envio: imagem 1, imagem 2, …), inclusive rostos pequenos, distantes, de perfil, de costas com parte do rosto à mostra, parcialmente cobertos por capacete, óculos ou máscara, em fotos, telas ou reflexos. Não marque objetos nem partes do corpo que não sejam o rosto. Responda SOMENTE com JSON: {"imagens":[{"imagem":1,"rostos":[{"box_2d":[ymin,xmin,ymax,xmax]}]}]}, com coordenadas inteiras normalizadas de 0 a 1000 em relação a cada imagem. Inclua todas as imagens, mesmo as sem rosto (lista vazia).`;
+  const r = await callAI(prompt, blobs, signal);
+  const out = blobs.map(() => []);
+  asList(r && r.imagens).forEach((im, k) => {
+    const i = (Number(im && im.imagem) || k + 1) - 1; if (i < 0 || i >= out.length) return;
+    asList(im.rostos).forEach(f => {
+      const bx = asList((f && f.box_2d) || f).map(Number); if (bx.length !== 4 || bx.some(v => isNaN(v))) return;
+      const [y0, x0, y1, x1] = bx.map(v => clamp(v, 0, 1000) / 1000); if (x1 <= x0 || y1 <= y0) return;
+      out[i].push({cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0});
+    });
+  });
+  return out;
+}
+// desenha a foto com um círculo opaco sobre cada rosto (cobre a cabeça inteira com folga)
+async function maskPhoto(blob, faces){
+  const url = await blobToDataURL(blob);
+  if (!faces || !faces.length) return url;
+  const im = new Image(); im.src = url; await im.decode();
+  const W = im.naturalWidth, H = im.naturalHeight, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d"); g.drawImage(im, 0, 0);
+  faces.forEach(f => {
+    const r = Math.max(10, Math.max(f.w * W, f.h * H) * 0.66);
+    g.beginPath(); g.arc(f.cx * W, f.cy * H, r, 0, Math.PI * 2);
+    g.fillStyle = "#5f6b73"; g.fill(); g.lineWidth = Math.max(2, r * 0.06); g.strokeStyle = "rgba(255,255,255,.9)"; g.stroke();
+  });
+  return c.toDataURL("image/jpeg", 0.9);
+}
+// troca as fotos dentro do relatório editado à mão (sem perder o texto)
+function swapPhotosInEdited(html, photos){
+  const d = document.createElement("div"); d.innerHTML = html;
+  d.querySelectorAll(".figs figure img").forEach((im, i) => { if (photos[i]) im.setAttribute("src", photos[i]); });
+  const cv = d.querySelector(".cv-art image"); if (cv && photos[0]){ cv.setAttribute("href", photos[0]); cv.setAttribute("xlink:href", photos[0]); }
+  return d.innerHTML;
+}
+async function applyFaces(){
+  const blobs = report.blobs || frames.map(f => f.blob);
+  report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, (report.faces || [])[i])));
+  if (report.edited) report.edited = swapPhotosInEdited(report.edited, report.photos);
+  showReport(); saveSoon();
+}
+async function openFaces(){
+  const dlg = $("faceDlg"), body = $("faceBody"), blobs = report.blobs || frames.map(f => f.blob);
+  report.faces = report.faces || blobs.map(() => []);
+  body.innerHTML = `<p class="hint">Clique no rosto que ficou descoberto para cobri-lo com um círculo. Clique em um círculo para retirá-lo. Os círculos aparecem em todas as fotos do relatório, do Word e da apresentação.</p><div class="facegrid"></div>`;
+  const grid = body.querySelector(".facegrid");
+  for (let i = 0; i < blobs.length; i++){
+    const fig = document.createElement("figure"), cv = document.createElement("canvas"), cap = document.createElement("figcaption");
+    cap.textContent = `Figura ${i + 1} · ${report.faces[i].length} rosto(s) coberto(s)`;
+    fig.append(cv, cap); grid.append(fig);
+    const im = new Image(); im.src = await blobToDataURL(blobs[i]); await im.decode();
+    const k = Math.min(1, 900 / im.naturalWidth); cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
+    const draw = () => { const g = cv.getContext("2d"); g.drawImage(im, 0, 0, cv.width, cv.height);
+      report.faces[i].forEach(f => { const r = Math.max(6, Math.max(f.w * cv.width, f.h * cv.height) * 0.66); g.beginPath(); g.arc(f.cx * cv.width, f.cy * cv.height, r, 0, Math.PI * 2); g.fillStyle = "rgba(95,107,115,.92)"; g.fill(); g.lineWidth = 2; g.strokeStyle = "#fff"; g.stroke(); });
+      cap.textContent = `Figura ${i + 1} · ${report.faces[i].length} rosto(s) coberto(s)`; };
+    draw();
+    cv.onclick = e => {
+      const rc = cv.getBoundingClientRect(), x = (e.clientX - rc.left) / rc.width, y = (e.clientY - rc.top) / rc.height;
+      const hit = report.faces[i].findIndex(f => { const r = Math.max(f.w, f.h * cv.height / cv.width) * 0.66; return Math.hypot(x - f.cx, (y - f.cy) * cv.height / cv.width) <= r; });
+      if (hit >= 0) report.faces[i].splice(hit, 1); else report.faces[i].push({cx: x, cy: y, w: 0.11, h: 0.11 * cv.width / cv.height});
+      draw(); body.dataset.changed = "1";
+    };
+  }
+  body.dataset.changed = "";
+  if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+}
+
+// relatório em duas etapas paralelas (respostas menores: menos falhas e mais rapidez)
+const REP_A = ["titulo","introducao","objetivo","justificativa","metodologia","descricao_ambiente","fotos","riscos","parecer","documentos_registros","sugestoes_melhoria","pessoas","residuos","armazenamento","edificacao","psicossociais","analise_documental","consideracoes_finais","referencias"];
+const REP_B = ["ishikawa","gut","rei","cinco_s","plano_acao","layout","checklist_nrs"];
+function reportPart(full, keys, etapa){
+  const mark = "Responda SOMENTE com um objeto JSON neste formato:\n";
+  const i = full.lastIndexOf(mark); if (i < 0) return full;
+  const head = full.slice(0, i), json = full.slice(i + mark.length).trim();
+  const lines = json.replace(/^\{/, "").replace(/\}\s*$/, "").split("\n").map(l => l.trim()).filter(Boolean);
+  const keep = lines.filter(l => { const m = l.match(/^"([a-z_0-9]+)"/i); return m && keys.includes(m[1]); }).map(l => l.replace(/,\s*$/, ""));
+  return head + `ETAPA ${etapa} DE 2: preencha SOMENTE os campos do formato abaixo (os demais campos são feitos em outra etapa). Mantenha coerência total com os riscos, NRs e constatações da análise preliminar.\n` + mark + "{" + keep.join(",\n") + "}";
+}
+async function callPart(prompt, blobs, signal){
+  try{ return await callAI(prompt, blobs, signal); }
+  catch(e){ if (e?.code === "cancelled" || e?.name === "AbortError" || e?.status === 401) throw e; return await callAI(prompt, blobs, signal); } // uma nova tentativa
+}
+
 async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
@@ -3307,10 +3474,20 @@ async function generateReport(){
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
   setStatus("Redigindo relatório técnico…");
   try{
-    const R = await callAI(reportPrompt(meta, $("ctx").value.trim(), validatedData(lastData), blobs.length), blobs, ctl.signal);
-    report = {R, photos: await Promise.all(blobs.map(blobToDataURL)), meta};
+    const full = reportPrompt(meta, $("ctx").value.trim(), validatedData(lastData), blobs.length);
+    let done = 0;
+    const part = (keys, n) => callPart(reportPart(full, keys, n), blobs, ctl.signal).then(r => { done++; setStatus(`Redigindo relatório técnico… etapa ${done} de 2 concluída`); return r || {}; });
+    const facesP = detectFaces(blobs, ctl.signal).catch(() => null); // rostos cobertos nas fotos do relatório
+    const [A, B] = await Promise.all([part(REP_A, 1), part(REP_B, 2)]);
+    const R = {...A, ...B};
+    setStatus("Cobrindo os rostos das pessoas nas fotos…");
+    const faces = await facesP;
+    report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces ? faces[i] : [])))};
+    report.faceWarn = !faces;
+    saveSoon();
     showReport();
-    setStatus(`Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. Revise antes de assinar.`);
+    const nF = report.faces.reduce((t, x) => t + x.length, 0);
+    setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível detectar os rostos automaticamente: use Rostos nas fotos para cobri-los antes de compartilhar." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
     $("tech").scrollIntoView({behavior: "smooth", block: "start"});
   }catch(e){ handleErr(e); }
   finally{ clearInterval(tick); ctl = null; $("stopRow").hidden = true; updateGo(); }
@@ -3374,7 +3551,12 @@ const PEER_JS = "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js";
 const QR_JS = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";
 const params = new URLSearchParams(location.search);
 // servidor de sinalização local só para testes (?peerhost=localhost:9000)
-const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false} : {}; })();
+// STUN para achar o caminho direto e TURN (retransmissão) quando a rede do celular e a do computador não se enxergam (4G, CGNAT, Wi-Fi corporativo)
+const ICE = {iceServers: [
+  {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:global.stun.twilio.com:3478"]},
+  {urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443", "turn:openrelay.metered.ca:443?transport=tcp", "turns:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject"}
+], iceCandidatePoolSize: 4};
+const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false, config: ICE} : {config: ICE}; })();
 let qr = null, remoteOn = false;
 function loadScript(src){
   return new Promise((res, rej) => {
@@ -3421,7 +3603,9 @@ async function qrStart(){
 function showQR(){
   const url = location.origin + location.pathname + "?conectar=" + qr.id + "&k=" + qr.k + (PEER_OPTS.host ? "&peerhost=" + params.get("peerhost") : "");
   const q = qrcode(0, "M"); q.addData(url); q.make();
-  $("qrArea").innerHTML = q.createSvgTag({cellSize: 4, margin: 3, scalable: true, alt: "QR code de acesso pelo celular"}) + `<span class="qrlink" id="qrLink">${esc(url)}</span>`;
+  $("qrArea").innerHTML = q.createSvgTag({cellSize: 4, margin: 3, scalable: true, alt: "QR code de acesso pelo celular"}) + `<span class="qrlink" id="qrLink">${esc(url)}</span>
+    <div class="qr-alt"><span>A câmera do celular não lê o QR?</span><a class="btn" id="qrWa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Abra este link no celular para conectar à inspeção SST: " + url)}">Enviar link por WhatsApp</a><button type="button" id="qrCopy">Copiar link</button></div>`;
+  $("qrCopy").onclick = async () => { try{ await navigator.clipboard.writeText(url); qrMsg("Link copiado. Envie para o celular (e-mail, mensagem) e abra no Chrome ou no Safari."); }catch(e){ qrMsg("Selecione e copie o link mostrado abaixo do QR code."); } };
   $("qrArea").hidden = false; $("qrEnd").hidden = false; $("qrBtn").textContent = "Gerar novo QR code";
   qrMsg("Aguardando a leitura do QR code pelo celular…");
 }
@@ -3479,7 +3663,7 @@ function onPhoneConn(peer, conn){
         const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
         if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
         else if (frames.length >= maxImages){ conn.send({type: "full"}); }
-        else { normalize(blob).then(b => { addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto da galeria do celular recebida (${frames.length} de ${maxImages}).`); }); }
+        else { normalize(blob).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto da galeria do celular recebida (${frames.length} de ${maxImages}).`); }); }
       }catch(e){ conn.send({type: "file_bad", fid: d.fid}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
@@ -3734,9 +3918,13 @@ function phoneMode(id, k){
 
   ensurePeer().catch(() => {}); // adianta a conexão enquanto a pessoa lê a tela de permissão
   $("phCancel").onclick = () => done("Conexão cancelada", "Nenhuma imagem foi enviada. Para conectar, leia o QR code de novo.");
+  // navegador interno de outros apps (Instagram, Facebook, leitores de QR): avisa e oferece copiar o link
+  if (/FBAN|FBAV|Instagram|Line\/|MicroMessenger|Snapchat|TikTok|musical_ly|; wv\)|GSA\//i.test(navigator.userAgent)) $("phInApp").hidden = false;
+  $("phCopy").onclick = async () => { try{ await navigator.clipboard.writeText(location.href); $("phCopy").textContent = "Link copiado"; }catch(e){ prompt("Copie o link:", location.href); } };
   $("phAllow").onclick = async () => {
     show("phLive"); msg("Abrindo a câmera…"); keepAwake();
-    try{ await cam(); }catch(e){ done("Câmera bloqueada", "Permita o uso da câmera para este site nas configurações do navegador e leia o QR code de novo."); return; }
+    try{ if (!navigator.mediaDevices?.getUserMedia) throw new Error("sem câmera"); await cam(); }
+    catch(e){ done("Câmera indisponível", "Este celular precisa de câmera liberada para conectar. Permita o uso da câmera para este site nas configurações do navegador (ou abra o link no Chrome/Safari) e leia o QR code de novo."); return; }
     msg("Conectando ao computador…");
     connect();
   };
@@ -3845,7 +4033,7 @@ Responda SOMENTE com um objeto JSON:
           informacoes_sst: res.flatMap(r => asList(r.informacoes_sst)), riscos_relatados: res.flatMap(r => asList(r.riscos_relatados)),
           sugestoes: res.flatMap(r => asList(r.sugestoes)), pessoas_funcoes: res.flatMap(r => asList(r.pessoas_funcoes)), riscos_psicossociais: res.flatMap(r => asList(r.riscos_psicossociais))
         });
-        a.status = "transcrito";
+        a.status = "transcrito"; saveSoon();
       }catch(e){
         a.err = true;
         a.status = e?.code === "http" ? "falha: " + e.message : /decode|EncodingError|unable/i.test(String(e?.message || e?.name)) ? "formato de áudio não suportado pelo navegador" : "falha na transcrição";
@@ -3895,7 +4083,7 @@ async function pdfLib(){
 async function readDoc(file){
   const name = file.name || "documento", ext = (name.split(".").pop() || "").toLowerCase(), d = {name, kind: ext.toUpperCase(), text: "", images: [], note: ""};
   try{
-    if (/^image\//.test(file.type)){ d.kind = "Imagem"; d.images.push(await normalize(file)); d.note = "imagem do documento"; }
+    if (/^image\//.test(file.type) || IMG_EXT.test(file.name || "")){ const im = await normalize(file); if (!im) throw new Error("imagem"); d.kind = "Imagem"; d.images.push(im); d.note = "imagem do documento"; }
     else if (ext === "pdf"){
       const lib = await pdfLib(), pdf = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
       const n = Math.min(pdf.numPages, 60); let t = "";
@@ -3971,7 +4159,7 @@ Responda SOMENTE com um objeto JSON neste formato:
   setStatus(`Lendo ${ok.length} documento(s) com IA…`);
   try{
     docInfo = await callAI(prompt, imgs, ctl.signal);
-    drawDocInfo();
+    drawDocInfo(); saveSoon();
     setStatus(`Documentos analisados em ${Math.round((Date.now()-t0)/1000)} s. As informações serão usadas na análise e no relatório.`);
   }catch(e){ handleErr(e); }
   finally{ clearInterval(tick); ctl = null; $("stopRow").hidden = true; updateGo(); drawDocs(); }
@@ -4011,11 +4199,65 @@ function watchUpdates(){
   setTimeout(check, 15000);
 }
 
+/* ---------- inspeção salva no navegador (IndexedDB): restaura ao abrir, "Nova inspeção" limpa ---------- */
+const IDB = {db: null};
+function idb(){
+  if (IDB.db) return Promise.resolve(IDB.db);
+  return new Promise((res, rej) => { try{ const r = indexedDB.open("inspecao-sst", 1); r.onupgradeneeded = () => r.result.createObjectStore("sessao"); r.onsuccess = () => res(IDB.db = r.result); r.onerror = () => rej(r.error); }catch(e){ rej(e); } });
+}
+async function idbPut(v){ const db = await idb(); return new Promise((res, rej) => { const tx = db.transaction("sessao", "readwrite"); tx.objectStore("sessao").put(v, "atual"); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }
+async function idbGet(){ const db = await idb(); return new Promise((res, rej) => { const q = db.transaction("sessao").objectStore("sessao").get("atual"); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function idbDel(){ const db = await idb(); return new Promise(res => { const tx = db.transaction("sessao", "readwrite"); tx.objectStore("sessao").delete("atual"); tx.oncomplete = res; tx.onerror = res; }); }
+let saveT = null, restoring = false;
+function saveSoon(){
+  if (inViewer || restoring || !$("phone").hidden) return;
+  clearTimeout(saveT);
+  saveT = setTimeout(async () => {
+    try{
+      const has = frames.length || lastData || report || audios.length || docs.length;
+      if (!has){ await idbDel(); $("newInsp").hidden = true; return; }
+      await idbPut({t: Date.now(), ctx: $("ctx").value, frames: frames.map(f => f.blob), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
+        audios: audios.filter(a => a.info || a.err).map(a => ({name: a.name, from: a.from, dur: a.dur, blob: a.blob, info: a.info, err: a.err, status: a.status})),
+        docs: docs.filter(d => !d.err).map(d => ({name: d.name, kind: d.kind, note: d.note, text: d.text, images: d.images || []})), docInfo});
+      $("newInsp").hidden = false;
+    }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
+  }, 800);
+}
+async function restoreSession(){
+  let s = null; try{ s = await idbGet(); }catch(e){ return; }
+  if (!s || !(s.frames?.length || s.lastData || s.report)) return;
+  restoring = true;
+  try{
+    if (s.ctx) $("ctx").value = s.ctx;
+    (s.frames || []).forEach(b => frames.push({blob: b, url: URL.createObjectURL(b)})); refreshThumbs();
+    (s.audios || []).forEach(a => audios.push({id: rnd(8), name: a.name, from: a.from, dur: a.dur, blob: a.blob, url: a.blob ? URL.createObjectURL(a.blob) : "", info: a.info, err: a.err, status: a.status || (a.info ? "transcrito" : "")})); drawAudios();
+    (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; drawDocs(); drawDocInfo();
+    if (s.lastData){ lastData = s.lastData; render(lastData, false); }
+    if (s.report){ const blobs = frames.map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
+    $("newInsp").hidden = false;
+    setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}). Para começar do zero, clique em Nova inspeção.`);
+  }catch(e){ console.warn(e); }
+  finally{ restoring = false; updateGo(); }
+}
+async function newInspection(){
+  if (!confirm("Começar uma nova inspeção? As fotos, a análise, as validações e o relatório atuais serão apagados deste navegador.")) return;
+  frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0;
+  audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0;
+  docs.length = 0; docInfo = null; lastData = null; report = null;
+  $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
+  refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); render(EXAMPLE, true);
+  try{ await idbDel(); }catch(e){}
+  $("newInsp").hidden = true; setStatus("Nova inspeção iniciada.");
+  scrollTo({top: 0, behavior: "smooth"});
+}
+
 /* ---------- modo ---------- */
 function setMode(txt){ $("mode").innerHTML = "Modo: <b>" + esc(txt) + "</b>"; }
 async function init(){
   if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
   render(EXAMPLE, true); refreshThumbs();
+  $("newInsp").onclick = newInspection;
+  $("ctx").addEventListener("input", saveSoon);
   if (inViewer){
     $("camHint").textContent = "Dentro do Claude, a análise usa a sua conta, sem chave. A câmera ao vivo e o monitoramento funcionam na versão para navegador (botão abaixo).";
     $("monBox").hidden = true;
@@ -4038,8 +4280,9 @@ async function init(){
     } else { setMode("análise indisponível"); setStatus("A análise não está disponível nesta visualização.", true); }
   } else {
     watchUpdates(); listCams(false);
-    $("keyBox").hidden = false; $("qrBox").hidden = false; const k = load("sst_api_key"); if (k) $("apiKey").value = k;
+    $("keyBox").hidden = false; $("qrBox").hidden = false; const k = loadKey(); if (k) $("apiKey").value = k;
     showProvider(); updateGo();
+    await restoreSession();
   }
 }
 init();
