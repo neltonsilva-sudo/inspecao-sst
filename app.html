@@ -967,7 +967,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v95</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v96</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1150,6 +1150,7 @@ api:
           <label for="rResp">Responsável técnico<input id="rResp" type="text" placeholder="Nome e registro profissional"></label>
           <label for="rElab">Elaborado por<input id="rElab" type="text" placeholder="Nome de quem elaborou o relatório"></label>
           <label for="rRev">Revisado por<input id="rRev" type="text" placeholder="Nome de quem revisou (deixe em branco se ainda não revisado)"></label>
+          <label for="rAprov">Aprovado por<input id="rAprov" type="text" placeholder="Nome de quem aprova o relatório (em branco: usa o responsável técnico)"></label>
           <label for="rData">Data da inspeção<input id="rData" type="date"></label>
           <div class="logo-f"><span>Foto do cabeçalho do painel (opcional)</span><div class="row"><label class="btn">Escolher foto<input id="heroPick" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="heroClr" type="button" hidden>Remover</button></div></div>
           <div class="logo-f"><span>Logo da empresa (opcional)</span><div class="row"><label class="btn">Escolher logo<input id="rLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><img id="rLogoPrev" alt="Logo escolhida" hidden><button id="rLogoClr" type="button" hidden>Remover</button></div></div>
@@ -1171,7 +1172,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v95</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v96</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3021,7 +3022,7 @@ function flowSVG(steps){
 // Matriz GUT com todos os problemas: a lista da IA + qualquer risco da análise que tenha ficado de fora
 // (G = severidade, U = probabilidade, T = média das duas)
 // "Elaborado por" e "Revisado por": somente o que foi digitado nos campos do relatório
-const elabOf = meta => meta.elab || "Não informado", revOf = meta => meta.rev || "A confirmar";
+const elabOf = meta => meta.elab || "Não informado", revOf = meta => meta.rev || "A confirmar", aprovOf = meta => meta.aprov || meta.resp || "";
 const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 function gutAll(R, riscos){
   const gut = asList(R.gut).filter(g => g && g.problema).map(g => ({...g, G: clamp(g.g,1,5), U: clamp(g.u,1,5), T: clamp(g.t,1,5)}));
@@ -3134,7 +3135,7 @@ function reportHTML(R, photos, meta){
   </section>
   ${H("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.")}
   <div class="tw"><table class="idt"><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody>
-  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens – Metodologia de Análise SST"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
+  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Aprovado por", aprovOf(meta) || "A confirmar"], ["Responsável técnico", meta.resp || "Não informado"], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens – Metodologia de Análise SST"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
   </tbody></table></div>
   ${call("info", "Uso do relatório", "Leia as seções na ordem apresentada: o diagnóstico fundamenta o parecer, e o parecer fundamenta o plano de ação.")}
   ${call("warn", "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.")}
@@ -3272,7 +3273,7 @@ function reportHTML(R, photos, meta){
   <ul class="chk">${plano.slice(0, 8).map(a => `<li>${esc(a.acao)}${a.quem || a.quando ? ` <span class="cap">(${esc([a.quem, a.quando].filter(Boolean).join(" · "))})</span>` : ""}</li>`).join("")}${DR.filter(x => x.k === "crit" || x.k === "high").slice(0, 6).map(x => `<li>${x.k === "crit" ? "Implantar" : "Atualizar"}: ${esc(x.doc)}${x.nr ? ` <span class="cap">(${esc(x.nr)})</span>` : ""}</li>`).join("")}<li>Nova inspeção após a implantação para confirmar as notas projetadas.</li></ul>
   ${call("info", "Resultado esperado", "Riscos controlados conforme a hierarquia de controles, trabalhadores com EPI adequado e sem adornos em situação de risco, e documentação de SST registrada como evidência.")}
   <div class="h2u">Controle de elaboração e revisão</div>
-  <div class="tw"><table><thead><tr><th>Etapa</th><th>Responsável | Data</th></tr></thead><tbody><tr><td>Elaboração</td><td>${esc(elabOf(meta))} | ${emis}</td></tr><tr><td>Revisão</td><td>${esc(revOf(meta))}${meta.rev ? " | " + emis : ""}</td></tr><tr><td>Aprovação</td><td>${meta.resp ? esc(meta.resp) + " | " + emis : "A confirmar"}</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th>Etapa</th><th>Responsável | Data</th></tr></thead><tbody><tr><td>Elaboração</td><td>${esc(elabOf(meta))} | ${emis}</td></tr><tr><td>Revisão</td><td>${esc(revOf(meta))}${meta.rev ? " | " + emis : ""}</td></tr><tr><td>Aprovação</td><td>${aprovOf(meta) ? esc(aprovOf(meta)) + " | " + emis : "A confirmar"}</td></tr></tbody></table></div>
   <h4 class="hx">Histórico de revisões</h4>
   <div class="tw"><table><thead><tr><th>Versão | Data</th><th>Descrição</th></tr></thead><tbody><tr><td>00 | ${emis}</td><td>Emissão inicial, a partir de inspeção por imagens conforme a Metodologia de Análise SST.</td></tr></tbody></table></div>
   <p class="local">${esc(meta.emp || "Local")}, ${esc(meta.data)}.</p>
@@ -3725,7 +3726,7 @@ async function buildPptx(R, photos, meta){
 
   // identificação
   s = slide("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.");
-  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens – Metodologia de Análise SST"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
+  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Aprovado por", aprovOf(meta) || "A confirmar"], ["Responsável técnico", meta.resp || "Não informado"], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens – Metodologia de Análise SST"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
   callout(s, "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 5.95, true, 0.8);
 
   // resumo executivo
@@ -3905,7 +3906,7 @@ async function buildPptx(R, photos, meta){
   // checklist final e controle
   s = slide("Checklist final e controle do documento", "Pendências para encerrar a inspeção e responsáveis pela revisão.");
   s.addText(plano.slice(0, 6).map(a => `${a.acao}${a.quem ? " – " + a.quem : ""}${a.quando ? " · " + a.quando : ""}`).concat(DR.filter(x => x.k === "crit").slice(0, 3).map(x => `Implantar: ${x.doc}`), ["Nova inspeção após a implantação para confirmar as notas"]).map(t => ({text: "☐  " + t, options: {breakLine: true}})), {x: 0.5, y: TOP, w: 7.2, h: 4.15, fontFace: FS, fontSize: 14, color: INK, valign: "top", paraSpaceAfter: 6, fit: "shrink"});
-  table(s, [[H("Etapa"), H("Responsável | Data")], [C("Elaboração"), C(`${elabOf(meta)} | ${emis}`)], [C("Revisão"), C(meta.rev ? `${meta.rev} | ${emis}` : "A confirmar")], [C("Aprovação"), C(meta.resp ? `${meta.resp} | ${emis}` : "A confirmar")]], [1.6, 3.3], {x: 7.93, fs: 12});
+  table(s, [[H("Etapa"), H("Responsável | Data")], [C("Elaboração"), C(`${elabOf(meta)} | ${emis}`)], [C("Revisão"), C(meta.rev ? `${meta.rev} | ${emis}` : "A confirmar")], [C("Aprovação"), C(aprovOf(meta) ? `${aprovOf(meta)} | ${emis}` : "A confirmar")]], [1.6, 3.3], {x: 7.93, fs: 12});
   [[meta.resp || "Responsável técnico", "Responsável técnico · assinatura e registro"], ["Responsável pela área", "Ciência do relatório e do plano de ação"]].forEach(([nm, d], i) => {
     const x = 7.93 + i * 2.5;
     s.addShape(pp.ShapeType.line, {x, y: 4.85, w: 2.3, h: 0, line: {color: INK, width: 1}});
@@ -4030,7 +4031,7 @@ async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
   const iso = $("rData").value || new Date().toISOString().slice(0, 10);
-  const meta = {ctx: !!$("ctx").value.trim(), emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), elab: $("rElab").value.trim(), rev: $("rRev").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
+  const meta = {ctx: !!$("ctx").value.trim(), emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), elab: $("rElab").value.trim(), rev: $("rRev").value.trim(), aprov: $("rAprov").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   let done = 0;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s${done ? ` · ${done} de ${REP_PARTS.length} partes prontas` : ""}${busyNote}`), 1000);
@@ -4057,7 +4058,7 @@ async function generateReport(){
 $("repBtn").onclick = generateReport;
 // o campo vinha preenchido automaticamente com "Nelton Silva" (v68–v76): limpa esse preenchimento uma vez
 if (!load("sst_elab_v77")){ if (load("sst_rElab") === "Nelton Silva") store("sst_rElab", null); store("sst_elab_v77", "1"); }
-["rEmp","rSetor","rResp","rElab","rRev"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
+["rEmp","rSetor","rResp","rElab","rRev","rAprov"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
 $("rData").value = new Date().toISOString().slice(0, 10);
 // logo da empresa: reduzida e guardada só neste navegador; vai na capa e no cabeçalho do relatório
 function drawLogo(){ const u = load("sst_logo"); $("rLogoPrev").hidden = !u; $("rLogoClr").hidden = !u; if (u) $("rLogoPrev").src = u; }
@@ -4911,7 +4912,7 @@ async function newInspection(){
   lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
-  ["rEmp", "rSetor", "rResp", "rRev"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
+  ["rEmp", "rSetor", "rResp", "rRev", "rAprov"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
   $("rElab").value = ""; store("sst_rElab", null);
   store("sst_logo", null); drawLogo();
   $("rData").value = new Date().toISOString().slice(0, 10);
