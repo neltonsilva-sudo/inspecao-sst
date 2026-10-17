@@ -854,7 +854,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v48</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v49</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1032,7 +1032,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v48</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v49</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1310,7 +1310,7 @@ Tarefas:
 2. Liste os perigos e riscos visíveis citando a Norma Regulamentadora aplicável (NR-01 GRO/PGR, NR-06 EPI, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22 mineração, NR-23, NR-24, NR-26 sinalização, NR-33, NR-35 etc.) e, quando tiver segurança, o item. Classifique pela matriz da NR-01: severidade 1-5 e probabilidade 1-5. Categoria: Físico, Químico, Biológico, Ergonômico ou Acidente.
 3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 e observação curta.
 4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.) e a fundamentação legal de cada uma (NR e item só com certeza; CLT arts. 157, 158, 166, 167 ou 184 quando couber).
-5. Monte um plano 5W2H com as ações mais importantes e um ciclo PDCA COERENTE com ele: em "plan", o planejamento de CADA ação que será executada (o que fazer, responsável, prazo e recursos), além das metas; em "do", a execução exatamente das ações planejadas, na mesma ordem; em "check", como verificar o resultado de cada ação executada (indicador, inspeção ou auditoria e frequência); em "act", padronizar o que funcionou e corrigir o que não funcionou. Nenhuma ação pode aparecer em "do" sem o planejamento correspondente em "plan".
+5. Monte um plano 5W2H com as ações mais importantes e um ciclo PDCA COERENTE com ele: em "plan", o planejamento de CADA ação que será executada (o que fazer, responsável, prazo e recursos), além das metas; em "do", a execução exatamente das ações planejadas, na mesma ordem; em "check", para CADA ação executada, como verificar se ela foi realmente implementada e se está gerando efeito positivo, isto é, resolvendo o problema ou a situação (indicador, inspeção ou auditoria, critério de sucesso e frequência); em "act", para cada verificação, o que fazer se a ação NÃO resolveu (ação corretiva: rever a causa, reforçar ou trocar a medida) e, se resolveu, como padronizar (procedimento, treinamento, check-list). Nenhuma ação pode aparecer em "do" sem o planejamento em "plan" e sem a verificação em "check".
 6. ${PESSOAS_REGRAS}
 7. ${DOCREG_REGRAS}
 8. ${RESIDUOS_REGRAS}
@@ -1329,7 +1329,7 @@ Responda SOMENTE com um objeto JSON neste formato:
 "cinco_s":{"seiri":{"nota":0-5,"obs":""},"seiton":{"nota":0-5,"obs":""},"seiso":{"nota":0-5,"obs":""},"seiketsu":{"nota":0-5,"obs":""},"shitsuke":{"nota":0-5,"obs":""}},
 "melhorias":[{"titulo":"","metodologia":"","descricao":"","fundamentacao":"NR e item / CLT"}],
 ${DOCREG_JSON},
-"pdca":{"plan":[""],"do":[""],"check":[""],"act":[""]},
+"pdca":{"plan":["planejamento de cada ação: o quê, quem, quando, recursos"],"do":["execução das ações planejadas"],"check":["para cada ação: foi implementada? está resolvendo o problema? como medir e critério de sucesso"],"act":["para cada verificação: se não resolveu, ação corretiva; se resolveu, como padronizar"]},
 "plano_5w2h":[{"what":"","why":"","where":"","who":"","when":"","how":"","how_much":""}],
 ${PESSOAS_JSON},
 ${RESIDUOS_JSON},
@@ -1368,8 +1368,8 @@ const EXAMPLE = {
   pdca:{
     plan:["Inventariar os riscos da oficina no PGR e definir as metas (zero máquina sem proteção; 5S ≥ 4)","Planejar a instalação das proteções NR-12 na esmerilhadeira (coifa, anteparo e ajuste do apoio): Manutenção, 7 dias, orçar a coifa","Planejar o Kaizen de layout: equipe, data do evento, mapa atual e demarcação do corredor de 1,20 m"],
     do:["Instalar as proteções NR-12 na esmerilhadeira conforme o planejado","Executar o Kaizen de layout e demarcar corredores e áreas de estocagem"],
-    check:["Inspecionar a esmerilhadeira com o check-list NR-12 após a instalação e mensalmente","Auditoria 5S quinzenal do novo layout (corredores e áreas de estocagem demarcados), com nota por senso comparada à meta ≥ 4"],
-    act:["Padronizar as proteções e o check-list no POP da oficina","Corrigir os desvios das auditorias e replicar o layout para outras oficinas"]},
+    check:["Proteções NR-12 da esmerilhadeira: conferir se a coifa e o anteparo foram instalados e se estão em uso (check-list NR-12 após a instalação e todo mês; sucesso = zero operação sem proteção e nenhum incidente de projeção)","Kaizen de layout: conferir se corredores e áreas de estocagem foram demarcados e se continuam livres (auditoria 5S quinzenal; sucesso = corredor desobstruído e nota 5S ≥ 4)"],
+    act:["Proteções NR-12: se não resolveu (proteção retirada, ajuste errado, nova ocorrência), investigar a causa, corrigir a instalação e reforçar o treinamento; se resolveu, padronizar no POP e no check-list da máquina","Layout: se o corredor voltou a ser obstruído ou a nota 5S ficou abaixo da meta, rever a área de estocagem e a rotina de arrumação; se resolveu, padronizar e replicar para outras oficinas"]},
   plano_5w2h:[
     {what:"Proteção fixa no rebolo",why:"Risco de projeção e contato (NR-12)",where:"Bancada 2",who:"Manutenção",when:"7 dias",how:"Coifa + anteparo + ajuste do apoio",how_much:"Verificar em campo"},
     {what:"Remover extensões do piso",why:"Tropeço e choque (NR-10)",where:"Corredor central",who:"Eletricista autorizado",when:"15 dias",how:"Tomadas na bancada",how_much:"Verificar em campo"},
@@ -1531,12 +1531,13 @@ function render(d, isExample){
   {
     const words = x => new Set(String(txt(x)).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9-]+/).filter(w => w.length > 3 && !/^(para|como|com|das|dos|nas|nos|uma|cada|conforme|executar|instalar|implantar|realizar|fazer|planejar|verificar)$/.test(w)));
     const covers = (list, item) => { const a = words(item); return asList(list).some(x => { const b = words(x); let n = 0; a.forEach(w => { if (b.has(w)) n++; }); return n >= Math.min(2, a.size); }); };
-    const plan = asList(P.plan).map(txt).filter(Boolean), chk = asList(P.check).map(txt).filter(Boolean);
+    const plan = asList(P.plan).map(txt).filter(Boolean), chk = asList(P.check).map(txt).filter(Boolean), act = asList(P.act).map(txt).filter(Boolean);
     asList(P.do).map(txt).filter(Boolean).forEach(a => {
       if (!covers(plan, a)) plan.push(`Planejar: ${a} (responsável, prazo e recursos)`);
-      if (!covers(chk, a)) chk.push(`Verificar o resultado de: ${a}`);
+      if (!covers(chk, a)) chk.push(`Verificar se foi implementado e se está resolvendo o problema: ${a}`);
+      if (!covers(act, a)) act.push(`Se não resolveu: ação corretiva para "${a}"; se resolveu: padronizar`);
     });
-    P.plan = plan; P.check = chk;
+    P.plan = plan; P.check = chk; P.act = act;
   }
   const quad = (cls, letter, name, en, arr) => {
     const items = asList(arr).map(txt).filter(Boolean);
@@ -1691,7 +1692,7 @@ function render(d, isExample){
 
     <section class="sec">
       <div class="sh"><h3>Ciclo PDCA</h3></div>
-      <div class="pdca">${quad("q-p","P","Planejar","Plan",P.plan)}${quad("q-d","D","Executar","Do",P.do)}${quad("q-c","C","Verificar","Check",P.check)}${quad("q-a","A","Agir","Act",P.act)}</div>
+      <div class="pdca">${quad("q-p","P","Planejar","Plan · o quê, quem, quando, recursos",P.plan)}${quad("q-d","D","Executar","Do · as ações planejadas",P.do)}${quad("q-c","C","Verificar","Check · foi implementado? resolveu o problema?",P.check)}${quad("q-a","A","Agir","Act · não resolveu: corrigir · resolveu: padronizar",P.act)}</div>
     </section>
 
     <section class="sec">
