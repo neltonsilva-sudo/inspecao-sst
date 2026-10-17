@@ -324,6 +324,8 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .fields{display:grid;gap:12px}
 .fields label{display:grid;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600}
 .fields input{font:400 15px/1.4 var(--f-body)}
+.logo-f{display:grid;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600}
+.logo-f img{height:38px;max-width:140px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px}
 @media (max-width:560px){select,input[type=password],input[type=text],input[type=date],textarea,.fields input{font-size:16px}}
 .tech{margin-top:24px}
 .techbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
@@ -422,9 +424,79 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 @media print{.rep .tw{overflow:visible}.rep table{font-size:10.5px}.rep table.w2h{font-size:9.5px}}
 .rep .signs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;margin-top:40px}
 .rep .signs .sign{margin:0;max-width:none}
+/* padrão visual do modelo institucional: páginas claras, azul-marinho, laranja e tabelas com cabeçalho creme */
+.rep{--nv:#0d3b72;--or:#f5a623;--or2:#f26b1d;--cr:#fdebd0;--bl:#1d5fa8;font:14.5px/1.5 "Times New Roman",Times,Georgia,serif;color:#1a1a1a}
+.rep p{max-width:none}
+.rep h2{display:flex;align-items:center;gap:0;padding:0 14px 0 0;margin:30px 0 4px;border:0;background:var(--nv);color:#fff;font:700 18.5px/1.25 "Times New Roman",Times,serif;letter-spacing:.01em;text-transform:uppercase;min-height:40px}
+.rep h2 .n{align-self:stretch;display:grid;place-items:center;min-width:48px;margin-right:16px;background:var(--or);color:#fff;font:700 15px "Times New Roman",serif}
+.rep .h2u{background:var(--nv);color:#fff;border:0;padding:9px 16px;font:700 18.5px/1.25 "Times New Roman",Times,serif;letter-spacing:.01em;margin:30px 0 8px}
+.rep .sub{font-style:italic;color:#707070;margin:6px 0 12px}
+.rep h3{display:flex;align-items:center;margin:18px 0 8px;padding:0 12px 0 0;border:1px solid #d6d6d6;background:#fff;color:var(--bl);font:700 14px/1.3 "Times New Roman",Times,serif;text-transform:uppercase;min-height:34px}
+.rep h3 .n{align-self:stretch;display:grid;place-items:center;min-width:48px;margin-right:12px;background:var(--or);color:#fff;font:700 13px "Times New Roman",serif}
+.rep h4.hx{font:700 14px "Times New Roman",serif;color:var(--bl);margin:16px 0 6px;text-transform:none;letter-spacing:0}
+.rep table{border:1px solid #222;font-size:13px}
+.rep th{background:var(--cr);color:var(--nv);font:700 13.5px "Times New Roman",serif;text-transform:none;letter-spacing:0;border:1px solid #222;padding:7px 9px}
+.rep td{border:1px solid #222;padding:6px 9px}
+.rep tbody tr:nth-child(even) td{background:transparent}
+.rep table.w2h th small{opacity:.8}
+.rep .num{font:13px "Times New Roman",serif}
+.rep .tcap,.rep .fcap{font-style:italic;color:#707070;font-size:12.5px}
+.rep .tcap b,.rep .fcap b{color:#444}
+.rep .fig{border:1px solid #d6d6d6;border-radius:0}
+.rep .flow svg{max-width:760px;margin:0 auto}
+.rep .call{display:grid;grid-template-columns:150px minmax(0,1fr);border:1px solid #d6d6d6;margin:14px 0;break-inside:avoid}
+.rep .call>b{display:flex;align-items:center;padding:12px;background:#f2f2f2;color:var(--nv);font:700 13px "Times New Roman",serif;text-transform:uppercase}
+.rep .call>div{padding:11px 13px}
+.rep .call.warn,.rep .call.crit{background:var(--cr)}
+.rep .call.warn>b{background:var(--cr);color:#e07b12}
+.rep .call.crit>b{background:var(--cr);color:#c62828}
+.rep .exec{border:1px solid #d6d6d6;border-left:6px solid var(--or);border-radius:0;background:#fff}
+.rep .exec h4{color:var(--nv);font-family:"Times New Roman",serif}
+.rep .toc a{color:#1a1a1a;font-size:14px}
+.rep .toc a .n{color:var(--nv);font-family:"Times New Roman",serif;font-weight:700}
+.rep .rk1{background:var(--nv);font-family:"Times New Roman",serif}
+.rep .lv{font-family:Arial,sans-serif}
+.rep table.idt td:first-child{width:34%}
+.rep ul.chk{list-style:none;padding:0;margin:8px 0}
+.rep ul.chk li{margin:6px 0;padding-left:26px;position:relative}
+.rep ul.chk li::before{content:"";position:absolute;left:2px;top:3px;width:12px;height:12px;border:1.5px solid #333}
+.rep .sit{font-family:"Times New Roman",serif}
+/* capa */
+.rep .cover{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:0;padding:0;margin:-44px -52px 30px;border:0;min-height:1000px;overflow:hidden;background:#fff}
+.rep .cv-l{display:flex;flex-direction:column;gap:14px;padding:56px 0 40px 56px;position:relative;z-index:1}
+.rep .cv-logo img{max-height:64px;max-width:240px;object-fit:contain;display:block}
+.rep .cv-logo b{font:italic 900 34px/1 Arial,sans-serif;color:var(--nv);letter-spacing:-.01em}
+.rep .cv-rule{width:110px;height:4px;background:linear-gradient(90deg,var(--or2) 0 55%,var(--or) 55%)}
+.rep .cv-rule.long{width:330px;margin-top:6px}
+.rep .cv-t1,.rep .cv-t2{font:700 64px/.95 "Barlow Condensed","Arial Narrow",Impact,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.rep .cv-t1{color:var(--nv);margin-top:60px}
+.rep .cv-t2{color:var(--or2)}
+.rep .cover h1{font:700 21px/1.25 Arial,sans-serif;color:var(--nv);text-transform:uppercase;margin:2px 0 6px;max-width:420px}
+.rep .cv-box{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;border:2px solid var(--nv);border-radius:14px;padding:14px 16px;margin-top:22px;background:#fff;max-width:440px}
+.rep .cv-ic{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--nv)}
+.rep .cv-sit{font:700 15px Arial,sans-serif;text-transform:uppercase}
+.rep .cv-box .notas{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.rep .cv-box .nt{padding:5px 6px;border-radius:6px;text-align:center}
+.rep .cv-box .nt-t{font:700 10px Arial,sans-serif}
+.rep .cv-box .nt-v{justify-content:center;font-size:22px}
+.rep .cv-box .nt-v span{font-size:13px}
+.rep .cv-box .nt-c{display:none}
+.rep .cv-bt{font:11px Arial,sans-serif;color:#707070;margin-top:6px}
+.rep .cover .meta{background:none;padding:0;max-width:440px;gap:8px 18px;margin-top:6px}
+.rep .cover .meta dt{font:700 10px Arial,sans-serif;color:#707070}
+.rep .cover .meta dd{font:600 14px Arial,sans-serif;color:#1a1a1a}
+.rep .cv-foot{margin-top:auto;display:grid;gap:3px;font:14px Arial,sans-serif;color:#444}
+.rep .cv-foot b{color:#1a1a1a}
+.rep .cv-tag{margin-top:16px;font:700 16px Arial,sans-serif;color:var(--nv);text-transform:uppercase;letter-spacing:.02em}
+.rep .cv-tag i{color:var(--or2);font-style:normal;margin:0 6px}
+.rep .cv-art{position:relative;margin-left:-20px}
+.rep .cv-art svg{position:absolute;inset:0;width:100%;height:100%}
+@media (max-width:640px){.rep .cover{grid-template-columns:minmax(0,1fr);margin:-22px -16px 24px;min-height:0}.rep .cv-l{padding:28px 20px}.rep .cv-art{height:340px;margin:0;order:-1}.rep .cv-t1,.rep .cv-t2{font-size:52px}.rep .cv-t1{margin-top:10px}}
 @media print{
-  .rep .cover{min-height:255mm;justify-content:space-between;border-bottom:0;break-after:page}
-  .rep .exec{break-after:page}
+  .rep .cover{min-height:296mm;margin:0;break-after:page;border:0}
+  .rep .cv-l{padding:22mm 0 16mm 16mm}
+  .rep #s1{break-before:page}
+  .rep .toc{break-after:page}
   .rep h2{break-after:avoid}
   .rep .notas,.rep .exec .two{break-inside:avoid}
 }
@@ -649,7 +721,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v22</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v24</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -803,6 +875,7 @@ api:
           <label for="rSetor">Setor / área inspecionada<input id="rSetor" type="text" placeholder="Ex.: Oficina de manutenção de correias"></label>
           <label for="rResp">Responsável técnico<input id="rResp" type="text" placeholder="Nome e registro profissional"></label>
           <label for="rData">Data da inspeção<input id="rData" type="date"></label>
+          <div class="logo-f"><span>Logo da empresa (opcional)</span><div class="row"><label class="btn">Escolher logo<input id="rLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><img id="rLogoPrev" alt="Logo escolhida" hidden><button id="rLogoClr" type="button" hidden>Remover</button></div></div>
         </div>
         <button class="primary" id="repBtn" type="button" disabled>Gerar relatório técnico</button>
         <p class="hint">Usa as imagens capturadas (ou o último quadro do monitoramento) e a análise mais recente. Monta introdução, objetivo, justificativa, metodologia, fotos, Ishikawa, matriz GUT, matriz REI, parecer pelas NRs e plano de ação.</p>
@@ -817,7 +890,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v22</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v24</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1837,6 +1910,28 @@ function scoreSVG(rows){
   });
   return s + `</svg>`;
 }
+// capa no padrão do modelo: foto recortada em diagonal com faixas azul-marinho e laranja
+function coverArtSVG(photo){
+  return `<svg viewBox="0 0 600 900" role="img" aria-label="Arte da capa" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs><clipPath id="cvClip"><polygon points="105,0 600,0 600,440 385,640"/></clipPath><linearGradient id="cvG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a6ab8"/><stop offset="1" stop-color="#0d3b72"/></linearGradient></defs>
+    ${photo ? `<image href="${photo}" xlink:href="${photo}" x="0" y="0" width="600" height="660" preserveAspectRatio="xMidYMid slice" clip-path="url(#cvClip)"/>` : `<polygon points="105,0 600,0 600,440 385,640" fill="#e8eef6"/>`}
+    <polygon points="40,0 82,0 362,640 320,640" fill="url(#cvG)"/>
+    <polygon points="190,900 290,900 600,615 600,520" fill="url(#cvG)"/>
+    <polygon points="335,900 440,900 600,750 600,650" fill="#f5a623"/>
+    <polygon points="470,900 600,900 600,785" fill="#f26b1d"/>
+  </svg>`;
+}
+function flowSVG(steps){
+  const W = 760, n = steps.length, gap = W / n, H = 150;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fluxo da inspeção" font-family="Arial, sans-serif">`;
+  steps.forEach((t, i) => {
+    const cx = gap * i + gap / 2;
+    if (i < n - 1) s += `<line x1="${cx + 26}" y1="48" x2="${cx + gap - 34}" y2="48" stroke="#f5a623" stroke-width="3"/><path d="M${cx + gap - 36} 41 L${cx + gap - 26} 48 L${cx + gap - 36} 55Z" fill="#f5a623"/>`;
+    s += `<circle cx="${cx}" cy="48" r="24" fill="#0d3b72" stroke="#f5a623" stroke-width="3"/><text x="${cx}" y="55" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">${i + 1}</text>`;
+    wrapWords(t, 14, 3).forEach((ln, j) => { s += `<text x="${cx}" y="${94 + j * 15}" text-anchor="middle" font-size="12" fill="#333">${esc(ln)}</text>`; });
+  });
+  return s + `</svg>`;
+}
 function reportHTML(R, photos, meta){
   const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
   const riscos = asList(R.riscos).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
@@ -1866,30 +1961,38 @@ function reportHTML(R, photos, meta){
     }
   }
   mx += `<div></div>` + [1,2,3,4,5].map(v => `<div class="ax">${v}</div>`).join("");
-  let n = 0; const H = t => `<h2 id="s${++n}"><span class="n">${n}</span>${t}</h2>`;
+  let n = 0; const H = (t, sub) => `<h2 id="s${++n}"><span class="n">${n}</span>${t}</h2>${sub ? `<p class="sub">${sub}</p>` : ""}`;
+  const call = (k, label, html) => `<div class="call ${k}"><b>${label}</b><div>${html}</div></div>`;
+  const logo = load("sst_logo");
   const code = "RT-SST-" + String(meta.iso || "").replace(/-/g, "") + "-" + ((meta.setor || "SETOR").normalize("NFD").replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase() || "SETOR");
   const emis = new Date().toLocaleDateString("pt-BR");
   const cssq = t => String(t || "").replace(/["\\]/g, "").slice(0, 70);
   const top3 = riscos.slice(0, 3), top5 = plano.slice(0, 5);
   const firstPar = String(P.texto || "").split(/\n+/).find(x => x.trim()) || "";
-  const body = `<article class="rep">
-  <style>@page{size:A4;margin:18mm 15mm 18mm 15mm;@top-left{content:"Relatório Técnico de SST · ${cssq(meta.emp || meta.setor)}";font:8.5pt Barlow,sans-serif;color:#5b6770}@top-right{content:"${code} · Rev. 00";font:8.5pt Barlow,sans-serif;color:#5b6770}@bottom-right{content:"Página " counter(page) " de " counter(pages);font:8.5pt Barlow,sans-serif;color:#5b6770}@bottom-left{content:"Documento técnico · uso interno";font:8.5pt Barlow,sans-serif;color:#9aa7b0}}@page:first{@top-left{content:none}@top-right{content:none}@bottom-right{content:none}@bottom-left{content:none}}</style>
+  const body = `<article class="rep" data-code="${code}" data-emis="${emis}">
+  <style>@page{size:A4;margin:20mm 15mm 18mm 15mm;@top-left{content:"${cssq(meta.emp || "Relatório Técnico de SST")}";font:italic 700 9.5pt "Times New Roman",serif;color:#0d3b72}@top-right{content:"${cssq(meta.setor || "Inspeção de SST")}";font:italic 9pt "Times New Roman",serif;color:#8a8a8a}@bottom-left{content:"Relatório Técnico de SST  |  ${code}  |  Rev. 00  |  Emitido em ${emis}";font:8.5pt "Times New Roman",serif;color:#8a8a8a}@bottom-right{content:"Página " counter(page) " de " counter(pages);font:8.5pt "Times New Roman",serif;color:#8a8a8a}}@page:first{margin:0;@top-left{content:none}@top-right{content:none}@bottom-right{content:none}@bottom-left{content:none}}</style>
   <section class="cover">
-    <div class="cv-top">
-      <svg width="46" height="41" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="#f5c400" stroke="#1c2328" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="#1c2328"/><circle cx="20" cy="28.5" r="1.9" fill="#1c2328"/></svg>
-      <div><div class="rk">Relatório técnico de inspeção</div><div class="cv-sub">Segurança e Saúde no Trabalho · Normas Regulamentadoras · Gestão da Qualidade</div></div>
+    <div class="cv-l">
+      <div class="cv-logo">${logo ? `<img src="${logo}" alt="Logo">` : `<b>${esc(meta.emp || "Inspeção SST")}</b>`}</div>
+      <div class="cv-rule"></div>
+      <div class="cv-t1">Relatório</div><div class="cv-t2">Técnico</div>
+      <div class="cv-rule long"></div>
+      <h1>${esc(String(R.titulo || "").replace(/^\s*relat[óo]rio\s+t[ée]cnico\s*(de|da|do)?\s*[–—:-]?\s*/i, "") || "Inspeção de Segurança e Saúde no Trabalho")}</h1>
+      <div class="cv-box">
+        <span class="cv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.4 3.4 8.2 8 9 4.6-.8 8-4.6 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke-linecap="round"/></svg></span>
+        <div class="cv-bx"><div class="cv-sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
+          <div class="notas" aria-label="Notas de avaliação: atual e após o plano de ação">${tile("SST (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? tile("5S", SC.s5A, SC.s5B) : ""}${tile("Geral", SC.gA, SC.gB)}</div>
+          <div class="cv-bt">Notas de 0 a 100: atual → após o plano de ação</div></div>
+      </div>
+      <dl class="meta">
+        <div><dt>Empresa / unidade</dt><dd>${esc(meta.emp || "Não informado")}</dd></div>
+        <div><dt>Setor / área</dt><dd>${esc(meta.setor || "Não informado")}</dd></div>
+        <div><dt>Data da inspeção</dt><dd>${esc(meta.data)}</dd></div>
+        <div><dt>Código</dt><dd>${code} · Rev. 00</dd></div>
+      </dl>
+      <div class="cv-foot"><b>${esc(meta.emp || "Empresa / unidade")}</b><span>Elaboração: ${esc(meta.resp || "Responsável técnico")}</span><div class="cv-tag">Identificar <i>•</i> Avaliar <i>•</i> Controlar</div></div>
     </div>
-    <h1>${esc(R.titulo || "Relatório Técnico de Inspeção de Segurança do Trabalho")}</h1>
-    <dl class="meta">
-      <div><dt>Empresa / unidade</dt><dd>${esc(meta.emp || "Não informado")}</dd></div>
-      <div><dt>Setor / área inspecionada</dt><dd>${esc(meta.setor || "Não informado")}</dd></div>
-      <div><dt>Data da inspeção</dt><dd>${esc(meta.data)}</dd></div>
-      <div><dt>Responsável técnico</dt><dd>${esc(meta.resp || "Não informado")}</dd></div>
-    </dl>
-    <div class="notas" aria-label="Notas de avaliação: atual e após o plano de ação">
-      ${tile("Segurança do Trabalho (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? tile("5S", SC.s5A, SC.s5B) : ""}${tile("Nota geral", SC.gA, SC.gB)}
-    </div>
-    <div class="tw"><table class="ctl"><thead><tr><th>Código do documento</th><th>Revisão</th><th>Emissão</th><th>Classificação</th></tr></thead><tbody><tr><td class="num">${code}</td><td class="num">00</td><td class="num">${emis}</td><td>Uso interno</td></tr></tbody></table></div>
+    <div class="cv-art">${coverArtSVG(photos[0] || "")}</div>
   </section>
   <section class="toc"><div class="h2u">Sumário</div><ol>%%TOC%%</ol></section>
   <section class="exec">
@@ -1902,14 +2005,23 @@ function reportHTML(R, photos, meta){
     </div>
     ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
     ${PP.total ? `<p><b>Pessoas no ambiente:</b> ${PP.total} pessoa(s) visível(is) nas imagens; ${PP.semEpi} sem EPI completo para a atividade e ${PP.comAd} com adornos em situação de risco${PP.nc ? ` (${PP.nc} em não conformidade)` : ""}. Detalhes na seção de EPI e adornos.</p>` : ""}
+    ${counts.crit ? call("crit", "Ponto crítico", `${counts.crit} risco(s) crítico(s) exigem ação imediata: ${esc(top3[0]?.perigo || "")}${top3[0]?.nr ? ` (${esc(top3[0].nr)})` : ""}.`) : ""}
     <p class="cap">Notas de 0 a 100 (atual → após o plano de ação): SST ${SC.sstA} → ${SC.sstB}${SC.s5A !== null ? ` · 5S ${SC.s5A} → ${SC.s5B}` : ""} · Geral ${SC.gA} → ${SC.gB}.${S5 ? ` Implantação do 5S necessária: ${S5.necessario ? "sim" : "não"}.` : ""} Detalhes nas seções seguintes.</p>
   </section>
-  ${H("Introdução")}${para(R.introducao)}
-  ${H("Objetivo")}${para(R.objetivo)}
-  ${H("Justificativa")}${para(R.justificativa)}
-  ${H("Metodologia")}${para(R.metodologia)}
+  ${H("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.")}
+  <div class="tw"><table class="idt"><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody>
+  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Responsável técnico", meta.resp || "Não informado"], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens com análise assistida por inteligência artificial"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
+  </tbody></table></div>
+  ${call("info", "Uso do relatório", "Leia as seções na ordem apresentada: o diagnóstico fundamenta o parecer, e o parecer fundamenta o plano de ação.")}
+  ${call("warn", "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.")}
+  ${H("Introdução", "Contexto da inspeção e do setor avaliado.")}${para(R.introducao)}
+  ${H("Objetivo", "O que esta inspeção verifica e entrega.")}${para(R.objetivo)}
+  ${H("Justificativa", "Fundamentos legais e de gestão que motivam a inspeção.")}${para(R.justificativa)}
+  ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
+  <div class="fig flow">${flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
+  ${para(R.metodologia)}
   <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
-  ${H("Caracterização do ambiente e registro fotográfico")}${para(R.descricao_ambiente)}
+  ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
     const AD = R.analise_documental || {}, dl = asList(AD.documentos), cv = asList(AD.convergencias), dv = asList(AD.divergencias), pd = asList(AD.pendencias_documentais);
@@ -1917,12 +2029,12 @@ function reportHTML(R, photos, meta){
     if (!names.length && !dl.length) return "";
     const rows = dl.length ? dl.map(d => `<tr><td>${esc(d.nome)}</td><td>${esc(d.tipo)}</td><td>${esc(d.contribuicao)}</td></tr>`).join("") : names.map(n => `<tr><td>${esc(n)}</td><td>—</td><td>—</td></tr>`).join("");
     const lst = (t, a) => a.length ? `<h3>${t}</h3><ul>${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
-    return `${H("Análise documental")}%%T:Documentos analisados%%<div class="tw"><table><thead><tr><th>Documento</th><th>Tipo</th><th>Contribuição para o diagnóstico</th></tr></thead><tbody>${rows}</tbody></table></div>${lst("Convergências (documentado e confirmado)", cv)}${lst("Divergências", dv)}${lst("Pendências documentais", pd)}`;
+    return `${H("Análise documental", "Documentos do setor analisados e confrontados com as imagens.")}%%T:Documentos analisados%%<div class="tw"><table><thead><tr><th>Documento</th><th>Tipo</th><th>Contribuição para o diagnóstico</th></tr></thead><tbody>${rows}</tbody></table></div>${lst("Convergências (documentado e confirmado)", cv)}${lst("Divergências", dv)}${lst("Pendências documentais", pd)}`;
   })()}
-  ${meta.audios?.length ? `${H("Relatos em áudio")}
+  ${meta.audios?.length ? `${H("Relatos em áudio", "Informações de SST obtidas nos relatos gravados.")}
   <p>Foram considerados ${meta.audios.length} relato(s) em áudio, transcritos por inteligência artificial e usados como evidência complementar às imagens e aos documentos. As transcrições completas constam no anexo.</p>
   %%T:Relatos em áudio e informações de SST extraídas%%<div class="tw"><table><thead><tr><th style="width:20%">Relato</th><th>Resumo</th><th>Informações de SST</th></tr></thead><tbody>${meta.audios.map(a => `<tr><td><b>${esc(a.nome)}</b><div class="cap" style="margin:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · ${fmtDur(a.dur)}</div></td><td>${esc(a.resumo || "—")}</td><td>${asList(a.informacoes_sst).length ? `<ul class="lst">${asList(a.informacoes_sst).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "—"}</td></tr>`).join("")}</tbody></table></div>` : ""}
-  ${H("Identificação e avaliação dos riscos")}
+  ${H("Identificação e avaliação dos riscos", "Perigos classificados pela matriz severidade × probabilidade da NR-01.")}
   %%T:Inventário de perigos e riscos identificados%%<div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
   ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
   </tbody></table></div>
@@ -1930,13 +2042,13 @@ function reportHTML(R, photos, meta){
     <div><h3>Matriz de risco (NR-01)</h3><div class="fig"><div class="mxw"><span class="ax-y">Severidade →</span><div class="mx">${mx}</div></div><div class="ax-x">Probabilidade →</div><div class="mxl">${["ok","warn","high","crit"].map((k, i) => `<span><i style="background:${LV[k][2]}"></i>${LV[k][0]} ${["1–4","5–9","10–14","15–25"][i]}</span>`).join("")}</div></div>%%F:Matriz de risco severidade × probabilidade (números = itens da tabela)%%</div>
     <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p>%%F:Distribuição dos riscos por nível%%</div>
   </div>
-  ${H("Trabalhadores expostos: uso de EPI e adornos")}
+  ${H("Trabalhadores expostos: uso de EPI e adornos", "Verificação individual do uso de EPI e de adornos, sem identificar as pessoas.")}
   ${PP.lista.length ? `<p>Foram observadas ${PP.total} pessoa(s) nas imagens. ${PP.semEpi} sem todos os EPIs exigidos para a atividade (NR-06) e ${PP.comAd} usando adornos em situação de risco (NR-12, junto a partes móveis; NR-10, em instalações elétricas; NR-32, em serviços de saúde). As pessoas são descritas de forma genérica, sem identificação individual.</p>
   %%T:Verificação de EPI e adornos por pessoa observada%%<div class="tw"><table class="ppl"><thead><tr><th>Pessoa / figura</th><th>Atividade e riscos</th><th>EPIs em uso</th><th>EPIs faltando</th><th>Adornos</th><th>Situação</th></tr></thead><tbody>
   ${PP.lista.map(o => `<tr><td><b>${esc(o.pessoa)}</b>${o.figura ? `<div class="cap" style="margin:0">${esc(o.figura)}</div>` : ""}</td><td>${esc(o.atividade || "—")}${o.riscos ? `<div class="cap" style="margin:2px 0 0">${esc(o.riscos)}</div>` : ""}</td><td>${o.epiUso.length ? esc(o.epiUso.join(", ")) : "Nenhum visível"}</td><td>${o.epiF.length ? `<ul class="lst">${o.epiF.map(e => `<li><b>${esc(e.epi)}</b>${e.motivo ? ` – ${esc(e.motivo)}` : ""} <span class="num">(${esc(e.nr)})</span></li>`).join("")}</ul>` : "—"}</td><td>${o.ad.length ? `<ul class="lst">${o.ad.map(a => `<li><b>${esc(a.adorno)}</b>${a.risco ? ` – ${esc(a.risco)}` : ""}${a.nr ? ` <span class="num">(${esc(a.nr)})</span>` : ""}</li>`).join("")}</ul>` : "Nenhum visível"}</td><td><span class="lv" style="background:${ppSit(o.k)[2]}">${esc(o.sit)}</span></td></tr>`).join("")}
   </tbody></table></div>
   ${PP.lista.some(o => o.rec) ? `<h3>Recomendações por pessoa observada</h3><ul>${PP.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.pessoa)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhuma pessoa visível nas imagens analisadas. A verificação de uso de EPI e de adornos deve ser feita em campo, durante a execução das atividades.</p>"}
-  ${S5 ? `${H("Avaliação 5S (organização e housekeeping)")}
+  ${S5 ? `${H("Avaliação 5S (organização e housekeeping)", "Avaliação de utilização, organização, limpeza, padronização e disciplina.")}
   <div class="sit" style="color:${S5.necessario ? "#c62828" : "#2e8b57"}">Implantação do 5S necessária: ${S5.necessario ? "Sim" : "Não"}</div>
   <p>Pontuação: <b>${S5.total}/${S5.max}</b> (${S5.pct}%) · Classificação: <b style="color:${S5.classe[1]}">${S5.classe[0]}</b>.${S5.justificativa ? " " + esc(S5.justificativa) : ""}</p>
   <div class="fig fig-c">${radarSVG(S5.rows.filter(r => r.nota !== null))}</div>%%F:Radar 5S – nota atual × nota esperada após a implantação (0 a 5)%%
@@ -1944,11 +2056,11 @@ function reportHTML(R, photos, meta){
   ${S5.rows.map(r => r.nota === null ? "" : `<tr><td><b>${r.jp}</b><div class="cap" style="margin:0">${r.pt}</div></td><td style="min-width:110px"><div class="num">${r.nota}/5</div><div class="gb"><i style="width:${r.nota*20}%;background:${r.nota >= 4 ? LV.ok[1] : r.nota === 3 ? LV.warn[1] : LV.crit[1]}"></i></div></td><td>${esc(r.constatacao || "—")}</td><td>${esc(r.acao || "Manter o padrão atual.")}</td></tr>`).join("")}
   </tbody></table></div>
   <p class="cap">Nota 0 a 5 por senso. Sensos com nota 3 ou menor exigem ação de implantação, que consta no plano de ação com a ferramenta "5S".</p>` : ""}
-  ${H("Análise de causas – Diagrama de Ishikawa")}
+  ${H("Análise de causas – Diagrama de Ishikawa", "Causas do principal problema de SST, organizadas pelos 6M.")}
   <p>Efeito analisado: <b>${esc(R.ishikawa?.efeito || "—")}</b>.</p>
   <div class="fig">${ishikawaSVG(R.ishikawa)}</div>%%F:Diagrama de Ishikawa (causa e efeito, 6M)%%
   %%T:Detalhamento das causas por categoria (6M)%%<div class="tw"><table><thead><tr><th style="width:22%">Categoria</th><th>Causas identificadas</th></tr></thead><tbody>${ISH_CATS.map(([k, label]) => { const it = asList((R.ishikawa || {})[k]).filter(Boolean); return `<tr><td><b>${label}</b></td><td>${it.length ? `<ul class="lst">${it.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "—"}</td></tr>`; }).join("")}</tbody></table></div>
-  ${H("Priorização dos problemas – Matriz GUT")}
+  ${H("Priorização dos problemas – Matriz GUT", "Priorização por gravidade, urgência e tendência.")}
   %%T:Matriz GUT – priorização dos problemas%%<div class="tw"><table class="gut"><thead><tr><th>Prioridade</th><th>Problema</th><th>G</th><th>U</th><th>T</th><th>G×U×T</th><th>Justificativa</th></tr></thead><tbody>
   ${gut.map((g, i) => `<tr><td><span class="rk1">${i+1}º</span></td><td><b>${esc(g.problema)}</b></td><td class="num hc" style="background:${GUT_HEAT(g.G)}">${g.G}</td><td class="num hc" style="background:${GUT_HEAT(g.U)}">${g.U}</td><td class="num hc" style="background:${GUT_HEAT(g.T)}">${g.T}</td><td style="min-width:96px"><div class="num"><b>${g.s}</b></div><div class="gb"><i style="width:${g.s/125*100}%"></i></div></td><td>${esc(g.justificativa)}</td></tr>`).join("") || '<tr><td colspan="7">—</td></tr>'}
   </tbody></table></div>
@@ -1956,11 +2068,11 @@ function reportHTML(R, photos, meta){
   %%T:Critérios de pontuação da matriz GUT%%<div class="tw"><table class="crit"><thead><tr><th>Nota</th><th>Gravidade</th><th>Urgência</th><th>Tendência</th></tr></thead><tbody>
   ${[[5,"Extremamente grave","Ação imediata","Piora rapidamente se nada for feito"],[4,"Muito grave","Com alguma urgência","Piora em pouco tempo"],[3,"Grave","O mais cedo possível","Piora a médio prazo"],[2,"Pouco grave","Pode aguardar um pouco","Piora a longo prazo"],[1,"Sem gravidade","Não há pressa","Não vai piorar"]].map(r => `<tr><td class="num hc" style="background:${GUT_HEAT(r[0])}">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("")}
   </tbody></table></div>
-  ${H("Priorização das ações – Matriz REI (esforço × impacto)")}
+  ${H("Priorização das ações – Matriz REI (esforço × impacto)", "Priorização das ações pela relação entre esforço e impacto.")}
   <div class="two"><div><div class="fig">${reiSVG(rei)}</div>%%F:Matriz REI – relação esforço × impacto das ações%%</div><div>%%T:Classificação das ações na matriz REI%%<div class="tw"><table><thead><tr><th>#</th><th>Ação</th><th>E</th><th>I</th><th>Quadrante</th></tr></thead><tbody>
   ${rei.map((a, i) => `<tr><td class="num">${i+1}</td><td>${esc(a.acao)}</td><td class="num">${a.e}</td><td class="num">${a.i}</td><td>${quad(a)}</td></tr>`).join("") || '<tr><td colspan="5">—</td></tr>'}
   </tbody></table></div><p class="cap">Executar primeiro os ganhos rápidos (baixo esforço, alto impacto) e planejar os projetos estratégicos.</p></div></div>
-  ${H("Notas de avaliação: situação atual × após o plano de ação")}
+  ${H("Notas de avaliação: situação atual × após o plano de ação", "Pontuação atual e projeção após a implantação do plano.")}
   <div class="fig">${scoreSVG([{label: "SST (NRs)", a: SC.sstA, b: SC.sstB}].concat(SC.s5A !== null ? [{label: "5S", a: SC.s5A, b: SC.s5B}] : [], [{label: "Geral", a: SC.gA, b: SC.gB}]))}</div>%%F:Notas de avaliação – situação atual × após o plano de ação (0 a 100)%%
   %%T:Notas de avaliação e ganho esperado%%<div class="tw"><table><thead><tr><th>Indicador</th><th>Atual</th><th>Após o plano</th><th>Ganho</th></tr></thead><tbody>
   ${[["Segurança do Trabalho (NRs)", SC.sstA, SC.sstB]].concat(SC.s5A !== null ? [["5S", SC.s5A, SC.s5B]] : [], [["Nota geral", SC.gA, SC.gB]]).map(([t, a, b]) => `<tr><td><b>${t}</b></td><td class="num">${a} · ${classe(a)[0]}</td><td class="num">${b} · ${classe(b)[0]}</td><td class="num">+${b - a}</td></tr>`).join("")}
@@ -1971,40 +2083,46 @@ function reportHTML(R, photos, meta){
   </tbody></table></div>
   ${S5 ? `<h3>5S atual × após a implantação</h3><div class="tw"><table><thead><tr><th>Senso</th><th>Atual</th><th>Após</th></tr></thead><tbody>${S5.rows.filter(r => r.nota !== null).map(r => `<tr><td><b>${r.jp}</b> · ${r.pt}</td><td class="num">${r.nota}/5</td><td class="num">${r.apos}/5</td></tr>`).join("")}</tbody></table></div>` : ""}
   <p class="cap"><b>Como a nota é calculada.</b> SST (NRs): parte de 100 e desconta, por risco identificado, 20 pontos se crítico, 12 se alto, 6 se moderado e 2 se baixo (matriz severidade × probabilidade da NR-01). 5S: soma das notas dos cinco sensos em percentual. Geral: média de SST e 5S. A projeção usa o risco residual esperado após as medidas e a nota esperada de cada senso após a implantação do 5S; é uma estimativa que depende da execução completa do plano e deve ser confirmada em nova inspeção. Faixas: 85–100 Excelente, 70–84 Bom, 50–69 Regular, abaixo de 50 Crítico.</p>
-  ${H("Parecer técnico")}
+  ${H("Parecer técnico", "Conclusão técnica fundamentada nas Normas Regulamentadoras.")}
   <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
   ${para(P.texto)}
   <h3>Fundamentação normativa</h3>
   %%T:Fundamentação normativa das constatações%%<div class="tw"><table><thead><tr><th>NR / item</th><th>Constatação</th><th>Exigência normativa</th></tr></thead><tbody>
   ${asList(P.fundamentacao).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
   </tbody></table></div>
-  ${H("Documentos e registros de evidências de SST")}
+  ${H("Documentos e registros de evidências de SST", "Documentos e registros que o setor deve manter como evidência legal.")}
   ${DR.length ? `<p>Para as atividades e riscos observados, as Normas Regulamentadoras exigem que o setor mantenha os documentos e registros abaixo, que servem de evidência do cumprimento legal em fiscalizações, auditorias e na gestão do PGR. A situação indica se é preciso implantar, atualizar ou apenas confirmar a existência em campo.</p>
   %%T:Documentos e registros de evidências necessários%%<div class="tw"><table class="dreg"><thead><tr><th>Documento / registro</th><th>NR</th><th>Finalidade</th><th>Evidência a manter</th><th>Situação</th><th>Prioridade · prazo</th></tr></thead><tbody>
   ${DR.map(x => `<tr><td><b>${esc(x.doc)}</b>${x.resp ? `<div class="cap" style="margin:0">Responsável: ${esc(x.resp)}</div>` : ""}</td><td class="num">${esc(x.nr || "—")}${x.item ? " · " + esc(x.item) : ""}</td><td>${esc(x.fin || "—")}</td><td>${esc(x.ev || "—")}</td><td><span class="lv" style="background:${LV[x.k][2]}">${esc(x.sit)}</span></td><td>${x.pr ? `<span class="lv" style="background:${prC(x.pr)}">${esc(x.pr)}</span>` : "—"}${x.prazo ? `<div class="cap" style="margin:2px 0 0">${esc(x.prazo)}</div>` : ""}</td></tr>`).join("")}
   </tbody></table></div>
   <p class="cap">Os registros devem ficar arquivados e disponíveis à fiscalização, assinados e datados, pelo prazo definido em cada NR.</p>` : "<p>Nenhum documento ou registro adicional foi indicado a partir das imagens. Recomenda-se confirmar em campo a existência do PGR, das ordens de serviço, dos registros de treinamento e das fichas de EPI.</p>"}
-  ${SG.length ? `${H("Sugestões de melhoria com fundamentação legal")}
+  ${SG.length ? `${H("Sugestões de melhoria com fundamentação legal", "Melhorias recomendadas, com a base legal de cada uma.")}
   <p>As melhorias abaixo seguem a hierarquia de controles da NR-01 (eliminação, substituição, controles de engenharia, medidas administrativas e EPI) e indicam a base legal de cada recomendação.</p>
   %%T:Sugestões de melhoria e fundamentação legal%%<div class="tw"><table class="sug"><thead><tr><th>#</th><th>Melhoria proposta</th><th>Fundamentação legal</th><th>Benefício esperado</th><th>Prioridade</th><th>Custo · prazo</th></tr></thead><tbody>
   ${SG.map((x, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(x.titulo || "")}</b>${x.descricao ? `<div class="cap" style="margin:2px 0 0">${esc(x.descricao)}</div>` : ""}</td><td>${esc(x.fundamentacao_legal || "—")}</td><td>${esc(x.beneficio || "—")}</td><td>${x.prioridade ? `<span class="lv" style="background:${prC(x.prioridade)}">${esc(x.prioridade)}</span>` : "—"}</td><td>${esc([x.custo, x.prazo].filter(Boolean).join(" · ") || "—")}</td></tr>`).join("")}
   </tbody></table></div>` : ""}
-  ${H("Plano de ação (5W2H)")}
+  ${H("Plano de ação (5W2H)", "Ações, responsáveis e prazos para tratar os desvios encontrados.")}
   %%T:Plano de ação 5W2H%%<div class="tw"><table class="w2h"><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê<small>What</small></th><th>Por quê<small>Why</small></th><th>Onde<small>Where</small></th><th>Quem<small>Who</small></th><th>Quando<small>When</small></th><th>Como<small>How</small></th><th>Quanto<small>How much</small></th></tr></thead><tbody>
   ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
   </tbody></table></div>
-  ${H("Considerações finais")}${para(R.consideracoes_finais)}
-  ${meta.audios?.length ? `${H("Anexo – Transcrições dos relatos em áudio")}${meta.audios.map((a, i) => `<h3>${esc(a.nome)}</h3><p class="cap" style="margin-top:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · duração ${fmtDur(a.dur)} · transcrição automática, sujeita a revisão</p><p class="transc">${esc(String(a.transcricao || "").slice(0, 6000))}</p>`).join("")}` : ""}
-  ${H("Referências normativas")}
+  ${H("Considerações finais", "Síntese e encaminhamentos.")}${para(R.consideracoes_finais)}
+  ${meta.audios?.length ? `${H("Anexo – Transcrições dos relatos em áudio", "Transcrições automáticas, sujeitas a revisão.")}${meta.audios.map((a, i) => `<h3>${esc(a.nome)}</h3><p class="cap" style="margin-top:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · duração ${fmtDur(a.dur)} · transcrição automática, sujeita a revisão</p><p class="transc">${esc(String(a.transcricao || "").slice(0, 6000))}</p>`).join("")}` : ""}
+  ${H("Referências normativas", "Normas e documentos citados neste relatório.")}
   <ol class="refs">${asList(R.referencias).map(x => `<li>${esc(x)}</li>`).join("")}<li>Normas Regulamentadoras: redação vigente publicada pelo Ministério do Trabalho e Emprego (gov.br/trabalho-e-emprego).</li></ol>
-  <div class="h2u" style="margin-top:34px">Controle de revisões</div>
-  <div class="tw"><table><thead><tr><th>Rev.</th><th>Data</th><th>Descrição</th><th>Elaborado por</th></tr></thead><tbody><tr><td class="num">00</td><td class="num">${emis}</td><td>Emissão inicial, a partir de inspeção por imagens com apoio de IA</td><td>${esc(meta.resp || "Responsável técnico")}</td></tr></tbody></table></div>
+  <div class="h2u chk-h">Checklist final</div>
+  <ul class="chk">${plano.slice(0, 8).map(a => `<li>${esc(a.acao)}${a.quem || a.quando ? ` <span class="cap">(${esc([a.quem, a.quando].filter(Boolean).join(" · "))})</span>` : ""}</li>`).join("")}${DR.filter(x => x.k === "crit" || x.k === "high").slice(0, 6).map(x => `<li>${x.k === "crit" ? "Implantar" : "Atualizar"}: ${esc(x.doc)}${x.nr ? ` <span class="cap">(${esc(x.nr)})</span>` : ""}</li>`).join("")}<li>Nova inspeção após a implantação para confirmar as notas projetadas.</li></ul>
+  ${call("info", "Resultado esperado", "Riscos controlados conforme a hierarquia de controles, trabalhadores com EPI adequado e sem adornos em situação de risco, e documentação de SST registrada como evidência.")}
+  <div class="h2u">Controle de elaboração e revisão</div>
+  <div class="tw"><table><thead><tr><th>Etapa</th><th>Responsável | Data</th></tr></thead><tbody><tr><td>Elaboração</td><td>${esc(meta.resp || "Responsável técnico")} | ${emis}</td></tr><tr><td>Revisão</td><td>A confirmar</td></tr><tr><td>Aprovação</td><td>A confirmar</td></tr></tbody></table></div>
+  <h4 class="hx">Histórico de revisões</h4>
+  <div class="tw"><table><thead><tr><th>Versão | Data</th><th>Descrição</th></tr></thead><tbody><tr><td>00 | ${emis}</td><td>Emissão inicial, a partir de inspeção por imagens com apoio de inteligência artificial.</td></tr></tbody></table></div>
   <p class="local">${esc(meta.emp || "Local")}, ${esc(meta.data)}.</p>
   <div class="signs">
     <div class="sign"><div class="ln"></div><div><b>${esc(meta.resp || "Responsável técnico")}</b></div><small>Responsável técnico · assinatura e registro profissional</small></div>
     <div class="sign"><div class="ln"></div><div><b>Responsável pela área</b></div><small>Ciência do relatório e do plano de ação</small></div>
   </div>
-  <p class="disc">Relatório elaborado com apoio de inteligência artificial a partir de imagens do ambiente. As constatações devem ser confirmadas em inspeção de campo, e o documento só tem validade técnica após revisão e assinatura de profissional legalmente habilitado. Confirme a redação vigente e a numeração dos itens das NRs no portal do MTE.</p>
+  ${call("info", "Observação", "Relatório elaborado com apoio de inteligência artificial a partir de imagens do ambiente. Confirme as constatações em campo e a redação vigente e a numeração dos itens das NRs no portal do MTE.")}
+  ${call("warn", "Situação do documento", "Emitido para revisão e assinatura do responsável técnico. Substitui versões anteriores deste relatório, quando existentes.")}
 </article>`;
   // sumário automático e numeração das subseções (6.1, 6.2…)
   const toc = []; let cur = 0, sub = 0;
@@ -2024,10 +2142,12 @@ function exportDoc(){
 }
 function showReport(){
   const t = $("tech"); t.hidden = false;
-  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
   if ($("prtBtn")) $("prtBtn").onclick = () => window.print();
   $("dlRep").onclick = downloadReport;
   $("dlDocx").onclick = downloadDocx;
+  $("dlPptx").onclick = () => downloadPptx(false);
+  $("toCanva").onclick = () => downloadPptx(true);
   $("closeRep").onclick = () => { t.hidden = true; };
 }
 async function downloadReport(){
@@ -2060,7 +2180,8 @@ async function dxSvg(svg){
   await img.decode();
   const k = 2, c = document.createElement("canvas"); c.width = w * k; c.height = h * k;
   const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
-  return {data: dxBytes(c.toDataURL("image/png")), w, h};
+  const url = c.toDataURL("image/png");
+  return {data: dxBytes(url), url, w, h};
 }
 const dxImgSize = src => new Promise(res => { const i = new Image(); i.onload = () => res([i.naturalWidth || 4, i.naturalHeight || 3]); i.onerror = () => res([4, 3]); i.src = src; });
 async function buildDocx(R, photos, meta){
@@ -2069,7 +2190,8 @@ async function buildDocx(R, photos, meta){
   const {Paragraph, TextRun, Table, TableRow, TableCell, ImageRun, WidthType, ShadingType, AlignmentType, HeadingLevel, BorderStyle, PageNumber, TabStopType, LevelFormat, VerticalAlign, Header, Footer, LineRuleType} = D;
   const root = document.createElement("div"); root.innerHTML = reportHTML(R, photos, meta);
   const rep = root.querySelector(".rep");
-  const GRAY = "5B6770", NAVY = "1F3A5F", LINE = "D5DBE0";
+  const GRAY = "707070", NAVY = "0D3B72", LINE = "D6D6D6", ORG = "F5A623", ORG2 = "F26B1D", CREAM = "FDEBD0", BLUE = "1D5FA8", INKB = "222222";
+  const logo = load("sst_logo");
   const sh = fill => fill ? {type: ShadingType.CLEAR, fill, color: "auto"} : undefined;
   const clean = t => t.replace(/\s+/g, " ");
   let olN = 0;
@@ -2098,6 +2220,7 @@ async function buildDocx(R, photos, meta){
   const P = (el, o = {}) => new Paragraph({children: inl(el, o.f || {}), spacing: {after: 100, line: 300, lineRule: LineRuleType.AUTO}, ...o.p});
   const txtP = (t, f = {}, p = {}) => new Paragraph({children: [new TextRun({text: t, ...f})], spacing: {after: 100}, ...p});
   function list(el, f = {}, inCell){
+    if (el.classList.contains("chk")) return [...el.querySelectorAll(":scope > li")].map(li => new Paragraph({spacing: {after: 80}, children: [new TextRun({text: "☐  ", size: 24}), ...inl(li, f)]}));
     const ord = el.tagName === "OL", inst = ++olN, out = [];
     el.querySelectorAll(":scope > li").forEach(li => {
       out.push(new Paragraph({children: inl(li, f), spacing: {after: inCell ? 30 : 60}, ...(ord ? {numbering: {reference: "ord", level: 0, instance: inst}} : {bullet: {level: 0}})}));
@@ -2136,7 +2259,7 @@ async function buildDocx(R, photos, meta){
       cw = cw.map((w, i) => fixed[i] ? minW[i] : wgt[i] / freeW * rest);
     }
     const sc = DX_W / cw.reduce((a, b) => a + b, 0); cw = cw.map(w => Math.round(w * sc));
-    const border = opt.noBorder ? {style: BorderStyle.NONE, size: 0, color: "FFFFFF"} : {style: BorderStyle.SINGLE, size: 4, color: LINE};
+    const border = opt.noBorder ? {style: BorderStyle.NONE, size: 0, color: "FFFFFF"} : {style: BorderStyle.SINGLE, size: 4, color: INKB};
     return new Table({
       width: {size: DX_W, type: WidthType.DXA}, columnWidths: cw,
       borders: {top: border, bottom: border, left: border, right: border, insideHorizontal: border, insideVertical: border},
@@ -2145,8 +2268,8 @@ async function buildDocx(R, photos, meta){
         let i = 0;
         return new TableRow({tableHeader: head, cantSplit: true, children: [...r.cells].map(c => {
           const span = c.colSpan || 1, w = cw.slice(i, i + span).reduce((a, b) => a + b, 0); i += span;
-          const fill = head ? "1C2328" : dxHex(c.getAttribute("style") || "");
-          const f = head ? {b: true, c: "FFFFFF", sz: small - 1} : {sz: small};
+          const fill = head ? CREAM : dxHex(c.getAttribute("style") || "");
+          const f = head ? {b: true, c: NAVY, sz: small + 1} : {sz: small + 1};
           return new TableCell({children: cellKids(c, f), columnSpan: span > 1 ? span : undefined, width: {size: w, type: WidthType.DXA}, shading: sh(fill), verticalAlign: VerticalAlign.TOP, margins: {top: 50, bottom: 50, left: 80, right: 80}});
         })});
       })
@@ -2179,11 +2302,22 @@ async function buildDocx(R, photos, meta){
       }
       if (tg === "H1"){ out.push(new Paragraph({children: [new TextRun({text: clean(n.textContent).trim(), bold: true, size: 40, color: NAVY})], spacing: {after: 200}})); continue; }
       if (tg === "H2" || cl.contains("h2u")){
-        const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim();
-        out.push(new Paragraph({heading: HeadingLevel.HEADING_1, children: num ? [new TextRun({text: num + "  ", color: "1F6FB2"}), new TextRun(t)] : [new TextRun(t)]})); continue;
+        const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim().toUpperCase();
+        out.push(new Paragraph({heading: HeadingLevel.HEADING_1, children: num ? [new TextRun({text: `  ${num}  `, shading: sh(ORG), color: "FFFFFF"}), new TextRun({text: "   " + t, color: "FFFFFF"})] : [new TextRun({text: "  " + t, color: "FFFFFF"})]})); continue;
       }
-      if (tg === "H3"){ const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim(); out.push(new Paragraph({heading: HeadingLevel.HEADING_2, children: num ? [new TextRun({text: num + "  ", color: GRAY}), new TextRun(t)] : [new TextRun(t)]})); continue; }
-      if (tg === "H4"){ out.push(new Paragraph({keepNext: true, spacing: {before: 120, after: 60}, children: [new TextRun({text: clean(n.textContent).trim(), bold: true, color: NAVY})]})); continue; }
+      if (cl.contains("sub")){ out.push(P(n, {f: {i: true, c: GRAY}, p: {spacing: {before: 60, after: 160}}})); continue; }
+      if (tg === "H3"){ const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim().toUpperCase(); out.push(new Paragraph({heading: HeadingLevel.HEADING_2, children: num ? [new TextRun({text: `  ${num}  `, shading: sh(ORG), color: "FFFFFF"}), new TextRun({text: "   " + t})] : [new TextRun(t)]})); continue; }
+      if (tg === "H4"){ out.push(new Paragraph({keepNext: true, spacing: {before: 160, after: 60}, children: [new TextRun({text: clean(n.textContent).trim(), bold: true, color: cl.contains("hx") ? BLUE : NAVY})]})); continue; }
+      if (cl.contains("call")){
+        const warm = cl.contains("warn") || cl.contains("crit"), lab = n.querySelector(":scope > b"), body = n.querySelector(":scope > div"), lw = 2300;
+        const b = {style: BorderStyle.SINGLE, size: 4, color: LINE};
+        out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [lw, DX_W - lw], borders: {top: b, bottom: b, left: b, right: b, insideHorizontal: b, insideVertical: b},
+          rows: [new TableRow({cantSplit: true, children: [
+            new TableCell({width: {size: lw, type: WidthType.DXA}, shading: sh(warm ? CREAM : "F2F2F2"), verticalAlign: VerticalAlign.CENTER, margins: {top: 100, bottom: 100, left: 140, right: 100}, children: [new Paragraph({children: [new TextRun({text: clean(lab?.textContent || "").trim().toUpperCase(), bold: true, size: 20, color: cl.contains("crit") ? "C62828" : warm ? "E07B12" : NAVY})]})]}),
+            new TableCell({width: {size: DX_W - lw, type: WidthType.DXA}, shading: sh(warm ? CREAM : undefined), verticalAlign: VerticalAlign.CENTER, margins: {top: 100, bottom: 100, left: 160, right: 140}, children: [new Paragraph({children: inl(body || n, {sz: 21})})]})]})]}),
+          new Paragraph({children: [], spacing: {after: 120}}));
+        continue;
+      }
       if (cl.contains("tcap")){ out.push(P(n, {f: {sz: 17}, p: {keepNext: true, spacing: {before: 160, after: 60}}})); continue; }
       if (cl.contains("fcap")){ out.push(P(n, {f: {sz: 17, c: GRAY}, p: {alignment: AlignmentType.CENTER, spacing: {before: 40, after: 160}}})); continue; }
       if (cl.contains("sit")){ out.push(P(n, {f: {b: true, sz: 24, c: dxHex(n.style.color)}, p: {spacing: {before: 80, after: 120}}})); continue; }
@@ -2240,49 +2374,52 @@ async function buildDocx(R, photos, meta){
     }
   }
   async function cover(c){
-    out.push(new Paragraph({spacing: {before: 600, after: 60}, children: [new TextRun({text: "▲ " + clean(c.querySelector(".rk")?.textContent || "Relatório técnico de inspeção").toUpperCase(), bold: true, size: 22, color: "B38F00", characterSpacing: 40})]}));
-    out.push(new Paragraph({spacing: {after: 480}, children: [new TextRun({text: clean(c.querySelector(".cv-sub")?.textContent || ""), size: 18, color: GRAY})]}));
-    out.push(new Paragraph({spacing: {after: 480}, border: {bottom: {style: BorderStyle.SINGLE, size: 18, color: "F5C400", space: 8}}, children: [new TextRun({text: clean(c.querySelector("h1")?.textContent || ""), bold: true, size: 48, color: NAVY})]}));
-    const dl = [...c.querySelectorAll("dl.meta > div")];
-    if (dl.length){
-      const none = {style: BorderStyle.NONE, size: 0, color: "FFFFFF"}, line = {style: BorderStyle.SINGLE, size: 4, color: LINE};
-      out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [3400, DX_W - 3400], borders: {top: none, bottom: line, left: none, right: none, insideHorizontal: line, insideVertical: none},
-        rows: dl.map(d => new TableRow({children: [
-          new TableCell({width: {size: 3400, type: WidthType.DXA}, margins: {top: 80, bottom: 80}, children: [new Paragraph({children: [new TextRun({text: clean(d.querySelector("dt")?.textContent || "").toUpperCase(), size: 16, bold: true, color: GRAY})]})]}),
-          new TableCell({width: {size: DX_W - 3400, type: WidthType.DXA}, margins: {top: 80, bottom: 80}, children: [new Paragraph({children: [new TextRun({text: clean(d.querySelector("dd")?.textContent || ""), size: 22, bold: true})]})]})]}))}));
-    }
-    const nt = [...c.querySelectorAll(".notas .nt")];
-    if (nt.length){
-      const w = Math.floor(DX_W / nt.length), b = {style: BorderStyle.SINGLE, size: 4, color: LINE};
-      out.push(new Paragraph({spacing: {before: 480, after: 100}, children: [new TextRun({text: "NOTAS DE AVALIAÇÃO (0 A 100): ATUAL → APÓS O PLANO DE AÇÃO", size: 16, bold: true, color: GRAY})]}));
-      out.push(new Table({width: {size: w * nt.length, type: WidthType.DXA}, columnWidths: Array(nt.length).fill(w), borders: {top: b, bottom: b, left: b, right: b, insideHorizontal: b, insideVertical: b},
-        rows: [new TableRow({children: nt.map(x => { const bs = [...x.querySelectorAll(".nt-v b")]; return new TableCell({width: {size: w, type: WidthType.DXA}, shading: sh("F6F8F9"), margins: {top: 120, bottom: 120, left: 120, right: 120}, children: [
-          new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: clean(x.querySelector(".nt-t")?.textContent || ""), size: 17, bold: true, color: GRAY})]}),
-          new Paragraph({alignment: AlignmentType.CENTER, spacing: {before: 60}, children: [new TextRun({text: bs[0]?.textContent || "", bold: true, size: 40, color: dxHex(bs[0]?.style.color)}), new TextRun({text: "  →  ", size: 28, color: GRAY}), new TextRun({text: bs[1]?.textContent || "", bold: true, size: 40, color: dxHex(bs[1]?.style.color)})]}),
-          new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: clean(x.querySelector(".nt-c")?.textContent || ""), size: 16, color: GRAY})]})]}); })})]}));
-    }
-    const ctl = c.querySelector("table.ctl");
-    if (ctl){ out.push(new Paragraph({spacing: {before: 600}, children: []})); const t = table(ctl); if (t) out.push(t); }
+    const none = {style: BorderStyle.NONE, size: 0, color: "FFFFFF"}, NB = {top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none};
+    const L = [], LW = 6300, RW = DX_W - LW;
+    if (logo){ const [w, h] = await dxImgSize(logo); L.push(new Paragraph({spacing: {after: 120}, children: [img(dxBytes(logo), "png", w, h, Math.min(220, w * 60 / h))]})); }
+    else L.push(new Paragraph({spacing: {after: 120}, children: [new TextRun({text: clean(c.querySelector(".cv-logo")?.textContent || "").trim(), bold: true, italics: true, size: 52, color: NAVY, font: "Arial"})]}));
+    const rule = (w, before = 0) => new Paragraph({spacing: {before, after: 200}, children: [new TextRun({text: " ".repeat(Math.round(w * .55)), shading: sh(ORG2), size: 6}), new TextRun({text: " ".repeat(Math.round(w * .45)), shading: sh(ORG), size: 6})]});
+    L.push(rule(22));
+    L.push(new Paragraph({spacing: {before: 900, after: 0, line: 240, lineRule: LineRuleType.AUTO}, children: [new TextRun({text: "RELATÓRIO", bold: true, size: 104, color: NAVY, font: "Arial Narrow"})]}));
+    L.push(new Paragraph({spacing: {after: 120, line: 240, lineRule: LineRuleType.AUTO}, children: [new TextRun({text: "TÉCNICO", bold: true, size: 104, color: ORG2, font: "Arial Narrow"})]}));
+    L.push(rule(64, 60));
+    L.push(new Paragraph({spacing: {after: 300}, children: [new TextRun({text: clean(c.querySelector("h1")?.textContent || "").trim().toUpperCase(), bold: true, size: 28, color: NAVY, font: "Arial"})]}));
+    const nb = {style: BorderStyle.SINGLE, size: 12, color: NAVY}, tiles = [...c.querySelectorAll(".notas .nt")];
+    L.push(new Table({width: {size: LW - 200, type: WidthType.DXA}, columnWidths: [LW - 200], borders: {top: nb, bottom: nb, left: nb, right: nb, insideHorizontal: none, insideVertical: none},
+      rows: [new TableRow({children: [new TableCell({width: {size: LW - 200, type: WidthType.DXA}, margins: {top: 140, bottom: 140, left: 200, right: 200}, children: [
+        new Paragraph({children: [new TextRun({text: clean(c.querySelector(".cv-sit")?.textContent || "").trim().toUpperCase(), bold: true, size: 24, color: dxHex(c.querySelector(".cv-sit")?.style.color) || NAVY, font: "Arial"})]}),
+        new Paragraph({spacing: {before: 80}, children: tiles.flatMap((x, i) => { const bs = [...x.querySelectorAll(".nt-v b")]; return [new TextRun({text: (i ? "     " : "") + clean(x.querySelector(".nt-t")?.textContent || "") + "  ", size: 17, bold: true, color: GRAY, font: "Arial"}), new TextRun({text: bs[0]?.textContent || "", bold: true, size: 30, color: dxHex(bs[0]?.style.color), font: "Arial"}), new TextRun({text: " → ", size: 22, color: GRAY}), new TextRun({text: bs[1]?.textContent || "", bold: true, size: 30, color: dxHex(bs[1]?.style.color), font: "Arial"})]; })}),
+        new Paragraph({children: [new TextRun({text: "Notas de 0 a 100: atual → após o plano de ação", size: 16, color: GRAY, font: "Arial"})]})]})]})]}));
+    [...c.querySelectorAll("dl.meta > div")].forEach((d, i) => L.push(new Paragraph({spacing: {before: i ? 40 : 300}, children: [new TextRun({text: clean(d.querySelector("dt")?.textContent || "").toUpperCase() + ":  ", size: 16, bold: true, color: GRAY, font: "Arial"}), new TextRun({text: clean(d.querySelector("dd")?.textContent || ""), size: 20, bold: true, font: "Arial"})]})));
+    const ft = c.querySelector(".cv-foot");
+    L.push(new Paragraph({spacing: {before: 900}, children: [new TextRun({text: clean(ft?.querySelector("b")?.textContent || ""), bold: true, size: 21, font: "Arial"})]}));
+    L.push(new Paragraph({children: [new TextRun({text: clean(ft?.querySelector("span")?.textContent || ""), size: 20, color: "444444", font: "Arial"})]}));
+    L.push(new Paragraph({spacing: {before: 200}, children: [new TextRun({text: "IDENTIFICAR", bold: true, size: 24, color: NAVY, font: "Arial"}), new TextRun({text: "  •  ", bold: true, size: 24, color: ORG2}), new TextRun({text: "AVALIAR", bold: true, size: 24, color: NAVY, font: "Arial"}), new TextRun({text: "  •  ", bold: true, size: 24, color: ORG2}), new TextRun({text: "CONTROLAR", bold: true, size: 24, color: NAVY, font: "Arial"})]}));
+    const R_ = [];
+    try{ const art = await dxSvg(c.querySelector(".cv-art svg")); R_.push(new Paragraph({alignment: AlignmentType.RIGHT, children: [img(art.data, "png", art.w, art.h, 250)]})); }catch(e){ R_.push(new Paragraph("")); }
+    out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [LW, RW], borders: NB, rows: [new TableRow({children: [
+      new TableCell({width: {size: LW, type: WidthType.DXA}, children: L}), new TableCell({width: {size: RW, type: WidthType.DXA}, verticalAlign: VerticalAlign.TOP, children: R_})]})]}));
     out.push(new Paragraph({children: [], pageBreakBefore: true, spacing: {after: 0}}));
   }
   await walk(rep);
-  const code = clean(rep.querySelector("table.ctl td")?.textContent || "").trim();
-  const hdrTxt = "Relatório Técnico de SST" + (meta.emp || meta.setor ? " · " + (meta.emp || meta.setor) : "");
-  const hf = (l, rKids) => new Paragraph({tabStops: [{type: TabStopType.RIGHT, position: DX_W}], children: [new TextRun({text: l, size: 16, color: GRAY}), new TextRun({text: "\t", size: 16}), ...rKids]});
+  const code = rep.dataset.code || "", emis = rep.dataset.emis || "";
+  const hf = (lKids, rKids, border) => new Paragraph({tabStops: [{type: TabStopType.RIGHT, position: DX_W}], border, children: [...lKids, new TextRun({text: "\t", size: 16}), ...rKids]});
+  let hLogo = [];
+  if (logo){ const [w, h] = await dxImgSize(logo); hLogo = [img(dxBytes(logo), "png", w, h, Math.min(120, w * 26 / h)), new TextRun({text: "  "})]; }
   return new D.Document({
     creator: meta.resp || "Inspeção SST", title: R.titulo || "Relatório Técnico de SST", description: "Relatório técnico de inspeção de SST",
     styles: {
-      default: {document: {run: {font: "Arial", size: 20, color: "1C2328"}, paragraph: {spacing: {line: 276, lineRule: LineRuleType.AUTO}}}},
+      default: {document: {run: {font: "Times New Roman", size: 22, color: "1A1A1A"}, paragraph: {spacing: {line: 264, lineRule: LineRuleType.AUTO}}}},
       paragraphStyles: [
-        {id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Arial", size: 28, bold: true, color: NAVY}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 360, after: 160}, border: {bottom: {style: BorderStyle.SINGLE, size: 8, color: "1C2328", space: 4}}}},
-        {id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Arial", size: 22, bold: true, color: "1C2328"}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 240, after: 100}}}
+        {id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Times New Roman", size: 28, bold: true, color: "FFFFFF"}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 360, after: 40, line: 360, lineRule: LineRuleType.AUTO}, shading: {type: ShadingType.CLEAR, fill: NAVY, color: "auto"}}},
+        {id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Times New Roman", size: 22, bold: true, color: BLUE}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 240, after: 100, line: 320, lineRule: LineRuleType.AUTO}, border: {top: {style: BorderStyle.SINGLE, size: 4, color: LINE, space: 1}, bottom: {style: BorderStyle.SINGLE, size: 4, color: LINE, space: 1}, left: {style: BorderStyle.SINGLE, size: 4, color: LINE, space: 0}, right: {style: BorderStyle.SINGLE, size: 4, color: LINE, space: 4}}}}
       ]
     },
     numbering: {config: [{reference: "ord", levels: [{level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.START, style: {paragraph: {indent: {left: 420, hanging: 300}}}}]}]},
     sections: [{
       properties: {titlePage: true, page: {size: {width: 11906, height: 16838}, margin: {top: 1020, bottom: 1020, left: 850, right: 850, header: 480, footer: 480}}},
-      headers: {default: new Header({children: [hf(hdrTxt, [new TextRun({text: code ? code + " · Rev. 00" : "Rev. 00", size: 16, color: GRAY})])]}), first: new Header({children: [new Paragraph("")]})},
-      footers: {default: new Footer({children: [hf("Documento técnico · uso interno", [new TextRun({children: ["Página ", PageNumber.CURRENT, " de ", PageNumber.TOTAL_PAGES], size: 16, color: GRAY})])]}), first: new Footer({children: [new Paragraph("")]})},
+      headers: {default: new Header({children: [hf([...hLogo, new TextRun({text: meta.emp || "Relatório Técnico de SST", bold: true, italics: true, size: 19, color: NAVY})], [new TextRun({text: meta.setor || "Inspeção de SST", italics: true, size: 18, color: "8A8A8A"})])]}), first: new Header({children: [new Paragraph("")]})},
+      footers: {default: new Footer({children: [hf([new TextRun({text: `Relatório Técnico de SST  |  ${code}  |  Rev. 00  |  Emitido em ${emis}`, size: 16, color: "8A8A8A"})], [new TextRun({children: ["Página ", PageNumber.CURRENT, " de ", PageNumber.TOTAL_PAGES], size: 16, color: "8A8A8A"})], {top: {style: BorderStyle.SINGLE, size: 4, color: LINE, space: 4}})]}), first: new Footer({children: [new Paragraph("")]})},
       children: out
     }]
   });
@@ -2305,6 +2442,247 @@ async function downloadDocx(){
   }catch(e){ console.error(e); setStatus("Não foi possível gerar o arquivo Word. Verifique a internet e tente de novo.", true); }
   finally{ btn.disabled = false; btn.textContent = old; }
 }
+/* ---------- apresentação (.pptx) para abrir no Canva, PowerPoint ou Google Slides ---------- */
+const PPTX_JS = "https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js";
+async function svgURL(svgStr){ const d = document.createElement("div"); d.innerHTML = svgStr; const s = await dxSvg(d.firstElementChild); return s; }
+async function buildPptx(R, photos, meta){
+  await loadScript(PPTX_JS);
+  const pp = new PptxGenJS(); pp.layout = "LAYOUT_WIDE";
+  pp.title = R.titulo || "Relatório Técnico de SST"; pp.author = meta.resp || "Inspeção SST"; pp.company = meta.emp || "";
+  // padrão do modelo institucional: páginas brancas, azul-marinho, laranja e tabelas com cabeçalho creme
+  const NV = "0D3B72", OR = "F5A623", OR2 = "F26B1D", CR = "FDEBD0", BL = "1D5FA8", INK = "1A1A1A", MUT = "707070", LINE = "D6D6D6", F = "Arial", FS = "Times New Roman";
+  const LVC = {crit: "C62828", high: "E0661B", warn: "D9A400", ok: "2E8B57"};
+  const hexOf = c => dxHex(c) || MUT;
+  const logo = load("sst_logo");
+  const riscos = asList(R.riscos).filter(r => r && typeof r === "object").slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
+  const S5 = prep5S(R), SC = scores(riscos, S5);
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
+  const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
+  const gut = asList(R.gut).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
+  const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
+  const ord = {alta: 0, "média": 1, media: 1, baixa: 2};
+  const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const Pa = R.parecer || {}, sit = String(Pa.situacao || "Verificar em campo");
+  const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LVC.crit : /parcial/i.test(sit) ? LVC.warn : /conforme/i.test(sit) ? LVC.ok : LVC.warn;
+  const tmp = document.createElement("div"); tmp.innerHTML = reportHTML(R, photos, meta);
+  const repEl = tmp.querySelector(".rep"), code = repEl?.dataset.code || "", emis = repEl?.dataset.emis || "";
+  const counts = {crit: 0, high: 0, warn: 0, ok: 0}; riscos.forEach(r => counts[level(r.severidade, r.probabilidade).k]++);
+  const tiles = [["SST (NRs)", SC.sstA, SC.sstB]].concat(SC.s5A !== null ? [["5S", SC.s5A, SC.s5B]] : [], [["Geral", SC.gA, SC.gB]]);
+  let lw = 0, lh = 0.42; if (logo){ const [w, h] = await dxImgSize(logo); lw = Math.min(1.8, lh * w / h); }
+  pp.defineSlideMaster({title: "M", background: {color: "FFFFFF"}, margin: [0.4, 0.5, 0.6, 0.5],
+    objects: [
+      ...(logo ? [{image: {data: logo, x: 0.5, y: 0.22, w: lw, h: lh}}] : []),
+      {text: {text: meta.emp || "Relatório Técnico de SST", options: {x: 0.5 + (logo ? lw + 0.15 : 0), y: 0.22, w: 6, h: lh, fontFace: FS, fontSize: 12, bold: true, italic: true, color: NV, valign: "middle"}}},
+      {text: {text: meta.setor || "Inspeção de SST", options: {x: 7.3, y: 0.22, w: 5.53, h: lh, fontFace: FS, fontSize: 11, italic: true, color: "8A8A8A", align: "right", valign: "middle"}}},
+      {line: {x: 0.5, y: 7.0, w: 12.33, h: 0, line: {color: LINE, width: 0.75}}},
+      {text: {text: `Relatório Técnico de SST  |  ${code}  |  Rev. 00  |  Emitido em ${emis}`, options: {x: 0.5, y: 7.05, w: 10, h: 0.3, fontFace: FS, fontSize: 9, color: "8A8A8A"}}}],
+    slideNumber: {x: 11.6, y: 7.05, w: 1.23, h: 0.3, fontFace: FS, fontSize: 9, color: "8A8A8A", align: "right"}});
+  let secN = 0;
+  const TOP = 1.95;
+  const slide = (title, sub) => {
+    const s = pp.addSlide({masterName: "M"}); secN++;
+    s.addShape(pp.ShapeType.rect, {x: 0.5, y: 0.82, w: 12.33, h: 0.62, fill: {color: NV}, line: {color: NV, width: 0}});
+    s.addShape(pp.ShapeType.rect, {x: 0.5, y: 0.82, w: 0.75, h: 0.62, fill: {color: OR}, line: {color: OR, width: 0}});
+    s.addText(String(secN), {x: 0.5, y: 0.82, w: 0.75, h: 0.62, fontFace: FS, fontSize: 18, bold: true, color: "FFFFFF", align: "center", valign: "middle"});
+    s.addText(String(title).toUpperCase(), {x: 1.45, y: 0.82, w: 11.3, h: 0.62, fontFace: FS, fontSize: 21, bold: true, color: "FFFFFF", valign: "middle", fit: "shrink"});
+    if (sub) s.addText(sub, {x: 0.5, y: 1.48, w: 12.33, h: 0.38, fontFace: FS, fontSize: 13, italic: true, color: MUT, valign: "middle"});
+    return s;
+  };
+  const H = t => ({text: t, options: {bold: true, color: NV, fill: {color: CR}, fontFace: FS, fontSize: 12}});
+  const C = (t, o = {}) => ({text: Array.isArray(t) ? t : (String(t ?? "") || "—"), options: o});
+  const badge = (t, col) => C(t, {bold: true, color: "FFFFFF", fill: {color: col}, align: "center", fontFace: F});
+  const table = (s, rows, colW, o = {}) => s.addTable(rows, {x: o.x || 0.5, y: o.y || TOP, w: colW.reduce((a, b) => a + b, 0), colW, fontFace: FS, fontSize: o.fs || 12, color: INK,
+    fill: {color: "FFFFFF"}, border: {type: "solid", pt: 0.75, color: "222222"}, valign: "top", margin: 0.06, autoPage: true, autoPageRepeatHeader: true, autoPageHeaderRows: 1, autoPageSlideStartY: TOP, autoPageCharWeight: -0.2, autoPageLineWeight: 0.2, masterName: "M"});
+  const prCol = pr => /alta/i.test(pr) ? LVC.crit : /m[ée]dia/i.test(pr) ? LVC.warn : LVC.ok;
+  const bul = (s, items, box) => s.addText(items.filter(Boolean).map(t => ({text: t, options: {bullet: {indent: 18}, breakLine: true}})), {fontFace: FS, fontSize: 16, color: INK, valign: "top", paraSpaceAfter: 8, fit: "shrink", ...box});
+  const callout = (s, label, text, y, warm, h = 0.75) => {
+    s.addShape(pp.ShapeType.rect, {x: 0.5, y, w: 12.33, h, fill: {color: warm ? CR : "FFFFFF"}, line: {color: LINE, width: 0.75}});
+    s.addShape(pp.ShapeType.rect, {x: 0.5, y, w: 2.2, h, fill: {color: warm ? CR : "F2F2F2"}, line: {color: LINE, width: 0.75}});
+    s.addText(label.toUpperCase(), {x: 0.6, y, w: 2.05, h, fontFace: FS, fontSize: 12, bold: true, color: warm ? "E07B12" : NV, valign: "middle"});
+    s.addText(text, {x: 2.85, y, w: 9.85, h, fontFace: FS, fontSize: 13, color: INK, valign: "middle", fit: "shrink"});
+  };
+  const imgBox = async (s, svg, x, y, w, h) => { try{ const im = await svgURL(svg); const k = Math.min(w / im.w, h / im.h); s.addImage({data: im.url, x: x + (w - im.w * k) / 2, y: y + (h - im.h * k) / 2, w: im.w * k, h: im.h * k}); }catch(e){} };
+
+  // capa
+  let s = pp.addSlide();
+  s.background = {color: "FFFFFF"};
+  try{ const art = await svgURL(coverArtSVG(photos[0] || "")); const h = 7.5, w = h * art.w / art.h; s.addImage({data: art.url, x: 13.333 - w, y: 0, w, h}); }catch(e){}
+  if (logo) s.addImage({data: logo, x: 0.7, y: 0.55, w: Math.min(2.6, 0.7 * lw / lh), h: 0.7});
+  else s.addText(meta.emp || "Inspeção SST", {x: 0.7, y: 0.5, w: 7, h: 0.75, fontFace: F, fontSize: 30, bold: true, italic: true, color: NV});
+  const rule = (x, y, w) => { s.addShape(pp.ShapeType.rect, {x, y, w: w * 0.55, h: 0.06, fill: {color: OR2}, line: {width: 0}}); s.addShape(pp.ShapeType.rect, {x: x + w * 0.55, y, w: w * 0.45, h: 0.06, fill: {color: OR}, line: {width: 0}}); };
+  rule(0.7, 1.4, 1.4);
+  s.addText("RELATÓRIO", {x: 0.65, y: 2.0, w: 7.6, h: 1.05, fontFace: "Arial Narrow", fontSize: 72, bold: true, color: NV});
+  s.addText("TÉCNICO", {x: 0.65, y: 2.95, w: 7.6, h: 1.05, fontFace: "Arial Narrow", fontSize: 72, bold: true, color: OR2});
+  rule(0.7, 4.1, 4.2);
+  s.addText(String(R.titulo || "").replace(/^\s*relat[óo]rio\s+t[ée]cnico\s*(de|da|do)?\s*[–—:-]?\s*/i, "").toUpperCase() || "INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO", {x: 0.7, y: 4.25, w: 6.6, h: 0.8, fontFace: F, fontSize: 18, bold: true, color: NV, valign: "top", fit: "shrink"});
+  s.addShape(pp.ShapeType.roundRect, {x: 0.7, y: 5.15, w: 6.3, h: 1.1, fill: {color: "FFFFFF"}, line: {color: NV, width: 2}, rectRadius: 0.15});
+  s.addShape(pp.ShapeType.ellipse, {x: 0.88, y: 5.33, w: 0.74, h: 0.74, fill: {color: NV}, line: {width: 0}});
+  s.addText("✓", {x: 0.88, y: 5.33, w: 0.74, h: 0.74, fontFace: F, fontSize: 22, bold: true, color: "FFFFFF", align: "center", valign: "middle"});
+  s.addText("SITUAÇÃO: " + sit.toUpperCase(), {x: 1.8, y: 5.22, w: 5.1, h: 0.38, fontFace: F, fontSize: 14, bold: true, color: sitC});
+  s.addText(tiles.flatMap(([t, a, b], i) => [{text: (i ? "     " : "") + t + "  ", options: {fontSize: 11, bold: true, color: MUT}}, {text: String(a), options: {fontSize: 18, bold: true, color: hexOf(classe(a)[1])}}, {text: " → ", options: {fontSize: 13, color: MUT}}, {text: String(b), options: {fontSize: 18, bold: true, color: hexOf(classe(b)[1])}}]), {x: 1.8, y: 5.6, w: 5.1, h: 0.5, fontFace: F, valign: "middle"});
+  s.addText([{text: meta.emp || "Empresa / unidade", options: {bold: true, breakLine: true}}, {text: `Elaboração: ${meta.resp || "Responsável técnico"} · ${meta.data}`}], {x: 0.7, y: 6.35, w: 6.6, h: 0.55, fontFace: F, fontSize: 12, color: "444444"});
+  s.addText([{text: "IDENTIFICAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "AVALIAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "CONTROLAR", options: {color: NV}}], {x: 0.7, y: 6.9, w: 6.6, h: 0.4, fontFace: F, fontSize: 14, bold: true});
+
+  // identificação
+  s = slide("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.");
+  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Responsável técnico", meta.resp || "Não informado"], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens com análise assistida por inteligência artificial"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
+  callout(s, "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 5.95, true, 0.8);
+
+  // resumo executivo
+  s = slide("Resumo executivo", "Situação geral, notas e principais números da inspeção.");
+  const tw = (12.33 - (tiles.length - 1) * 0.3) / tiles.length;
+  tiles.forEach(([t, a, b], i) => {
+    const x = 0.5 + i * (tw + 0.3);
+    s.addShape(pp.ShapeType.rect, {x, y: TOP, w: tw, h: 1.75, fill: {color: "FFFFFF"}, line: {color: NV, width: 1.5}});
+    s.addShape(pp.ShapeType.rect, {x, y: TOP, w: tw, h: 0.42, fill: {color: CR}, line: {color: NV, width: 1.5}});
+    s.addText(t.toUpperCase(), {x, y: TOP, w: tw, h: 0.42, fontFace: FS, fontSize: 12, bold: true, color: NV, align: "center", valign: "middle"});
+    s.addText([{text: String(a), options: {color: hexOf(classe(a)[1]), fontSize: 40, bold: true}}, {text: "  →  ", options: {color: MUT, fontSize: 22}}, {text: String(b), options: {color: hexOf(classe(b)[1]), fontSize: 40, bold: true}}], {x, y: TOP + 0.45, w: tw, h: 0.85, fontFace: F, align: "center", valign: "middle"});
+    s.addText(`${classe(a)[0]} → ${classe(b)[0]} · atual → após o plano`, {x, y: TOP + 1.3, w: tw, h: 0.35, fontFace: FS, fontSize: 11, italic: true, color: MUT, align: "center"});
+  });
+  [["crit", "Crítico"], ["high", "Alto"], ["warn", "Moderado"], ["ok", "Baixo"]].forEach(([k, t], i) => {
+    const x = 0.5 + i * 1.5;
+    s.addShape(pp.ShapeType.rect, {x, y: 4.0, w: 1.35, h: 1.05, fill: {color: counts[k] ? LVC[k] : "F2F2F2"}, line: {color: counts[k] ? LVC[k] : LINE, width: 0.75}});
+    s.addText(String(counts[k]), {x, y: 4.02, w: 1.35, h: 0.65, fontFace: F, fontSize: 28, bold: true, color: counts[k] ? "FFFFFF" : MUT, align: "center"});
+    s.addText(t, {x, y: 4.65, w: 1.35, h: 0.33, fontFace: F, fontSize: 11, bold: true, color: counts[k] ? "FFFFFF" : MUT, align: "center"});
+  });
+  s.addText("Riscos por nível (matriz NR-01)", {x: 0.5, y: 5.1, w: 6, h: 0.3, fontFace: FS, fontSize: 11, italic: true, color: MUT});
+  bul(s, [`Situação: ${sit}`, PP.total ? `${PP.total} pessoa(s) observada(s): ${PP.semEpi} sem EPI completo, ${PP.comAd} com adornos` : "", DR.length ? `${DR.length} documento(s) e registro(s): ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar` : "", SG.length ? `${SG.length} sugestões de melhoria com fundamentação legal` : "", S5 ? `5S: ${S5.total}/${S5.max} (${S5.pct}%), implantação ${S5.necessario ? "necessária" : "não necessária"}` : "", `${plano.length} ação(ões) no plano 5W2H`], {x: 6.7, y: 3.95, w: 6.1, h: 2.0, fontSize: 14});
+  if (counts.crit) callout(s, "Ponto crítico", `${counts.crit} risco(s) crítico(s) exigem ação imediata: ${riscos[0]?.perigo || ""}${riscos[0]?.nr ? ` (${riscos[0].nr})` : ""}.`, 6.05, true, 0.8);
+
+  // metodologia com fluxo
+  s = slide("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.");
+  s.addShape(pp.ShapeType.rect, {x: 0.5, y: TOP, w: 12.33, h: 2.1, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
+  await imgBox(s, flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"]), 0.7, TOP + 0.1, 11.9, 1.9);
+  bul(s, ["Matriz de risco severidade × probabilidade (NR-01, GRO/PGR)", "Ishikawa (6M), matriz GUT, matriz REI e avaliação 5S", "Verificação das pessoas visíveis: EPI (NR-06) e adornos (NR-10, NR-12, NR-32)", "Documentos e registros de evidências exigidos pelas NRs", meta.docs?.length ? `Análise de ${meta.docs.length} documento(s) do setor` : "", meta.audios?.length ? `${meta.audios.length} relato(s) em áudio transcritos pela IA` : "", "Plano de ação 5W2H com prioridade, responsável e prazo"], {x: 0.5, y: 4.2, w: 12.33, h: 2.7, fontSize: 15});
+
+  // registro fotográfico
+  const fotos = asList(R.fotos);
+  for (let p0 = 0; p0 < Math.min(photos.length, 12); p0 += 6){
+    s = slide("Registro fotográfico", p0 ? "Condições observadas no ambiente (continuação)." : "Condições observadas no ambiente.");
+    const grp = photos.slice(p0, p0 + 6), cw = 3.95, ch = 1.95;
+    for (let j = 0; j < grp.length; j++){
+      const x = 0.5 + (j % 3) * (cw + 0.24), y = TOP + Math.floor(j / 3) * (ch + 0.58), i = p0 + j;
+      s.addShape(pp.ShapeType.rect, {x, y, w: cw, h: ch, fill: {color: "F4F6F7"}, line: {color: LINE, width: 0.75}});
+      const [w, h] = await dxImgSize(grp[j]), k = Math.min(cw / w, ch / h);
+      s.addImage({data: grp[j], x: x + (cw - w * k) / 2, y: y + (ch - h * k) / 2, w: w * k, h: h * k});
+      s.addText([{text: `Figura ${i + 1} – `, options: {bold: true}}, {text: tr(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""), 70)}], {x, y: y + ch + 0.02, w: cw, h: 0.48, fontFace: FS, fontSize: 11, italic: true, color: MUT, valign: "top", fit: "shrink"});
+    }
+  }
+
+  // riscos
+  s = slide("Identificação e avaliação dos riscos", "Perigos classificados pela matriz severidade × probabilidade da NR-01.");
+  table(s, [[H("#"), H("Perigo / risco"), H("Tipo"), H("NR"), H("S×P"), H("Nível"), H("Medida de controle")]].concat(riscos.length ? riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return [C(i + 1), C(r.perigo), C(r.categoria), C([r.nr, r.item].filter(Boolean).join(" · ")), C(`${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}`), badge(L.t, LVC[L.k]), C(r.medida)]; }) : [[C("—"), C("Nenhum risco identificado nas imagens."), C(""), C(""), C(""), C(""), C("")]]), [0.45, 3.3, 1.25, 1.3, 1.0, 1.15, 3.88]);
+
+  // matriz e residual
+  s = slide("Matriz de risco e risco residual", "Posição de cada risco na matriz e projeção após as medidas.");
+  const mx0 = 1.2, my0 = TOP + 0.05, cs = 0.8;
+  for (let sv = 5; sv >= 1; sv--) for (let pv = 1; pv <= 5; pv++){
+    const L = level(sv, pv), x = mx0 + (pv - 1) * cs, y = my0 + (5 - sv) * cs;
+    const ids = riscos.map((r, i) => clamp(r.severidade,1,5) === sv && clamp(r.probabilidade,1,5) === pv ? i + 1 : 0).filter(Boolean);
+    s.addShape(pp.ShapeType.rect, {x, y, w: cs - 0.05, h: cs - 0.05, fill: {color: hexOf(LV[L.k][2])}, line: {color: ids.length ? LVC[L.k] : "FFFFFF", width: ids.length ? 2 : 0}});
+    s.addText(ids.length ? ids.join(" ") : String(L.r), {x, y, w: cs - 0.05, h: cs - 0.05, fontFace: F, fontSize: ids.length ? 16 : 10, bold: !!ids.length, color: ids.length ? INK : MUT, align: "center", valign: "middle"});
+  }
+  for (let v = 1; v <= 5; v++){
+    s.addText(String(v), {x: mx0 + (v - 1) * cs, y: my0 + 5 * cs, w: cs - 0.05, h: 0.3, fontFace: F, fontSize: 11, color: MUT, align: "center"});
+    s.addText(String(6 - v), {x: mx0 - 0.4, y: my0 + (v - 1) * cs, w: 0.3, h: cs - 0.05, fontFace: F, fontSize: 11, color: MUT, align: "center", valign: "middle"});
+  }
+  s.addText("Probabilidade →", {x: mx0, y: my0 + 5 * cs + 0.3, w: 5 * cs, h: 0.3, fontFace: FS, fontSize: 12, bold: true, color: INK, align: "center"});
+  s.addText("Severidade →", {x: -0.05, y: my0 + 2 * cs, w: 1.5, h: 0.4, fontFace: FS, fontSize: 12, bold: true, color: INK, align: "center", rotate: 270});
+  table(s, [[H("#"), H("Perigo / risco"), H("Atual"), H("Residual")]].concat(SC.res.map((x, i) => [C(i + 1), C(tr(String(x.r.perigo || ""), 70)), badge(`${x.a.r} ${x.a.t}`, LVC[x.a.k]), badge(`${x.b.r} ${x.b.t}`, LVC[x.b.k])])), [0.45, 3.9, 1.3, 1.3], {x: 5.85, y: TOP + 0.05});
+
+  // pessoas
+  s = slide("Trabalhadores expostos: EPI e adornos", "Verificação individual do uso de EPI e de adornos, sem identificar as pessoas.");
+  if (PP.lista.length) table(s, [[H("Pessoa / figura"), H("Atividade e riscos"), H("EPIs em uso"), H("EPIs faltando"), H("Adornos"), H("Situação")]].concat(PP.lista.map(o => [C(o.pessoa + (o.figura ? "\n" + o.figura : "")), C([o.atividade, o.riscos].filter(Boolean).join("\n")), C(o.epiUso.join(", ") || "Nenhum visível"), C(o.epiF.map(e => `${e.epi} (${e.nr})`).join("\n") || "—", {color: o.epiF.length ? "C62828" : INK, bold: !!o.epiF.length}), C(o.ad.map(a => a.adorno + (a.nr ? ` (${a.nr})` : "")).join("\n") || "Nenhum visível", {color: o.ad.length ? "C62828" : INK, bold: !!o.ad.length}), badge(o.sit, LVC[o.k])])), [2.3, 2.6, 1.8, 2.2, 2.0, 1.43]);
+  else callout(s, "Observação", "Nenhuma pessoa visível nas imagens analisadas. Verificar o uso de EPI e de adornos em campo, durante a execução das atividades.", TOP, false, 0.9);
+
+  // 5S
+  if (S5){
+    s = slide("Avaliação 5S", `Pontuação ${S5.total}/${S5.max} (${S5.pct}%) · ${S5.classe[0]} · implantação ${S5.necessario ? "necessária" : "não necessária"}.`);
+    s.addShape(pp.ShapeType.rect, {x: 0.5, y: TOP, w: 5.6, h: 4.85, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
+    await imgBox(s, radarSVG(S5.rows.filter(r => r.nota !== null)), 0.6, TOP + 0.1, 5.4, 4.65);
+    S5.rows.filter(r => r.nota !== null).forEach((r, i) => {
+      const y = TOP + 0.05 + i * 0.95;
+      s.addText([{text: r.jp, options: {bold: true, color: BL}}, {text: "  " + r.pt, options: {color: MUT, fontSize: 12, italic: true}}], {x: 6.5, y, w: 6.3, h: 0.32, fontFace: FS, fontSize: 15, color: INK});
+      s.addShape(pp.ShapeType.rect, {x: 6.5, y: y + 0.36, w: 5.0, h: 0.2, fill: {color: "EEF1F3"}, line: {width: 0}});
+      s.addShape(pp.ShapeType.rect, {x: 6.5, y: y + 0.36, w: Math.max(0.05, 5.0 * r.nota / 5), h: 0.2, fill: {color: r.nota >= 4 ? LVC.ok : r.nota === 3 ? LVC.warn : LVC.crit}, line: {width: 0}});
+      s.addShape(pp.ShapeType.rect, {x: 6.5, y: y + 0.6, w: Math.max(0.05, 5.0 * r.apos / 5), h: 0.12, fill: {color: NV}, line: {width: 0}});
+      s.addText(`${r.nota} → ${r.apos}`, {x: 11.6, y: y + 0.28, w: 1.2, h: 0.4, fontFace: F, fontSize: 13, bold: true, color: INK, align: "right"});
+    });
+    s.addText("Barra colorida: nota atual · barra azul: nota esperada após a implantação (0 a 5).", {x: 6.5, y: 6.6, w: 6.3, h: 0.3, fontFace: FS, fontSize: 11, italic: true, color: MUT});
+  }
+
+  // Ishikawa
+  s = slide("Análise de causas – Diagrama de Ishikawa", "Efeito analisado: " + tr(String(R.ishikawa?.efeito || "problema principal"), 100) + ".");
+  await imgBox(s, ishikawaSVG(R.ishikawa), 0.5, TOP, 12.33, 4.95);
+
+  // GUT e REI
+  s = slide("Priorização – Matriz GUT e Matriz REI", "Problemas por gravidade, urgência e tendência; ações por esforço e impacto.");
+  table(s, [[H("Prior."), H("Problema"), H("G"), H("U"), H("T"), H("GUT")]].concat(gut.map((g, i) => [C(i + 1 + "º", {bold: true}), C(tr(String(g.problema || ""), 80)), C(g.G, {align: "center", fill: {color: hexOf(GUT_HEAT(g.G))}}), C(g.U, {align: "center", fill: {color: hexOf(GUT_HEAT(g.U))}}), C(g.T, {align: "center", fill: {color: hexOf(GUT_HEAT(g.T))}}), C(g.s, {bold: true, align: "center", color: NV})])), [0.8, 3.3, 0.5, 0.5, 0.5, 0.7]);
+  s.addShape(pp.ShapeType.rect, {x: 7.0, y: TOP, w: 5.83, h: 3.75, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
+  await imgBox(s, reiSVG(rei), 7.05, TOP + 0.05, 5.73, 3.65);
+  s.addText(rei.slice(0, 6).map((a, i) => ({text: `${i + 1}. ${tr(String(a.acao || ""), 60)} – ${quad(a)}`, options: {breakLine: true}})), {x: 7.0, y: TOP + 3.85, w: 5.83, h: 1.05, fontFace: FS, fontSize: 11.5, color: INK, valign: "top", fit: "shrink"});
+
+  // documentos e registros
+  s = slide("Documentos e registros de evidências de SST", "Documentos e registros que o setor deve manter como evidência legal.");
+  if (DR.length) table(s, [[H("Documento / registro"), H("NR"), H("Evidência a manter"), H("Situação"), H("Prioridade"), H("Responsável · prazo")]].concat(DR.map(x => [C(x.doc, {bold: true}), C([x.nr, x.item].filter(Boolean).join(" · ")), C(x.ev || x.fin), badge(x.sit, LVC[x.k]), x.pr ? badge(x.pr, prCol(x.pr)) : C("—"), C([x.resp, x.prazo].filter(Boolean).join("\n"))])), [3.3, 1.1, 3.6, 1.6, 1.15, 1.58]);
+  else callout(s, "Observação", "Nenhum documento adicional indicado. Confirmar em campo PGR, ordens de serviço, treinamentos e fichas de EPI.", TOP, false, 0.9);
+
+  // sugestões
+  if (SG.length){
+    s = slide("Sugestões de melhoria com fundamentação legal", "Melhorias recomendadas pela hierarquia de controles da NR-01, com a base legal de cada uma.");
+    table(s, [[H("#"), H("Melhoria proposta"), H("Fundamentação legal"), H("Benefício"), H("Prioridade"), H("Custo · prazo")]].concat(SG.map((x, i) => [C(i + 1), C([{text: String(x.titulo || ""), options: {bold: true, breakLine: !!x.descricao}}].concat(x.descricao ? [{text: String(x.descricao), options: {color: MUT, fontSize: 11}}] : [])), C(x.fundamentacao_legal, {color: BL, bold: true}), C(x.beneficio), x.prioridade ? badge(x.prioridade, prCol(x.prioridade)) : C("—"), C([x.custo, x.prazo].filter(Boolean).join(" · "))])), [0.45, 3.9, 2.9, 2.5, 1.15, 1.43]);
+  }
+
+  // plano de ação
+  s = slide("Plano de ação (5W2H)", "Ações, responsáveis e prazos para tratar os desvios encontrados.");
+  table(s, [[H("Prior."), H("O quê"), H("Por quê"), H("Onde"), H("Quem"), H("Quando"), H("Como"), H("Quanto")]].concat(plano.map(a => [a.prioridade ? badge(a.prioridade, prCol(a.prioridade)) : C("—"), C(a.acao, {bold: true}), C(a.por_que), C(a.onde), C(a.quem), C(a.quando), C(a.como), C(a.quanto)])), [0.9, 2.3, 2.0, 1.25, 1.35, 1.0, 2.35, 1.18], {fs: 11});
+
+  // notas
+  s = slide("Notas: situação atual × após o plano de ação", "Pontuação atual e projeção com as medidas implantadas.");
+  s.addShape(pp.ShapeType.rect, {x: 0.5, y: TOP, w: 8.4, h: 4.85, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
+  await imgBox(s, scoreSVG(tiles.map(([t, a, b]) => ({label: t.replace(" (NRs)", ""), a, b}))), 0.6, TOP + 0.1, 8.2, 4.65);
+  bul(s, tiles.map(([t, a, b]) => `${t}: ${a} → ${b} (+${b - a})`).concat(["Estimativa: depende da execução completa do plano e deve ser confirmada em nova inspeção."]), {x: 9.2, y: TOP, w: 3.63, h: 4.85, fontSize: 14});
+
+  // parecer
+  s = slide("Parecer técnico", "Conclusão técnica fundamentada nas Normas Regulamentadoras.");
+  s.addText("SITUAÇÃO: " + sit.toUpperCase(), {x: 0.5, y: TOP, w: 6.3, h: 0.5, fontFace: F, fontSize: 15, bold: true, color: sitC, align: "center", line: {color: sitC, width: 2}});
+  s.addText(tr(String(Pa.texto || "—").split(/\n+/).filter(x => x.trim()).slice(0, 2).join("\n\n"), 900), {x: 0.5, y: TOP + 0.65, w: 6.3, h: 4.2, fontFace: FS, fontSize: 14, color: INK, valign: "top", fit: "shrink", paraSpaceAfter: 6});
+  const fund = asList(Pa.fundamentacao).slice(0, 6);
+  if (fund.length) table(s, [[H("NR / item"), H("Constatação"), H("Exigência")]].concat(fund.map(f => [C([f.nr, f.item].filter(Boolean).join(" · "), {color: NV, bold: true}), C(tr(String(f.constatacao || ""), 110)), C(tr(String(f.exigencia || ""), 110))])), [1.2, 2.25, 2.25], {x: 7.1, fs: 11});
+
+  // checklist final e controle
+  s = slide("Checklist final e controle do documento", "Pendências para encerrar a inspeção e responsáveis pela revisão.");
+  s.addText(plano.slice(0, 6).map(a => `${a.acao}${a.quem ? " – " + a.quem : ""}${a.quando ? " · " + a.quando : ""}`).concat(DR.filter(x => x.k === "crit").slice(0, 3).map(x => `Implantar: ${x.doc}`), ["Nova inspeção após a implantação para confirmar as notas"]).map(t => ({text: "☐  " + t, options: {breakLine: true}})), {x: 0.5, y: TOP, w: 7.2, h: 4.15, fontFace: FS, fontSize: 14, color: INK, valign: "top", paraSpaceAfter: 6, fit: "shrink"});
+  table(s, [[H("Etapa"), H("Responsável | Data")], [C("Elaboração"), C(`${meta.resp || "Responsável técnico"} | ${emis}`)], [C("Revisão"), C("A confirmar")], [C("Aprovação"), C("A confirmar")]], [1.6, 3.3], {x: 7.93, fs: 12});
+  [[meta.resp || "Responsável técnico", "Responsável técnico · assinatura e registro"], ["Responsável pela área", "Ciência do relatório e do plano de ação"]].forEach(([nm, d], i) => {
+    const x = 7.93 + i * 2.5;
+    s.addShape(pp.ShapeType.line, {x, y: 4.85, w: 2.3, h: 0, line: {color: INK, width: 1}});
+    s.addText(nm, {x, y: 4.9, w: 2.3, h: 0.3, fontFace: FS, fontSize: 11, bold: true, color: INK, align: "center", fit: "shrink"});
+    s.addText(d, {x, y: 5.2, w: 2.3, h: 0.4, fontFace: FS, fontSize: 9, color: MUT, align: "center", fit: "shrink"});
+  });
+  callout(s, "Situação do documento", "Relatório elaborado com apoio de inteligência artificial. Só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 6.1, true, 0.8);
+  return pp;
+}
+async function downloadPptx(toCanva){
+  const btn = $(toCanva ? "toCanva" : "dlPptx"), old = btn.textContent;
+  const win = toCanva && !inViewer ? window.open("about:blank", "_blank") : null; // abre a aba já no clique (evita bloqueio de pop-up)
+  btn.disabled = true; btn.textContent = "Gerando apresentação…";
+  try{
+    const pp = await buildPptx(report.R, report.photos, report.meta);
+    const blob = await pp.write({outputType: "blob"}), name = "apresentacao-sst-" + (report.meta.iso || "inspecao") + ".pptx";
+    if (inViewer){
+      const dl = await claude.use("downloads");
+      if (!dl){ setStatus("Download indisponível nesta visualização.", true); return; }
+      try{ await dl.save({filename: name, data: blob}); }catch(e){ if (e?.code !== "declined") setStatus("Não foi possível baixar a apresentação.", true); }
+      return;
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    if (win){ try{ win.location.href = "https://www.canva.com/upload"; }catch(e){} }
+    setStatus(toCanva ? `Apresentação "${name}" baixada. Na aba do Canva que abriu, clique em Enviar (Upload) e escolha esse arquivo: ele vira um design editável.` : `Apresentação "${name}" baixada. Abre no PowerPoint, Google Slides ou Canva.`);
+  }catch(e){ console.error(e); try{ win?.close(); }catch(x){} setStatus("Não foi possível gerar a apresentação. Verifique a internet e tente de novo.", true); }
+  finally{ btn.disabled = false; btn.textContent = old; }
+}
 async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
@@ -2325,6 +2703,20 @@ async function generateReport(){
 $("repBtn").onclick = generateReport;
 ["rEmp","rSetor","rResp"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
 $("rData").value = new Date().toISOString().slice(0, 10);
+// logo da empresa: reduzida e guardada só neste navegador; vai na capa e no cabeçalho do relatório
+function drawLogo(){ const u = load("sst_logo"); $("rLogoPrev").hidden = !u; $("rLogoClr").hidden = !u; if (u) $("rLogoPrev").src = u; }
+$("rLogo").onchange = async e => {
+  const f = e.target.files?.[0]; e.target.value = ""; if (!f) return;
+  try{
+    const url = await blobToDataURL(f), im = new Image(); im.src = url; await im.decode();
+    const k = Math.min(1, 480 / Math.max(im.naturalWidth || 480, im.naturalHeight || 480)), c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round((im.naturalWidth || 480) * k)); c.height = Math.max(1, Math.round((im.naturalHeight || 160) * k));
+    c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+    store("sst_logo", c.toDataURL("image/png")); drawLogo();
+  }catch(x){ setStatus("Não foi possível ler a imagem da logo.", true); }
+};
+$("rLogoClr").onclick = () => { store("sst_logo", null); drawLogo(); };
+drawLogo();
 
 /* ---------- celular como câmera (QR code + WebRTC ponta a ponta) ---------- */
 const PEER_JS = "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js";
