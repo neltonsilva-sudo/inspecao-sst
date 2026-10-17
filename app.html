@@ -211,7 +211,19 @@ button.watch:hover{filter:brightness(1.08)}
 button.watch.on{background:var(--panel);color:var(--crit)}
 .al-save{flex-wrap:wrap}.al-save button{flex:1 1 200px}
 .hist .hmsg{display:block;font-size:11px;font-weight:600;color:var(--crit);line-height:1.25;margin-top:2px}
-.mon-alert{border:2px solid var(--crit);background:#fdecec;color:#7a1414;border-radius:10px;padding:10px 12px;font-size:13.5px}
+.lamp-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.lamp{width:62px;height:62px;border-radius:50%;padding:5px;background:linear-gradient(#cfd5da,#9aa4ab);box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
+.lamp i{display:block;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f4f5,#9aa7b0 60%,#6b7780);transition:background .3s,box-shadow .3s}
+.lamp-row[data-st="ok"] .lamp i{background:radial-gradient(circle at 35% 30%,#d9ffe6,#2fbf6a 55%,#17803f);box-shadow:0 0 14px rgba(47,191,106,.65)}
+.lamp-row[data-st="alert"]{border-color:var(--crit);background:#fff5f5}
+.lamp-row[data-st="alert"] .lamp i{background:radial-gradient(circle at 35% 30%,#ffd6d6,#ff2a2a 50%,#a30000);animation:lampBlink .8s steps(1,end) infinite}
+@keyframes lampBlink{0%{opacity:1;box-shadow:0 0 24px 8px rgba(255,40,40,.85)}50%{opacity:.25;box-shadow:none}}
+.lamp-card{min-width:0;font-size:13px;line-height:1.4;display:grid;gap:3px}
+.lamp-card b{font:700 14px var(--f-body)}
+.lamp-row[data-st="alert"] .lamp-card b{color:var(--crit)}
+.lamp-card #lampD{color:var(--muted)}
+#lampAck{justify-self:start;margin-top:6px;min-height:34px;padding:5px 12px;font-weight:700;border-color:var(--crit);color:var(--crit)}
+.mon-alert{border:0;background:none;color:#7a1414;padding:0;font-size:13px}
 .mon-alert ul{margin:4px 0 0;padding-left:18px}
 .report .alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:start;padding:14px 16px;border-radius:8px;background:var(--cell-crit);border:1px solid var(--crit);border-left:7px solid var(--crit)}
 .report .alert svg{width:32px;height:32px;grid-row:1 / span 3;color:var(--crit)}
@@ -939,7 +951,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v84</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v85</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -995,6 +1007,15 @@ api:
         </details>
         <div id="monBox" class="stack mon">
           <p class="label" style="margin:0">Monitoramento automático</p>
+          <div class="lamp-row" id="lampRow" data-st="off">
+            <div class="lamp" aria-hidden="true"><i></i></div>
+            <div class="lamp-card" role="status" aria-live="assertive">
+              <b id="lampT">Monitoramento desligado</b>
+              <div id="lampD">Clique em Monitorar situações de risco para começar.</div>
+              <div class="mon-alert" id="monAlert" hidden></div>
+              <button type="button" id="lampAck" hidden>Ciente – parar de piscar</button>
+            </div>
+          </div>
           <button id="watchBtn" type="button" class="watch">🛡️ Monitorar situações de risco</button>
           <div class="row">
             <select id="monInt" aria-label="Intervalo entre análises">
@@ -1007,7 +1028,6 @@ api:
           <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
           <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button></div>
           <p class="hint" id="alDirInfo" style="margin:0">As fotos com alerta podem ser gravadas automaticamente na pasta "Fotos Inspeção SST" dentro de Downloads (foto .jpg + .txt com data, hora e situações).</p>
-          <div class="mon-alert" id="monAlert" role="alert" hidden></div>
           <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico (e as situações marcadas acima) toca um alerta sonoro. As pessoas não são identificadas.</p>
         </div>
         <div id="dlBox" class="stack" hidden>
@@ -1131,7 +1151,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v84</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v85</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2558,15 +2578,24 @@ async function cycle(){
   monCount++;
   const crit = data.critico, hits = monHits(data, sel);
   const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
+  if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${new Date().toLocaleTimeString("pt-BR")}.`);
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     alSave(history[0]); // e gravado na pasta escolhida, se houver
     beep();
     const now = new Date(), quando = `${now.toLocaleDateString("pt-BR")} às ${now.toLocaleTimeString("pt-BR")}`;
-    $("monAlert").innerHTML = `<b>⚠ Alerta em ${quando}</b><ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
+    $("monAlert").innerHTML = `<ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
+    lamp("alert", `⚠ ALERTA – ${quando}`, `${msgs.length} situação(ões) de risco detectada(s):`);
     try{ if (window.Notification && Notification.permission === "granted") new Notification(hits.length && !crit.length ? hits.map(h => h.t).join(" · ") : "Risco grave e iminente", {body: (quando + " — " + msgs.join("; ")).slice(0, 220)}); }catch(e){}
   }
 }
+// sinalizador do monitoramento: cinza (desligado), verde (sem risco), vermelho piscando (alerta até clicar em Ciente)
+function lamp(st, t, d){
+  const r = $("lampRow"); if (!r) return;
+  r.dataset.st = st; $("lampT").textContent = t; $("lampD").textContent = d || "";
+  $("lampAck").hidden = st !== "alert"; if (st !== "alert") $("monAlert").hidden = true;
+}
+$("lampAck").onclick = () => mon ? lamp("ok", "Monitorando – nenhuma situação de risco", "Alerta reconhecido. As fotos do alerta ficam guardadas em Alertas do monitoramento.") : lamp("off", "Monitoramento desligado", "Alerta reconhecido.");
 // verificação dedicada de cada quadro do monitoramento: pergunta curta e direta só sobre as situações de alerta
 // (bem mais rápida e confiável do que a análise completa); na dúvida, alerta
 async function monCheck(blob, sel){
@@ -2638,12 +2667,14 @@ function startMon(){
   mon = {sec: Number($("monInt").value) || 300, next: Date.now()};
   mon.timer = setInterval(tickMon, 1000); tickMon();
   $("watchBtn").textContent = "⏹ Parar monitoramento"; $("watchBtn").classList.add("on");
+  if ($("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", "Aguardando a primeira verificação…");
   $("monBtn").textContent = "Parar monitoramento"; $("monInt").disabled = true; $("monBox").classList.add("on"); $("rec").textContent = "● MONITORANDO";
   updateGo();
 }
 function stopMon(){
   if (mon) clearInterval(mon.timer); mon = null;
   $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on");
+  if ($("lampRow").dataset.st !== "alert") lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   $("monBtn").textContent = "Iniciar monitoramento"; $("monInt").disabled = false; $("monBox").classList.remove("on"); $("rec").textContent = "● AO VIVO";
   $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
   updateGo();
@@ -4776,6 +4807,7 @@ async function newInspection(){
   frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0;
   audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0;
   history.forEach(h => URL.revokeObjectURL(h.url)); history.length = 0; monCount = 0; drawHistory(-1);
+  lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
   ["rEmp", "rSetor", "rResp", "rRev"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
