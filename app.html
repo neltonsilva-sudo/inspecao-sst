@@ -871,7 +871,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v53</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v54</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1052,7 +1052,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v53</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v54</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3551,12 +3551,7 @@ const PEER_JS = "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js";
 const QR_JS = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";
 const params = new URLSearchParams(location.search);
 // servidor de sinalização local só para testes (?peerhost=localhost:9000)
-// STUN para achar o caminho direto e TURN (retransmissão) quando a rede do celular e a do computador não se enxergam (4G, CGNAT, Wi-Fi corporativo)
-const ICE = {iceServers: [
-  {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:global.stun.twilio.com:3478"]},
-  {urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443", "turn:openrelay.metered.ca:443?transport=tcp", "turns:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject"}
-], iceCandidatePoolSize: 4};
-const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false, config: ICE} : {config: ICE}; })();
+const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false} : {}; })();
 let qr = null, remoteOn = false;
 function loadScript(src){
   return new Promise((res, rej) => {
@@ -3806,7 +3801,7 @@ function phoneMode(id, k){
     catch(e){ why = (e && e.type) || "sinalização"; if (resumeKey) lost(why); else msg("Sem conexão com o servidor. Verifique a internet.", true); return; }
     if (ended) return;
     const c = conn = p.connect(id, {reliable: true, serialization: "json"});
-    const t = setTimeout(() => { if (c === conn && !c.open){ if (resumeKey) lost("sem resposta"); else done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora."); } }, 15000);
+    const t = setTimeout(() => { if (c === conn && !c.open){ if (resumeKey) lost("sem resposta"); else done("Não foi possível conectar", "O celular não conseguiu falar com o computador. Confira se a página do computador continua aberta com o QR code na tela, use o mesmo Wi-Fi nos dois se puder e leia o QR code de novo."); } }, 25000);
     c.on("open", () => {
       clearTimeout(t);
       c.send({type: "hello", k, r: resumeKey || undefined, device: deviceName()});
