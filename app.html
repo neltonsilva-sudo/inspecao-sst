@@ -937,7 +937,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v80</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v81</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -996,7 +996,7 @@ api:
           <button id="watchBtn" type="button" class="watch">🛡️ Monitorar situações de risco</button>
           <div class="row">
             <select id="monInt" aria-label="Intervalo entre análises">
-              <option value="60">A cada 1 min</option><option value="120">A cada 2 min</option>
+              <option value="30">A cada 30 s</option><option value="60">A cada 1 min</option><option value="120">A cada 2 min</option>
               <option value="300" selected>A cada 5 min</option><option value="600">A cada 10 min</option>
               <option value="900">A cada 15 min</option><option value="1800">A cada 30 min</option>
             </select>
@@ -1126,7 +1126,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v80</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v81</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2440,13 +2440,13 @@ function handleErr(e){
   }
 }
 // roda uma análise; devolve os dados ou null se falhou (status já mostra o motivo)
-async function analyze(blobs, label, extra = ""){
+async function analyze(blobs, label, extra = "", opts = {}){
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`${label}… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus(label + "…");
   const prompt = buildPrompt($("ctx").value.trim()) + extra;
   try{
-    const data = await callAI(prompt, blobs, ctl.signal);
+    const data = await callAI(prompt, blobs, ctl.signal, opts);
     render(data, false); lastData = data; locTried = false; saveSoon();
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
@@ -2497,7 +2497,7 @@ async function cycle(){
   if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); return; }
   const sel = MON_AL.filter(([id]) => $(id).checked);
   const extra = sel.length ? `\nALERTAS DO MONITORAMENTO: inclua também no objeto JSON o campo "alertas" com, para cada situação abaixo, {"ocorre":true|false,"onde":"Figura 1 – onde está e descrição genérica da pessoa, sem nome nem traços que a identifiquem"}:\n${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}\nResponda "ocorre":true só quando a imagem mostrar a situação com clareza.` : "";
-  const data = await analyze([blob], `Monitoramento: analisando quadro das ${new Date().toLocaleTimeString("pt-BR")}`, extra);
+  const data = await analyze([blob], `Monitoramento: analisando quadro das ${new Date().toLocaleTimeString("pt-BR")}`, extra, {fast: true}); // modo rápido: cabe em intervalos curtos
   if (!data) return;
   addHistory(blob, data);
   const crit = critOf(data), hits = monHits(data, sel);
@@ -2581,9 +2581,9 @@ $("watchBtn").onclick = async () => {
     if (!stream){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
   }
   MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); });
-  $("monInt").value = "60";
+  $("monInt").value = "30";
   startMon();
-  setStatus(`Monitorando a cada 1 minuto: risco crítico e ${MON_AL.length} situações de atos e condições inseguras.`);
+  setStatus(`Monitorando a cada 30 segundos: risco crítico e ${MON_AL.length} situações de atos e condições inseguras.`);
 };
 $("stopBtn").onclick = () => ctl?.abort();
 
