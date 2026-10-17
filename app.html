@@ -524,6 +524,11 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .lst li{margin:4px 0}
 .rep table.ppl{table-layout:fixed}.rep table.ppl th:nth-child(1){width:17%}.rep table.ppl th:nth-child(2){width:20%}.rep table.ppl th:nth-child(3){width:14%}.rep table.ppl th:nth-child(6){width:13%}
 .rep table.ppl td{overflow-wrap:anywhere}
+.rep th{white-space:normal;overflow-wrap:normal;word-break:normal;hyphens:manual;vertical-align:bottom;line-height:1.25} /* título da coluna quebra em linhas, sem invadir a vizinha */
+.rep table.edif{table-layout:fixed}.rep table.edif td{overflow-wrap:break-word}.rep table.edif th:nth-child(1){width:14%}.rep table.edif th:nth-child(2){width:11%}.rep table.edif th:nth-child(3){width:27%}.rep table.edif th:nth-child(4){width:24%}.rep table.edif th:nth-child(5){width:24%}
+.rep table.psi{table-layout:fixed}.rep table.psi td{overflow-wrap:break-word}.rep table.psi th:nth-child(1){width:15%}.rep table.psi th:nth-child(2){width:19%}.rep table.psi th:nth-child(3){width:13%}.rep table.psi th:nth-child(4){width:14%}.rep table.psi th:nth-child(5){width:15%}.rep table.psi th:nth-child(6){width:24%}
+.rep table.arm{table-layout:fixed}.rep table.arm td{overflow-wrap:break-word}.rep table.arm th:nth-child(1){width:16%}.rep table.arm th:nth-child(2){width:14%}.rep table.arm th:nth-child(3){width:18%}.rep table.arm th:nth-child(4){width:18%}.rep table.arm th:nth-child(5){width:22%}.rep table.arm th:nth-child(6){width:12%}
+.rep table.lay{table-layout:fixed}.rep table.lay td{overflow-wrap:break-word}.rep table.lay th:nth-child(1){width:20%}.rep table.lay th:nth-child(2){width:14%}.rep table.lay th:nth-child(3){width:20%}.rep table.lay th:nth-child(4){width:20%}.rep table.lay th:nth-child(5){width:26%}
 .rep table.res{table-layout:fixed}.rep table.res td{overflow-wrap:anywhere}.rep table.res th:nth-child(1){width:18%}.rep table.res th:nth-child(4){width:12%}.rep table.res th:nth-child(6){width:12%}
 .rep table.cores td:nth-child(odd){width:16%}
 .rep table.nrchk{table-layout:fixed}.rep table.nrchk td{overflow-wrap:anywhere}.rep table.nrchk th:nth-child(1){width:13%}.rep table.nrchk th:nth-child(3){width:16%}
@@ -884,7 +889,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v64</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v65</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1066,7 +1071,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v64</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v65</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2758,16 +2763,16 @@ function reportHTML(R, photos, meta){
   ${PP.lista.some(o => o.rec) ? `<h3>Recomendações por pessoa observada</h3><ul>${PP.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.pessoa)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhuma pessoa visível nas imagens analisadas. A verificação de uso de EPI e de adornos deve ser feita em campo, durante a execução das atividades.</p>"}
   ${PS.length ? `${H("Fatores de riscos psicossociais", "Fatores relacionados à organização do trabalho e às relações, levantados nos relatos, documentos e contexto.")}
   <p>A NR-01 determina que o gerenciamento de riscos ocupacionais considere os fatores de riscos psicossociais relacionados ao trabalho. Os fatores abaixo foram identificados sem identificar as pessoas e devem ser confirmados por avaliação específica e incluídos no inventário de riscos do PGR.</p>
-  %%T:Fatores de riscos psicossociais identificados%%<div class="tw"><table class="res"><thead><tr><th>Fator</th><th>Fonte e evidência</th><th>Categoria</th><th>S×P</th><th>Fundamentação</th><th>Medida de controle</th></tr></thead><tbody>
+  %%T:Fatores de riscos psicossociais identificados%%<div class="tw"><table class="psi"><thead><tr><th>Fator</th><th>Fonte e evidência</th><th>Categoria</th><th>S×P</th><th>Fundamentação</th><th>Medida de controle</th></tr></thead><tbody>
   ${PS.map(x => `<tr><td><b>${esc(x.fator)}</b></td><td>${esc(x.fonte || "—")}${x.ev ? `<div class="cap" style="margin:2px 0 0"><i>${esc(x.ev)}</i></div>` : ""}</td><td>${esc(x.cat || "—")}</td><td class="num">${x.sev}×${x.prob}=${x.L.r} <span class="lv" style="background:${LV[x.L.k][2]}">${x.L.t}</span></td><td>${esc(x.nr || "NR-01")}</td><td>${esc(x.medida || "—")}</td></tr>`).join("")}
   </tbody></table></div>` : ""}
   ${ED.length ? `${H("Condições da edificação: piso, paredes, teto e pintura", "Estado de conservação dos elementos construtivos e das demarcações.")}
-  %%T:Condições da edificação%%<div class="tw"><table class="res"><thead><tr><th>Elemento</th><th>Estado</th><th>Constatações</th><th>Risco e fundamentação</th><th>Recomendação</th></tr></thead><tbody>
+  %%T:Condições da edificação%%<div class="tw"><table class="edif"><thead><tr><th>Elemento</th><th>Estado</th><th>Constatações</th><th>Risco e fundamentação</th><th>Recomendação</th></tr></thead><tbody>
   ${ED.map(x => `<tr><td><b>${esc(x.el)}</b></td><td><span class="lv" style="background:${LV[x.k][2]}">${esc(x.est)}</span></td><td>${x.cons.length ? `<ul class="lst">${x.cons.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : "—"}</td><td>${esc(x.risco || "—")}${x.norma ? `<div class="cap" style="margin:2px 0 0">${esc(x.norma)}</div>` : ""}</td><td>${esc(x.rec || "—")}</td></tr>`).join("")}
   </tbody></table></div>` : ""}
   ${H("Armazenamento e acondicionamento de materiais", "Materiais guardados em local errado ou de forma insegura.")}
   ${AR.lista.length ? `<p>Foram observados ${AR.total} caso(s), com ${AR.nc} não conformidade(s). Materiais devem ficar em locais definidos e identificados, sem obstruir circulação, saídas, extintores e quadros elétricos, com produtos químicos rotulados e inflamáveis em armários próprios.</p>
-  %%T:Materiais acondicionados em local errado%%<div class="tw"><table class="res"><thead><tr><th>Material / figura</th><th>Onde está</th><th>Local ou forma correta</th><th>Problema</th><th>Risco e fundamentação</th><th>Situação</th></tr></thead><tbody>
+  %%T:Materiais acondicionados em local errado%%<div class="tw"><table class="arm"><thead><tr><th>Material / figura</th><th>Onde está</th><th>Local ou forma correta</th><th>Problema</th><th>Risco e fundamentação</th><th>Situação</th></tr></thead><tbody>
   ${AR.lista.map(o => `<tr><td><b>${esc(o.mat)}</b>${o.fig ? `<div class="cap" style="margin:0">${esc(o.fig)}</div>` : ""}</td><td>${esc(o.local || "—")}</td><td>${esc(o.certo || "—")}</td><td>${esc(o.prob || "—")}</td><td>${esc(o.risco || "—")}${o.norma ? `<div class="cap" style="margin:2px 0 0">${esc(o.norma)}</div>` : ""}</td><td><span class="lv" style="background:${LV[o.k][2]}">${esc(o.sit)}</span></td></tr>`).join("")}
   </tbody></table></div>
   ${AR.lista.some(o => o.rec) ? `<h3>Recomendações para o armazenamento</h3><ul>${AR.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.mat)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhum material acondicionado em local inadequado foi identificado nas imagens. Confirmar em campo as áreas de estocagem e de produtos químicos.</p>"}
@@ -2775,7 +2780,7 @@ function reportHTML(R, photos, meta){
   ${LY.nota !== null ? `<div class="sit" style="color:${LY.nota >= 7 ? "#2e8b57" : LY.nota >= 5 ? "#a87f00" : "#c62828"}">Nota do layout: ${String(LY.nota).replace(".", ",")}/10 → ${String(LY.apos).replace(".", ",")}/10 com a proposta</div>` : ""}
   ${para(LY.aval)}
   ${LY.fortes.length ? `<h3>Pontos fortes</h3><ul>${LY.fortes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-  ${LY.probs.length ? `%%T:Problemas de layout e sugestões%%<div class="tw"><table class="res"><thead><tr><th>Problema</th><th>Local</th><th>Impacto</th><th>Fundamentação</th><th>Sugestão</th></tr></thead><tbody>${LY.probs.map(x => `<tr><td><b>${esc(x.p)}</b></td><td>${esc(x.local || "—")}</td><td>${esc(x.imp || "—")}</td><td>${esc(x.norma || "—")}</td><td>${esc(x.sug || "—")}</td></tr>`).join("")}</tbody></table></div>` : ""}
+  ${LY.probs.length ? `%%T:Problemas de layout e sugestões%%<div class="tw"><table class="lay"><thead><tr><th>Problema</th><th>Local</th><th>Impacto</th><th>Fundamentação</th><th>Sugestão</th></tr></thead><tbody>${LY.probs.map(x => `<tr><td><b>${esc(x.p)}</b></td><td>${esc(x.local || "—")}</td><td>${esc(x.imp || "—")}</td><td>${esc(x.norma || "—")}</td><td>${esc(x.sug || "—")}</td></tr>`).join("")}</tbody></table></div>` : ""}
   ${LY.proposta ? `<h3>Proposta de layout</h3>${para(LY.proposta)}` : ""}
   ${LY.princ.length ? `<p class="cap">Princípios aplicados: ${esc(LY.princ.join(" · "))}.</p>` : ""}` : ""}
   ${H("Descarte de resíduos", "Materiais descartados no recipiente errado, sem separação ou em local inadequado.")}
