@@ -917,7 +917,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v72</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v73</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1102,7 +1102,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v72</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v73</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2188,7 +2188,7 @@ function openLevel(k){
   let h = `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Riscos de nível ${t.toLowerCase()}</h2><div class="hint" style="margin:0">Severidade × probabilidade de ${rg} (matriz de risco da NR-01)</div></div></div>`;
   // análise feita antes de a IA informar a foto de cada risco: localiza só as fotos, sem refazer a análise
   const semFoto = curRiscos.some(r => r.figura === undefined), podeLoc = semFoto && frames.length && curRender && !curRender.isExample;
-  if (podeLoc) h += `<div class="lvd-loc"><span>${locBusy ? "Localizando as fotos de cada risco com a IA…" : locErr ? `<b class="err">${esc(locErr)}</b>` : "Esta análise foi feita antes da versão que mostra as fotos. Clique para a IA indicar a foto e a área de cada risco, sem refazer a análise."}</span><button type="button" id="lvLoc" class="accent"${locBusy ? " disabled" : ""}>${locBusy ? "Localizando…" : "Localizar as fotos dos riscos"}</button></div>`;
+  if (podeLoc) h += `<div class="lvd-loc"><span>${locBusy ? "Inserindo a foto correspondente a cada problema (a IA localiza a foto e a área de cada risco)…" : locErr ? `<b class="err">${esc(locErr)}</b>` : "Não foi possível inserir as fotos automaticamente. Clique para tentar de novo."}</span><button type="button" id="lvLoc" class="accent"${locBusy ? " disabled" : ""}>${locBusy ? "Localizando…" : "Localizar as fotos dos riscos"}</button></div>`;
   if (!list.length) h += `<p class="hint">Nenhum risco classificado neste nível na análise atual.</p>`;
   else h += `<ol class="lvd-list ${k}">${list.map(({r, L}) => {
     const S = clamp(r.severidade, 1, 5), P = clamp(r.probabilidade, 1, 5), n = nrNum(r.nr);
@@ -2206,10 +2206,12 @@ function openLevel(k){
   $("lvDlgBody").innerHTML = h;
   $("lvDlgBody").querySelectorAll("[data-nr]").forEach(b => b.onclick = () => { $("lvDlg").close(); openNR(Number(b.dataset.nr)); });
   if ($("lvLoc")) $("lvLoc").onclick = () => locateRisks(k);
+  // análise antiga sem as fotos: busca sozinha uma vez (o botão fica para tentar de novo se falhar)
+  if (podeLoc && !locBusy && !locTried && ($("apiKey").value.trim() || sample)){ locTried = true; locateRisks(k); }
   if (!$("lvDlg").open) $("lvDlg").showModal();
   $("lvDlg").querySelector(".nrd-in").scrollTop = 0;
 }
-let locBusy = false, locErr = "";
+let locBusy = false, locErr = "", locTried = false;
 async function locateRisks(k){
   if (locBusy || !frames.length) return;
   if (!$("apiKey").value.trim() && !sample){ locErr = "Informe a chave da API para localizar as fotos."; openLevel(k); return; }
@@ -2421,7 +2423,7 @@ async function analyze(blobs, label){
   const prompt = buildPrompt($("ctx").value.trim());
   try{
     const data = await callAI(prompt, blobs, ctl.signal);
-    render(data, false); lastData = data; saveSoon();
+    render(data, false); lastData = data; locTried = false; saveSoon();
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
   }catch(e){
