@@ -871,7 +871,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v55</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v56</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1052,7 +1052,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v55</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v56</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2019,7 +2019,13 @@ function grabFrame(){
     c.toBlob(res, "image/jpeg", 0.86);
   });
 }
-$("snapBtn").onclick = async () => { const b = await grabFrame(); if (b) addBlob(b); };
+$("snapBtn").onclick = async () => {
+  const b = await grabFrame();
+  if (b){ addBlob(b); setStatus(`Quadro capturado (${frames.length} de ${maxImages}).`); return; }
+  // celular conectado sem vídeo ao vivo (retransmissão): pede ao celular que fotografe e envie
+  if (qr?.ok && qr.conn?.open){ qr.conn.send({type: "take"}); setStatus("Pedindo a foto ao celular…"); return; }
+  setStatus("Não há imagem de câmera para capturar. Ligue a câmera ou conecte o celular pelo QR code.", true);
+};
 if (!navigator.mediaDevices?.getUserMedia){ $("camBtn").disabled = true; $("videoMsg").textContent = "Este navegador não oferece acesso à câmera. Use fotos."; }
 
 /* ---------- checklist por NR (tela que abre ao clicar no card) ---------- */
@@ -3723,13 +3729,15 @@ function qrStop(){
   setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
   $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
   if (remoteOn) stopCam();
+  if (!stream) $("snapBtn").disabled = true;
 }
 $("qrBtn").onclick = qrStart;
 $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi desconectado e o QR code anterior não vale mais."); };
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
   qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true;
-  qrMsg(qr.conn.relay ? `Conectado: ${qr.device} (por retransmissão, porque esta rede bloqueia a conexão direta). Não há vídeo ao vivo: as fotos tiradas no celular, as da galeria e os áudios entram nas listas.` : `Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
+  $("snapBtn").disabled = false; // sem vídeo ao vivo (retransmissão), o botão pede a foto ao celular
+  qrMsg(qr.conn.relay ? `Conectado: ${qr.device} (por retransmissão, porque esta rede bloqueia a conexão direta). Não há vídeo ao vivo: use Capturar quadro (o celular fotografa) ou o botão do celular; as fotos da galeria e os áudios também entram nas listas.` : `Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
 };
 $("qrDeny").onclick = () => {
   if (!qr?.conn) return;
@@ -3890,6 +3898,7 @@ function phoneMode(id, k){
         }
       }
       else if (d.type === "full"){ msg("O computador atingiu o limite de fotos.", true); setAuto(false); }
+      else if (d.type === "take") snapLocal();
       else if (d.type === "bad"){ if (d.local) snapLocal(); else msg(d.why || "A foto não foi capturada. Tente de novo.", true); }
         else if (d.type === "file_done" || d.type === "file_bad") fileReply(d);
     });
