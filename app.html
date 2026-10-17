@@ -209,6 +209,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 button.watch{width:100%;min-height:48px;font-weight:700;font-size:15px;background:var(--crit);border-color:var(--crit);color:#fff}
 button.watch:hover{filter:brightness(1.08)}
 button.watch.on{background:var(--panel);color:var(--crit)}
+.hist .hmsg{display:block;font-size:11px;font-weight:600;color:var(--crit);line-height:1.25;margin-top:2px}
 .mon-alert{border:2px solid var(--crit);background:#fdecec;color:#7a1414;border-radius:10px;padding:10px 12px;font-size:13.5px}
 .mon-alert ul{margin:4px 0 0;padding-left:18px}
 .report .alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:start;padding:14px 16px;border-radius:8px;background:var(--cell-crit);border:1px solid var(--crit);border-left:7px solid var(--crit)}
@@ -937,7 +938,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v81</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v82</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1093,7 +1094,8 @@ api:
       </div>
 
       <div class="panel stack" id="histBox" hidden>
-        <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p class="label">Histórico do monitoramento</p></div>
+        <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p class="label">Alertas do monitoramento</p></div>
+        <p class="hint" style="margin:0">Só ficam guardadas as fotos em que a IA notificou risco; as demais são descartadas após a análise. Clique numa foto para ver a análise daquele momento.</p>
         <ol class="hist" id="hist"></ol>
       </div>
 
@@ -1126,7 +1128,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v81</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v82</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2474,10 +2476,12 @@ function beep(){
   }catch(e){}
 }
 function critOf(d){ return (d.riscos || []).filter(r => level(r.severidade, r.probabilidade).k === "crit"); }
-function addHistory(blob, data){
+// guarda só os quadros em que houve alerta (até 100, salvos no navegador com a inspeção)
+let monCount = 0;
+function addHistory(blob, data, msgs = [], t = new Date()){
   const url = URL.createObjectURL(blob);
-  history.unshift({t: new Date(), url, data, blob});
-  while (history.length > 50) URL.revokeObjectURL(history.pop().url);
+  history.unshift({t, url, data, blob, msgs});
+  while (history.length > 100) URL.revokeObjectURL(history.pop().url);
   drawHistory(0);
 }
 function drawHistory(cur){
@@ -2486,7 +2490,8 @@ function drawHistory(cur){
     const counts = {crit:0, high:0}; (h.data.riscos || []).forEach(r => { const k = level(r.severidade, r.probabilidade).k; if (k in counts) counts[k]++; });
     const li = document.createElement("li"); const b = document.createElement("button"); b.type = "button";
     if (i === cur) b.className = "cur";
-    b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleTimeString("pt-BR")}</span><span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span><span class="sc">${clamp(h.data.nota_geral,0,100)}</span>`;
+    b.title = (h.msgs || []).join("\n");
+    b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span><span class="sc">${clamp(h.data.nota_geral,0,100)}</span>`;
     b.onclick = () => { render(h.data, false); drawHistory(i); };
     li.append(b); ol.append(li);
   });
@@ -2499,14 +2504,15 @@ async function cycle(){
   const extra = sel.length ? `\nALERTAS DO MONITORAMENTO: inclua também no objeto JSON o campo "alertas" com, para cada situação abaixo, {"ocorre":true|false,"onde":"Figura 1 – onde está e descrição genérica da pessoa, sem nome nem traços que a identifiquem"}:\n${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}\nResponda "ocorre":true só quando a imagem mostrar a situação com clareza.` : "";
   const data = await analyze([blob], `Monitoramento: analisando quadro das ${new Date().toLocaleTimeString("pt-BR")}`, extra, {fast: true}); // modo rápido: cabe em intervalos curtos
   if (!data) return;
-  addHistory(blob, data);
+  monCount++;
   const crit = critOf(data), hits = monHits(data, sel);
   const msgs = [...(crit.length ? [`Risco crítico: ${crit.map(r => r.perigo).join("; ")}`] : []), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
   if (msgs.length){
+    addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     beep();
-    const hora = new Date().toLocaleTimeString("pt-BR");
-    $("monAlert").innerHTML = `<b>⚠ Alerta às ${hora}</b><ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
-    try{ if (window.Notification && Notification.permission === "granted") new Notification(hits.length && !crit.length ? hits.map(h => h.t).join(" · ") : "Risco crítico detectado", {body: msgs.join("; ").slice(0, 200)}); }catch(e){}
+    const now = new Date(), quando = `${now.toLocaleDateString("pt-BR")} às ${now.toLocaleTimeString("pt-BR")}`;
+    $("monAlert").innerHTML = `<b>⚠ Alerta em ${quando}</b><ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
+    try{ if (window.Notification && Notification.permission === "granted") new Notification(hits.length && !crit.length ? hits.map(h => h.t).join(" · ") : "Risco crítico detectado", {body: (quando + " — " + msgs.join("; ")).slice(0, 220)}); }catch(e){}
   }
 }
 // situações que o monitoramento pode alertar além do risco crítico (id do campo, chave pedida à IA, descrição)
@@ -2551,7 +2557,7 @@ function tickMon(){
   if (!mon) return;
   const left = Math.round((mon.next - Date.now()) / 1000);
   if (left <= 0){ mon.next = Date.now() + mon.sec * 1000; cycle(); }
-  else if (!ctl) $("monInfo").textContent = `Monitorando. Próxima análise em ${fmt(left)} · ${history.length} análise(s) feita(s).`;
+  else if (!ctl) $("monInfo").textContent = `Monitorando. Próxima análise em ${fmt(left)} · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
 }
 function startMon(){
   try{ audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); }catch(e){}
@@ -2566,7 +2572,7 @@ function stopMon(){
   if (mon) clearInterval(mon.timer); mon = null;
   $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on");
   $("monBtn").textContent = "Iniciar monitoramento"; $("monInt").disabled = false; $("monBox").classList.remove("on"); $("rec").textContent = "● AO VIVO";
-  $("monInfo").textContent = history.length ? `Monitoramento parado · ${history.length} análise(s) no histórico.` : "Monitoramento parado.";
+  $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
   updateGo();
 }
 $("monBtn").onclick = () => mon ? stopMon() : startMon();
@@ -4662,16 +4668,18 @@ function saveSoon(){
   clearTimeout(saveT);
   saveT = setTimeout(async () => {
     try{
-      const has = frames.length || lastData || report || audios.length || docs.length;
+      const has = frames.length || lastData || report || audios.length || docs.length || history.length;
       if (!has){ await idbDel(); return; }
       await idbPut({t: Date.now(), ctx: $("ctx").value, frames: frames.map(f => f.blob), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
         audios: audios.filter(a => a.info || a.err).map(a => ({name: a.name, from: a.from, dur: a.dur, blob: a.blob, info: a.info, err: a.err, status: a.status})),
-        docs: docs.filter(d => !d.err).map(d => ({name: d.name, kind: d.kind, note: d.note, text: d.text, images: d.images || []})), docInfo});
+        docs: docs.filter(d => !d.err).map(d => ({name: d.name, kind: d.kind, note: d.note, text: d.text, images: d.images || []})), docInfo,
+        alerts: history.map(h => ({t: h.t.getTime(), blob: h.blob, data: h.data, msgs: h.msgs || []}))});
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
   }, 800);
 }
 async function restoreSession(){
   let s = null; try{ s = await idbGet(); }catch(e){ return; }
+  if (s?.alerts?.length) s.alerts.slice().reverse().forEach(a => addHistory(a.blob, a.data, a.msgs, new Date(a.t))); // fotos com alerta do monitoramento
   if (!s || !(s.frames?.length || s.lastData || s.report)) return;
   restoring = true;
   try{
@@ -4694,7 +4702,7 @@ async function newInspection(){
   try{ if (stream) stopCam(); }catch(e){}
   frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0;
   audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0;
-  history.length = 0;
+  history.forEach(h => URL.revokeObjectURL(h.url)); history.length = 0; monCount = 0; drawHistory(-1);
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
   ["rEmp", "rSetor", "rResp", "rRev"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
