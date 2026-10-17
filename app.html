@@ -293,6 +293,18 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .nrc.na{opacity:.62}
 .report .nrc.rev{opacity:.4;cursor:default;text-decoration:line-through}
 .report .nrc.off{border-top-color:var(--muted);border-style:dashed;background:var(--bg)}.report .nrc.off b,.report .nrc.off small{text-decoration:line-through;opacity:.6}.report .nrc.off .st{color:#c62828}
+.nrd-imp{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:8px 12px;align-items:center;margin:12px 0 0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-size:13px}
+.nrd-imp>b{font-size:14px}
+.nrd-imp .err{grid-column:1 / -1;color:#c62828;font-weight:600}
+.nrd-yn{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+.nrd-yn button{border:0;border-radius:0;min-width:64px;font-weight:700;background:var(--panel)}
+.nrd-yn button+button{border-left:1px solid var(--line-strong)}
+.nrd-imp.yes #nrYes{background:#2e9e5b;color:#fff}
+.nrd-imp.no #nrNo{background:#c62828;color:#fff}
+.nrd-imp.yes{border-color:#2e9e5b;background:color-mix(in srgb,#2e9e5b 8%,var(--panel))}
+.nrd-imp.no{border-color:var(--line-strong)}
+.nrd-imp.busy{border-style:dashed}
+@media (max-width:560px){.nrd-imp{grid-template-columns:auto minmax(0,1fr)}.nrd-imp>span{grid-column:1 / -1}}
 .nrd-off{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin:12px 0 0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-size:13px}
 .nrd-off.on{border-color:#c62828;background:color-mix(in srgb,#c62828 8%,var(--panel))}
 .nrd-off button{font-weight:600}
@@ -829,7 +841,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v39</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v41</span></div>
       </div>
     </div>
     <div class="mode" id="mode" hidden>Modo: <b>verificando…</b></div>
@@ -1001,7 +1013,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v39</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v41</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1098,7 +1110,7 @@ const audios = []; // {id, name, blob, from, dur, status, info, err}
 function relatosBlock(){
   const ok = audios.filter(a => a.info);
   if (!ok.length) return "";
-  const data = ok.map(a => ({nome: a.name, origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 2500)}));
+  const data = ok.map(a => ({nome: a.name, origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, riscos_psicossociais: a.info.riscos_psicossociais, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 2500)}));
   return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 15000) +
     "\nUse os relatos como evidência complementar: confirme ou confronte com as imagens e os documentos e cite quando um risco ou pendência vier de relato.\n";
 }
@@ -1246,6 +1258,14 @@ function validatedData(d){
   return out;
 }
 
+// fatores de riscos psicossociais (NR-01 atualizada): relatos, documentos, contexto e sinais visíveis
+const PSI_REGRAS = `Riscos psicossociais (obrigatório quando houver relato, documento ou contexto): inclua os fatores de riscos psicossociais relacionados ao trabalho que aparecerem nos relatos em áudio, nos documentos do setor ou no contexto informado (sobrecarga, ritmo excessivo, pressão por metas, jornada longa ou sem pausas, assédio moral ou sexual, conflitos, falta de autonomia ou de apoio, isolamento, violência, falta de reconhecimento, insegurança no emprego). Nas imagens, considere apenas sinais visíveis (ex.: trabalho isolado, posto sem pausa possível, ambiente de atendimento ao público hostil) e marque como "verificar em campo". Para cada fator informe a fonte (qual relato, documento ou figura), um trecho ou evidência curta sem identificar pessoas, a categoria, severidade e probabilidade (1 a 5) e a medida de controle (ex.: avaliação psicossocial no PGR, AET/AEP da NR-17, revisão de metas e pausas, canal de denúncia e apuração de assédio, treinamento de lideranças, apoio psicológico). Fundamente na NR-01 (gerenciamento de riscos ocupacionais incluindo fatores psicossociais), na NR-17 (organização do trabalho) e na NR-05 (prevenção e combate ao assédio na CIPA). Todo fator também deve entrar na lista de riscos com "categoria":"Psicossocial" e no plano de ação. Se não houver nenhuma evidência, use lista vazia.`;
+const PSI_JSON = `"psicossociais":[{"fator":"","fonte":"Relato em áudio 1|Documento|Contexto|Figura 1","evidencia":"trecho ou constatação curta, sem nomes","categoria":"Organização do trabalho|Jornada e pausas|Relações e assédio|Conteúdo da tarefa|Violência|Reconhecimento e segurança no emprego","severidade":1,"probabilidade":1,"nr":"NR-01; NR-17","medida":""}]`;
+function psiOf(d){
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  return asList(d?.psicossociais).filter(x => x && typeof x === "object" && t(x.fator)).map(x => ({fator: t(x.fator), fonte: t(x.fonte), ev: t(x.evidencia), cat: t(x.categoria), L: level(x.severidade, x.probabilidade), sev: clamp(x.severidade, 1, 5), prob: clamp(x.probabilidade, 1, 5), nr: t(x.nr), medida: t(x.medida)})).sort((a, b) => b.L.r - a.L.r);
+}
+
 function buildPrompt(ctx){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
@@ -1263,6 +1283,7 @@ Tarefas:
 10. ${LAYOUT_REGRAS}
 11. ${EDIF_REGRAS}
 12. ${NRCHK_REGRAS}
+13. ${PSI_REGRAS}
 ${DETALHE_REGRAS}
 Regras: baseie-se só no que é visível; se algo não puder ser confirmado pela imagem, diga "verificar em campo". Não invente pessoas nem números. Se a imagem não mostrar um ambiente de trabalho, avalie mesmo assim o que for possível (ex.: escritório, home office, ergonomia NR-17) e explique em "limitacoes".
 Escreva em português do Brasil, frases curtas.
@@ -1281,6 +1302,7 @@ ${ARM_JSON},
 ${LAYOUT_JSON},
 ${EDIF_JSON},
 ${NRCHK_JSON},
+${PSI_JSON},
 "limitacoes":"string"}`;
 }
 
@@ -1313,6 +1335,10 @@ const EXAMPLE = {
     {what:"Proteção fixa no rebolo",why:"Risco de projeção e contato (NR-12)",where:"Bancada 2",who:"Manutenção",when:"7 dias",how:"Coifa + anteparo + ajuste do apoio",how_much:"Verificar em campo"},
     {what:"Remover extensões do piso",why:"Tropeço e choque (NR-10)",where:"Corredor central",who:"Eletricista autorizado",when:"15 dias",how:"Tomadas na bancada",how_much:"Verificar em campo"},
     {what:"Demarcar corredores",why:"Circulação segura (NR-12/NR-26)",where:"Toda a oficina",who:"Equipe 5S",when:"30 dias",how:"Faixa amarela 10 cm",how_much:"Verificar em campo"}
+  ],
+  psicossociais:[
+    {fator:"Pressão por prazos de manutenção sem reposição de pessoal",fonte:"Relato em áudio 1 (exemplo)",evidencia:"\"a gente fecha a ordem correndo porque o turno não tem gente\"",categoria:"Organização do trabalho",severidade:3,probabilidade:4,nr:"NR-01; NR-17",medida:"Incluir o fator no inventário do PGR, avaliar a carga de trabalho (AEP da NR-17) e rever o dimensionamento do turno"},
+    {fator:"Relato de cobrança em tom humilhante pela liderança",fonte:"Relato em áudio 2 (exemplo)",evidencia:"\"leva bronca na frente de todo mundo\"",categoria:"Relações e assédio",severidade:4,probabilidade:3,nr:"NR-01; NR-05",medida:"Canal de denúncia sigiloso, apuração pela CIPA/RH e treinamento de lideranças"}
   ],
   checklist_nrs:[
     {nr:"NR-12",aplicavel:true,justificativa:"Há esmerilhadeira de bancada e outras máquinas em operação.",itens:[
@@ -1445,7 +1471,7 @@ function render(d, isExample){
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
-  const PP = pessoasOf(d), DR = docRegOf(d), RS = residuosOf(d), AR = armOf(d), LY = layoutOf(d), ED = edifOf(d);
+  const PP = pessoasOf(d), DR = docRegOf(d), RS = residuosOf(d), AR = armOf(d), LY = layoutOf(d), ED = edifOf(d), PS = psiOf(d);
   const NRC = nrChecks(d), NRA = Object.values(NRC).filter(m => m.aplic).sort((a, b) => a.n - b.n);
   curNR = NRC; curRiscos = riscos;
   const ppl = PP.lista.map(o => `<li class="pp ${o.k}">
@@ -1567,6 +1593,15 @@ function render(d, isExample){
         ${o.norma ? `<div class="med"><span>Fundamentação</span>${esc(o.norma)}</div>` : ""}
         ${o.rec ? `<div class="med"><span>Recomendação</span>${esc(o.rec)}</div>` : ""}</li>`).join("")}</ol>` : '<p class="empty">Nenhum material armazenado em local inadequado nas imagens.</p>'}
     </section>
+
+    ${PS.length ? `<section class="sec">
+      <div class="sh"><h3>Riscos psicossociais</h3><span class="meta">${PS.length} fator(es) · NR-01, NR-17, NR-05</span></div>
+      <ol class="rlist">${PS.map(x => `<li class="pp ${x.L.k}"><div class="pp-h"><b>${esc(x.fator)}</b><span class="lc ${x.L.k}"><i></i>${x.L.t}<b title="Severidade × Probabilidade">${x.L.r}</b></span></div>
+        <div class="tags">${x.cat ? `<span class="cat">${esc(x.cat)}</span>` : ""}${x.fonte ? `<span class="sp">${esc(x.fonte)}</span>` : ""}${x.nr ? `<span class="nr">${esc(x.nr)}</span>` : ""}</div>
+        ${x.ev ? `<div class="med"><span>Evidência</span><i>${esc(x.ev)}</i></div>` : ""}
+        ${x.medida ? `<div class="med"><span>Medida de controle</span>${esc(x.medida)}</div>` : ""}</li>`).join("")}</ol>
+      <p class="hint" style="margin:8px 0 0">Fatores levantados nos relatos, documentos e contexto, sem identificar pessoas. Confirme com avaliação psicossocial no PGR.</p>
+    </section>` : ""}
 
     ${ED.length ? `<section class="sec">
       <div class="sh"><h3>Piso, paredes, teto e pintura</h3><span class="meta">${ED.filter(x => x.k === "crit").length} em estado ruim</span></div>
@@ -1862,7 +1897,11 @@ function openNR(n){
   const ic = k => k === "ok" ? "✓" : k === "crit" ? "✗" : "?";
   const off = !!((curRender?.d.__nrOff || {})[n]);
   let h = `<div class="nrd-h"><span class="nr big">${code}</span><div><h2 id="nrDlgT">${esc(def[2])}</h2><div class="nrd-ap ${m && m.aplic ? "y" : "n"}">${m && m.aplic ? "Aplicável a este setor" : "Não aplicável ao que foi observado nas imagens"}</div></div></div>`;
-  h += `<div class="nrd-off${off ? " on" : ""}"><button type="button" id="nrOffBtn" aria-pressed="${off ? "true" : "false"}">${off ? "Voltar a abordar esta NR no relatório" : "Não abordar esta NR no relatório"}</button><span>${off ? `<b>${code} está fora do relatório:</b> o checklist, os riscos e a fundamentação desta NR não entram no relatório nem na apresentação.` : "Use se esta norma não deve constar no relatório deste setor."}</span></div>`;
+  const incl = !off && !!(m && m.aplic), busy = nrBusy === n;
+  h += `<div class="nrd-imp ${busy ? "busy" : incl ? "yes" : "no"}"><b>Implementar esta NR no relatório?</b>
+    <div class="nrd-yn" role="group" aria-label="Implementar ${code} no relatório"><button type="button" id="nrYes" aria-pressed="${incl}"${busy ? " disabled" : ""}>Sim</button><button type="button" id="nrNo" aria-pressed="${!incl && !busy}"${busy ? " disabled" : ""}>Não</button></div>
+    <span>${busy ? `Gerando o checklist da ${code} com a IA a partir das fotos do setor…` : incl ? `<b>Sim:</b> o checklist desta NR aparece abaixo e entra no relatório.` : off ? `<b>Não:</b> ${code} fica fora do relatório (checklist, riscos e fundamentação).` : `A análise não indicou esta NR para o setor. Marque <b>Sim</b> para a IA montar o checklist e incluí-lo no relatório.`}</span>
+    ${nrErr && nrErr.n === n ? `<span class="err">${esc(nrErr.msg)}</span>` : ""}</div>`;
   if (m && m.just) h += `<p class="nrd-j">${esc(m.just)}</p>`;
   if (m && m.aplic && m.itens.length){
     h += `<div class="nrd-sum"><span class="lc ok"><i></i>${m.c} conforme(s)</span><span class="lc crit"><i></i>${m.nc} não conforme(s)</span><span class="lc warn"><i></i>${m.nv} não verificável(is)</span>${m.pct !== null ? `<span class="nrd-pct">${m.pct}% de conformidade nos itens verificáveis</span>` : ""}</div>`;
@@ -1879,13 +1918,46 @@ function openNR(n){
   const dlg = $("nrDlg"); if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
   dlg.querySelector(".nrd-in").scrollTop = keepScroll;
 }
+// implementar NR no relatório: Sim inclui (e, se preciso, a IA monta o checklist); Não exclui
+let nrBusy = 0, nrErr = null;
+function refreshNR(n){ const d = curRender.d, y = scrollY; render(d, curRender.isExample); scrollTo(0, y); if ($("nrDlg").open && Number($("nrDlgBody").dataset.nr) === n) openNR(n); if (report && !$("tech").hidden && d === lastData) showReport(); }
+async function setNR(n, yes){
+  const d = curRender.d; d.__nrOff = d.__nrOff || {}; nrErr = null;
+  if (!yes){ d.__nrOff[n] = 1; refreshNR(n); return; }
+  delete d.__nrOff[n];
+  d.checklist_nrs = asList(d.checklist_nrs);
+  const ent = d.checklist_nrs.find(x => x && nrNum(x.nr) === n);
+  if (ent && asList(ent.itens).length){ ent.aplicavel = true; refreshNR(n); return; }
+  if (curNR[n] && curNR[n].aplic && curNR[n].itens.length){ refreshNR(n); return; } // já vem dos riscos
+  const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
+  const def = NR_LIST.find(x => x[0] === n), code = nrTxt(n);
+  const ok = sample || (!inViewer && $("apiKey").value.trim());
+  if (!ok || !blobs.length){
+    // sem IA ou sem fotos: checklist mínimo para verificação em campo
+    d.checklist_nrs.push({nr: code, aplicavel: true, justificativa: "Incluída pelo responsável técnico.", manual: true, itens: [{item: "confirmar item", requisito: `Atender aos requisitos aplicáveis da ${code} – ${def[2]}`, situacao: "Não verificável", evidencia: !blobs.length ? "Sem imagens para análise" : "Checklist não gerado: informe a chave da IA", acao: "Verificar em campo"}]});
+    nrErr = !blobs.length ? {n, msg: "Capture ou envie fotos do setor para a IA montar o checklist completo."} : {n, msg: "Informe a chave da IA (Gemini ou Claude) para gerar o checklist completo desta NR."};
+    refreshNR(n); return;
+  }
+  nrBusy = n; refreshNR(n);
+  try{
+    const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. O responsável técnico decidiu incluir a ${code} (${def[2]}) no relatório deste setor. Com base nas imagens anexadas${$("ctx").value.trim() ? " e no contexto: " + $("ctx").value.trim() : ""}, monte o checklist desta NR com 5 a 12 requisitos aplicáveis ao que se vê ou ao tipo de setor. Para cada requisito: item da NR somente com certeza (senão "confirmar item"), requisito em linguagem clara, situação ("Conforme" se a imagem mostra que é atendido; "Não conforme" se mostra que não é; "Não verificável" se depende de documento, treinamento, medição ou não aparece), evidência (o que se vê e em qual figura) e ação para os não conformes. Não invente o que não é visível. Português do Brasil.
+Responda SOMENTE com um objeto JSON: {"nr":"${code}","aplicavel":true,"justificativa":"por que a NR se aplica ou foi incluída","itens":[{"item":"","requisito":"","situacao":"Conforme|Não conforme|Não verificável","evidencia":"","acao":""}]}`;
+    const r = await callAI(prompt, blobs, undefined);
+    const itens = asList(r && r.itens).filter(i => i && typeof i === "object" && i.requisito);
+    if (!itens.length) throw new Error("vazio");
+    const old = d.checklist_nrs.findIndex(x => x && nrNum(x.nr) === n); if (old >= 0) d.checklist_nrs.splice(old, 1);
+    d.checklist_nrs.push({nr: code, aplicavel: true, justificativa: String(r.justificativa || "Incluída pelo responsável técnico."), manual: true, itens});
+  }catch(err){
+    nrErr = {n, msg: "Não foi possível gerar o checklist agora. Tente de novo em instantes."};
+    d.__nrOff[n] = 1;
+  }finally{ nrBusy = 0; refreshNR(n); }
+}
+
 // validação: o item clicado deixa de ir para o relatório (e volta com novo clique)
 $("nrDlgBody").addEventListener("click", e => {
-  if (e.target.closest("#nrOffBtn") && curRender){
-    const d = curRender.d, n = Number($("nrDlgBody").dataset.nr), y = scrollY; d.__nrOff = d.__nrOff || {};
-    if (d.__nrOff[n]) delete d.__nrOff[n]; else d.__nrOff[n] = 1;
-    render(d, curRender.isExample); scrollTo(0, y); openNR(n);
-    if (report && !$("tech").hidden && d === lastData) showReport();
+  if ((e.target.closest("#nrYes") || e.target.closest("#nrNo")) && curRender){
+    const n = Number($("nrDlgBody").dataset.nr);
+    if (e.target.closest("#nrNo")) setNR(n, false); else setNR(n, true);
     return;
   }
   const b = e.target.closest(".nrd-it"); if (!b || !curRender) return;
@@ -2130,6 +2202,7 @@ Regras:
 - ${EDIF_REGRAS}
 - ${LAYOUT_REGRAS} Inclua no plano de ação as mudanças de layout prioritárias, com "ferramenta":"Layout".
 - ${NRCHK_REGRAS}
+- ${PSI_REGRAS}
 - ${DETALHE_REGRAS} Nas observações de cada figura, descreva com detalhe tudo o que tem relevância para SST.
 - ${DOCREG_REGRAS} Inclua no plano de ação a implantação ou atualização dos documentos de prioridade alta, com "ferramenta":"Documentação".
 - ${SUG_REGRAS}
@@ -2164,6 +2237,7 @@ ${ARM_JSON},
 ${LAYOUT_JSON},
 ${EDIF_JSON},
 ${NRCHK_JSON},
+${PSI_JSON},
 "analise_documental":{"documentos":[{"nome":"","tipo":"","contribuicao":"o que o documento acrescentou ao diagnóstico"}],"convergencias":["documentado e confirmado nas imagens"],"divergencias":["documentado sem controle visível, ou visível e não documentado"],"pendencias_documentais":["documento ausente, vencido ou incompleto"]},
 "consideracoes_finais":"1-2 parágrafos",
 "referencias":["NR-01 – Disposições Gerais e Gerenciamento de Riscos Ocupacionais"]}`;
@@ -2331,6 +2405,7 @@ function reportHTML(R, photos, meta){
   const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
   const RS = residuosOf(R.residuos ? R : (lastData || {}));
   const AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
+  const PS = nrOff()[1] ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
   const NRA = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos}, true)).filter(m => m.aplic && m.itens.length && !nrOff()[m.n]).sort((a, b) => a.n - b.n);
   const NRrej = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : {}, true)).reduce((t, m) => t + m.rejN, 0);
   const DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
@@ -2388,6 +2463,7 @@ function reportHTML(R, photos, meta){
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
     ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
+    ${PS.length ? `<p><b>Riscos psicossociais:</b> ${PS.length} fator(es) identificado(s) nos relatos, documentos ou contexto${PS.filter(x => x.L.k === "crit" || x.L.k === "high").length ? `, ${PS.filter(x => x.L.k === "crit" || x.L.k === "high").length} de nível alto ou crítico` : ""}.</p>` : ""}
     ${ED.length ? `<p><b>Edificação:</b> ${ED.map(x => `${x.el.toLowerCase()} ${x.est.toLowerCase()}`).join("; ")}.</p>` : ""}
     ${AR.nc ? `<p><b>Armazenamento:</b> ${AR.nc} material(is) acondicionado(s) em local errado ou de forma insegura.</p>` : ""}
     ${LY && LY.nota !== null ? `<p><b>Layout:</b> nota ${String(LY.nota).replace(".", ",")}/10, com projeção de ${String(LY.apos).replace(".", ",")}/10 após a proposta de rearranjo.</p>` : ""}
@@ -2408,7 +2484,7 @@ function reportHTML(R, photos, meta){
   ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
   <div class="fig flow">${flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
   ${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
@@ -2442,6 +2518,11 @@ function reportHTML(R, photos, meta){
   ${PP.lista.map(o => `<tr><td><b>${esc(o.pessoa)}</b>${o.figura ? `<div class="cap" style="margin:0">${esc(o.figura)}</div>` : ""}</td><td>${esc(o.atividade || "—")}${o.riscos ? `<div class="cap" style="margin:2px 0 0">${esc(o.riscos)}</div>` : ""}</td><td>${o.epiUso.length ? esc(o.epiUso.join(", ")) : "Nenhum visível"}</td><td>${o.epiF.length ? `<ul class="lst">${o.epiF.map(e => `<li><b>${esc(e.epi)}</b>${e.motivo ? ` – ${esc(e.motivo)}` : ""} <span class="num">(${esc(e.nr)})</span></li>`).join("")}</ul>` : "—"}</td><td>${o.ad.length ? `<ul class="lst">${o.ad.map(a => `<li><b>${esc(a.adorno)}</b>${a.risco ? ` – ${esc(a.risco)}` : ""}${a.nr ? ` <span class="num">(${esc(a.nr)})</span>` : ""}</li>`).join("")}</ul>` : "Nenhum visível"}</td><td><span class="lv" style="background:${ppSit(o.k)[2]}">${esc(o.sit)}</span></td></tr>`).join("")}
   </tbody></table></div>
   ${PP.lista.some(o => o.rec) ? `<h3>Recomendações por pessoa observada</h3><ul>${PP.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.pessoa)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhuma pessoa visível nas imagens analisadas. A verificação de uso de EPI e de adornos deve ser feita em campo, durante a execução das atividades.</p>"}
+  ${PS.length ? `${H("Fatores de riscos psicossociais", "Fatores relacionados à organização do trabalho e às relações, levantados nos relatos, documentos e contexto.")}
+  <p>A NR-01 determina que o gerenciamento de riscos ocupacionais considere os fatores de riscos psicossociais relacionados ao trabalho. Os fatores abaixo foram identificados sem identificar as pessoas e devem ser confirmados por avaliação específica e incluídos no inventário de riscos do PGR.</p>
+  %%T:Fatores de riscos psicossociais identificados%%<div class="tw"><table class="res"><thead><tr><th>Fator</th><th>Fonte e evidência</th><th>Categoria</th><th>S×P</th><th>Fundamentação</th><th>Medida de controle</th></tr></thead><tbody>
+  ${PS.map(x => `<tr><td><b>${esc(x.fator)}</b></td><td>${esc(x.fonte || "—")}${x.ev ? `<div class="cap" style="margin:2px 0 0"><i>${esc(x.ev)}</i></div>` : ""}</td><td>${esc(x.cat || "—")}</td><td class="num">${x.sev}×${x.prob}=${x.L.r} <span class="lv" style="background:${LV[x.L.k][2]}">${x.L.t}</span></td><td>${esc(x.nr || "NR-01")}</td><td>${esc(x.medida || "—")}</td></tr>`).join("")}
+  </tbody></table></div>` : ""}
   ${ED.length ? `${H("Condições da edificação: piso, paredes, teto e pintura", "Estado de conservação dos elementos construtivos e das demarcações.")}
   %%T:Condições da edificação%%<div class="tw"><table class="res"><thead><tr><th>Elemento</th><th>Estado</th><th>Constatações</th><th>Risco e fundamentação</th><th>Recomendação</th></tr></thead><tbody>
   ${ED.map(x => `<tr><td><b>${esc(x.el)}</b></td><td><span class="lv" style="background:${LV[x.k][2]}">${esc(x.est)}</span></td><td>${x.cons.length ? `<ul class="lst">${x.cons.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : "—"}</td><td>${esc(x.risco || "—")}${x.norma ? `<div class="cap" style="margin:2px 0 0">${esc(x.norma)}</div>` : ""}</td><td>${esc(x.rec || "—")}</td></tr>`).join("")}
@@ -2874,7 +2955,7 @@ async function buildPptx(R, photos, meta){
   const logo = load("sst_logo");
   const riscos = asList(R.riscos).filter(r => r && typeof r === "object" && !nrOff()[nrNum(r.nr)]).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const S5 = prep5S(R), SC = scores(riscos, S5);
-  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {})), PS = nrOff()[1] ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
   const gut = asList(R.gut).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
   const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
@@ -3025,6 +3106,12 @@ async function buildPptx(R, photos, meta){
   s = slide("Trabalhadores expostos: EPI e adornos", "Verificação individual do uso de EPI e de adornos, sem identificar as pessoas.");
   if (PP.lista.length) table(s, [[H("Pessoa / figura"), H("Atividade e riscos"), H("EPIs em uso"), H("EPIs faltando"), H("Adornos"), H("Situação")]].concat(PP.lista.map(o => [C(o.pessoa + (o.figura ? "\n" + o.figura : "")), C([o.atividade, o.riscos].filter(Boolean).join("\n")), C(o.epiUso.join(", ") || "Nenhum visível"), C(o.epiF.map(e => `${e.epi} (${e.nr})`).join("\n") || "—", {color: o.epiF.length ? "C62828" : INK, bold: !!o.epiF.length}), C(o.ad.map(a => a.adorno + (a.nr ? ` (${a.nr})` : "")).join("\n") || "Nenhum visível", {color: o.ad.length ? "C62828" : INK, bold: !!o.ad.length}), badge(o.sit, LVC[o.k])])), [2.3, 2.6, 1.8, 2.2, 2.0, 1.43]);
   else callout(s, "Observação", "Nenhuma pessoa visível nas imagens analisadas. Verificar o uso de EPI e de adornos em campo, durante a execução das atividades.", TOP, false, 0.9);
+
+  // psicossociais
+  if (PS.length){
+    s = slide("Fatores de riscos psicossociais", "Levantados nos relatos, documentos e contexto, sem identificar pessoas (NR-01, NR-17, NR-05).");
+    table(s, [[H("Fator"), H("Fonte e evidência"), H("Categoria"), H("Nível"), H("Medida de controle")]].concat(PS.map(x => [C(x.fator, {bold: true}), C([x.fonte, x.ev].filter(Boolean).join("\n")), C(x.cat), badge(`${x.L.r} ${x.L.t}`, LVC[x.L.k]), C(x.medida)])), [2.9, 3.0, 1.7, 1.2, 3.53], {fs: 11});
+  }
 
   // edificação
   if (ED.length){
@@ -3650,7 +3737,7 @@ function drawAudios(){
   const box = $("audSum");
   if (!done.length){ box.hidden = true; box.innerHTML = ""; return; }
   const all = k => done.flatMap(a => asList(a.info[k])).slice(0, 6);
-  box.innerHTML = `<b>Informações extraídas dos relatos (${done.length} áudio(s))</b>${all("informacoes_sst").length ? `<ul>${all("informacoes_sst").map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}<div class="chips"><span class="chip">${done.flatMap(a => asList(a.info.riscos_relatados)).length} risco(s) relatado(s)</span><span class="chip">${done.flatMap(a => asList(a.info.sugestoes)).length} sugestão(ões)</span></div><div class="hint">Estas informações entram automaticamente na análise e no relatório técnico.</div>`;
+  box.innerHTML = `<b>Informações extraídas dos relatos (${done.length} áudio(s))</b>${all("informacoes_sst").length ? `<ul>${all("informacoes_sst").map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}<div class="chips"><span class="chip">${done.flatMap(a => asList(a.info.riscos_relatados)).length} risco(s) relatado(s)</span>${done.flatMap(a => asList(a.info.riscos_psicossociais)).length ? `<span class="chip crit">${done.flatMap(a => asList(a.info.riscos_psicossociais)).length} fator(es) psicossocial(is)</span>` : ""}<span class="chip">${done.flatMap(a => asList(a.info.sugestoes)).length} sugestão(ões)</span></div><div class="hint">Estas informações entram automaticamente na análise e no relatório técnico.</div>`;
   box.hidden = false;
 }
 let audBusy = false;
@@ -3674,15 +3761,16 @@ async function processAudios(){
           const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. O áudio anexado é ${parts.length > 1 ? `a parte ${i + 1} de ${parts.length} de ` : ""}um relato gravado durante uma inspeção de SST (entrevista com trabalhador, supervisor ou observação falada do inspetor).
 1. Transcreva fielmente em português do Brasil (sem inventar trechos; marque [inaudível] quando não entender).
 2. Extraia as informações úteis para o diagnóstico do setor.
+3. Identifique fatores de riscos psicossociais relatados (sobrecarga ou ritmo excessivo, pressão por metas, jornada longa ou sem pausas, assédio moral ou sexual, conflitos, falta de autonomia ou de apoio, isolamento, violência, falta de reconhecimento, insegurança no emprego, metas incompatíveis), com um trecho curto do relato que comprove, sem nomes.
 Responda SOMENTE com um objeto JSON:
-{"transcricao":"texto completo","resumo":"1-2 frases","informacoes_sst":["fatos relevantes para SST"],"riscos_relatados":[{"perigo":"","detalhe":""}],"sugestoes":["melhorias sugeridas no relato"],"pessoas_funcoes":["funções ou cargos citados, sem nomes completos"]}`;
+{"transcricao":"texto completo","resumo":"1-2 frases","informacoes_sst":["fatos relevantes para SST"],"riscos_relatados":[{"perigo":"","detalhe":""}],"riscos_psicossociais":[{"fator":"","trecho":"frase curta do relato"}],"sugestoes":["melhorias sugeridas no relato"],"pessoas_funcoes":["funções ou cargos citados, sem nomes completos"]}`;
           res.push(await viaGemini(prompt, [parts[i]], undefined));
         }
         a.info = {
           transcricao: res.map(r => r.transcricao || "").join("\n"),
           resumo: res.map(r => r.resumo || "").filter(Boolean).join(" "),
           informacoes_sst: res.flatMap(r => asList(r.informacoes_sst)), riscos_relatados: res.flatMap(r => asList(r.riscos_relatados)),
-          sugestoes: res.flatMap(r => asList(r.sugestoes)), pessoas_funcoes: res.flatMap(r => asList(r.pessoas_funcoes))
+          sugestoes: res.flatMap(r => asList(r.sugestoes)), pessoas_funcoes: res.flatMap(r => asList(r.pessoas_funcoes)), riscos_psicossociais: res.flatMap(r => asList(r.riscos_psicossociais))
         };
         a.status = "transcrito";
       }catch(e){
