@@ -207,7 +207,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .mon-dd > .mon-al{border:0;border-top:1px solid var(--line);border-radius:0 0 10px 10px}
 .mon-al{border:1px solid var(--line);border-radius:10px;padding:8px 12px 10px;margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 .mon-al legend{font:600 12px var(--f-body);padding:0 4px;color:var(--muted)}
-.mon-g{display:grid;gap:5px}.mon-g + .mon-g{margin-top:6px;padding-top:8px;border-top:1px dashed var(--line)}
+.mon-g{display:grid;gap:5px}
+.mon-epi{padding-bottom:8px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
+.mon-epis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin-top:2px}
+.mon-epis label{font-size:12.5px}.mon-g + .mon-g{margin-top:6px;padding-top:8px;border-top:1px dashed var(--line)}
 .mon-g > b{font:700 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
 .mon-all{display:flex;gap:8px;margin-top:6px}.mon-all button{min-height:32px;padding:4px 10px;font-size:12.5px}
 .mon-al label{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;cursor:pointer}
@@ -961,7 +964,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v87</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v88</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1164,7 +1167,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v87</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v88</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2623,8 +2626,8 @@ async function monCheck(blob, sel){
 Situações:
 ${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
 - "critico": qualquer outra situação de risco grave e iminente à vida ou à integridade (NR-03), como incêndio, choque elétrico, queda iminente, prensamento ou atropelamento.
-Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
-Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição, se os olhos estão abertos ou fechados, postura, EPI) e o ambiente, em uma ou duas frases curtas.
+${sel.some(x => x[1] === "sem_epi") && epiReq().length ? `EPIs OBRIGATÓRIOS nesta área: ${epiReq().join(", ")}. Em "sem_epi", confira CADA pessoa visível contra essa lista e marque "ocorre": true se faltar qualquer um deles; em "onde", diga qual EPI falta e em qual pessoa.\n` : ""}Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
+Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição, olhos abertos ou fechados, postura, EPIs em uso e adornos visíveis) e o ambiente, em uma ou duas frases curtas.
 Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
   try{
     const r = await callAI(prompt, [blob], ctl.signal, {fast: true, budget: 1024}); // um pouco de raciocínio: repara em detalhes como olhos fechados
@@ -2643,7 +2646,7 @@ Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "crit
 const MON_AL = [
   // pessoas: atos inseguros
   ["alEpi", "sem_epi", "pessoa sem algum EPI exigido para a atividade ou a área (capacete, óculos, protetor auricular, luvas, calçado, máscara, cinto, vestimenta) — NR-06", "Pessoa sem EPI", "p"],
-  ["alAdorno", "adornos", "pessoa usando adornos (anel, aliança, pulseira, relógio, corrente, colar, brinco, crachá pendurado ou cabelo comprido solto) junto a máquinas, eletricidade ou área de risco — NR-12/NR-10", "Pessoa com adornos", "p"],
+  ["alAdorno", "adornos", "pessoa usando QUALQUER adorno visível — anel, aliança, relógio (inclusive smartwatch), pulseira, corrente, colar, brinco, piercing, crachá ou cordão pendurado, cabelo comprido solto — proibidos em área operacional (NR-12/NR-10); diga qual adorno", "Pessoa com adornos", "p"],
   ["alCorre", "correndo", "pessoa correndo ou se deslocando com pressa em área de risco, oficina, corredor de máquinas, escada ou piso escorregadio", "Pessoa correndo em área de risco", "p"],
   ["alAto", "pratica_insegura", "pessoa executando tarefa de forma incorreta ou insegura (mão perto de parte móvel, burlar proteção, improviso, ferramenta inadequada, levantamento de peso com postura errada, operar sem habilitação aparente)", "Prática insegura ou incorreta", "p"],
   ["alCel", "celular", "pessoa usando celular enquanto opera máquina, dirige veículo/empilhadeira ou circula em área de risco", "Uso de celular em área de risco", "p"],
@@ -2657,10 +2660,14 @@ const MON_AL = [
   ["alObst", "obstrucao", "saída de emergência, rota de fuga, extintor, hidrante ou quadro elétrico obstruído — NR-23/NR-10", "Saída, extintor ou quadro elétrico obstruído", "a"],
   ["alPiso", "piso_risco", "piso molhado, com óleo, derramamento ou objeto solto na área de circulação", "Piso molhado, óleo ou derramamento", "a"]
 ];
+// EPIs que podem ser exigidos na área monitorada
+const EPI_REQ = [["epiCap", "Capacete"], ["epiOcl", "Óculos de proteção"], ["epiAud", "Protetor auricular"], ["epiLuv", "Luvas"], ["epiBot", "Calçado de segurança"], ["epiMasc", "Máscara ou respirador"], ["epiCol", "Colete refletivo"], ["epiVest", "Vestimenta / avental"], ["epiCinto", "Cinto de segurança (altura)"]];
+const epiReq = () => EPI_REQ.filter(([id]) => $(id)?.checked).map(([, l]) => l);
 // monta as caixas de seleção em dois grupos
 (() => {
   const f = $("monAl"); if (!f) return;
   const grp = (g, t) => `<div class="mon-g"><b>${t}</b>${MON_AL.filter(x => x[4] === g).map(([id, , , l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div>`;
+  f.insertAdjacentHTML("beforeend", `<div class="mon-g mon-epi"><b>EPIs obrigatórios nesta área</b><span class="hint" style="margin:0">Marque os exigidos no local; a IA confere cada pessoa. Sem nenhum marcado, ela avalia pela atividade.</span><div class="mon-epis">${EPI_REQ.map(([id, l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div></div>`);
   f.insertAdjacentHTML("beforeend", grp("p", "Pessoas (atos inseguros)") + grp("a", "Ambiente (condições inseguras)") + `<div class="mon-all"><button type="button" id="alAll">Marcar todas</button><button type="button" id="alNone">Desmarcar todas</button></div>`);
   $("alAll").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount(); };
   $("alNone").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = false; store("sst_" + id, null); }); alCount(); };
@@ -2682,6 +2689,7 @@ MON_AL.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load(
 // contagem no título da lista recolhível
 function alCount(){ const n = MON_AL.filter(([id]) => $(id)?.checked).length; if ($("monAlN")) $("monAlN").textContent = `(${n} de ${MON_AL.length} marcadas)`; }
 alCount();
+EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => store("sst_" + id, el.checked ? "1" : null); });
 function tickMon(){
   if (!mon) return;
   const left = Math.round((mon.next - Date.now()) / 1000);
