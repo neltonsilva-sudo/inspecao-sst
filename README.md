@@ -6,6 +6,7 @@ Página de teste que usa uma webcam (ex.: Logitech Brio 500) ou fotos para anali
 - avaliação 5S, pontos de melhoria (Kaizen, Poka-Yoke, gestão visual etc.);
 - ciclo PDCA e plano de ação 5W2H;
 - monitoramento automático em intervalos, com histórico e alerta sonoro de risco crítico.
+- documentos e registros de evidências de SST que o setor precisa implantar, atualizar ou verificar, e sugestões de melhoria com fundamentação legal (NRs, CLT, Lei 6.514/1977);
 - verificação de cada pessoa visível: riscos ocupacionais, EPIs faltando (NR-06) e adornos (NR-10, NR-12, NR-32);
 - relatório técnico com capa, sumário, ferramentas da qualidade e plano de ação, baixado em Word (.docx), HTML ou PDF;
 - câmeras: webcam USB/integrada, celular via QR code (fotos e áudios), Wi-Fi/IP (MJPEG, snapshot, HLS, MP4; RTSP via go2rtc);

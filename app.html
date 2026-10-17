@@ -281,6 +281,8 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .it-h span:first-child{font:600 12px var(--f-mono);color:var(--muted)}
 .report .it b{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
 .report .it p{margin:0;font-size:13.5px;overflow-wrap:anywhere}
+.report .it .fund{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.report .it .fund span{display:block;font:600 10px var(--f-body);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1px}
 .report .tag{font:600 10.5px var(--f-body);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid var(--info);color:var(--info);overflow-wrap:anywhere}
 /* PDCA */
 .report .pdca{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
@@ -388,6 +390,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .lst li{margin:4px 0}
 .rep table.ppl{table-layout:fixed}.rep table.ppl th:nth-child(1){width:17%}.rep table.ppl th:nth-child(2){width:20%}.rep table.ppl th:nth-child(3){width:14%}.rep table.ppl th:nth-child(6){width:13%}
 .rep table.ppl td{overflow-wrap:anywhere}
+.rep table.dreg,.rep table.sug{table-layout:fixed}.rep table.dreg td,.rep table.sug td{overflow-wrap:anywhere}
+.rep table.dreg th:nth-child(1){width:22%}.rep table.dreg th:nth-child(2){width:9%}.rep table.dreg th:nth-child(5){width:13%}.rep table.dreg th:nth-child(6){width:12%}
+.rep table.sug th:nth-child(1){width:5%}.rep table.sug th:nth-child(2){width:31%}.rep table.sug th:nth-child(3){width:22%}.rep table.sug th:nth-child(5){width:11%}.rep table.sug th:nth-child(6){width:12%}
 .rep h2{display:flex;gap:10px;align-items:baseline}
 .rep h2 .n{font:700 19px "JetBrains Mono",monospace;color:#1f6fb2;min-width:26px}
 .rep h3 .n{font:600 12.5px "JetBrains Mono",monospace;color:#5b6770;margin-right:8px}
@@ -644,7 +649,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v21</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v22</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -812,7 +817,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v21</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v22</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -936,6 +941,21 @@ function pessoasOf(d){
   return {total: Math.max(lista.length, Math.round(Number(P.total) || 0)), lista, nc: lista.filter(x => x.k === "crit").length, semEpi: lista.filter(x => x.epiF.length).length, comAd: lista.filter(x => x.ad.length).length};
 }
 
+// documentos e registros de evidência de SST que o setor precisa manter
+const DOCREG_REGRAS = `Documentos e registros de evidências (obrigatório): com base no que é visível (atividades, máquinas, eletricidade, trabalho em altura, espaço confinado, produtos químicos, ruído, ergonomia, movimentação de cargas, pessoas e EPIs) e nos documentos do setor anexados, identifique os documentos e registros de SST que o setor precisa ter e manter como evidência de cumprimento legal. Considere, quando aplicável ao que foi observado: inventário de riscos e plano de ação do PGR (NR-01); ordens de serviço de SST e registros de treinamento com conteúdo, carga horária, data e assinatura (NR-01 e NRs específicas); fichas de entrega de EPI com número do CA e assinatura do trabalhador (NR-06); PCMSO e ASO (NR-07); registros da CIPA ou do representante (NR-05); prontuário das instalações elétricas, esquemas unifilares e autorização formal dos trabalhadores (NR-10); inventário de máquinas, manuais, procedimentos e check-lists de segurança, registros de manutenção (NR-12); inspeções de equipamentos de movimentação e capacitação de operadores (NR-11); avaliação ergonômica preliminar ou AET (NR-17); avaliações quantitativas e laudos de agentes (NR-09, NR-15, NR-16); fichas com dados de segurança (FDS) e rotulagem dos produtos químicos (NR-26); análise de risco e permissão de trabalho para altura e espaço confinado (NR-35, NR-33); inspeção e manutenção de extintores e plano de emergência (NR-23); check-lists de inspeção de segurança e 5S, registros de DDS e de investigação de incidentes. Para cada documento informe a NR (item só com certeza), a finalidade, a evidência que deve ficar arquivada e a situação: "Implantar" (há indício de que não existe ou é exigido pelo que se vê), "Atualizar" (existe, mas incompleto ou desatualizado nos documentos anexados), "Verificar existência" (exigido, mas não dá para confirmar) ou "Existente" (só se constar nos documentos anexados). Não liste documento sem relação com o que foi observado.`;
+const DOCREG_JSON = `"documentos_registros":[{"documento":"","nr":"NR-06","item":"","finalidade":"para que serve","evidencia":"registro que comprova (ex.: ficha assinada com CA, certificado, check-list preenchido)","situacao":"Implantar|Atualizar|Verificar existência|Existente","prioridade":"Alta|Média|Baixa","responsavel":"","prazo":""}]`;
+const SUG_REGRAS = `Sugestões de melhoria com fundamentação legal (obrigatório): proponha de 4 a 10 melhorias concretas para o setor (engenharia e proteção de máquinas, organização e layout, sinalização, ergonomia, EPC e EPI, treinamento, gestão e documentação), seguindo a hierarquia de controles da NR-01. Cada sugestão deve ter fundamentação legal: a NR e o item (somente com certeza; senão escreva "confirmar item na redação vigente") e, quando couber, a CLT (art. 157, deveres do empregador; art. 158, deveres do empregado; arts. 166 e 167, EPI gratuito com CA; art. 184, dispositivos de partida e parada de máquinas) ou a Lei 6.514/1977. Informe o benefício esperado, a prioridade, o custo estimado e o prazo sugerido.`;
+const SUG_JSON = `"sugestoes_melhoria":[{"titulo":"","descricao":"o que fazer e como","fundamentacao_legal":"NR-12, item … ; CLT art. 184","beneficio":"","prioridade":"Alta|Média|Baixa","custo":"Baixo|Médio|Alto","prazo":""}]`;
+function docRegOf(d){
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const ordP = {alta: 0, "média": 1, media: 1, baixa: 2}, ordS = {implantar: 0, atualizar: 1, "verificar existência": 2, "verificar existencia": 2, existente: 3};
+  return asList(d?.documentos_registros).filter(x => x && typeof x === "object" && t(x.documento)).map(x => {
+    const sit = t(x.situacao) || "Verificar existência";
+    const k = /implant/i.test(sit) ? "crit" : /atualiz/i.test(sit) ? "high" : /exist[eê]nte/i.test(sit) && !/verific/i.test(sit) ? "ok" : "warn";
+    return {doc: t(x.documento), nr: t(x.nr), item: t(x.item), fin: t(x.finalidade), ev: t(x.evidencia), sit, k, pr: t(x.prioridade), resp: t(x.responsavel), prazo: t(x.prazo)};
+  }).sort((a, b) => (ordS[a.sit.toLowerCase()] ?? 2) - (ordS[b.sit.toLowerCase()] ?? 2) || (ordP[a.pr.toLowerCase()] ?? 3) - (ordP[b.pr.toLowerCase()] ?? 3));
+}
+
 function buildPrompt(ctx){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
@@ -944,9 +964,10 @@ Tarefas:
 1. Identifique o tipo de ambiente e as atividades visíveis.
 2. Liste os perigos e riscos visíveis citando a Norma Regulamentadora aplicável (NR-01 GRO/PGR, NR-06 EPI, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22 mineração, NR-23, NR-24, NR-26 sinalização, NR-33, NR-35 etc.) e, quando tiver segurança, o item. Classifique pela matriz da NR-01: severidade 1-5 e probabilidade 1-5. Categoria: Físico, Químico, Biológico, Ergonômico ou Acidente.
 3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 e observação curta.
-4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.).
+4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.) e a fundamentação legal de cada uma (NR e item só com certeza; CLT arts. 157, 158, 166, 167 ou 184 quando couber).
 5. Monte um ciclo PDCA e um plano 5W2H com as 3 a 5 ações mais importantes.
 6. ${PESSOAS_REGRAS}
+7. ${DOCREG_REGRAS}
 Regras: baseie-se só no que é visível; se algo não puder ser confirmado pela imagem, diga "verificar em campo". Não invente pessoas nem números. Se a imagem não mostrar um ambiente de trabalho, avalie mesmo assim o que for possível (ex.: escritório, home office, ergonomia NR-17) e explique em "limitacoes".
 Escreva em português do Brasil, frases curtas.
 
@@ -954,7 +975,8 @@ Responda SOMENTE com um objeto JSON neste formato:
 {"ambiente":"string","resumo":"2-3 frases","nota_geral":0-100,
 "riscos":[{"perigo":"string","categoria":"Acidente","nr":"NR-12","item":"12.38 ou vazio","severidade":1-5,"probabilidade":1-5,"medida":"controle recomendado"}],
 "cinco_s":{"seiri":{"nota":0-5,"obs":""},"seiton":{"nota":0-5,"obs":""},"seiso":{"nota":0-5,"obs":""},"seiketsu":{"nota":0-5,"obs":""},"shitsuke":{"nota":0-5,"obs":""}},
-"melhorias":[{"titulo":"","metodologia":"","descricao":""}],
+"melhorias":[{"titulo":"","metodologia":"","descricao":"","fundamentacao":"NR e item / CLT"}],
+${DOCREG_JSON},
 "pdca":{"plan":[""],"do":[""],"check":[""],"act":[""]},
 "plano_5w2h":[{"what":"","why":"","where":"","who":"","when":"","how":"","how_much":""}],
 ${PESSOAS_JSON},
@@ -975,9 +997,15 @@ const EXAMPLE = {
   ],
   cinco_s:{seiri:{nota:2,obs:"Sucata misturada a peças úteis"},seiton:{nota:2,obs:"Ferramentas sem quadro de sombra"},seiso:{nota:3,obs:"Piso com limalha junto à bancada"},seiketsu:{nota:2,obs:"Sem padrão visual de áreas"},shitsuke:{nota:2,obs:"Verificar em campo: auditorias 5S"}},
   melhorias:[
-    {titulo:"Quadro de sombras para ferramentas",metodologia:"Gestão visual / 5S",descricao:"Cada ferramenta com silhueta pintada; falta fica evidente."},
-    {titulo:"Intertravamento na esmerilhadeira",metodologia:"Poka-Yoke / Hierarquia de controles",descricao:"Máquina só liga com a proteção fechada."},
-    {titulo:"Evento Kaizen de 1 dia no layout",metodologia:"Kaizen / Lean",descricao:"Redefinir fluxo de peças e eliminar transportes."}
+    {titulo:"Quadro de sombras para ferramentas",metodologia:"Gestão visual / 5S",descricao:"Cada ferramenta com silhueta pintada; falta fica evidente.",fundamentacao:"NR-12 (organização e áreas de trabalho) – confirmar item na redação vigente"},
+    {titulo:"Intertravamento na esmerilhadeira",metodologia:"Poka-Yoke / Hierarquia de controles",descricao:"Máquina só liga com a proteção fechada.",fundamentacao:"NR-12 (proteções e dispositivos de intertravamento); CLT art. 184"},
+    {titulo:"Evento Kaizen de 1 dia no layout",metodologia:"Kaizen / Lean",descricao:"Redefinir fluxo de peças e eliminar transportes.",fundamentacao:"NR-12 (circulação e arranjo físico); NR-01 (plano de ação do PGR)"}
+  ],
+  documentos_registros:[
+    {documento:"Fichas de entrega de EPI com número do CA",nr:"NR-06",item:"",finalidade:"Comprovar fornecimento gratuito e orientação de uso",evidencia:"Ficha individual assinada pelo trabalhador, com data, EPI e CA",situacao:"Implantar",prioridade:"Alta",responsavel:"SESMT / RH",prazo:"15 dias"},
+    {documento:"Inventário de máquinas e check-list da esmerilhadeira",nr:"NR-12",item:"",finalidade:"Controlar proteções e condições de segurança das máquinas",evidencia:"Inventário atualizado e check-list diário preenchido e assinado",situacao:"Implantar",prioridade:"Alta",responsavel:"Manutenção",prazo:"30 dias"},
+    {documento:"Ordem de serviço de SST da função de mecânico",nr:"NR-01",item:"",finalidade:"Informar riscos, medidas de prevenção e proibições",evidencia:"OS entregue e assinada pelo trabalhador",situacao:"Verificar existência",prioridade:"Média",responsavel:"SESMT",prazo:"30 dias"},
+    {documento:"Inventário de riscos e plano de ação do PGR",nr:"NR-01",item:"",finalidade:"Registrar perigos, avaliação e medidas do setor",evidencia:"PGR atualizado com os riscos desta inspeção",situacao:"Atualizar",prioridade:"Alta",responsavel:"SESMT",prazo:"30 dias"}
   ],
   pdca:{plan:["Inventariar riscos no PGR da oficina","Definir metas 5S ≥ 4"],do:["Instalar proteções NR-12","Executar Kaizen de layout"],check:["Auditoria 5S quinzenal","Inspeção de segurança mensal"],act:["Padronizar no POP da oficina","Replicar para outras oficinas"]},
   plano_5w2h:[
@@ -1076,7 +1104,7 @@ function render(d, isExample){
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
-  const PP = pessoasOf(d);
+  const PP = pessoasOf(d), DR = docRegOf(d);
   const ppl = PP.lista.map(o => `<li class="pp ${o.k}">
       <div class="pp-h"><b>${esc(o.pessoa)}</b><span class="lc ${o.k}"><i></i>${esc(o.sit)}</span></div>
       <div class="tags">${o.figura ? `<span class="cat">${esc(o.figura)}</span>` : ""}${o.atividade ? `<span class="sp">${esc(o.atividade)}</span>` : ""}</div>
@@ -1098,7 +1126,7 @@ function render(d, isExample){
 
   const imp = asList(d.melhorias).map(m => rec(m, "titulo")).filter(Boolean).map((m,i) => `<article class="it">
       <div class="it-h"><span>${String(i+1).padStart(2,"0")}</span>${txt(m.metodologia) ? `<span class="tag">${esc(txt(m.metodologia))}</span>` : ""}</div>
-      <b>${esc(txt(m.titulo)) || "Melhoria"}</b>${txt(m.descricao) ? `<p>${esc(txt(m.descricao))}</p>` : ""}</article>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
+      <b>${esc(txt(m.titulo)) || "Melhoria"}</b>${txt(m.descricao) ? `<p>${esc(txt(m.descricao))}</p>` : ""}${txt(m.fundamentacao || m.fundamentacao_legal) ? `<p class="fund"><span>Base legal</span>${esc(txt(m.fundamentacao || m.fundamentacao_legal))}</p>` : ""}</article>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
 
   const W = [["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto"]];
   const w2hList = asList(d.plano_5w2h).map(a => rec(a, "what")).filter(Boolean);
@@ -1169,6 +1197,15 @@ function render(d, isExample){
     <section class="sec">
       <div class="sh"><h3>Pontos de melhoria</h3></div>
       <div class="imp">${imp}</div>
+    </section>
+
+    <section class="sec">
+      <div class="sh"><h3>Documentos e registros de SST</h3><span class="meta">${DR.length ? `${DR.filter(x => x.k === "crit").length} a implantar · ${DR.filter(x => x.k === "high").length} a atualizar · ${DR.filter(x => x.k === "warn").length} a verificar` : ""}</span></div>
+      ${DR.length ? `<ol class="rlist">${DR.map(x => `<li class="pp dr ${x.k}">
+        <div class="pp-h"><b>${esc(x.doc)}</b><span class="lc ${x.k}"><i></i>${esc(x.sit)}</span></div>
+        <div class="tags">${x.nr ? `<span class="nr">${esc(x.nr)}${x.item ? `<small>${esc(x.item)}</small>` : ""}</span>` : ""}${x.pr ? `<span class="cat">Prioridade ${esc(x.pr)}</span>` : ""}${x.resp || x.prazo ? `<span class="sp">${esc([x.resp, x.prazo].filter(Boolean).join(" · "))}</span>` : ""}</div>
+        ${x.fin ? `<div class="med"><span>Finalidade</span>${esc(x.fin)}</div>` : ""}
+        ${x.ev ? `<div class="med"><span>Evidência a registrar</span>${esc(x.ev)}</div>` : ""}</li>`).join("")}</ol>` : '<p class="empty">Nenhum documento ou registro indicado nesta análise.</p>'}
     </section>
 
     <section class="sec">
@@ -1645,6 +1682,8 @@ Regras:
 - Baseie-se apenas no que é visível. O que não puder ser confirmado pela imagem deve aparecer como "verificar em campo". Não invente pessoas, medições, datas ou valores.
 - Português do Brasil, linguagem técnica, impessoal e objetiva.
 - ${PESSOAS_REGRAS} No relatório, cite a figura em que cada pessoa aparece.
+- ${DOCREG_REGRAS} Inclua no plano de ação a implantação ou atualização dos documentos de prioridade alta, com "ferramenta":"Documentação".
+- ${SUG_REGRAS}
 - Se houver informações de documentos do setor, use-as no diagnóstico, na fundamentação do parecer e no plano de ação, e preencha "analise_documental". Sem documentos, deixe "analise_documental" com listas vazias.
 Ferramentas da qualidade obrigatórias:
 - Diagrama de Ishikawa (6M) para o principal problema de SST encontrado: até 4 causas por categoria, cada causa com no máximo 6 palavras.
@@ -1667,7 +1706,9 @@ Responda SOMENTE com um objeto JSON neste formato:
 "rei":[{"acao":"","esforco":1,"impacto":1}],
 "parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
 "cinco_s":{"necessario":true,"justificativa":"1-2 frases","seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":""}},
-"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual"}],
+"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual|Documentação"}],
+${DOCREG_JSON},
+${SUG_JSON},
 ${PESSOAS_JSON},
 "analise_documental":{"documentos":[{"nome":"","tipo":"","contribuicao":"o que o documento acrescentou ao diagnóstico"}],"convergencias":["documentado e confirmado nas imagens"],"divergencias":["documentado sem controle visível, ou visível e não documentado"],"pendencias_documentais":["documento ausente, vencido ou incompleto"]},
 "consideracoes_finais":"1-2 parágrafos",
@@ -1812,6 +1853,9 @@ function reportHTML(R, photos, meta){
   const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
   const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
+  const DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
+  const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
+  const prC = pr => /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2];
   const ppSit = k => k === "crit" ? LV.crit : k === "ok" ? LV.ok : LV.warn;
   let mx = "";
   for (let sv = 5; sv >= 1; sv--){
@@ -1856,6 +1900,7 @@ function reportHTML(R, photos, meta){
       <div><h4>Principais riscos</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
+    ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
     ${PP.total ? `<p><b>Pessoas no ambiente:</b> ${PP.total} pessoa(s) visível(is) nas imagens; ${PP.semEpi} sem EPI completo para a atividade e ${PP.comAd} com adornos em situação de risco${PP.nc ? ` (${PP.nc} em não conformidade)` : ""}. Detalhes na seção de EPI e adornos.</p>` : ""}
     <p class="cap">Notas de 0 a 100 (atual → após o plano de ação): SST ${SC.sstA} → ${SC.sstB}${SC.s5A !== null ? ` · 5S ${SC.s5A} → ${SC.s5B}` : ""} · Geral ${SC.gA} → ${SC.gB}.${S5 ? ` Implantação do 5S necessária: ${S5.necessario ? "sim" : "não"}.` : ""} Detalhes nas seções seguintes.</p>
   </section>
@@ -1863,7 +1908,7 @@ function reportHTML(R, photos, meta){
   ${H("Objetivo")}${para(R.objetivo)}
   ${H("Justificativa")}${para(R.justificativa)}
   ${H("Metodologia")}${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
@@ -1933,6 +1978,17 @@ function reportHTML(R, photos, meta){
   %%T:Fundamentação normativa das constatações%%<div class="tw"><table><thead><tr><th>NR / item</th><th>Constatação</th><th>Exigência normativa</th></tr></thead><tbody>
   ${asList(P.fundamentacao).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
   </tbody></table></div>
+  ${H("Documentos e registros de evidências de SST")}
+  ${DR.length ? `<p>Para as atividades e riscos observados, as Normas Regulamentadoras exigem que o setor mantenha os documentos e registros abaixo, que servem de evidência do cumprimento legal em fiscalizações, auditorias e na gestão do PGR. A situação indica se é preciso implantar, atualizar ou apenas confirmar a existência em campo.</p>
+  %%T:Documentos e registros de evidências necessários%%<div class="tw"><table class="dreg"><thead><tr><th>Documento / registro</th><th>NR</th><th>Finalidade</th><th>Evidência a manter</th><th>Situação</th><th>Prioridade · prazo</th></tr></thead><tbody>
+  ${DR.map(x => `<tr><td><b>${esc(x.doc)}</b>${x.resp ? `<div class="cap" style="margin:0">Responsável: ${esc(x.resp)}</div>` : ""}</td><td class="num">${esc(x.nr || "—")}${x.item ? " · " + esc(x.item) : ""}</td><td>${esc(x.fin || "—")}</td><td>${esc(x.ev || "—")}</td><td><span class="lv" style="background:${LV[x.k][2]}">${esc(x.sit)}</span></td><td>${x.pr ? `<span class="lv" style="background:${prC(x.pr)}">${esc(x.pr)}</span>` : "—"}${x.prazo ? `<div class="cap" style="margin:2px 0 0">${esc(x.prazo)}</div>` : ""}</td></tr>`).join("")}
+  </tbody></table></div>
+  <p class="cap">Os registros devem ficar arquivados e disponíveis à fiscalização, assinados e datados, pelo prazo definido em cada NR.</p>` : "<p>Nenhum documento ou registro adicional foi indicado a partir das imagens. Recomenda-se confirmar em campo a existência do PGR, das ordens de serviço, dos registros de treinamento e das fichas de EPI.</p>"}
+  ${SG.length ? `${H("Sugestões de melhoria com fundamentação legal")}
+  <p>As melhorias abaixo seguem a hierarquia de controles da NR-01 (eliminação, substituição, controles de engenharia, medidas administrativas e EPI) e indicam a base legal de cada recomendação.</p>
+  %%T:Sugestões de melhoria e fundamentação legal%%<div class="tw"><table class="sug"><thead><tr><th>#</th><th>Melhoria proposta</th><th>Fundamentação legal</th><th>Benefício esperado</th><th>Prioridade</th><th>Custo · prazo</th></tr></thead><tbody>
+  ${SG.map((x, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(x.titulo || "")}</b>${x.descricao ? `<div class="cap" style="margin:2px 0 0">${esc(x.descricao)}</div>` : ""}</td><td>${esc(x.fundamentacao_legal || "—")}</td><td>${esc(x.beneficio || "—")}</td><td>${x.prioridade ? `<span class="lv" style="background:${prC(x.prioridade)}">${esc(x.prioridade)}</span>` : "—"}</td><td>${esc([x.custo, x.prazo].filter(Boolean).join(" · ") || "—")}</td></tr>`).join("")}
+  </tbody></table></div>` : ""}
   ${H("Plano de ação (5W2H)")}
   %%T:Plano de ação 5W2H%%<div class="tw"><table class="w2h"><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê<small>What</small></th><th>Por quê<small>Why</small></th><th>Onde<small>Where</small></th><th>Quem<small>Who</small></th><th>Quando<small>When</small></th><th>Como<small>How</small></th><th>Quanto<small>How much</small></th></tr></thead><tbody>
   ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
