@@ -972,7 +972,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v102</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v103</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1177,7 +1177,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v102</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v103</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3164,12 +3164,6 @@ function reportHTML(R, photos, meta){
     ${counts.crit ? call("crit", "Ponto crítico", `${counts.crit} risco(s) crítico(s) exigem ação imediata: ${esc(top3[0]?.perigo || "")}${top3[0]?.nr ? ` (${esc(top3[0].nr)})` : ""}.`) : ""}
     <p class="cap">Notas de 0 a 100 (atual → após o plano de ação): SST ${SC.sstA} → ${SC.sstB}${SC.s5A !== null ? ` · 5S ${SC.s5A} → ${SC.s5B}` : ""} · Geral ${SC.gA} → ${SC.gB}.${S5 ? ` Implantação do 5S necessária: ${S5.necessario ? "sim" : "não"}.` : ""} Detalhes nas seções seguintes.</p>
   </section>
-  ${H("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.")}
-  <div class="tw"><table class="idt"><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody>
-  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Aprovado por", aprovOf(meta) || "A confirmar"], ["Responsável técnico", meta.resp || "Não informado"], ["Data da inspeção", meta.data], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens – Metodologia de Análise SST"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
-  </tbody></table></div>
-  ${call("info", "Uso do relatório", "Leia as seções na ordem apresentada: o diagnóstico fundamenta o parecer, e o parecer fundamenta o plano de ação.")}
-  ${call("warn", "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.")}
   ${H("Introdução", "Contexto da inspeção e do setor avaliado.")}${para(R.introducao)}
   ${H("Objetivo", "O que esta inspeção verifica e entrega.")}${para(R.objetivo)}
   ${H("Justificativa", "Fundamentos legais e de gestão que motivam a inspeção.")}${para(R.justificativa)}
@@ -3758,11 +3752,6 @@ async function buildPptx(R, photos, meta){
   s.addText([{text: meta.emp || "Empresa / unidade", options: {bold: true, breakLine: true}}, {text: [meta.elab ? "Elaboração: " + meta.elab : "", meta.rev ? "Revisão: " + meta.rev : "", meta.data].filter(Boolean).join(" · ")}], {x: 0.7, y: 6.35, w: 6.6, h: 0.55, fontFace: F, fontSize: 12, color: "444444"});
   s.addText(["PLANEJAR", "DESENVOLVER", "CHECAR", "AGIR"].flatMap((w, k) => [...(k ? [{text: "  •  ", options: {color: OR2}}] : []), {text: w, options: {color: NV}}]), {x: 0.7, y: 6.9, w: 6.6, h: 0.4, fontFace: F, fontSize: 14, bold: true});
 
-  // identificação
-  s = slide("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.");
-  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Aprovado por", aprovOf(meta) || "A confirmar"], ["Responsável técnico", meta.resp || "Não informado"], ["Data da inspeção", meta.data], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens – Metodologia de Análise SST"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
-  callout(s, "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 5.95, true, 0.8);
-
   // resumo executivo
   s = slide("Resumo executivo", "Situação geral, notas e principais números da inspeção.");
   const tw = (12.33 - (tiles.length - 1) * 0.3) / tiles.length;
@@ -4109,7 +4098,7 @@ function metaSync(){
       // com edições manuais no texto: troca só a capa, a identificação e o quadro de controle, mantendo o resto editado
       const P = h => new DOMParser().parseFromString(h, "text/html");
       const fresh = P(reportHTML(report.R, report.photos, report.meta)), ed = P(report.edited);
-      ["section.cover", "table.idt", "section.ctrl", ".signs"].forEach(sel => { const a = ed.querySelector(sel), b = fresh.querySelector(sel); if (a && b) a.replaceWith(b); });
+      ["section.cover", "section.ctrl", ".signs"].forEach(sel => { const a = ed.querySelector(sel), b = fresh.querySelector(sel); if (a && b) a.replaceWith(b); });
       const art = ed.querySelector(".rep"); if (art) report.edited = art.outerHTML;
     }
     const y = scrollY; showReport(); scrollTo(0, y); saveSoon();
