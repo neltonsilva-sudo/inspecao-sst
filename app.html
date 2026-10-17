@@ -642,7 +642,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .cv-t1{color:var(--nv);margin-top:60px}
 .rep .cv-t2{color:var(--or2)}
 .rep .cover h1{font:700 21px/1.25 Arial,sans-serif;color:var(--nv);text-transform:uppercase;margin:2px 0 6px;max-width:420px}
-.rep .cv-box{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;border:2px solid var(--nv);border-radius:14px;padding:14px 16px;margin-top:22px;background:#fff;max-width:440px}
+.rep .cv-box{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;border:2px solid var(--nv);border-radius:14px;padding:14px 16px;margin-top:22px;background:#fff;max-width:500px}
 .rep .cv-ic{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--nv)}
 .rep .cv-sit{font:700 15px Arial,sans-serif;text-transform:uppercase}
 .rep .cv-box .notas{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
@@ -652,6 +652,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .cv-box .nt-v span{font-size:13px}
 .rep .cv-box .nt-c{display:none}
 .rep .cv-bt{font:11px Arial,sans-serif;color:#707070;margin-top:6px}
+.rep .cv-box .nt-l{display:flex;justify-content:space-between;gap:4px;font:700 8.5px Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#8a8a8a;margin-top:1px}
+.rep .cv-box .nt-k{font:600 10px Arial,sans-serif;margin-top:3px}
+.rep .cv-exp{font:10.5px/1.45 Arial,sans-serif;color:#4a4a4a;margin-top:8px}
+.rep .cv-exp ul{margin:4px 0 0;padding-left:15px}.rep .cv-exp li{margin:1px 0}
 .rep .cover .meta{background:none;padding:0;max-width:440px;gap:8px 18px;margin-top:6px}
 .rep .cover .meta dt{font:700 10px Arial,sans-serif;color:#707070}
 .rep .cover .meta dd{font:600 14px Arial,sans-serif;color:#1a1a1a}
@@ -917,7 +921,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v73</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v74</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1102,7 +1106,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v73</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v74</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2669,6 +2673,14 @@ function prep5S(R){
 }
 // notas de 0 a 100, regra fixa e transparente: SST desconta por risco; 5S = % dos sensos; geral = média
 const PEN = {crit: 20, high: 12, warn: 6, ok: 2};
+// explicação das notas da capa: de onde vem o desconto da nota de SST
+function scoreWhy(SC){
+  const c = {crit: 0, high: 0, warn: 0, ok: 0}; SC.res.forEach(x => c[x.a.k]++);
+  const nm = {crit: ["crítico", "críticos"], high: ["alto", "altos"], warn: ["moderado", "moderados"], ok: ["baixo", "baixos"]};
+  const parts = Object.keys(c).filter(k => c[k]).map(k => `${c[k]} ${nm[k][c[k] > 1 ? 1 : 0]} (−${c[k] * PEN[k]})`);
+  const tot = Object.keys(c).reduce((t, k) => t + c[k] * PEN[k], 0);
+  return {parts, tot, txt: parts.length ? `Hoje: ${parts.join(", ")} = −${tot} ponto(s)${tot >= 100 ? ", por isso a nota chega a 0" : ""}.` : "Nenhum risco identificado."};
+}
 const classe = n => n >= 75 ? ["Ótimo", "#2e8b57"] : n >= 60 ? ["Regular", "#a87f00"] : ["Ruim", "#c62828"]; // faixas: 75–100 Ótimo · 60–74 Regular · < 60 Ruim
 function scores(riscos, S5){
   const res = riscos.map(r => {
@@ -2754,6 +2766,7 @@ function reportHTML(R, photos, meta){
   const ord = {alta:0, "média":1, media:1, baixa:2};
   const S5 = prep5S(R);
   const SC = scores(riscos, S5);
+  const ctile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-l"><span>hoje</span><span>após o plano</span></div><div class="nt-k"><span style="color:${classe(a)[1]}">${classe(a)[0]}</span> → <span style="color:${classe(b)[1]}">${classe(b)[0]}</span></div></div>`;
   const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
   const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
@@ -2795,8 +2808,9 @@ function reportHTML(R, photos, meta){
       <div class="cv-box">
         <span class="cv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.4 3.4 8.2 8 9 4.6-.8 8-4.6 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke-linecap="round"/></svg></span>
         <div class="cv-bx"><div class="cv-sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
-          <div class="notas" aria-label="Notas de avaliação: atual e após o plano de ação">${tile("SST (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? tile("5S", SC.s5A, SC.s5B) : ""}${tile("Geral", SC.gA, SC.gB)}</div>
-          <div class="cv-bt">Notas de 0 a 100: atual → após o plano de ação</div></div>
+          <div class="notas" aria-label="Notas de avaliação: hoje e após o plano de ação">${ctile("SST (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? ctile("5S", SC.s5A, SC.s5B) : ""}${ctile("Geral", SC.gA, SC.gB)}</div>
+          <div class="cv-exp"><b>Como ler:</b> notas de 0 a 100. O 1º número é a situação <b>hoje</b>; o 2º, a nota <b>prevista se o plano de ação for cumprido</b>. Faixas: 75–100 Ótimo · 60–74 Regular · abaixo de 60 Ruim.
+            <ul><li><b>SST (NRs):</b> parte de 100 e desconta cada risco encontrado: crítico −20, alto −12, moderado −6, baixo −2 (mínimo 0). ${scoreWhy(SC).txt}</li>${SC.s5A !== null ? "<li><b>5S:</b> soma das notas dos 5 sensos (0 a 5 cada), convertida para 0 a 100.</li>" : ""}<li><b>Geral:</b> ${SC.s5A !== null ? "média das notas de SST e 5S" : "igual à nota de SST"}.</li></ul></div></div>
       </div>
       <dl class="meta">
         <div><dt>Empresa / unidade</dt><dd>${esc(meta.emp || "Não informado")}</dd></div>
@@ -3280,7 +3294,9 @@ async function buildDocx(R, photos, meta){
       rows: [new TableRow({children: [new TableCell({width: {size: LW - 200, type: WidthType.DXA}, margins: {top: 140, bottom: 140, left: 200, right: 200}, children: [
         new Paragraph({children: [new TextRun({text: clean(c.querySelector(".cv-sit")?.textContent || "").trim().toUpperCase(), bold: true, size: 24, color: dxHex(c.querySelector(".cv-sit")?.style.color) || NAVY, font: "Arial"})]}),
         new Paragraph({spacing: {before: 80}, children: tiles.flatMap((x, i) => { const bs = [...x.querySelectorAll(".nt-v b")]; return [new TextRun({text: (i ? "     " : "") + clean(x.querySelector(".nt-t")?.textContent || "") + "  ", size: 17, bold: true, color: GRAY, font: "Arial"}), new TextRun({text: bs[0]?.textContent || "", bold: true, size: 30, color: dxHex(bs[0]?.style.color), font: "Arial"}), new TextRun({text: " → ", size: 22, color: GRAY}), new TextRun({text: bs[1]?.textContent || "", bold: true, size: 30, color: dxHex(bs[1]?.style.color), font: "Arial"})]; })}),
-        new Paragraph({children: [new TextRun({text: "Notas de 0 a 100: atual → após o plano de ação", size: 16, color: GRAY, font: "Arial"})]})]})]})]}));
+        ...(() => { const ex = c.querySelector(".cv-exp"); if (!ex) return [new Paragraph({children: [new TextRun({text: "Notas de 0 a 100: hoje → após o plano de ação", size: 16, color: GRAY, font: "Arial"})]})];
+          const intro = clean([...ex.childNodes].filter(n => n.nodeName !== "UL").map(n => n.textContent).join("")).trim();
+          return [new Paragraph({spacing: {before: 80}, children: [new TextRun({text: intro, size: 15, color: GRAY, font: "Arial"})]}), ...[...ex.querySelectorAll("li")].map(li => new Paragraph({spacing: {before: 20}, children: [new TextRun({text: "• " + clean(li.textContent).trim(), size: 15, color: GRAY, font: "Arial"})]}))]; })()]})]})]}));
     [...c.querySelectorAll("dl.meta > div")].forEach((d, i) => L.push(new Paragraph({spacing: {before: i ? 40 : 300}, children: [new TextRun({text: clean(d.querySelector("dt")?.textContent || "").toUpperCase() + ":  ", size: 16, bold: true, color: GRAY, font: "Arial"}), new TextRun({text: clean(d.querySelector("dd")?.textContent || ""), size: 20, bold: true, font: "Arial"})]})));
     const ft = c.querySelector(".cv-foot");
     L.push(new Paragraph({spacing: {before: 900}, children: [new TextRun({text: clean(ft?.querySelector("b")?.textContent || ""), bold: true, size: 21, font: "Arial"})]}));
@@ -3411,7 +3427,8 @@ async function buildPptx(R, photos, meta){
   s.addShape(pp.ShapeType.ellipse, {x: 0.88, y: 5.33, w: 0.74, h: 0.74, fill: {color: NV}, line: {width: 0}});
   s.addText("✓", {x: 0.88, y: 5.33, w: 0.74, h: 0.74, fontFace: F, fontSize: 22, bold: true, color: "FFFFFF", align: "center", valign: "middle"});
   s.addText("SITUAÇÃO: " + sit.toUpperCase(), {x: 1.8, y: 5.22, w: 5.1, h: 0.38, fontFace: F, fontSize: 14, bold: true, color: sitC});
-  s.addText(tiles.flatMap(([t, a, b], i) => [{text: (i ? "     " : "") + t + "  ", options: {fontSize: 11, bold: true, color: MUT}}, {text: String(a), options: {fontSize: 18, bold: true, color: hexOf(classe(a)[1])}}, {text: " → ", options: {fontSize: 13, color: MUT}}, {text: String(b), options: {fontSize: 18, bold: true, color: hexOf(classe(b)[1])}}]), {x: 1.8, y: 5.6, w: 5.1, h: 0.5, fontFace: F, valign: "middle"});
+  s.addText(tiles.flatMap(([t, a, b], i) => [{text: (i ? "     " : "") + t + "  ", options: {fontSize: 11, bold: true, color: MUT}}, {text: String(a), options: {fontSize: 18, bold: true, color: hexOf(classe(a)[1])}}, {text: " → ", options: {fontSize: 13, color: MUT}}, {text: String(b), options: {fontSize: 18, bold: true, color: hexOf(classe(b)[1])}}]), {x: 1.8, y: 5.52, w: 5.1, h: 0.45, fontFace: F, valign: "middle"});
+  s.addText("1º número = nota de hoje · 2º = prevista após o plano de ação (0 a 100: 75+ Ótimo · 60–74 Regular · abaixo de 60 Ruim)", {x: 1.8, y: 5.95, w: 5.15, h: 0.28, fontFace: F, fontSize: 8.5, color: MUT, valign: "top", fit: "shrink"});
   s.addText([{text: meta.emp || "Empresa / unidade", options: {bold: true, breakLine: true}}, {text: `Elaboração: ${elabOf(meta)}${meta.rev ? " · Revisão: " + meta.rev : ""} · ${meta.data}`}], {x: 0.7, y: 6.35, w: 6.6, h: 0.55, fontFace: F, fontSize: 12, color: "444444"});
   s.addText([{text: "IDENTIFICAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "AVALIAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "CONTROLAR", options: {color: NV}}], {x: 0.7, y: 6.9, w: 6.6, h: 0.4, fontFace: F, fontSize: 14, bold: true});
 
