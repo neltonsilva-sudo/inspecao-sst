@@ -884,7 +884,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v62</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v63</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1066,7 +1066,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v62</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v63</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2202,7 +2202,7 @@ async function fitBudget(blobs, max){
     }catch(e){ return b; }
   }));
 }
-async function viaApi(prompt, blobs, signal, again = true){
+async function viaApi(prompt, blobs, signal, again = true, opts = {}){
   const key = $("apiKey").value.trim();
   blobs = await fitBudget(blobs, 22e6);
   const content = [];
@@ -2212,7 +2212,7 @@ async function viaApi(prompt, blobs, signal, again = true){
     method:"POST", signal,
     headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01",
              "anthropic-dangerous-direct-browser-access":"true","anthropic-beta":"server-side-fallback-2026-07-01"},
-    body: JSON.stringify({model:MODEL, max_tokens:12800, output_config:{effort:"medium"}, fallbacks:"default",
+    body: JSON.stringify({model:MODEL, max_tokens:12800, output_config:{effort: opts.fast ? "low" : "medium"}, fallbacks:"default",
                           messages:[{role:"user", content}]})
   });
   const j = await res.json().catch(() => ({}));
@@ -2221,7 +2221,7 @@ async function viaApi(prompt, blobs, signal, again = true){
   const text = (j.content || []).filter(c => c.type === "text").map(c => c.text).join("");
   const out = await parseLoose(text); if (out) return out;
   if (j.stop_reason === "max_tokens") throw {code:"http", status:0, message: "a resposta foi cortada por tamanho. Tente com menos fotos"};
-  if (again) return viaApi(prompt, blobs, signal, false); // refaz uma vez sozinho
+  if (again) return viaApi(prompt, blobs, signal, false, opts); // refaz uma vez sozinho
   throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
@@ -2244,25 +2244,30 @@ async function pickGeminiModel(key, signal){
 }
 let busyNote = ""; // aviso que aparece junto do cronômetro enquanto o Gemini está sobrecarregado
 const wait = (ms, signal) => new Promise((res, rej) => { const t = setTimeout(res, ms); signal?.addEventListener("abort", () => { clearTimeout(t); rej(new DOMException("Abortado", "AbortError")); }, {once: true}); });
-async function viaGemini(prompt, blobs, signal, again = true){
+// nível de "raciocínio" por família de modelo (os mais antigos não aceitam o parâmetro)
+const thinkCfg = m => /gemini-3/.test(m) ? {thinkingLevel: "low"} : /gemini-2\.5-pro/.test(m) ? {thinkingBudget: 128} : /gemini-2\.5/.test(m) ? {thinkingBudget: 0} : null;
+async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   const key = $("apiKey").value.trim();
   const model = await pickGeminiModel(key, signal);
   blobs = await fitBudget(blobs, 13.5e6); // ~18 MB depois de virar base64
   const parts = [];
   for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
   parts.push({text: prompt});
-  const body = JSON.stringify({contents:[{role:"user", parts}], generationConfig:{responseMimeType:"application/json", temperature:0.2}});
+  let think = !!opts.fast;
+  const body = m => { const gc = {responseMimeType:"application/json", temperature:0.2}; const tc = think && thinkCfg(m); if (tc) gc.thinkingConfig = tc; return JSON.stringify({contents:[{role:"user", parts}], generationConfig: gc}); };
   // Gemini sobrecarregado (503/500/504): tenta de novo com pausas e, se continuar, usa outro modelo
   // ordem: principal → outros modelos (em pico costumam estar livres) → principal de novo após uma pausa maior
   const alt = geminiAlt.filter(m => m !== model), tries = [model, ...alt, model, model];
   const pause = tries.map((m, a) => a === 0 ? 0 : a <= alt.length ? 1500 : a === alt.length + 1 ? 8000 : 15000);
   let res, j;
   for (let a = 0; a < tries.length; a++){
-    if (a){ busyNote = ` · Gemini sobrecarregado, tentando de novo${tries[a] !== model ? " com outro modelo (" + tries[a].replace("models/", "") + ")" : ""} (${a}/${tries.length - 1})`; await wait(pause[a], signal).catch(e => { busyNote = ""; throw e; }); }
-    try{ res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${tries[a]}:generateContent?key=${encodeURIComponent(key)}`, {method:"POST", signal, headers:{"content-type":"application/json"}, body}); }
+    if (a){ busyNote = ` · Gemini ${res?.status === 429 ? "no limite de pedidos por minuto" : "sobrecarregado"}, tentando de novo${tries[a] !== model ? " com outro modelo (" + tries[a].replace("models/", "") + ")" : ""} (${a}/${tries.length - 1})`; await wait(pause[a], signal).catch(e => { busyNote = ""; throw e; }); }
+    try{ res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${tries[a]}:generateContent?key=${encodeURIComponent(key)}`, {method:"POST", signal, headers:{"content-type":"application/json"}, body: body(tries[a])}); }
     catch(e){ busyNote = ""; throw e; }
     j = await res.json().catch(() => ({}));
-    if (![500, 503, 504].includes(res.status)) break;
+    // modelo que não aceita o ajuste de raciocínio: repete o mesmo pedido sem ele
+    if (res.status === 400 && think && /think/i.test(j.error?.message || "")){ think = false; a--; continue; }
+    if (![429, 500, 503, 504].includes(res.status)) break; // 429: limite por minuto da chave gratuita; cada modelo tem o seu
   }
   busyNote = "";
   if (!res.ok){
@@ -2276,7 +2281,7 @@ async function viaGemini(prompt, blobs, signal, again = true){
   if (!text) throw fin === "MAX_TOKENS" ? {code:"http", status:0, message: cut} : (/SAFETY|RECITATION|PROHIBITED|BLOCK/.test(fin) ? {code:"refused"} : {code:"http", status:0, message: "o Gemini não devolveu resposta (" + (fin || "vazia") + "). Tente de novo"});
   const out = await parseLoose(text); if (out) return out;
   if (fin === "MAX_TOKENS") throw {code:"http", status:0, message: cut};
-  if (again) return viaGemini(prompt, blobs, signal, false); // refaz uma vez sozinho
+  if (again) return viaGemini(prompt, blobs, signal, false, opts); // refaz uma vez sozinho
   throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
@@ -2299,10 +2304,11 @@ async function shrink(blobs){
     }catch(e){ return b; }
   }));
 }
-async function callAI(prompt, blobs, signal){
+// opts.fast: redação a partir de uma análise pronta → pouco "raciocínio" interno do modelo (bem mais rápido)
+async function callAI(prompt, blobs, signal, opts = {}){
   blobs = await shrink(blobs);
   if (sample) return sample.json(prompt, {images: blobs, signal, cache:false});
-  return provider() === "claude" ? viaApi(prompt, blobs, signal) : viaGemini(prompt, blobs, signal);
+  return provider() === "claude" ? viaApi(prompt, blobs, signal, true, opts) : viaGemini(prompt, blobs, signal, true, opts);
 }
 function handleErr(e){
   if (e?.code === "cancelled" || e?.name === "AbortError") setStatus("Operação interrompida.");
@@ -3537,19 +3543,26 @@ async function openFaces(){
 }
 
 // relatório em duas etapas paralelas (respostas menores: menos falhas e mais rapidez)
-const REP_A = ["titulo","introducao","objetivo","justificativa","metodologia","descricao_ambiente","fotos","riscos","parecer","documentos_registros","sugestoes_melhoria","pessoas","residuos","armazenamento","edificacao","psicossociais","analise_documental","consideracoes_finais","referencias"];
-const REP_B = ["ishikawa","gut","rei","cinco_s","plano_acao","layout","checklist_nrs"];
-function reportPart(full, keys, etapa){
+// relatório em 4 partes equilibradas, geradas ao mesmo tempo. Só a 1ª recebe as fotos (legendas e descrição do
+// ambiente); as demais redigem a partir da análise preliminar, que já traz tudo o que foi visto nas imagens
+const REP_PARTS = [
+  ["titulo","introducao","objetivo","justificativa","metodologia","descricao_ambiente","fotos","pessoas","edificacao","consideracoes_finais","referencias"],
+  ["riscos","parecer","documentos_registros"],
+  ["sugestoes_melhoria","residuos","armazenamento","psicossociais","analise_documental","layout"],
+  ["ishikawa","gut","rei","cinco_s","plano_acao","checklist_nrs"]
+];
+function reportPart(full, keys, etapa, total = REP_PARTS.length, imgs = true){
   const mark = "Responda SOMENTE com um objeto JSON neste formato:\n";
   const i = full.lastIndexOf(mark); if (i < 0) return full;
   const head = full.slice(0, i), json = full.slice(i + mark.length).trim();
   const lines = json.replace(/^\{/, "").replace(/\}\s*$/, "").split("\n").map(l => l.trim()).filter(Boolean);
-  const keep = lines.filter(l => { const m = l.match(/^"([a-z_0-9]+)"/i); return m && keys.includes(m[1]); }).map(l => l.replace(/,\s*$/, ""));
-  return head + `ETAPA ${etapa} DE 2: preencha SOMENTE os campos do formato abaixo (os demais campos são feitos em outra etapa). Mantenha coerência total com os riscos, NRs e constatações da análise preliminar.\n` + mark + "{" + keep.join(",\n") + "}";
+  const all = REP_PARTS.flat(), mine = k => keys.includes(k) || (etapa === 1 && !all.includes(k)); // campo novo no formato, sem parte definida: vai na 1ª
+  const keep = lines.filter(l => { const m = l.match(/^"([a-z_0-9]+)"/i); return m && mine(m[1]); }).map(l => l.replace(/,\s*$/, ""));
+  return head + `ETAPA ${etapa} DE ${total}: preencha SOMENTE os campos do formato abaixo (os demais campos são feitos em outras etapas, ao mesmo tempo). Mantenha coerência total com os riscos, NRs e constatações da análise preliminar.${imgs ? "" : " Nesta etapa as imagens NÃO estão anexadas: baseie-se nas constatações, evidências e figuras citadas na análise preliminar (mantenha as referências às figuras)."}\n` + mark + "{" + keep.join(",\n") + "}";
 }
 async function callPart(prompt, blobs, signal){
-  try{ return await callAI(prompt, blobs, signal); }
-  catch(e){ if (e?.code === "cancelled" || e?.name === "AbortError" || e?.status === 401) throw e; return await callAI(prompt, blobs, signal); } // uma nova tentativa
+  try{ return await callAI(prompt, blobs, signal, {fast: true}); }
+  catch(e){ if (e?.code === "cancelled" || e?.name === "AbortError" || e?.status === 401) throw e; return await callAI(prompt, blobs, signal, {fast: true}); } // uma nova tentativa
 }
 
 async function generateReport(){
@@ -3558,15 +3571,16 @@ async function generateReport(){
   const iso = $("rData").value || new Date().toISOString().slice(0, 10);
   const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
-  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
+  let done = 0;
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s${done ? ` · ${done} de ${REP_PARTS.length} partes prontas` : ""}${busyNote}`), 1000);
   setStatus("Redigindo relatório técnico…");
   try{
     const full = reportPrompt(meta, $("ctx").value.trim(), validatedData(lastData), blobs.length);
-    let done = 0;
-    const part = (keys, n) => callPart(reportPart(full, keys, n), blobs, ctl.signal).then(r => { done++; setStatus(`Redigindo relatório técnico… etapa ${done} de 2 concluída`); return r || {}; });
+    const N = REP_PARTS.length;
+    const part = (keys, n) => callPart(reportPart(full, keys, n, N, n === 1), n === 1 ? blobs : [], ctl.signal).then(r => { done++; setStatus(`Redigindo relatório técnico… ${done} de ${N} partes prontas`); return r || {}; });
     const facesP = detectFaces(blobs, ctl.signal).catch(() => null); // rostos cobertos nas fotos do relatório
-    const [A, B] = await Promise.all([part(REP_A, 1), part(REP_B, 2)]);
-    const R = {...A, ...B};
+    const parts = await Promise.all(REP_PARTS.map((k, i) => part(k, i + 1)));
+    const R = Object.assign({}, ...parts);
     setStatus("Cobrindo os rostos das pessoas nas fotos…");
     const faces = await facesP;
     report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces ? faces[i] : [])))};
