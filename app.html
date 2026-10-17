@@ -203,6 +203,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .mon-al label{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;cursor:pointer}
 .mon-al input{width:16px;height:16px;accent-color:var(--crit)}
 @media (max-width:640px){.mon-al{grid-template-columns:minmax(0,1fr)}}
+button.watch{width:100%;min-height:48px;font-weight:700;font-size:15px;background:var(--crit);border-color:var(--crit);color:#fff}
+button.watch:hover{filter:brightness(1.08)}
+button.watch.on{background:var(--panel);color:var(--crit)}
 .mon-alert{border:2px solid var(--crit);background:#fdecec;color:#7a1414;border-radius:10px;padding:10px 12px;font-size:13.5px}
 .mon-alert ul{margin:4px 0 0;padding-left:18px}
 .report .alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:start;padding:14px 16px;border-radius:8px;background:var(--cell-crit);border:1px solid var(--crit);border-left:7px solid var(--crit)}
@@ -931,7 +934,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v78</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v79</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -987,6 +990,7 @@ api:
         </details>
         <div id="monBox" class="stack mon">
           <p class="label" style="margin:0">Monitoramento automático</p>
+          <button id="watchBtn" type="button" class="watch">🛡️ Monitorar situações de risco</button>
           <div class="row">
             <select id="monInt" aria-label="Intervalo entre análises">
               <option value="60">A cada 1 min</option><option value="120">A cada 2 min</option>
@@ -1124,7 +1128,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v78</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v79</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2537,16 +2541,33 @@ function startMon(){
   try{ if (window.Notification && Notification.permission === "default") Notification.requestPermission(); }catch(e){}
   mon = {sec: Number($("monInt").value) || 300, next: Date.now()};
   mon.timer = setInterval(tickMon, 1000); tickMon();
+  $("watchBtn").textContent = "⏹ Parar monitoramento"; $("watchBtn").classList.add("on");
   $("monBtn").textContent = "Parar monitoramento"; $("monInt").disabled = true; $("monBox").classList.add("on"); $("rec").textContent = "● MONITORANDO";
   updateGo();
 }
 function stopMon(){
   if (mon) clearInterval(mon.timer); mon = null;
+  $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on");
   $("monBtn").textContent = "Iniciar monitoramento"; $("monInt").disabled = false; $("monBox").classList.remove("on"); $("rec").textContent = "● AO VIVO";
   $("monInfo").textContent = history.length ? `Monitoramento parado · ${history.length} análise(s) no histórico.` : "Monitoramento parado.";
   updateGo();
 }
 $("monBtn").onclick = () => mon ? stopMon() : startMon();
+// um clique: liga a câmera (se preciso), marca as 4 situações, intervalo de 1 min e começa a monitorar
+$("watchBtn").onclick = async () => {
+  if (mon){ stopMon(); return; }
+  if (!sample && !$("apiKey").value.trim()){ setStatus("Informe a chave da API (Gemini ou Claude) para monitorar.", true); $("apiKey").focus(); return; }
+  if (!stream){
+    setStatus("Ligando a câmera…");
+    await startCam($("camSel").value || undefined);
+    for (let i = 0; i < 40 && !($("video").videoWidth > 0); i++) await new Promise(r => setTimeout(r, 150));
+    if (!stream){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
+  }
+  MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); });
+  $("monInt").value = "60";
+  startMon();
+  setStatus("Monitorando a cada 1 minuto: risco crítico, pessoa sem EPI, com adornos, prática insegura e pessoa dormindo, desacordada ou caída.");
+};
 $("stopBtn").onclick = () => ctl?.abort();
 
 /* ---------- relatório técnico ---------- */
