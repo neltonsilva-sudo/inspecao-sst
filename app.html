@@ -225,7 +225,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .scale .cur{color:var(--ink);font-weight:600}
 .report .scale .sc-t{font:600 11px var(--f-body);margin-left:2px}
 .report .lv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.report .lv div{min-width:0;padding:8px 7px 7px;border:1px solid var(--line);border-top:4px solid var(--lc);border-radius:6px;background:var(--panel)}
+.report .lv > *{min-width:0;padding:8px 7px 7px;border:1px solid var(--line);border-top:4px solid var(--lc);border-radius:6px;background:var(--panel)}
+.report .lv button{display:block;width:100%;min-height:0;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.report .lv button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.report .lv button:focus-visible{outline:2px solid var(--lc);outline-offset:2px}
 .report .lv b{display:block;font:700 30px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .report .lv span{display:block;font-size:12px;font-weight:600;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .report .lv small{display:block;font:500 10.5px var(--f-mono);color:var(--muted)}
@@ -332,6 +335,17 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .facegrid canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair;border:1px solid var(--line)}
 .facegrid figcaption{font-size:12.5px;color:var(--muted);margin-top:4px}
 .nrdlg::backdrop{background:rgba(10,14,18,.55)}
+#lvDlg .crit{--lc:var(--crit)}#lvDlg .high{--lc:var(--high)}#lvDlg .warn{--lc:var(--warn)}#lvDlg .ok{--lc:var(--ok)}
+.lvd-h{display:flex;align-items:center;gap:12px;margin-bottom:6px}.lvd-h h2{margin:0;font:700 22px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.lvd-h .lvd-n{min-width:46px;height:46px;border-radius:10px;display:grid;place-items:center;font:700 24px var(--f-display);color:#fff;background:var(--lc)}
+.lvd-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.lvd-list li{border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:10px;padding:12px 14px;background:var(--panel)}
+.lvd-list .p{font-weight:700;font-size:15px;line-height:1.35}
+.lvd-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.lvd-tags span,.lvd-tags button{font:600 12px var(--f-body);padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);min-height:0}
+.lvd-tags button{cursor:pointer;border-color:var(--ink)}.lvd-tags b{font-family:var(--f-mono)}
+.lvd-m{margin:4px 0 0;font-size:14px;line-height:1.45}.lvd-m em{font-style:normal;font-weight:700;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:block}
+.lvd-res{margin-top:6px;font-size:13px;color:var(--muted)}
 .nrd-in{padding:20px 22px;overflow:auto;max-height:calc(100vh - 32px)}
 .nrd-h{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
 .nrd-h h2{margin:0;font:700 19px/1.25 var(--f-display);text-transform:uppercase}
@@ -892,7 +906,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v69</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v70</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1070,13 +1084,14 @@ api:
   </div>
   <section class="tech" id="tech" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
+  <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
 </div>
 
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v69</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v70</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1633,7 +1648,7 @@ function render(d, isExample){
       </section>
       <section class="kpi k-lv" aria-label="Riscos por nível">
         <p class="kt">Riscos por nível <span>${riscos.length} no total</span></p>
-        <div class="lv">${LV.map(([k,t,rg]) => `<div class="${k} ${counts[k] ? "on" : "zero"}"><b>${counts[k]}</b><span>${t}</span><small>${rg}</small></div>`).join("")}</div>
+        <div class="lv">${LV.map(([k,t,rg]) => `<button type="button" class="${k} ${counts[k] ? "on" : "zero"}" data-lv="${k}" title="Ver os riscos de nível ${t.toLowerCase()}" aria-label="${counts[k]} risco(s) de nível ${t.toLowerCase()}: ver detalhes"><b>${counts[k]}</b><span>${t}</span><small>${rg}</small></button>`).join("")}</div>
         <div class="dist" role="img" aria-label="Distribuição: ${LV.map(([k,t]) => counts[k] + " " + t.toLowerCase()).join(", ")}">${LV.filter(([k]) => counts[k]).map(([k]) => `<i class="${k}" style="flex:${counts[k]}"></i>`).join("")}</div>
       </section>
       <section class="kpi k-5s ${lvOf(s5total/5)}" aria-label="Avaliação 5S">
@@ -2154,6 +2169,28 @@ $("nrDlgBody").addEventListener("click", e => {
   refreshReport(d);
 });
 $("report").addEventListener("click", e => { const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
+// cards "Riscos por nível": tela com os riscos daquele nível
+function openLevel(k){
+  const LVT = {crit: ["Crítico", "15–25"], high: ["Alto", "10–14"], warn: ["Moderado", "5–9"], ok: ["Baixo", "1–4"]}, [t, rg] = LVT[k];
+  const list = curRiscos.map(r => ({r, L: level(r.severidade, r.probabilidade)})).filter(x => x.L.k === k).sort((a, b) => b.L.r - a.L.r);
+  let h = `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Riscos de nível ${t.toLowerCase()}</h2><div class="hint" style="margin:0">Severidade × probabilidade de ${rg} (matriz de risco da NR-01)</div></div></div>`;
+  if (!list.length) h += `<p class="hint">Nenhum risco classificado neste nível na análise atual.</p>`;
+  else h += `<ol class="lvd-list ${k}">${list.map(({r, L}) => {
+    const S = clamp(r.severidade, 1, 5), P = clamp(r.probabilidade, 1, 5), n = nrNum(r.nr);
+    const hasRes = r.severidade_residual != null && r.severidade_residual !== "" && r.probabilidade_residual != null && r.probabilidade_residual !== "";
+    const R2 = hasRes ? level(Math.min(S, clamp(r.severidade_residual, 1, 5)), Math.min(P, clamp(r.probabilidade_residual, 1, 5))) : null;
+    return `<li><div class="p">${esc(r.perigo || "Risco")}</div>
+      <div class="lvd-tags">${r.categoria ? `<span>${esc(r.categoria)}</span>` : ""}${r.nr ? (n && NR_LIST.some(x => x[0] === n) ? `<button type="button" data-nr="${n}" title="Abrir o checklist desta NR">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""} ›</button>` : `<span>${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</span>`) : ""}<span>S ${S} × P ${P} = <b>${S * P}</b></span></div>
+      ${r.medida ? `<p class="lvd-m"><em>Medida de controle</em>${esc(r.medida)}</p>` : ""}
+      ${R2 ? `<div class="lvd-res">Após o controle: <span class="lc ${R2.k}"><i></i>${R2.t} ${R2.r}</span></div>` : ""}</li>`; }).join("")}</ol>`;
+  $("lvDlgBody").innerHTML = h;
+  $("lvDlgBody").querySelectorAll("[data-nr]").forEach(b => b.onclick = () => { $("lvDlg").close(); openNR(Number(b.dataset.nr)); });
+  if (!$("lvDlg").open) $("lvDlg").showModal();
+  $("lvDlg").querySelector(".nrd-in").scrollTop = 0;
+}
+$("report").addEventListener("click", e => { const b = e.target.closest(".lv [data-lv]"); if (b) openLevel(b.dataset.lv); });
+$("lvDlgX").onclick = () => $("lvDlg").close();
+$("lvDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 $("nrDlgX").onclick = () => $("nrDlg").close();
 $("faceOk").onclick = async () => { $("faceDlg").close(); if ($("faceBody").dataset.changed){ await applyFaces(); setStatus("Rostos atualizados nas fotos do relatório."); } };
 $("nrDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
