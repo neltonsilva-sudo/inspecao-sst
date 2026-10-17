@@ -939,7 +939,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v83</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v84</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1131,7 +1131,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v83</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v84</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2529,15 +2529,22 @@ function addHistory(blob, data, msgs = [], t = new Date()){
   while (history.length > 100) URL.revokeObjectURL(history.pop().url);
   drawHistory(0);
 }
+// foto de um alerta do monitoramento, com data, hora e situações
+function openAlert(h){
+  $("lvDlgBody").innerHTML = `<div class="lvd-h crit"><span class="lvd-n">!</span><div><h2 id="lvDlgT">Alerta do monitoramento</h2><div class="hint" style="margin:0">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</div></div></div>
+    <img src="${h.url}" alt="Quadro da câmera no momento do alerta" style="width:100%;border-radius:10px;margin:10px 0">
+    <ul class="lvd-m">${(h.msgs || []).map(m => `<li>${esc(m)}</li>`).join("")}</ul>`;
+  if (!$("lvDlg").open) $("lvDlg").showModal();
+}
 function drawHistory(cur){
   const ol = $("hist"); ol.innerHTML = ""; $("histBox").hidden = !history.length;
   history.forEach((h, i) => {
-    const counts = {crit:0, high:0}; (h.data.riscos || []).forEach(r => { const k = level(r.severidade, r.probabilidade).k; if (k in counts) counts[k]++; });
+    const counts = {crit:0, high:0}; (h.data?.riscos || []).forEach(r => { const k = level(r.severidade, r.probabilidade).k; if (k in counts) counts[k]++; });
     const li = document.createElement("li"); const b = document.createElement("button"); b.type = "button";
     if (i === cur) b.className = "cur";
     b.title = (h.msgs || []).join("\n");
     b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span><span class="sc">${clamp(h.data.nota_geral,0,100)}</span>`;
-    b.onclick = () => { render(h.data, false); drawHistory(i); };
+    b.onclick = () => { if (h.data?.riscos) { render(h.data, false); drawHistory(i); } else openAlert(h); };
     li.append(b); ol.append(li);
   });
 }
@@ -2546,20 +2553,39 @@ async function cycle(){
   const blob = await grabFrame();
   if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); return; }
   const sel = MON_AL.filter(([id]) => $(id).checked);
-  const extra = sel.length ? `\nALERTAS DO MONITORAMENTO: inclua também no objeto JSON o campo "alertas" com, para cada situação abaixo, {"ocorre":true|false,"onde":"Figura 1 – onde está e descrição genérica da pessoa, sem nome nem traços que a identifiquem"}:\n${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}\nResponda "ocorre":true só quando a imagem mostrar a situação com clareza.` : "";
-  const data = await analyze([blob], `Monitoramento: analisando quadro das ${new Date().toLocaleTimeString("pt-BR")}`, extra, {fast: true}); // modo rápido: cabe em intervalos curtos
+  const data = await monCheck(blob, sel);
   if (!data) return;
   monCount++;
-  const crit = critOf(data), hits = monHits(data, sel);
-  const msgs = [...(crit.length ? [`Risco crítico: ${crit.map(r => r.perigo).join("; ")}`] : []), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
+  const crit = data.critico, hits = monHits(data, sel);
+  const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     alSave(history[0]); // e gravado na pasta escolhida, se houver
     beep();
     const now = new Date(), quando = `${now.toLocaleDateString("pt-BR")} às ${now.toLocaleTimeString("pt-BR")}`;
     $("monAlert").innerHTML = `<b>⚠ Alerta em ${quando}</b><ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
-    try{ if (window.Notification && Notification.permission === "granted") new Notification(hits.length && !crit.length ? hits.map(h => h.t).join(" · ") : "Risco crítico detectado", {body: (quando + " — " + msgs.join("; ")).slice(0, 220)}); }catch(e){}
+    try{ if (window.Notification && Notification.permission === "granted") new Notification(hits.length && !crit.length ? hits.map(h => h.t).join(" · ") : "Risco grave e iminente", {body: (quando + " — " + msgs.join("; ")).slice(0, 220)}); }catch(e){}
   }
+}
+// verificação dedicada de cada quadro do monitoramento: pergunta curta e direta só sobre as situações de alerta
+// (bem mais rápida e confiável do que a análise completa); na dúvida, alerta
+async function monCheck(blob, sel){
+  ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
+  const hora = new Date().toLocaleTimeString("pt-BR"); setStatus(`Monitoramento: verificando o quadro das ${hora}…`);
+  const prompt = `Você é técnico(a) de segurança do trabalho monitorando uma câmera ao vivo de um ambiente de trabalho. Examine com atenção a imagem anexada (um quadro da câmera) e diga se ocorre cada situação abaixo.
+Situações:
+${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
+- "critico": qualquer outra situação de risco grave e iminente à vida ou à integridade (NR-03), como incêndio, choque elétrico, queda iminente, prensamento ou atropelamento.
+Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
+Responda SOMENTE com JSON: {"alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
+  try{
+    const r = await callAI(prompt, [blob], ctl.signal, {fast: true});
+    const al = r && typeof r.alertas === "object" ? r.alertas : {};
+    const c = al.critico && (al.critico.ocorre === true || al.critico.ocorre === "true") ? [String(al.critico.onde || "situação grave na imagem")] : [];
+    setStatus(`Monitoramento: quadro das ${hora} verificado.`);
+    return {alertas: al, critico: c};
+  }catch(e){ handleErr(e); return null; }
+  finally{ ctl = null; $("stopRow").hidden = true; updateGo(); }
 }
 // situações que o monitoramento pode alertar além do risco crítico (id do campo, chave pedida à IA, descrição)
 const MON_AL = [
@@ -2592,6 +2618,7 @@ function monHits(d, sel){
   return sel.map(([id, k, , t]) => {
     const a = al[k] && typeof al[k] === "object" ? al[k] : {ocorre: al[k] === true};
     let on = a.ocorre === true || a.ocorre === "true", onde = a.onde ? String(a.onde) : "";
+    if (on && /baixa/i.test(String(a.certeza || ""))) onde = "possível – " + (onde || "verifique a imagem");
     // EPI e adornos também saem da verificação de pessoas que a análise já faz
     if (!on && k === "sem_epi"){ const p = obs.find(o => asList(o.epis_faltantes).some(x => x && (x.epi || typeof x === "string"))); if (p){ on = true; onde = [p.figura, p.pessoa].filter(Boolean).join(" – "); } }
     if (!on && k === "adornos"){ const p = obs.find(o => asList(o.adornos).some(x => x && (x.adorno || typeof x === "string"))); if (p){ on = true; onde = [p.figura, p.pessoa].filter(Boolean).join(" – "); } }
