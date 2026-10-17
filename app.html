@@ -884,7 +884,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v63</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v64</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1066,7 +1066,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v63</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v64</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2720,7 +2720,7 @@ function reportHTML(R, photos, meta){
   ${H("Objetivo", "O que esta inspeção verifica e entrega.")}${para(R.objetivo)}
   ${H("Justificativa", "Fundamentos legais e de gestão que motivam a inspeção.")}${para(R.justificativa)}
   ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
-  <div class="fig flow">${flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
+  <div class="fig flow">${flowSVG(["Registro das imagens", "Reconhecimento ambiental", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
   ${para(R.metodologia)}
   <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Proteção de imagem: os rostos das pessoas nas fotos foram cobertos para impedir a identificação.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
@@ -3298,7 +3298,7 @@ async function buildPptx(R, photos, meta){
   // metodologia com fluxo
   s = slide("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.");
   s.addShape(pp.ShapeType.rect, {x: 0.5, y: TOP, w: 12.33, h: 2.1, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
-  await imgBox(s, flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"]), 0.7, TOP + 0.1, 11.9, 1.9);
+  await imgBox(s, flowSVG(["Registro das imagens", "Reconhecimento ambiental", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"]), 0.7, TOP + 0.1, 11.9, 1.9);
   bul(s, ["Matriz de risco severidade × probabilidade (NR-01, GRO/PGR)", "Ishikawa (6M), matriz GUT, matriz REI e avaliação 5S", "Verificação das pessoas visíveis: EPI (NR-06) e adornos (NR-10, NR-12, NR-32)", "Documentos e registros de evidências exigidos pelas NRs", meta.docs?.length ? `Análise de ${meta.docs.length} documento(s) do setor` : "", meta.audios?.length ? `${meta.audios.length} relato(s) em áudio transcritos pela IA` : "", "Plano de ação 5W2H com prioridade, responsável e prazo"], {x: 0.5, y: 4.2, w: 12.33, h: 2.7, fontSize: 15});
 
   // registro fotográfico
