@@ -871,7 +871,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v54</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v55</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1052,7 +1052,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v54</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v55</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3552,6 +3552,39 @@ const QR_JS = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";
 const params = new URLSearchParams(location.search);
 // servidor de sinalização local só para testes (?peerhost=localhost:9000)
 const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false} : {}; })();
+// retransmissão: quando a rede não deixa o celular e o computador se conectarem direto (WebRTC),
+// as mensagens seguem pelo próprio servidor do QR code, cifradas com AES-GCM a partir da chave do QR
+const u8b64 = u => { let t = ""; for (let i = 0; i < u.length; i += 32768) t += String.fromCharCode.apply(null, u.subarray(i, i + 32768)); return btoa(t); };
+const b64u8 = t => Uint8Array.from(atob(t), ch => ch.charCodeAt(0));
+const relayKey = k => crypto.subtle.digest("SHA-256", new TextEncoder().encode("sst-relay:" + k)).then(h => crypto.subtle.importKey("raw", h, "AES-GCM", false, ["encrypt", "decrypt"]));
+const isRelayMsg = m => m && m.type === "CANDIDATE" && m.payload && m.payload.sst === 1 && m.src;
+function relayConn(peer, dst, keyP){
+  const ev = {}, emit = (n, x) => (ev[n] || []).forEach(f => { try{ f(x); }catch(e){} });
+  let sq = Promise.resolve(), rq = Promise.resolve(), seen = 0;
+  const c = {
+    relay: true, peer: dst, open: true, peerConnection: null,
+    dataChannel: {get bufferedAmount(){ return peer.socket?._socket?.bufferedAmount || 0; }},
+    on(n, f){ (ev[n] = ev[n] || []).push(f); return c; },
+    send(obj){
+      if (!c.open) return;
+      sq = sq.then(async () => {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const d = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv}, await keyP, new TextEncoder().encode(JSON.stringify(obj))));
+        if (c.open) peer.socket.send({type: "CANDIDATE", dst, payload: {sst: 1, iv: u8b64(iv), d: u8b64(d)}});
+      }).catch(() => {});
+    },
+    close(){ if (!c.open) return; c.open = false; clearInterval(dog); emit("close"); },
+    push(p){
+      rq = rq.then(async () => {
+        const t = await crypto.subtle.decrypt({name: "AES-GCM", iv: b64u8(p.iv)}, await keyP, b64u8(p.d));
+        if (!c.open) return; seen = Date.now(); emit("data", JSON.parse(new TextDecoder().decode(t)));
+      }).catch(() => {});
+    }
+  };
+  // sem notícias do outro lado por 20 s (o celular manda sinal a cada 4 s): considera a ligação caída
+  const dog = setInterval(() => { if (seen && Date.now() - seen > 20000) c.close(); }, 3000);
+  return c;
+}
 let qr = null, remoteOn = false;
 function loadScript(src){
   return new Promise((res, rej) => {
@@ -3587,6 +3620,13 @@ async function qrStart(){
   qr = {peer, id, k, conn: null, call: null, ok: false, device: "", parts: {}, resume: "", grace: null};
   peer.on("open", () => { if (qr?.peer === peer) showQR(); });
   peer.on("connection", conn => onPhoneConn(peer, conn));
+  const relays = {}, keyP = relayKey(k);
+  peer.socket.on("message", m => {
+    if (!isRelayMsg(m) || !qr || qr.peer !== peer) return;
+    let c = relays[m.src];
+    if (!c || !c.open){ c = relays[m.src] = relayConn(peer, m.src, keyP); c.push(m.payload); onPhoneConn(peer, c); return; }
+    c.push(m.payload);
+  });
   peer.on("call", call => {
     if (!qr || qr.peer !== peer || !qr.ok || call.peer !== qr.conn?.peer){ call.close(); return; }
     try{ qr.call?.close(); }catch(e){}
@@ -3630,10 +3670,10 @@ function onPhoneConn(peer, conn){
     } else if (d.type === "snap"){
       // o celular pede a foto; o computador captura do vídeo ao vivo que já está recebendo
       if (Date.now() - (qr.lastSnap || 0) < 200) return; qr.lastSnap = Date.now();
-      if (!remoteOn){ conn.send({type: "bad", why: "A imagem do celular não está ativa na tela do computador."}); return; }
+      if (!remoteOn){ conn.send({type: "bad", local: 1}); return; } // sem vídeo ao vivo: o celular fotografa e envia o arquivo
       if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
       grabFrame().then(b => {
-        if (!b){ conn.send({type: "bad", why: "O computador ainda não recebeu imagem do celular."}); return; }
+        if (!b){ conn.send({type: "bad", local: 1}); return; }
         addBlob(b);
         const n = frames.length;
         miniThumb(b).then(t => { try{ conn.open && conn.send({type: "got", n, t}); }catch(e){} });
@@ -3658,7 +3698,7 @@ function onPhoneConn(peer, conn){
         const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
         if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
         else if (frames.length >= maxImages){ conn.send({type: "full"}); }
-        else { normalize(blob).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto da galeria do celular recebida (${frames.length} de ${maxImages}).`); }); }
+        else { normalize(blob).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto do celular recebida (${frames.length} de ${maxImages}).`); }); }
       }catch(e){ conn.send({type: "file_bad", fid: d.fid}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
@@ -3689,7 +3729,7 @@ $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi 
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
   qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true;
-  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
+  qrMsg(qr.conn.relay ? `Conectado: ${qr.device} (por retransmissão, porque esta rede bloqueia a conexão direta). Não há vídeo ao vivo: as fotos tiradas no celular, as da galeria e os áudios entram nas listas.` : `Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
 };
 $("qrDeny").onclick = () => {
   if (!qr?.conn) return;
@@ -3709,7 +3749,7 @@ function phoneMode(id, k){
   document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
   let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
-  let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null;
+  let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null, relay = false;
   const MAX_TRIES = 8;
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
@@ -3730,6 +3770,9 @@ function phoneMode(id, k){
     if (peerReady) return peerReady;
     peerReady = loadScript(PEER_JS).then(() => new Promise((res, rej) => {
       const p = new Peer(PEER_OPTS); peer = p;
+      const keyP = relayKey(k);
+      p.socket.on("message", m => { if (!isRelayMsg(m) || m.src !== id) return; if (conn?.relay && conn.open) conn.push(m.payload); });
+      p._relayKey = keyP;
       p.on("open", () => res(p));
       p.on("disconnected", () => { if (!p.destroyed && !ended) try{ p.reconnect(); }catch(e){} });
       p.on("error", e => {
@@ -3745,8 +3788,8 @@ function phoneMode(id, k){
   }
   function closeLinks(){
     clearInterval(ping); ping = null;
-    try{ mcall?.close(); }catch(e){} try{ conn?.close(); }catch(e){}
-    mcall = null; conn = null;
+    const m0 = mcall, c0 = conn; mcall = null; conn = null; // solta antes de fechar: o aviso de "fechou" não dispara outra reconexão
+    try{ m0?.close(); }catch(e){} try{ c0?.close(); }catch(e){}
   }
   function done(title, text){
     if (ended) return; ended = true;
@@ -3800,21 +3843,38 @@ function phoneMode(id, k){
     try{ p = await ensurePeer(); }
     catch(e){ why = (e && e.type) || "sinalização"; if (resumeKey) lost(why); else msg("Sem conexão com o servidor. Verifique a internet.", true); return; }
     if (ended) return;
+    if (relay){
+      // modo retransmissão: a ligação já está aberta pelo servidor; o sinal a cada 4 s mantém a sessão viva no computador
+      const c = conn = relayConn(p, id, p._relayKey);
+      wire(c);
+      c.send({type: "hello", k, r: resumeKey || undefined, device: deviceName()});
+      clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 4000);
+      if (!resumeKey) msg("Aguardando autorização no computador…");
+      return;
+    }
     const c = conn = p.connect(id, {reliable: true, serialization: "json"});
-    const t = setTimeout(() => { if (c === conn && !c.open){ if (resumeKey) lost("sem resposta"); else done("Não foi possível conectar", "O celular não conseguiu falar com o computador. Confira se a página do computador continua aberta com o QR code na tela, use o mesmo Wi-Fi nos dois se puder e leia o QR code de novo."); } }, 25000);
+    let opened = false;
+    // a rede não deixou abrir a conexão direta: passa para a retransmissão pelo servidor
+    const toRelay = () => { if (c !== conn || opened || relay || ended) return; clearTimeout(t); relay = true; why = ""; conn = null; try{ c.close(); }catch(e){} msg("Conexão direta bloqueada nesta rede. Conectando por retransmissão…"); connect(); };
+    const t = setTimeout(toRelay, 10000);
     c.on("open", () => {
-      clearTimeout(t);
+      clearTimeout(t); opened = true;
       c.send({type: "hello", k, r: resumeKey || undefined, device: deviceName()});
       if (!resumeKey) msg("Aguardando autorização no computador…");
     });
+    c.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; if (!opened) toRelay(); });
+    c.on("close", () => { if (c !== conn) return; if (!opened && !relay) toRelay(); else lost(why); });
+    wire(c);
+  }
+  function wire(c){
     c.on("data", d => {
       if (!d || typeof d !== "object" || c !== conn) return;
       if (d.type === "ok"){
         if (d.r) resumeKey = String(d.r);
         tries = 0;
-        msg("Conectado. Toque no botão redondo ou no vídeo para capturar.");
-        $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false;
-        startCall(); keepAwake();
+        msg(c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
+        $("phRec").textContent = c.relay ? "● CONECTADO" : "● TRANSMITINDO"; $("phShot").disabled = false;
+        if (!c.relay) startCall(); keepAwake();
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
           document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
           setTimeout(pump, 400);
@@ -3830,11 +3890,10 @@ function phoneMode(id, k){
         }
       }
       else if (d.type === "full"){ msg("O computador atingiu o limite de fotos.", true); setAuto(false); }
-      else if (d.type === "bad") msg(d.why || "A foto não foi capturada. Tente de novo.", true);
+      else if (d.type === "bad"){ if (d.local) snapLocal(); else msg(d.why || "A foto não foi capturada. Tente de novo.", true); }
         else if (d.type === "file_done" || d.type === "file_bad") fileReply(d);
     });
-    c.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; });
-    c.on("close", () => { if (c === conn) lost(why); });
+    if (c.relay) c.on("close", () => { if (c === conn) lost(why || "retransmissão"); });
   }
   let lastShot = 0;
   // fila de arquivos: envia um por vez em partes pequenas; se a rede cair, reenvia ao reconectar
@@ -3903,9 +3962,16 @@ function phoneMode(id, k){
     }catch(e){ msg("Não foi possível usar o microfone. Permita o acesso nas configurações do navegador.", true); }
   }
   function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); }
+  // foto tirada no próprio celular e enviada como arquivo (quando não há vídeo ao vivo no computador)
+  function snapLocal(){
+    const v = $("phVideo"); if (!v.videoWidth){ msg("A câmera ainda não está pronta. Tente de novo.", true); return; }
+    const cv = document.createElement("canvas"); cv.width = v.videoWidth; cv.height = v.videoHeight;
+    cv.getContext("2d").drawImage(v, 0, 0);
+    cv.toBlob(b => { if (b){ enqueue(b, "photo", "camera-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".jpg"); msg("Enviando foto…"); } }, "image/jpeg", 0.9);
+  }
   function shot(){
     if (!live() || Date.now() - lastShot < 350) return; lastShot = Date.now();
-    conn.send({type: "snap"});
+    if (conn.relay) snapLocal(); else conn.send({type: "snap"});
     sent++; $("phCount").textContent = sent; $("phBadge").textContent = sent;
     const box = $("phBox"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
     try{ navigator.vibrate?.(30); }catch(e){}
