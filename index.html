@@ -169,7 +169,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
             </select>
             <button id="monBtn" type="button" disabled>Iniciar monitoramento</button>
           </div>
-          <p class="hint" id="monInfo">Ligue a câmera e informe a chave da API. A cada intervalo, um quadro é capturado e analisado. Risco crítico toca um alerta sonoro.</p>
+          <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico toca um alerta sonoro.</p>
         </div>
         <div id="dlBox" class="stack" hidden>
           <button id="dlBtn" type="button">Baixar versão com câmera ao vivo</button>
@@ -191,9 +191,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
         <p class="label">3 · Contexto (opcional)</p>
         <textarea id="ctx" placeholder="Ex.: oficina de manutenção de correias transportadoras, 6 mantenedores por turno, uso de lixadeira e solda."></textarea>
         <div id="keyBox" class="stack" hidden>
-          <label class="label" for="apiKey" style="margin:0">Chave da API Anthropic</label>
-          <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-...">
-          <p class="hint">Fica salva só neste navegador. Use uma chave de teste.</p>
+          <label class="label" for="apiKey" style="margin:0">Chave da API (Gemini ou Claude)</label>
+          <input id="apiKey" type="password" autocomplete="off" placeholder="AIza... (Gemini, grátis) ou sk-ant-... (Claude)">
+          <p class="hint" id="keyHint">Gemini gratuito: crie a chave em aistudio.google.com/apikey. A chave fica salva só neste navegador.</p>
         </div>
         <button class="primary" id="goBtn" type="button" disabled>Analisar ambiente</button>
         <div class="row" id="stopRow" hidden><button id="stopBtn" type="button">Parar</button></div>
@@ -474,7 +474,8 @@ function updateGo(){
   $("goBtn").disabled = !ready || !!ctl;
   $("monBtn").disabled = !mon && !(stream && !inViewer && $("apiKey").value.trim());
 }
-$("apiKey").addEventListener("input", e => { store("sst_api_key", e.target.value.trim() || null); updateGo(); });
+$("apiKey").addEventListener("input", e => { store("sst_api_key", e.target.value.trim() || null); geminiModel = null; updateGo(); if (!inViewer) showProvider(); });
+function showProvider(){ const k = $("apiKey").value.trim(); setMode(!k ? "navegador · informe a chave" : provider() === "claude" ? "navegador + Claude" : "navegador + Gemini"); }
 
 function parseJSON(text){
   try{ return JSON.parse(text); }catch(e){}
@@ -504,6 +505,40 @@ async function viaApi(prompt, blobs, signal){
   return parseJSON(text);
 }
 
+function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
+let geminiModel = null;
+async function pickGeminiModel(key, signal){
+  if (geminiModel) return geminiModel;
+  try{
+    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=" + encodeURIComponent(key), {signal});
+    const j = await r.json();
+    const ok = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes("generateContent") && /^models\/gemini-\d+(\.\d+)?-flash$/.test(m.name));
+    ok.sort((a,b) => parseFloat(b.name.split("-")[1]) - parseFloat(a.name.split("-")[1]));
+    if (ok.length) geminiModel = ok[0].name;
+  }catch(e){ if (e?.name === "AbortError") throw e; }
+  return geminiModel || "models/gemini-2.5-flash";
+}
+async function viaGemini(prompt, blobs, signal){
+  const key = $("apiKey").value.trim();
+  const model = await pickGeminiModel(key, signal);
+  const parts = [];
+  for (const b of blobs) parts.push({inline_data:{mime_type:"image/jpeg", data: await blobToB64(b)}});
+  parts.push({text: prompt});
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${encodeURIComponent(key)}`, {
+    method:"POST", signal, headers:{"content-type":"application/json"},
+    body: JSON.stringify({contents:[{role:"user", parts}], generationConfig:{responseMimeType:"application/json", temperature:0.2}})
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok){
+    const msg = (j.error && j.error.message) || ("HTTP " + res.status);
+    throw {code:"http", status: /API key/i.test(msg) ? 401 : res.status, message: res.status === 429 ? "limite gratuito do Gemini atingido. Aumente o intervalo ou aguarde alguns minutos." : msg};
+  }
+  if (j.promptFeedback?.blockReason) throw {code:"refused"};
+  const text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
+  if (!text) throw {code:"refused"};
+  return parseJSON(text);
+}
+
 const ERR = {
   not_granted:"Uso do Claude não autorizado nesta página.", sampling_disabled:"Claude indisponível para esta conta.",
   rate_limited:"Muitas análises seguidas. Aguarde um pouco e tente de novo.", image_rejected:"Uma das imagens não foi aceita. Troque por outra foto.",
@@ -520,7 +555,7 @@ async function analyze(blobs, label){
   try{
     const data = sample
       ? await sample.json(prompt, {images: blobs, signal: ctl.signal, cache:false})
-      : await viaApi(prompt, blobs, ctl.signal);
+      : provider() === "claude" ? await viaApi(prompt, blobs, ctl.signal) : await viaGemini(prompt, blobs, ctl.signal);
     render(data, false);
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
@@ -629,7 +664,7 @@ async function init(){
     } else { setMode("análise indisponível"); setStatus("A análise não está disponível nesta visualização.", true); }
   } else {
     $("keyBox").hidden = false; const k = load("sst_api_key"); if (k) $("apiKey").value = k;
-    setMode("navegador + API"); updateGo();
+    showProvider(); updateGo();
   }
 }
 init();
