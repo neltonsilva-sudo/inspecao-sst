@@ -210,8 +210,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .kpi{display:flex;flex-direction:column;gap:10px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
 .report .kt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:600 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0}
 .report .kt span{font:500 11px var(--f-mono);letter-spacing:0;text-transform:none}
-.report .k-score .kb{display:flex;align-items:center;gap:12px}
-.report .gauge{width:104px;height:104px;flex:none}
+.report .k-score .kb{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;justify-content:center}
+.report .k-score .kb>div{flex:1 1 128px;min-width:0;display:flex;justify-content:center}
+.report .gauge{width:96px;height:96px;flex:none}
 .report .gauge .gv{font:700 34px var(--f-display);fill:var(--ink)}
 .report .gauge .gs{font:500 10px var(--f-mono);fill:var(--muted)}
 .report .kt .band{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;background:var(--lcell);font:600 12px/1.3 var(--f-body);letter-spacing:0;text-transform:none;color:var(--ink);white-space:nowrap}
@@ -219,9 +220,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .band i,.report .lc i,.report .legend i{flex:none;border-radius:50%}
 .report .band i{width:8px;height:8px;background:var(--lc)}
 .report .scale{margin:0;padding:0;list-style:none;display:grid;gap:2px;font:500 11px/1.5 var(--f-mono);color:var(--muted)}
-.report .scale li{display:flex;align-items:center;gap:6px}
+.report .scale li{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:10.5px}
 .report .scale i{width:7px;height:7px;border-radius:50%;background:var(--lc)}
 .report .scale .cur{color:var(--ink);font-weight:600}
+.report .scale .sc-t{font:600 11px var(--f-body);margin-left:2px}
 .report .lv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .report .lv div{min-width:0;padding:8px 7px 7px;border:1px solid var(--line);border-top:4px solid var(--lc);border-radius:6px;background:var(--panel)}
 .report .lv b{display:block;font:700 30px/1 var(--f-display);font-variant-numeric:tabular-nums}
@@ -854,7 +856,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v49</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v50</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1032,7 +1034,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v49</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v50</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1452,7 +1454,7 @@ function render(d, isExample){
   const riscos = asList(d.riscos).filter(r => r && typeof r === "object");
   riscos.sort((a,b) => level(b.severidade,b.probabilidade).r - level(a.severidade,a.probabilidade).r);
   const score = Math.round(clamp(d.nota_geral, 0, 100));
-  const band = score >= 75 ? ["ok","Adequado"] : score >= 50 ? ["warn","Atenção"] : ["crit","Insatisfatório"];
+  const band = score >= 75 ? ["ok","Ótimo"] : score >= 60 ? ["warn","Regular"] : ["crit","Ruim"];
   const counts = {crit:0,high:0,warn:0,ok:0};
   riscos.forEach(r => counts[level(r.severidade,r.probabilidade).k]++);
   const LV = [["crit","Crítico","15–25"],["high","Alto","10–14"],["warn","Moderado","5–9"],["ok","Baixo","1–4"]];
@@ -1576,7 +1578,7 @@ function render(d, isExample){
       <section class="kpi k-score" aria-label="Nota geral">
         <p class="kt">Nota geral <span class="band ${band[0]}"><i></i>${band[1]}</span></p>
         <div class="kb">${gauge}
-          <div><ul class="scale" aria-label="Faixas da nota">${[["ok","75–100"],["warn","50–74"],["crit","0–49"]].map(([k,f]) => `<li class="${k}${k === band[0] ? " cur" : ""}"><i></i>${f}</li>`).join("")}</ul></div>
+          <div><ul class="scale" aria-label="Faixas da nota">${[["ok","75–100","Ótimo"],["warn","60–74","Regular"],["crit","< 60","Ruim"]].map(([k,f,t]) => `<li class="${k}${k === band[0] ? " cur" : ""}"><i></i>${f} <span class="sc-t">${t}</span></li>`).join("")}</ul></div>
         </div>
       </section>
       <section class="kpi k-lv" aria-label="Riscos por nível">
@@ -2401,7 +2403,7 @@ function prep5S(R){
 }
 // notas de 0 a 100, regra fixa e transparente: SST desconta por risco; 5S = % dos sensos; geral = média
 const PEN = {crit: 20, high: 12, warn: 6, ok: 2};
-const classe = n => n >= 85 ? ["Excelente", "#2e8b57"] : n >= 70 ? ["Bom", "#2e8b57"] : n >= 50 ? ["Regular", "#a87f00"] : ["Crítico", "#c62828"];
+const classe = n => n >= 75 ? ["Ótimo", "#2e8b57"] : n >= 60 ? ["Regular", "#a87f00"] : ["Ruim", "#c62828"]; // faixas: 75–100 Ótimo · 60–74 Regular · < 60 Ruim
 function scores(riscos, S5){
   const res = riscos.map(r => {
     const s0 = clamp(r.severidade,1,5), p0 = clamp(r.probabilidade,1,5);
@@ -2650,7 +2652,7 @@ function reportHTML(R, photos, meta){
   ${SC.res.map((x, i) => `<tr><td class="num">${i+1}</td><td>${esc(x.r.perigo)}</td><td><span class="num">${clamp(x.r.severidade,1,5)}×${clamp(x.r.probabilidade,1,5)}=${x.a.r}</span> <span class="lv" style="background:${LV[x.a.k][2]}">${LV[x.a.k][0]}</span></td><td><span class="num">${x.s1}×${x.p1}=${x.b.r}</span> <span class="lv" style="background:${LV[x.b.k][2]}">${LV[x.b.k][0]}</span></td></tr>`).join("") || '<tr><td colspan="4">—</td></tr>'}
   </tbody></table></div>
   ${S5 ? `<h3>5S atual × após a implantação</h3><div class="tw"><table><thead><tr><th>Senso</th><th>Atual</th><th>Após</th></tr></thead><tbody>${S5.rows.filter(r => r.nota !== null).map(r => `<tr><td><b>${r.jp}</b> · ${r.pt}</td><td class="num">${r.nota}/5</td><td class="num">${r.apos}/5</td></tr>`).join("")}</tbody></table></div>` : ""}
-  <p class="cap"><b>Como a nota é calculada.</b> SST (NRs): parte de 100 e desconta, por risco identificado, 20 pontos se crítico, 12 se alto, 6 se moderado e 2 se baixo (matriz severidade × probabilidade da NR-01). 5S: soma das notas dos cinco sensos em percentual. Geral: média de SST e 5S. A projeção usa o risco residual esperado após as medidas e a nota esperada de cada senso após a implantação do 5S; é uma estimativa que depende da execução completa do plano e deve ser confirmada em nova inspeção. Faixas: 85–100 Excelente, 70–84 Bom, 50–69 Regular, abaixo de 50 Crítico.</p>
+  <p class="cap"><b>Como a nota é calculada.</b> SST (NRs): parte de 100 e desconta, por risco identificado, 20 pontos se crítico, 12 se alto, 6 se moderado e 2 se baixo (matriz severidade × probabilidade da NR-01). 5S: soma das notas dos cinco sensos em percentual. Geral: média de SST e 5S. A projeção usa o risco residual esperado após as medidas e a nota esperada de cada senso após a implantação do 5S; é uma estimativa que depende da execução completa do plano e deve ser confirmada em nova inspeção. Faixas: 75–100 Ótimo, 60–74 Regular e abaixo de 60 Ruim.</p>
   ${H("Parecer técnico", "Conclusão técnica fundamentada nas Normas Regulamentadoras.")}
   <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
   ${para(P.texto)}
