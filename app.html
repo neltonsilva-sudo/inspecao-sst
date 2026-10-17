@@ -627,6 +627,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .camhelp summary{cursor:pointer;font-weight:600;color:var(--ink);border-radius:4px}
 .camhelp[open] summary{margin-bottom:4px}
 .camhelp ul{margin:6px 0 0;padding-left:18px;display:grid;gap:5px}
+.ipcam input{width:100%;font:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 12px}
+.ipcam select{flex:1;width:auto;min-width:0}
+.ipcam .ipcfg{margin:0;padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--line);font:500 11.5px/1.5 var(--f-mono);color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+.ipcam code{font:500 11.5px var(--f-mono);overflow-wrap:anywhere;color:var(--ink)}
 #camSel{flex:1;width:auto;min-width:0}
 .flash{animation:fl .35s ease-out}
 @keyframes fl{from{box-shadow:0 0 0 6px var(--signal)}to{box-shadow:0 0 0 0 transparent}}
@@ -660,6 +664,23 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
           <select id="camSel" aria-label="Escolher câmera" hidden></select>
           <button id="camScan" type="button">Procurar câmeras</button>
         </div>
+        <details class="camhelp ipcam" id="ipBox">
+          <summary>Câmera Wi-Fi / IP</summary>
+          <div class="stack" style="margin-top:8px">
+            <label class="label" for="ipUrl" style="margin:0">Endereço do vídeo da câmera</label>
+            <input id="ipUrl" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="http://localhost:1984/api/stream.mjpeg?src=camera1">
+            <div class="row">
+              <select id="ipMode" aria-label="Tipo de vídeo da câmera"><option value="auto">Detectar o tipo</option><option value="mjpeg">Vídeo MJPEG</option><option value="snap">Foto periódica (snapshot JPEG)</option><option value="video">HLS (.m3u8) ou MP4</option></select>
+              <button id="ipBtn" type="button">Conectar câmera IP</button>
+            </div>
+            <p class="hint" style="margin:0">Aceita vídeo MJPEG, foto JPEG periódica (snapshot), HLS (.m3u8) ou MP4. A câmera precisa liberar acesso pelo navegador (CORS). Câmeras <b>RTSP</b>, com senha ou só com endereço <b>http://192.168…</b> (bloqueado em sites https): instale o <b>go2rtc</b> neste computador, cadastre a câmera e use o endereço local que ele cria.</p>
+            <pre class="ipcfg" aria-label="Exemplo de configuração do go2rtc">streams:
+  camera1: rtsp://usuario:senha@192.168.0.50:554/stream1
+api:
+  origin: "*"</pre>
+            <p class="hint" style="margin:0">Depois use: <code>http://localhost:1984/api/stream.mjpeg?src=camera1</code>. Se o Chrome perguntar sobre acesso à rede local, clique em Permitir.</p>
+          </div>
+        </details>
         <div class="status" id="camStatus" role="status"></div>
         <div class="row split">
           <button id="camBtn" class="accent" type="button">Ligar câmera</button>
@@ -673,7 +694,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
             <li><b>iPhone no Mac sem fio (Câmera de Continuidade):</b> com o iPhone perto do Mac, na mesma conta Apple, ele aparece na lista como câmera.</li>
             <li><b>Celular como câmera:</b> use o QR code abaixo, ou apps como Camo, DroidCam ou Iriun, que criam uma webcam no computador.</li>
             <li><b>Câmera Bluetooth:</b> o navegador só enxerga a câmera se o computador a reconhecer como webcam. Pareie nas configurações de Bluetooth do sistema e clique em <b>Procurar câmeras</b>. Se não aparecer, o modelo não funciona como webcam.</li>
-            <li><b>Câmera Wi-Fi ou IP (RTSP):</b> navegadores não abrem esse tipo de vídeo direto. Use o app do fabricante ou o OBS Studio com a "Câmera virtual" ligada; ela aparece na lista como câmera.</li>
+            <li><b>Câmera Wi-Fi ou IP:</b> abra <b>Câmera Wi-Fi / IP</b> acima e cole o endereço do vídeo (MJPEG, snapshot, HLS ou MP4). Para RTSP, use o go2rtc (exemplo acima) ou o OBS Studio com a "Câmera virtual" ligada, que aparece na lista como câmera.</li>
           </ul>
         </details>
         <div id="monBox" class="stack mon">
@@ -1270,7 +1291,116 @@ async function startCam(deviceId){
   const fit = () => { box.style.aspectRatio = v.videoWidth && v.videoHeight ? v.videoWidth + " / " + v.videoHeight : ""; };
   v.addEventListener("loadedmetadata", fit); v.addEventListener("resize", fit); v.addEventListener("emptied", fit);
 })();
+/* ---------- câmera Wi-Fi / IP: MJPEG, snapshot, HLS ou MP4 desenhados num canvas que vira a "câmera" ---------- */
+const HLS_JS = "https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js";
+let ip = null;
+function ipMsg(t, err){ $("camStatus").textContent = t; $("camStatus").classList.toggle("err", !!err); }
+function ipCleanup(){
+  if (!ip) return;
+  const x = ip; ip = null;
+  x.dead = true; clearInterval(x.draw); clearTimeout(x.poll); clearTimeout(x.retry);
+  try{ x.hls?.destroy(); }catch(e){}
+  if (x.el){ x.el.removeAttribute("src"); try{ x.el.load?.(); }catch(e){} x.el.remove(); }
+  $("ipBtn").textContent = "Conectar câmera IP";
+}
+const ipKind = (u, m) => m !== "auto" ? m : /^rtsps?:/i.test(u) ? "rtsp" : /\.m3u8(\?|$)|\.mp4(\?|$)|\.webm(\?|$)|stream\.mp4|stream\.m3u8/i.test(u) ? "video" : /snap|still|picture|image\.|\.jpe?g(\?|$)|frame\.cgi|jpg\/image/i.test(u) ? "snap" : "mjpeg";
+const bust = u => u + (u.includes("?") ? "&" : "?") + "_t=" + Date.now();
+function ipLoadImg(src, cors){
+  return new Promise((res, rej) => {
+    const im = new Image(); if (cors) im.crossOrigin = "anonymous";
+    im.decoding = "async";
+    im.className = "ip-src"; Object.assign(im.style, {position: "fixed", left: "-9999px", top: "0", width: "2px", height: "2px", opacity: "0", pointerEvents: "none"});
+    let done = false;
+    const ok = () => { if (!done && im.naturalWidth){ done = true; clearInterval(chk); clearTimeout(to); res(im); } };
+    const chk = setInterval(ok, 150); // MJPEG nem sempre dispara "load": basta o primeiro quadro chegar
+    const to = setTimeout(() => { if (!done){ done = true; clearInterval(chk); im.remove(); rej(new Error("timeout")); } }, 12000);
+    im.onload = ok;
+    im.onerror = () => { if (!done){ done = true; clearInterval(chk); clearTimeout(to); im.remove(); rej(new Error("erro")); } };
+    document.body.append(im); im.src = src;
+  });
+}
+async function ipDiagnose(u){
+  // sem CORS a imagem abre, mas o navegador proíbe copiar os quadros para análise
+  try{ const im = await ipLoadImg(bust(u), false); im.remove(); return "cors"; }catch(e){ return "off"; }
+}
+async function startIp(){
+  const u = $("ipUrl").value.trim(), mode = $("ipMode").value;
+  if (ip && ip.url === u && (mode === "auto" || mode === ip.kind)){ stopCam(); return; } // mesmo endereço: o botão desconecta; endereço novo: troca a câmera
+  if (!u){ ipMsg("Cole o endereço do vídeo da câmera Wi-Fi/IP.", true); $("ipUrl").focus(); return; }
+  if (!/^(https?|rtsps?):\/\//i.test(u)){ ipMsg("O endereço deve começar com http://, https:// ou rtsp://.", true); return; }
+  const kind = ipKind(u, mode);
+  if (kind === "rtsp"){ ipMsg("O navegador não abre RTSP diretamente. Cadastre a câmera no go2rtc (exemplo acima) e use o endereço http://localhost:1984/api/stream.mjpeg?src=camera1.", true); return; }
+  let host = ""; try{ host = new URL(u).hostname; }catch(e){ ipMsg("Endereço inválido.", true); return; }
+  if (/@/.test(u.split("/")[2] || "")){ ipMsg("O navegador bloqueia usuário e senha dentro do endereço. Use o go2rtc para guardar a senha e conecte pelo endereço local dele.", true); return; }
+  const mixed = location.protocol === "https:" && /^http:/i.test(u) && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(host);
+  store("sst_ipurl", u);
+  stopCam();
+  const me = ip = {kind, url: u, dead: false};
+  $("ipBtn").textContent = "Desconectar câmera IP"; $("ipBtn").disabled = true;
+  ipMsg("Conectando à câmera Wi-Fi/IP…");
+  try{
+    let src;
+    if (kind === "video"){
+      const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.crossOrigin = "anonymous"; v.autoplay = true;
+      Object.assign(v.style, {position: "fixed", left: "-9999px", top: "0", width: "2px", height: "2px", opacity: "0"}); document.body.append(v); me.el = v;
+      if (/\.m3u8(\?|$)|stream\.m3u8/i.test(u) && !v.canPlayType("application/vnd.apple.mpegurl")){
+        await loadScript(HLS_JS);
+        if (!window.Hls?.isSupported()) throw new Error("hls");
+        me.hls = new Hls({liveDurationInfinity: true}); me.hls.loadSource(u); me.hls.attachMedia(v);
+      } else v.src = u;
+      await new Promise((res, rej) => { const to = setTimeout(() => rej(new Error("timeout")), 15000); v.addEventListener("loadeddata", () => { clearTimeout(to); res(); }, {once: true}); v.addEventListener("error", () => { clearTimeout(to); rej(new Error("erro")); }, {once: true}); });
+      await v.play().catch(() => {});
+      src = () => v.videoWidth ? [v, v.videoWidth, v.videoHeight] : null;
+    } else {
+      me.img = await ipLoadImg(kind === "snap" ? bust(u) : u, true); me.el = me.img;
+      src = () => me.img?.naturalWidth ? [me.img, me.img.naturalWidth, me.img.naturalHeight] : null;
+      if (kind === "snap"){
+        // foto periódica: busca a próxima só depois que a anterior chegar
+        let fails = 0;
+        const next = () => { if (me.dead) return; const im = new Image(); im.crossOrigin = "anonymous";
+          im.onload = () => { if (me.dead) return; fails = 0; me.img = im; me.poll = setTimeout(next, 400); };
+          im.onerror = () => { if (me.dead) return; if (++fails === 5) ipMsg("A câmera parou de responder. Tentando de novo…", true); me.poll = setTimeout(next, Math.min(1000 * fails, 5000)); };
+          im.src = bust(u); };
+        me.poll = setTimeout(next, 400);
+      } else {
+        // MJPEG: se a conexão cair, reabre sozinho
+        const reopen = () => { if (me.dead) return; ipMsg("Sinal da câmera perdido. Reconectando…", true);
+          me.retry = setTimeout(async () => { if (me.dead) return;
+            try{ const n = await ipLoadImg(u, true); if (me.dead){ n.remove(); return; } me.img?.remove(); me.img = me.el = n; n.onerror = reopen; ipMsg("Câmera Wi-Fi/IP reconectada."); }
+            catch(e){ reopen(); } }, 3000); };
+        me.img.onerror = reopen;
+      }
+    }
+    if (me.dead) return;
+    const first = src(); if (!first) throw new Error("vazio");
+    const c = document.createElement("canvas"); c.width = first[1]; c.height = first[2];
+    const g = c.getContext("2d");
+    const paint = () => { const f = src(); if (!f) return; if (c.width !== f[1] || c.height !== f[2]){ c.width = f[1]; c.height = f[2]; } try{ g.drawImage(f[0], 0, 0, c.width, c.height); }catch(e){} };
+    paint();
+    const st = c.captureStream(15);
+    me.draw = setInterval(paint, 66);
+    stream = st;
+    const v = $("video"); v.srcObject = st; await v.play().catch(() => {});
+    v.hidden = false; $("videoMsg").hidden = true; $("rec").hidden = false; $("rec").textContent = "● AO VIVO · IP";
+    $("snapBtn").disabled = false; $("camBtn").textContent = "Desligar câmera"; updateGo();
+    ipMsg(`Câmera Wi-Fi/IP conectada (${{mjpeg: "vídeo MJPEG", snap: "foto periódica", video: "HLS/MP4"}[kind]}, ${c.width}×${c.height}). Capture quadros ou ligue o monitoramento.`);
+  }catch(e){
+    if (me !== ip) return;
+    ipCleanup();
+    const why = e?.message === "hls" ? "Este navegador não reproduz HLS." : kind !== "video" && await ipDiagnose(u) === "cors"
+      ? "A câmera respondeu, mas não libera acesso para análise (CORS). Use o go2rtc com api: origin: \"*\" e conecte pelo endereço dele."
+      : mixed ? "Este site é https e o navegador bloqueia vídeo http:// da rede local. Use o go2rtc neste computador e conecte por http://localhost:1984/…"
+      : "Não foi possível abrir o vídeo. Confira o endereço, se a câmera está ligada na mesma rede e o tipo de vídeo escolhido.";
+    ipMsg(why, true);
+  }finally{ $("ipBtn").disabled = false; }
+}
+$("ipBtn").onclick = startIp;
+{ const v = load("sst_ipurl"); if (v) $("ipUrl").value = v; }
+$("ipUrl").addEventListener("keydown", e => { if (e.key === "Enter") startIp(); });
+$("ipUrl").addEventListener("input", () => { if (ip) $("ipBtn").textContent = $("ipUrl").value.trim() === ip.url ? "Desconectar câmera IP" : "Conectar câmera IP"; });
+
 function stopCam(){
+  ipCleanup(); $("rec").textContent = "● AO VIVO";
   remoteOn = false;
   if (stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
   const v = $("video"); v.srcObject = null; v.hidden = true;
