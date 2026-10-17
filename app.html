@@ -964,7 +964,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v90</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v91</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1167,7 +1167,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v90</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v91</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2595,7 +2595,7 @@ async function cycle(){
   const crit = data.critico, hits = monHits(data, sel);
   const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
   if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${data.hora}.`);
-  lampSaw(data.cena ? `IA viu (${data.hora}): ${data.cena}` : `Verificação das ${data.hora} concluída.`);
+  lampSaw(data.cena ? `IA viu (${data.hora}, em ${data.secs} s): ${data.cena}` : `Verificação das ${data.hora} concluída em ${data.secs} s.`);
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     alSave(history[0]); // e gravado na pasta escolhida, se houver
@@ -2617,6 +2617,16 @@ function lamp(st, t, d){
 function lampSaw(t, err){ const el = $("lampSaw"); if (!el) return; el.textContent = t; el.hidden = !t; el.classList.toggle("err", !!err); }
 $("monNow").onclick = () => { if (!mon) return; if (ctl){ setStatus("Aguarde: ainda verificando o quadro anterior."); return; } mon.next = Date.now() + mon.sec * 1000; cycle(); };
 $("lampAck").onclick = () => mon ? lamp("ok", "Monitorando – nenhuma situação de risco", "Alerta reconhecido. As fotos do alerta ficam guardadas em Alertas do monitoramento.") : lamp("off", "Monitoramento desligado", "Alerta reconhecido.");
+// reduz a foto (maior lado = max px) só para o envio à IA
+async function shrinkTo(b, max){
+  try{
+    const bmp = await createImageBitmap(b), sc = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    if (sc >= 1) return b;
+    const c = document.createElement("canvas"); c.width = Math.round(bmp.width * sc); c.height = Math.round(bmp.height * sc);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return await new Promise(r => c.toBlob(x => r(x || b), "image/jpeg", 0.85));
+  }catch(e){ return b; }
+}
 // verificação dedicada de cada quadro do monitoramento: pergunta curta e direta só sobre as situações de alerta
 // (bem mais rápida e confiável do que a análise completa); na dúvida, alerta
 async function monCheck(blob, sel){
@@ -2629,12 +2639,19 @@ ${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
 ${sel.some(x => x[1] === "sem_epi") && epiReq().length ? `EPIs OBRIGATÓRIOS nesta área: ${epiReq().join(", ")}. Em "sem_epi", confira CADA pessoa visível contra essa lista e marque "ocorre": true se faltar qualquer um deles; em "onde", diga qual EPI falta e em qual pessoa.\n` : ""}Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
 Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição, olhos abertos ou fechados, postura, EPIs em uso e adornos visíveis) e o ambiente, em uma ou duas frases curtas.
 Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
+  const t0 = Date.now();
   try{
-    const r = await callAI(prompt, [blob], ctl.signal, {fast: true, budget: 1024}); // um pouco de raciocínio: repara em detalhes como olhos fechados
+    const small = await shrinkTo(blob, 768); // basta para pessoas, EPI e postura, e a resposta vem bem mais rápida
+    const r = await callAI(prompt, [small], ctl.signal, {fast: true, budget: 384});
     const al = r && typeof r.alertas === "object" ? r.alertas : {};
     const c = al.critico && (al.critico.ocorre === true || al.critico.ocorre === "true") ? [String(al.critico.onde || "situação grave na imagem")] : [];
-    setStatus(`Monitoramento: quadro das ${hora} verificado.`);
-    return {alertas: al, critico: c, cena: String(r?.cena || ""), hora};
+    const secs = Math.round((Date.now() - t0) / 1000), cena = String(r?.cena || "");
+    // regra de segurança: se a própria descrição indica sono, alerta mesmo que a IA não tenha marcado
+    if (sel.some(x => x[1] === "dormindo_caido") && !(al.dormindo_caido && (al.dormindo_caido.ocorre === true || al.dormindo_caido.ocorre === "true"))
+        && /sonolen|sono\b|cochil|dormi|olhos\s+(semi|entre)?\s*(fechad|cerrad|entreabert|semiabert)|olhos\s+quase\s+fechad|cabe[çc]a\s+(ca[íi]da|baixa|apoiada|tombada)|debru[çc]ad/i.test(normTxt(cena).replace(/[^a-z\s]/g, " ") + " " + cena.toLowerCase()))
+      al.dormindo_caido = {ocorre: true, certeza: "baixa", onde: "a descrição da cena indica sonolência: " + cena.slice(0, 140)};
+    setStatus(`Monitoramento: quadro das ${hora} verificado em ${secs} s.`);
+    return {alertas: al, critico: c, cena, hora, secs};
   }catch(e){
     handleErr(e);
     if (e?.code !== "cancelled" && e?.name !== "AbortError") lampSaw(`Falha na verificação das ${hora}: ${$("status").textContent}`, true);
