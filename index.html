@@ -57,7 +57,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .primary{background:var(--signal);color:var(--signal-ink);border-color:var(--signal);font-family:var(--f-display);font-size:18px;letter-spacing:.04em;text-transform:uppercase;padding:10px 18px;width:100%;justify-content:center}
 .primary:hover{border-color:var(--ink)}
 .btn input{display:none}
-.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-height:330px;overflow-y:auto}
 .thumb{position:relative;aspect-ratio:4/3;border-radius:3px;overflow:hidden;background:var(--bg);border:1px dashed var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb button{position:absolute;top:3px;right:3px;padding:0 6px;font-size:12px;line-height:18px;border-radius:3px;background:rgba(0,0,0,.6);color:#fff;border:0}
@@ -128,6 +128,76 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .alert b{font:700 16px var(--f-display);letter-spacing:.05em;color:var(--crit);text-transform:uppercase;white-space:nowrap}
 .limit{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
 .empty{color:var(--muted)}
+.fields{display:grid;gap:8px}
+.fields label{display:grid;gap:4px;font-size:12.5px;color:var(--muted);font-weight:600}
+input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.tech{margin-top:24px}
+.techbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+/* Relatório: papel claro de propósito (documento para imprimir), cores fixas */
+.rep{background:#fff;color:#1c2328;max-width:900px;margin:0 auto;padding:44px 52px;font:14px/1.6 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.18);border-radius:4px}
+.rep h1{font:700 30px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;margin:6px 0 16px;color:#1c2328;text-wrap:balance}
+.rep h2{font:700 19px/1.2 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.03em;margin:30px 0 10px;padding-bottom:4px;border-bottom:2px solid #1c2328;color:#1c2328}
+.rep h3{font:600 14px/1.3 "Barlow",sans-serif;margin:16px 0 6px;color:#1c2328}
+.rep p{margin:0 0 10px;max-width:75ch}
+.rep .rk{font:600 11px "Barlow",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#5b6770;border-left:6px solid #f5c400;padding-left:8px}
+.rep .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px;margin:0;padding:12px 14px;background:#f4f6f7;border-radius:4px}
+.rep .meta dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#5b6770}
+.rep .meta dd{margin:0;font-weight:600}
+.rep table{border-collapse:collapse;width:100%;font-size:12.5px;margin:6px 0 4px}
+.rep th{background:#1c2328;color:#fff;font:600 11px "Barlow",sans-serif;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:6px 8px}
+.rep td{border-bottom:1px solid #d5dbe0;padding:6px 8px;vertical-align:top}
+.rep .tw{overflow-x:auto}
+.rep .num{font:500 12px "JetBrains Mono",ui-monospace,monospace;white-space:nowrap}
+.rep .lv{display:inline-block;font:600 11px "Barlow",sans-serif;padding:1px 7px;border-radius:3px;color:#1c2328}
+.rep .figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rep .figs.many{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rep figure{margin:0}
+.rep figure img{width:100%;border-radius:3px;border:1px solid #d5dbe0;display:block}
+.rep figcaption{font-size:12px;color:#3d474e;margin-top:4px}
+.rep .cap{font-size:12px;color:#5b6770;margin:4px 0 0}
+.rep .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.rep .mx{display:grid;grid-template-columns:20px repeat(5,minmax(0,1fr));gap:2px;font:500 10px "JetBrains Mono",monospace;max-width:280px}
+.rep .mx .c{aspect-ratio:1;border-radius:2px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:1px}
+.rep .mx .ax{display:grid;place-items:center;color:#5b6770}
+.rep .mx .d{width:15px;height:15px;border-radius:50%;background:#1c2328;color:#fff;display:grid;place-items:center;font-size:9px}
+.rep .dr{display:grid;grid-template-columns:72px minmax(0,1fr) 24px;gap:8px;align-items:center;margin:5px 0;font-size:12.5px}
+.rep .db{height:14px;background:#eef1f3;border-radius:0 4px 4px 0}
+.rep .db i{display:block;height:100%;border-radius:0 4px 4px 0}
+.rep svg{width:100%;height:auto;display:block}
+.rep .gb{height:10px;background:#eef1f3;border-radius:0 4px 4px 0;min-width:80px}
+.rep .gb i{display:block;height:100%;background:#1f6fb2;border-radius:0 4px 4px 0}
+.rep .sit{display:inline-flex;align-items:center;gap:8px;font:700 15px "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:6px 12px;border-radius:4px;border:2px solid currentColor;margin-bottom:10px}
+.rep ol.refs,.rep ul{margin:0 0 10px;padding-left:20px}
+.rep .sign{margin:48px auto 0;max-width:340px;text-align:center}
+.rep .sign .ln{border-top:1px solid #1c2328;margin-bottom:6px}
+.rep .sign small{color:#5b6770}
+.rep .disc{font-size:11.5px;color:#5b6770;border-top:1px solid #d5dbe0;padding-top:10px;margin-top:28px;max-width:none}
+@media (max-width:640px){.rep{padding:22px 16px}.rep .meta,.rep .figs,.rep .two{grid-template-columns:minmax(0,1fr)}}
+@page{size:A4;margin:14mm}
+@media print{
+  body{background:#fff}
+  .wrap>header,.grid,.techbar{display:none!important}
+  .wrap{padding:0!important;max-width:none}
+  .tech{margin:0}
+  .rep{box-shadow:none;padding:0;max-width:none;border-radius:0}
+  .rep h2{break-after:avoid}
+  .rep figure,.rep tr,.rep svg,.rep .mx{break-inside:avoid}
+}
+.qr svg{width:100%;max-width:230px;height:auto;background:#fff;padding:6px;border-radius:6px;display:block;margin:0 auto}
+.qrlink{display:block;font:500 10.5px var(--f-mono);word-break:break-all;color:var(--muted);margin-top:6px;text-align:center}
+.ask{border:2px solid var(--signal);border-radius:6px;padding:10px 12px;display:grid;gap:8px;background:var(--bg)}
+.okb{background:var(--ok);color:#fff;border-color:var(--ok)}
+.phone{max-width:520px;margin:0 auto;padding-block:14px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ph-top{display:flex;gap:10px;align-items:center;border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:16px}
+.ph-top h1{font-size:24px}
+.phone h2{font-size:24px}
+.phone p{margin:0}
+.phone button{font-size:16px;padding:12px 14px;justify-content:center}
+.phone .row button{flex:1}
+.ph-v{aspect-ratio:auto;min-height:220px}
+.ph-v video{object-fit:contain;max-height:62vh}
+.flash{animation:fl .35s ease-out}
+@keyframes fl{from{box-shadow:0 0 0 6px var(--signal)}to{box-shadow:0 0 0 0 transparent}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head><body>
@@ -177,14 +247,27 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
         </div>
       </div>
 
+      <div class="panel stack" id="qrBox" hidden>
+        <p class="label">Celular como câmera (QR code)</p>
+        <p class="hint">Gere o QR code e leia com a câmera do celular. O celular pede permissão, você autoriza aqui e a câmera dele passa a alimentar a inspeção. Ao encerrar ou fechar esta página, o celular é desconectado e precisa ler um novo QR code.</p>
+        <div id="qrArea" class="qr" hidden></div>
+        <div id="qrAsk" class="ask" hidden role="alert">
+          <b id="qrAskTxt"></b>
+          <div class="row"><button id="qrAllow" class="okb" type="button">Permitir</button><button id="qrDeny" type="button">Recusar</button></div>
+        </div>
+        <div class="row"><button id="qrBtn" type="button">Gerar QR code</button><button id="qrEnd" type="button" hidden>Encerrar conexão</button></div>
+        <div class="status" id="qrStatus" role="status"></div>
+      </div>
+
       <div class="panel stack">
         <p class="label">2 · Ou use fotos</p>
         <div class="row">
           <label class="btn">Tirar foto<input id="shoot" type="file" accept="image/*" capture="environment"></label>
           <label class="btn">Enviar fotos<input id="pick" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+          <button id="clrBtn" type="button" hidden>Remover todas</button>
         </div>
         <div class="thumbs" id="thumbs"></div>
-        <p class="hint">Até <span id="maxN">4</span> imagens. Ângulos diferentes do mesmo setor dão um diagnóstico melhor.</p>
+        <p class="hint"><b id="cnt">0</b> de <span id="maxN">50</span> imagens. Fotografe o setor de ângulos diferentes: visão geral, postos de trabalho, máquinas, piso, quadros elétricos, extintores e saídas.</p>
       </div>
 
       <div class="panel stack">
@@ -204,17 +287,55 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
         <p class="label">Histórico do monitoramento</p>
         <ol class="hist" id="hist"></ol>
       </div>
+
+      <div class="panel stack" id="repBox">
+        <p class="label">4 · Relatório técnico</p>
+        <div class="fields">
+          <label for="rEmp">Empresa / unidade<input id="rEmp" type="text" placeholder="Ex.: Complexo Germano – Usina de Concentração"></label>
+          <label for="rSetor">Setor / área inspecionada<input id="rSetor" type="text" placeholder="Ex.: Oficina de manutenção de correias"></label>
+          <label for="rResp">Responsável técnico<input id="rResp" type="text" placeholder="Nome e registro profissional"></label>
+          <label for="rData">Data da inspeção<input id="rData" type="date"></label>
+        </div>
+        <button class="primary" id="repBtn" type="button" disabled>Gerar relatório técnico</button>
+        <p class="hint">Usa as imagens capturadas (ou o último quadro do monitoramento) e a análise mais recente. Monta introdução, objetivo, justificativa, metodologia, fotos, Ishikawa, matriz GUT, matriz REI, parecer pelas NRs e plano de ação.</p>
+      </div>
     </section>
 
     <section class="panel report" id="report" aria-live="polite"></section>
   </div>
+  <section class="tech" id="tech" hidden></section>
 </div>
+
+<section class="phone" id="phone" hidden>
+  <header class="ph-top">
+    <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular</div></div>
+  </header>
+  <div id="phAsk" class="stack">
+    <h2>Conectar este celular?</h2>
+    <p>A câmera deste celular vai transmitir imagens para o computador que mostrou o QR code. Nada fica salvo no celular.</p>
+    <p>O acesso vale só para esta sessão. Ao encerrar no computador, ou ao fechar esta página, o celular é desconectado e é preciso ler o QR code de novo.</p>
+    <button class="primary" id="phAllow" type="button">Permitir e conectar</button>
+    <button id="phCancel" type="button">Cancelar</button>
+  </div>
+  <div id="phLive" class="stack" hidden>
+    <div class="video-box ph-v" id="phBox"><video id="phVideo" playsinline muted autoplay></video><span class="rec" id="phRec">● AGUARDANDO</span></div>
+    <div class="status" id="phStatus" role="status"></div>
+    <button class="primary" id="phShot" type="button" disabled>Enviar foto</button>
+    <div class="row"><button id="phFlip" type="button">Trocar câmera</button><button id="phEnd" type="button">Desconectar</button></div>
+    <p class="hint"><b id="phCount">0</b> foto(s) enviada(s) nesta sessão.</p>
+  </div>
+  <div id="phDone" class="stack" hidden>
+    <h2 id="phDoneT">Desconectado</h2>
+    <p id="phDoneP"></p>
+  </div>
+</section>
 
 <script>
 (function(){
 "use strict";
 const $ = id => document.getElementById(id);
-const MAX_DEFAULT = 4;
+const MAX_DEFAULT = 50;
 let maxImages = MAX_DEFAULT;
 const frames = []; // {blob, url}
 let stream = null, sample = null, ctl = null;
@@ -391,7 +512,8 @@ function render(d, isExample){
 /* ---------- imagens ---------- */
 function refreshThumbs(){
   const box = $("thumbs"); box.innerHTML = "";
-  for (let i = 0; i < maxImages; i++){
+  const slots = Math.min(maxImages, Math.max(4, Math.ceil((frames.length + 1) / 4) * 4));
+  for (let i = 0; i < slots; i++){
     const f = frames[i]; const d = document.createElement("div"); d.className = "thumb";
     if (f){
       const img = document.createElement("img"); img.src = f.url; img.alt = "Imagem " + (i+1);
@@ -401,23 +523,31 @@ function refreshThumbs(){
     }
     box.append(d);
   }
+  $("cnt").textContent = frames.length; $("clrBtn").hidden = !frames.length;
   updateGo();
 }
+$("clrBtn").onclick = () => { frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0; refreshThumbs(); };
 function addBlob(blob){
   if (frames.length >= maxImages){ setStatus(`Limite de ${maxImages} imagens. Remova uma para adicionar outra.`, true); return; }
   frames.push({blob, url: URL.createObjectURL(blob)}); refreshThumbs(); setStatus("");
 }
 async function normalize(file){
-  // reduz para ~1600px e converte para JPEG (aceita formatos que o navegador decodifica)
+  // reduz para ~1280px e converte para JPEG (aceita formatos que o navegador decodifica)
   try{
     const bmp = await createImageBitmap(file);
-    const s = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const s = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.round(bmp.width*s); c.height = Math.round(bmp.height*s);
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
     return await new Promise(r => c.toBlob(r, "image/jpeg", 0.86));
   }catch(e){ return file; }
 }
-async function onFiles(list){ for (const f of Array.from(list || [])) addBlob(await normalize(f)); }
+async function onFiles(list){
+  const arr = Array.from(list || []);
+  for (const f of arr){
+    if (frames.length >= maxImages){ setStatus(`Limite de ${maxImages} imagens atingido. As fotos excedentes foram ignoradas.`, true); break; }
+    addBlob(await normalize(f));
+  }
+}
 $("pick").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
 $("shoot").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
 
@@ -449,6 +579,7 @@ async function startCam(deviceId){
   }
 }
 function stopCam(){
+  remoteOn = false;
   if (stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
   const v = $("video"); v.srcObject = null; v.hidden = true;
   $("videoMsg").hidden = false; $("rec").hidden = true; $("snapBtn").disabled = true; $("camBtn").textContent = "Ligar câmera";
@@ -459,7 +590,7 @@ $("camSel").onchange = e => startCam(e.target.value);
 function grabFrame(){
   return new Promise(res => {
     const v = $("video"); if (!stream || !v.videoWidth) return res(null);
-    const s = Math.min(1, 1600 / v.videoWidth);
+    const s = Math.min(1, 1280 / v.videoWidth);
     const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
     c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
     c.toBlob(res, "image/jpeg", 0.86);
@@ -473,6 +604,7 @@ function updateGo(){
   const ready = frames.length > 0 && (sample || (!inViewer && $("apiKey").value.trim()));
   $("goBtn").disabled = !ready || !!ctl;
   $("monBtn").disabled = !mon && !(stream && !inViewer && $("apiKey").value.trim());
+  $("repBtn").disabled = !!ctl || !(frames.length || history.length) || !(sample || (!inViewer && $("apiKey").value.trim()));
 }
 $("apiKey").addEventListener("input", e => { store("sst_api_key", e.target.value.trim() || null); geminiModel = null; updateGo(); if (!inViewer) showProvider(); });
 function showProvider(){ const k = $("apiKey").value.trim(); setMode(!k ? "navegador · informe a chave" : provider() === "claude" ? "navegador + Claude" : "navegador + Gemini"); }
@@ -495,7 +627,7 @@ async function viaApi(prompt, blobs, signal){
     method:"POST", signal,
     headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01",
              "anthropic-dangerous-direct-browser-access":"true","anthropic-beta":"server-side-fallback-2026-07-01"},
-    body: JSON.stringify({model:MODEL, max_tokens:16000, output_config:{effort:"medium"}, fallbacks:"default",
+    body: JSON.stringify({model:MODEL, max_tokens:12800, output_config:{effort:"medium"}, fallbacks:"default",
                           messages:[{role:"user", content}]})
   });
   const j = await res.json().catch(() => ({}));
@@ -546,6 +678,28 @@ const ERR = {
   invalid_json:"A resposta veio fora do formato. Clique em Analisar de novo.", session_expired:"Sua sessão expirou. Entre de novo no Claude."
 };
 
+// com muitas fotos, reduz cada uma para caber nos limites de tamanho das APIs
+async function shrink(blobs){
+  if (blobs.length <= 16) return blobs;
+  return Promise.all(blobs.map(async b => {
+    try{
+      const bmp = await createImageBitmap(b); const s = Math.min(1, 1024 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas"); c.width = Math.round(bmp.width*s); c.height = Math.round(bmp.height*s);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+      return await new Promise(r => c.toBlob(x => r(x || b), "image/jpeg", 0.8));
+    }catch(e){ return b; }
+  }));
+}
+async function callAI(prompt, blobs, signal){
+  blobs = await shrink(blobs);
+  if (sample) return sample.json(prompt, {images: blobs, signal, cache:false});
+  return provider() === "claude" ? viaApi(prompt, blobs, signal) : viaGemini(prompt, blobs, signal);
+}
+function handleErr(e){
+  if (e?.code === "cancelled" || e?.name === "AbortError") setStatus("Operação interrompida.");
+  else if (e?.code === "http") { setStatus(e.status === 401 ? "Chave da API inválida." : "Erro da API: " + e.message, true); if (e.status === 401 && mon) stopMon(); }
+  else setStatus(ERR[e?.code] || "Falha na análise. Tente de novo em instantes.", true);
+}
 // roda uma análise; devolve os dados ou null se falhou (status já mostra o motivo)
 async function analyze(blobs, label){
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
@@ -553,16 +707,12 @@ async function analyze(blobs, label){
   setStatus(label + "…");
   const prompt = buildPrompt($("ctx").value.trim());
   try{
-    const data = sample
-      ? await sample.json(prompt, {images: blobs, signal: ctl.signal, cache:false})
-      : provider() === "claude" ? await viaApi(prompt, blobs, ctl.signal) : await viaGemini(prompt, blobs, ctl.signal);
-    render(data, false);
+    const data = await callAI(prompt, blobs, ctl.signal);
+    render(data, false); lastData = data;
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
   }catch(e){
-    if (e?.code === "cancelled" || e?.name === "AbortError") setStatus("Análise interrompida.");
-    else if (e?.code === "http") { setStatus(e.status === 401 ? "Chave da API inválida." : "Erro da API: " + e.message, true); if (e.status === 401 && mon) stopMon(); }
-    else setStatus(ERR[e?.code] || "Falha na análise. Tente de novo em instantes.", true);
+    handleErr(e);
     return null;
   }finally{
     clearInterval(tick); ctl = null; $("stopRow").hidden = true; updateGo();
@@ -587,7 +737,7 @@ function beep(){
 function critOf(d){ return (d.riscos || []).filter(r => level(r.severidade, r.probabilidade).k === "crit"); }
 function addHistory(blob, data){
   const url = URL.createObjectURL(blob);
-  history.unshift({t: new Date(), url, data});
+  history.unshift({t: new Date(), url, data, blob});
   while (history.length > 50) URL.revokeObjectURL(history.pop().url);
   drawHistory(0);
 }
@@ -638,9 +788,385 @@ function stopMon(){
 $("monBtn").onclick = () => mon ? stopMon() : startMon();
 $("stopBtn").onclick = () => ctl?.abort();
 
+/* ---------- relatório técnico ---------- */
+let lastData = null, report = null;
+const tr = (t, n) => { t = String(t ?? ""); return t.length > n ? t.slice(0, n-1) + "…" : t; };
+function wrapWords(t, n, max){
+  const lines = []; let cur = "";
+  for (const w of String(t || "").split(/\s+/)){
+    if ((cur + " " + w).trim().length > n){ if (cur) lines.push(cur); cur = w; } else cur = (cur + " " + w).trim();
+  }
+  if (cur) lines.push(cur);
+  if (lines.length > max){ lines.length = max; lines[max-1] = tr(lines[max-1], n - 1) + "…"; }
+  return lines;
+}
+const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsDataURL(b); });
+const LV = {crit:["Crítico","#c62828","#f6c9c9"], high:["Alto","#e0661b","#fbd9c2"], warn:["Moderado","#d9a400","#fbefc2"], ok:["Baixo","#2e8b57","#d7eedf"]};
+
+function reportPrompt(meta, ctx, base, n){
+  return `Você é engenheiro(a) de segurança do trabalho no Brasil e vai redigir um RELATÓRIO TÉCNICO DE INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO a partir da(s) ${n} imagem(ns) anexada(s). Cite-as como Figura 1, Figura 2 etc., na ordem de envio.
+Dados da inspeção: empresa/unidade: ${meta.emp || "não informado"}; setor/área: ${meta.setor || "não informado"}; data: ${meta.data}; responsável técnico: ${meta.resp || "não informado"}.
+${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${base ? "Análise preliminar feita por IA (ponto de partida; corrija o que a imagem contrariar): " + JSON.stringify(base).slice(0, 12000) + "\n" : ""}
+Regras:
+- Fundamente o parecer nas Normas Regulamentadoras do MTE com a redação vigente. Considere a NR-01 atualizada (GRO/PGR, inventário de riscos e plano de ação, incluindo fatores de riscos psicossociais relacionados ao trabalho) e as NRs aplicáveis ao que aparece (ex.: NR-05, NR-06, NR-07, NR-08, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22, NR-23, NR-24, NR-26, NR-33, NR-35).
+- Cite número de item somente quando tiver certeza. Se não tiver, cite só a NR e escreva "confirmar item na redação vigente".
+- Baseie-se apenas no que é visível. O que não puder ser confirmado pela imagem deve aparecer como "verificar em campo". Não invente pessoas, medições, datas ou valores.
+- Português do Brasil, linguagem técnica, impessoal e objetiva.
+Ferramentas da qualidade obrigatórias:
+- Diagrama de Ishikawa (6M) para o principal problema de SST encontrado: até 4 causas por categoria, cada causa com no máximo 6 palavras.
+- Matriz GUT (gravidade, urgência, tendência de 1 a 5) para 3 a 8 problemas.
+- Matriz REI, relação esforço × impacto (1 a 5 cada), para cada ação proposta.
+- Plano de ação 5W2H com prioridade coerente com a GUT.
+
+Responda SOMENTE com um objeto JSON neste formato:
+{"titulo":"Relatório Técnico de Inspeção de Segurança do Trabalho – <setor>",
+"introducao":"1-2 parágrafos","objetivo":"1 parágrafo","justificativa":"1-2 parágrafos citando as NRs e o GRO",
+"metodologia":"1-2 parágrafos: inspeção visual por imagens, matriz de risco severidade × probabilidade (NR-01), Ishikawa, GUT, REI e 5W2H",
+"descricao_ambiente":"1 parágrafo",
+"fotos":[{"legenda":"legenda curta da Figura N","observacoes":"o que se observa de SST nesta figura"}],
+"riscos":[{"perigo":"","categoria":"Físico|Químico|Biológico|Ergonômico|Acidente|Psicossocial","nr":"NR-12","item":"","severidade":1,"probabilidade":1,"medida":"medida de controle seguindo a hierarquia de controles"}],
+"ishikawa":{"efeito":"problema principal","metodo":[""],"maquina":[""],"mao_de_obra":[""],"material":[""],"meio_ambiente":[""],"medicao":[""]},
+"gut":[{"problema":"","g":1,"u":1,"t":1,"justificativa":"curta"}],
+"rei":[{"acao":"","esforco":1,"impacto":1}],
+"parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
+"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa"}],
+"consideracoes_finais":"1-2 parágrafos",
+"referencias":["NR-01 – Disposições Gerais e Gerenciamento de Riscos Ocupacionais"]}`;
+}
+
+function ishikawaSVG(I){
+  I = I || {};
+  const cats = [["metodo","Método"],["maquina","Máquina"],["mao_de_obra","Mão de obra"],["material","Material"],["meio_ambiente","Meio ambiente"],["medicao","Medição"]];
+  const W = 1000, H = 480, SY = 240;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de Ishikawa">`;
+  s += `<line x1="20" y1="${SY}" x2="770" y2="${SY}" stroke="#1c2328" stroke-width="3"/><path d="M770 ${SY-9} L786 ${SY} L770 ${SY+9}Z" fill="#1c2328"/>`;
+  s += `<rect x="790" y="${SY-80}" width="200" height="160" rx="6" fill="#fff3c4" stroke="#1c2328" stroke-width="2"/>`;
+  const ef = wrapWords(I.efeito || "Problema principal", 22, 6);
+  ef.forEach((l, i) => { s += `<text x="890" y="${SY - (ef.length-1)*9 + i*18 + 5}" text-anchor="middle" font-size="14" font-weight="700" fill="#1c2328">${esc(l)}</text>`; });
+  cats.forEach(([k, label], i) => {
+    const top = i < 3, x0 = 50 + (i % 3) * 245, xe = x0 + 170, y0 = top ? 44 : H - 44;
+    s += `<line x1="${x0}" y1="${y0}" x2="${xe}" y2="${SY}" stroke="#1c2328" stroke-width="2"/>`;
+    s += `<rect x="${x0-44}" y="${top ? y0-30 : y0+6}" width="120" height="24" rx="3" fill="#1c2328"/><text x="${x0+16}" y="${top ? y0-13 : y0+23}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${label}</text>`;
+    const items = (Array.isArray(I[k]) ? I[k] : []).filter(Boolean).slice(0, 4);
+    items.forEach((t, j) => {
+      const f = (j + 1) / (items.length + 1) * 0.9, y = y0 + (SY - y0) * f, x = x0 + (xe - x0) * f;
+      s += `<line x1="${x}" y1="${y}" x2="${x+12}" y2="${y}" stroke="#5b6770" stroke-width="1.5"/><text x="${x+16}" y="${y+5}" font-size="14" fill="#1c2328">${esc(tr(t, 30))}<title>${esc(t)}</title></text>`;
+    });
+  });
+  return s + `</svg>`;
+}
+
+function reiSVG(rei){
+  const L = 52, T = 14, PW = 420, PH = 300, W = L + PW + 14, H = T + PH + 46;
+  const X = v => L + (v - 0.5) / 5 * PW, Y = v => T + PH - (v - 0.5) / 5 * PH, xm = X(3), ym = Y(3);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Matriz REI: esforço por impacto">`;
+  s += `<rect x="${L}" y="${T}" width="${xm-L}" height="${ym-T}" fill="#e3f2e8"/><rect x="${xm}" y="${T}" width="${L+PW-xm}" height="${ym-T}" fill="#e4edf8"/>`;
+  s += `<rect x="${L}" y="${ym}" width="${xm-L}" height="${T+PH-ym}" fill="#f2f4f5"/><rect x="${xm}" y="${ym}" width="${L+PW-xm}" height="${T+PH-ym}" fill="#fbeaea"/>`;
+  s += `<g font-size="11" font-weight="600" fill="#3d474e"><text x="${L+8}" y="${T+16}">GANHOS RÁPIDOS</text><text x="${L+PW-8}" y="${T+16}" text-anchor="end">PROJETOS ESTRATÉGICOS</text><text x="${L+8}" y="${T+PH-8}">TAREFAS SIMPLES</text><text x="${L+PW-8}" y="${T+PH-8}" text-anchor="end">REAVALIAR</text></g>`;
+  s += `<rect x="${L}" y="${T}" width="${PW}" height="${PH}" fill="none" stroke="#9aa7b0"/>`;
+  for (let v = 1; v <= 5; v++){ s += `<text x="${X(v)}" y="${T+PH+15}" text-anchor="middle" font-size="11" fill="#5b6770">${v}</text><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#5b6770">${v}</text>`; }
+  s += `<text x="${L+PW/2}" y="${H-6}" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2328">Esforço →</text><text transform="translate(14 ${T+PH/2}) rotate(-90)" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2328">Impacto →</text>`;
+  const seen = {};
+  rei.forEach((a, i) => {
+    const key = a.e + "," + a.i, n = seen[key] = (seen[key] || 0) + 1, ang = (n - 1) * 2.1, r = n > 1 ? 14 : 0;
+    const cx = X(a.e) + Math.cos(ang) * r, cy = Y(a.i) + Math.sin(ang) * r;
+    s += `<g><title>${esc(a.acao)}: esforço ${a.e}, impacto ${a.i}</title><circle cx="${cx}" cy="${cy}" r="11" fill="#1f6fb2" stroke="#fff" stroke-width="2"/><text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${i+1}</text></g>`;
+  });
+  return s + `</svg>`;
+}
+const quad = a => a.i >= 3 ? (a.e <= 3 ? "Ganho rápido" : "Projeto estratégico") : (a.e <= 3 ? "Tarefa simples" : "Reavaliar");
+
+function reportHTML(R, photos, meta){
+  const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
+  const riscos = (R.riscos || []).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
+  const counts = {crit:0, high:0, warn:0, ok:0}; riscos.forEach(r => counts[level(r.severidade, r.probabilidade).k]++);
+  const maxC = Math.max(1, ...Object.values(counts));
+  const gut = (R.gut || []).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
+  const rei = (R.rei || []).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
+  const P = R.parecer || {}, sit = String(P.situacao || "Verificar em campo");
+  const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LV.crit[1] : /parcial/i.test(sit) ? "#a87f00" : /conforme/i.test(sit) ? LV.ok[1] : "#a87f00";
+  const ord = {alta:0, "média":1, media:1, baixa:2};
+  const plano = (R.plano_acao || []).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const fotos = R.fotos || [];
+  let mx = "";
+  for (let sv = 5; sv >= 1; sv--){
+    mx += `<div class="ax">${sv}</div>`;
+    for (let pv = 1; pv <= 5; pv++){
+      const L = level(sv, pv);
+      mx += `<div class="c" style="background:${LV[L.k][2]}">${riscos.map((r, i) => clamp(r.severidade,1,5) === sv && clamp(r.probabilidade,1,5) === pv ? `<span class="d">${i+1}</span>` : "").join("")}</div>`;
+    }
+  }
+  mx += `<div></div>` + [1,2,3,4,5].map(v => `<div class="ax">${v}</div>`).join("");
+  let n = 0; const H = t => `<h2>${++n}. ${t}</h2>`;
+  return `<article class="rep">
+  <div class="rk">Relatório técnico de inspeção · Segurança e Saúde no Trabalho</div>
+  <h1>${esc(R.titulo || "Relatório Técnico de Inspeção de Segurança do Trabalho")}</h1>
+  <dl class="meta">
+    <div><dt>Empresa / unidade</dt><dd>${esc(meta.emp || "Não informado")}</dd></div>
+    <div><dt>Setor / área</dt><dd>${esc(meta.setor || "Não informado")}</dd></div>
+    <div><dt>Data da inspeção</dt><dd>${esc(meta.data)}</dd></div>
+    <div><dt>Responsável técnico</dt><dd>${esc(meta.resp || "Não informado")}</dd></div>
+  </dl>
+  ${H("Introdução")}${para(R.introducao)}
+  ${H("Objetivo")}${para(R.objetivo)}
+  ${H("Justificativa")}${para(R.justificativa)}
+  ${H("Metodologia")}${para(R.metodologia)}
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Plano de ação 5W2H.</li></ul>
+  ${H("Caracterização do ambiente e registro fotográfico")}${para(R.descricao_ambiente)}
+  <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(fotos[i]?.legenda || "Ambiente inspecionado")}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
+  ${H("Identificação e avaliação dos riscos")}
+  <div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
+  ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
+  </tbody></table></div>
+  <div class="two">
+    <div><h3>Matriz de risco (NR-01)</h3><div class="mx">${mx}</div><p class="cap">Linhas: severidade (1 a 5). Colunas: probabilidade (1 a 5). Números = itens da tabela.</p></div>
+    <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p></div>
+  </div>
+  ${H("Análise de causas – Diagrama de Ishikawa")}
+  <p>Efeito analisado: <b>${esc(R.ishikawa?.efeito || "—")}</b>.</p>
+  ${ishikawaSVG(R.ishikawa)}
+  ${H("Priorização dos problemas – Matriz GUT")}
+  <div class="tw"><table><thead><tr><th>Problema</th><th>G</th><th>U</th><th>T</th><th>G×U×T</th><th>Prioridade</th><th>Justificativa</th></tr></thead><tbody>
+  ${gut.map((g, i) => `<tr><td>${esc(g.problema)}</td><td class="num">${g.G}</td><td class="num">${g.U}</td><td class="num">${g.T}</td><td><div class="num">${g.s}</div><div class="gb"><i style="width:${g.s/125*100}%"></i></div></td><td class="num">${i+1}º</td><td>${esc(g.justificativa)}</td></tr>`).join("") || '<tr><td colspan="7">—</td></tr>'}
+  </tbody></table></div>
+  <p class="cap">G = gravidade, U = urgência, T = tendência (1 a 5). Pontuação máxima 125.</p>
+  ${H("Priorização das ações – Matriz REI (esforço × impacto)")}
+  <div class="two"><div>${reiSVG(rei)}</div><div><div class="tw"><table><thead><tr><th>#</th><th>Ação</th><th>E</th><th>I</th><th>Quadrante</th></tr></thead><tbody>
+  ${rei.map((a, i) => `<tr><td class="num">${i+1}</td><td>${esc(a.acao)}</td><td class="num">${a.e}</td><td class="num">${a.i}</td><td>${quad(a)}</td></tr>`).join("") || '<tr><td colspan="5">—</td></tr>'}
+  </tbody></table></div><p class="cap">Executar primeiro os ganhos rápidos (baixo esforço, alto impacto) e planejar os projetos estratégicos.</p></div></div>
+  ${H("Parecer técnico")}
+  <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
+  ${para(P.texto)}
+  <h3>Fundamentação normativa</h3>
+  <div class="tw"><table><thead><tr><th>NR / item</th><th>Constatação</th><th>Exigência normativa</th></tr></thead><tbody>
+  ${(P.fundamentacao || []).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
+  </tbody></table></div>
+  ${H("Plano de ação (5W2H)")}
+  <div class="tw"><table><thead><tr><th>Prioridade</th><th>O quê</th><th>Por quê</th><th>Onde</th><th>Quem</th><th>Quando</th><th>Como</th><th>Quanto</th></tr></thead><tbody>
+  ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td><b>${esc(a.acao)}</b></td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="8">—</td></tr>'}
+  </tbody></table></div>
+  ${H("Considerações finais")}${para(R.consideracoes_finais)}
+  ${H("Referências normativas")}
+  <ol class="refs">${(R.referencias || []).map(x => `<li>${esc(x)}</li>`).join("")}<li>Normas Regulamentadoras: redação vigente publicada pelo Ministério do Trabalho e Emprego (gov.br/trabalho-e-emprego).</li></ol>
+  <div class="sign"><div class="ln"></div><div><b>${esc(meta.resp || "Responsável técnico")}</b></div><small>Assinatura e registro profissional</small></div>
+  <p class="disc">Relatório elaborado com apoio de inteligência artificial a partir de imagens do ambiente. As constatações devem ser confirmadas em inspeção de campo, e o documento só tem validade técnica após revisão e assinatura de profissional legalmente habilitado. Confirme a redação vigente e a numeração dos itens das NRs no portal do MTE.</p>
+</article>`;
+}
+
+function exportDoc(){
+  const css = [...document.querySelectorAll("style")].map(x => x.textContent).join("\n");
+  const rcss = css.slice(css.indexOf(".rep{"), css.indexOf("@media (max-width:640px)"));
+  const mob = css.slice(css.indexOf("@media (max-width:640px)"), css.indexOf("@page"));
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(report.R.titulo || "Relatório Técnico SST")}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"><style>body{margin:0;background:#e9ecef;padding:24px 12px}${rcss}${mob}@page{size:A4;margin:14mm}@media print{body{background:#fff;padding:0}.rep{box-shadow:none;padding:0;max-width:none}.rep h2{break-after:avoid}.rep figure,.rep tr,.rep svg{break-inside:avoid}}</style></head><body>${reportHTML(report.R, report.photos, report.meta)}</body></html>`;
+}
+function showReport(){
+  const t = $("tech"); t.hidden = false;
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="dlRep">Baixar relatório</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
+  if ($("prtBtn")) $("prtBtn").onclick = () => window.print();
+  $("dlRep").onclick = downloadReport;
+  $("closeRep").onclick = () => { t.hidden = true; };
+}
+async function downloadReport(){
+  const html = exportDoc(), name = "relatorio-tecnico-sst-" + (report.meta.iso || "inspecao") + ".html";
+  if (inViewer){
+    const dl = await claude.use("downloads");
+    if (!dl){ setStatus("Download indisponível nesta visualização.", true); return; }
+    try{ await dl.save({filename: name, data: html}); }catch(e){ if (e?.code !== "declined") setStatus("Não foi possível baixar o relatório.", true); }
+    return;
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html], {type:"text/html"})); a.download = name;
+  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+async function generateReport(){
+  const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
+  if (!blobs.length || ctl) return;
+  const iso = $("rData").value || new Date().toISOString().slice(0, 10);
+  const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR")};
+  ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
+  setStatus("Redigindo relatório técnico…");
+  try{
+    const R = await callAI(reportPrompt(meta, $("ctx").value.trim(), lastData, blobs.length), blobs, ctl.signal);
+    report = {R, photos: await Promise.all(blobs.map(blobToDataURL)), meta};
+    showReport();
+    setStatus(`Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. Revise antes de assinar.`);
+    $("tech").scrollIntoView({behavior: "smooth", block: "start"});
+  }catch(e){ handleErr(e); }
+  finally{ clearInterval(tick); ctl = null; $("stopRow").hidden = true; updateGo(); }
+}
+$("repBtn").onclick = generateReport;
+["rEmp","rSetor","rResp"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
+$("rData").value = new Date().toISOString().slice(0, 10);
+
+/* ---------- celular como câmera (QR code + WebRTC ponta a ponta) ---------- */
+const PEER_JS = "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js";
+const QR_JS = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";
+const params = new URLSearchParams(location.search);
+// servidor de sinalização local só para testes (?peerhost=localhost:9000)
+const PEER_OPTS = (() => { const h = params.get("peerhost") || ""; const m = h.match(/^(localhost|127\.0\.0\.1):(\d+)$/); return m ? {host: m[1], port: Number(m[2]), path: "/", secure: false} : {}; })();
+let qr = null, remoteOn = false;
+function loadScript(src){
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`) && (window.Peer || src !== PEER_JS) && (window.qrcode || src !== QR_JS)) return res();
+    const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = () => rej(new Error("load")); document.head.append(el);
+  });
+}
+const rnd = n => { const a = new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(x => "abcdefghijkmnpqrstuvwxyz23456789"[x % 32]).join(""); };
+function qrMsg(t, err){ const el = $("qrStatus"); el.textContent = t || ""; el.classList.toggle("err", !!err); }
+function useRemote(s){
+  stopCam();
+  stream = s; remoteOn = true;
+  const v = $("video"); v.srcObject = s; v.play().catch(() => {});
+  v.hidden = false; $("videoMsg").hidden = true; $("rec").hidden = false; $("rec").textContent = "● CELULAR";
+  $("snapBtn").disabled = false; $("camBtn").textContent = "Desligar câmera"; updateGo();
+}
+async function qrStart(){
+  qrMsg("Preparando conexão…");
+  try{ await Promise.all([loadScript(PEER_JS), loadScript(QR_JS)]); }
+  catch(e){ qrMsg("Não foi possível carregar o módulo de conexão. Verifique a internet.", true); return; }
+  qrStop();
+  const id = "inspecao-sst-" + rnd(16), k = rnd(12), peer = new Peer(id, PEER_OPTS);
+  qr = {peer, id, k, conn: null, call: null, ok: false, device: ""};
+  peer.on("open", () => { if (qr?.peer === peer) showQR(); });
+  peer.on("connection", conn => onPhoneConn(peer, conn));
+  peer.on("call", call => {
+    if (!qr || qr.peer !== peer || !qr.ok || call.peer !== qr.conn?.peer){ call.close(); return; }
+    qr.call = call; call.answer(); call.on("stream", s => { if (qr?.call === call) useRemote(s); });
+  });
+  peer.on("disconnected", () => { if (qr?.peer === peer && !peer.destroyed) try{ peer.reconnect(); }catch(e){} });
+  peer.on("error", e => { if (qr?.peer === peer) qrMsg("Falha na conexão (" + (e.type || "erro") + "). Gere um novo QR code.", true); });
+}
+function showQR(){
+  const url = location.origin + location.pathname + "?conectar=" + qr.id + "&k=" + qr.k + (PEER_OPTS.host ? "&peerhost=" + params.get("peerhost") : "");
+  const q = qrcode(0, "M"); q.addData(url); q.make();
+  $("qrArea").innerHTML = q.createSvgTag({cellSize: 4, margin: 3, scalable: true, alt: "QR code de acesso pelo celular"}) + `<span class="qrlink" id="qrLink">${esc(url)}</span>`;
+  $("qrArea").hidden = false; $("qrEnd").hidden = false; $("qrBtn").textContent = "Gerar novo QR code";
+  qrMsg("Aguardando a leitura do QR code pelo celular…");
+}
+function onPhoneConn(peer, conn){
+  if (!qr || qr.peer !== peer){ conn.close(); return; }
+  conn.on("data", d => {
+    if (!d || typeof d !== "object" || !qr) return;
+    if (d.type === "hello"){
+      const bad = d.k !== qr.k, busy = qr.conn && qr.conn !== conn;
+      if (bad || busy){ conn.send({type: "deny", reason: bad ? "QR code inválido." : "Outro celular já está conectado."}); setTimeout(() => conn.close(), 400); return; }
+      qr.conn = conn; qr.device = tr(String(d.device || "Celular"), 40);
+      $("qrAskTxt").textContent = `${qr.device} quer se conectar a esta inspeção.`;
+      $("qrAsk").hidden = false; $("qrArea").hidden = true;
+      qrMsg("Pedido de conexão recebido. Autorize ou recuse.");
+    } else if (conn !== qr.conn || !qr.ok){
+      return;
+    } else if (d.type === "photo"){
+      if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
+      addBlob(new Blob([d.data], {type: "image/jpeg"}));
+      conn.send({type: "got", n: frames.length});
+      setStatus(`Foto recebida do celular (${frames.length} de ${maxImages}).`);
+    } else if (d.type === "bye"){
+      phoneGone("O celular se desconectou.");
+    }
+  });
+  conn.on("close", () => { if (qr && qr.conn === conn) phoneGone("A conexão com o celular terminou."); });
+}
+function phoneGone(text){ qrStop(); qrMsg(text + " Para conectar de novo, gere e leia um novo QR code."); }
+function qrStop(){
+  if (!qr) return;
+  const q = qr; qr = null;
+  try{ q.conn?.open && q.conn.send({type: "bye"}); }catch(e){}
+  setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
+  $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
+  if (remoteOn) stopCam();
+}
+$("qrBtn").onclick = qrStart;
+$("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi desconectado e o QR code anterior não vale mais."); };
+$("qrAllow").onclick = () => {
+  if (!qr?.conn) return;
+  qr.ok = true; qr.conn.send({type: "ok"}); $("qrAsk").hidden = true;
+  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo" e as fotos enviadas entram na lista.`);
+};
+$("qrDeny").onclick = () => {
+  if (!qr?.conn) return;
+  try{ qr.conn.send({type: "deny", reason: "Conexão recusada no computador."}); }catch(e){}
+  qrStop(); qrMsg("Conexão recusada. Gere um novo QR code quando quiser conectar um celular.");
+};
+addEventListener("pagehide", () => { if (qr) qrStop(); });
+
+function deviceName(){
+  const u = navigator.userAgent;
+  if (/iPhone/.test(u)) return "iPhone";
+  if (/iPad/.test(u)) return "iPad";
+  if (/Android/.test(u)){ const m = u.match(/Android[^;)]*;\s*([^;)]+)/); return m ? m[1].replace(/\s*Build.*$/, "").trim() || "Celular Android" : "Celular Android"; }
+  return "Celular";
+}
+function phoneMode(id, k){
+  document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
+  try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
+  let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false;
+  const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
+  const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
+  function done(title, text){
+    if (ended) return; ended = true;
+    try{ st?.getTracks().forEach(t => t.stop()); }catch(e){}
+    try{ mcall?.close(); }catch(e){} try{ conn?.close(); }catch(e){} try{ peer?.destroy(); }catch(e){}
+    $("phDoneT").textContent = title; $("phDoneP").textContent = text; show("phDone");
+  }
+  async function cam(){
+    const old = st;
+    st = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: facing}, width: {ideal: 1920}, height: {ideal: 1080}}});
+    old?.getTracks().forEach(t => t.stop());
+    $("phVideo").srcObject = st; await $("phVideo").play().catch(() => {});
+  }
+  $("phCancel").onclick = () => done("Conexão cancelada", "Nenhuma imagem foi enviada. Para conectar, leia o QR code de novo.");
+  $("phAllow").onclick = async () => {
+    show("phLive"); msg("Abrindo a câmera…");
+    try{ await cam(); }catch(e){ done("Câmera bloqueada", "Permita o uso da câmera para este site nas configurações do navegador e leia o QR code de novo."); return; }
+    msg("Conectando ao computador…");
+    try{ await loadScript(PEER_JS); }catch(e){ done("Sem conexão", "Não foi possível carregar o módulo de conexão. Verifique a internet e leia o QR code de novo."); return; }
+    peer = new Peer(PEER_OPTS);
+    peer.on("open", () => {
+      conn = peer.connect(id, {reliable: true});
+      const t = setTimeout(() => { if (!conn.open) done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora."); }, 20000);
+      conn.on("open", () => { clearTimeout(t); conn.send({type: "hello", k, device: deviceName()}); msg("Aguardando autorização no computador…"); });
+      conn.on("data", d => {
+        if (!d || typeof d !== "object") return;
+        if (d.type === "ok"){ msg("Conectado. A câmera deste celular está sendo transmitida para o computador."); $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false; mcall = peer.call(id, st); }
+        else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
+        else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
+        else if (d.type === "got") msg(`Foto recebida pelo computador (${d.n} na lista).`);
+        else if (d.type === "full") msg("O computador atingiu o limite de fotos.", true);
+      });
+      conn.on("close", () => done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."));
+    });
+    peer.on("error", e => {
+      if (e.type === "peer-unavailable") done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora.");
+      else if (!ended) msg("Falha de conexão (" + e.type + ").", true);
+    });
+  };
+  $("phShot").onclick = async () => {
+    const v = $("phVideo"); if (!v.videoWidth || !conn?.open) return;
+    const s = Math.min(1, 1600 / Math.max(v.videoWidth, v.videoHeight));
+    const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
+    c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.85)); if (!b) return;
+    conn.send({type: "photo", data: await b.arrayBuffer()});
+    $("phCount").textContent = ++sent; msg("Enviando foto…");
+    const box = $("phBox"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+  };
+  $("phFlip").onclick = async () => {
+    facing = facing === "environment" ? "user" : "environment";
+    try{
+      await cam();
+      const sender = mcall?.peerConnection?.getSenders().find(x => x.track?.kind === "video");
+      if (sender) await sender.replaceTrack(st.getVideoTracks()[0]);
+    }catch(e){ msg("Não foi possível trocar a câmera.", true); }
+  };
+  $("phEnd").onclick = () => { try{ conn?.open && conn.send({type: "bye"}); }catch(e){} setTimeout(() => done("Desconectado", "Você desconectou este celular. Para conectar de novo, leia o QR code na tela do computador."), 200); };
+  addEventListener("pagehide", () => { try{ conn?.open && conn.send({type: "bye"}); }catch(e){} try{ peer?.destroy(); }catch(e){} });
+}
+
 /* ---------- modo ---------- */
 function setMode(txt){ $("mode").innerHTML = "Modo: <b>" + esc(txt) + "</b>"; }
 async function init(){
+  if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
   render(EXAMPLE, true); refreshThumbs();
   if (inViewer){
     $("camHint").textContent = "Dentro do Claude, a análise usa a sua conta, sem chave. A câmera ao vivo e o monitoramento funcionam na versão para navegador (botão abaixo).";
@@ -663,7 +1189,7 @@ async function init(){
       $("maxN").textContent = maxImages; refreshThumbs(); setMode("Claude (sua conta)");
     } else { setMode("análise indisponível"); setStatus("A análise não está disponível nesta visualização.", true); }
   } else {
-    $("keyBox").hidden = false; const k = load("sst_api_key"); if (k) $("apiKey").value = k;
+    $("keyBox").hidden = false; $("qrBox").hidden = false; const k = load("sst_api_key"); if (k) $("apiKey").value = k;
     showProvider(); updateGo();
   }
 }
