@@ -237,6 +237,18 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .ri .med{font-size:13.5px;overflow-wrap:anywhere}
 .report .ri .med span{display:block;font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 @container rep (max-width:420px){.report .ri .lc{grid-column:2 / 4;grid-row:2;justify-self:start}.report .ri .tags{grid-row:3}.report .ri .med{grid-row:4}.report .ri .n{grid-row:1 / span 4}}
+.report .pp{display:grid;gap:8px;padding:11px 12px;border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:6px;background:var(--panel);min-width:0}
+.report .pp-h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between}
+.report .pp-h b{line-height:1.35;overflow-wrap:anywhere}
+.report .pp .tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.report .pp .sp{white-space:normal}
+.report .pp .med{font-size:13.5px;overflow-wrap:anywhere}
+.report .pp .med span,.report .pp-g span{display:block;font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.report .pp-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px}
+.report .pp-g em{display:inline-block;font-style:normal;font-size:12.5px;padding:2px 8px;margin:0 4px 4px 0;border-radius:999px;border:1px solid var(--line)}
+.report .pp-g em.ok-t{border-color:var(--ok);color:var(--ok)}
+.report .pp-g em.bad-t{border-color:var(--crit);color:var(--crit);font-weight:600}
+.report .pp-g em.mut{color:var(--muted)}
 .report .lc{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:var(--lcell);font:600 12px var(--f-body);white-space:nowrap}
 .report .lc i{width:8px;height:8px;background:var(--lc)}
 .report .lc b{font:600 11.5px var(--f-mono);padding-left:6px;border-left:1px solid var(--line)}
@@ -374,6 +386,8 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .exec h4{font:700 13px "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#5b6770;margin:6px 0 6px}
 .rep .lst{margin:0;padding-left:18px;font-size:13px}
 .rep .lst li{margin:4px 0}
+.rep table.ppl{table-layout:fixed}.rep table.ppl th:nth-child(1){width:17%}.rep table.ppl th:nth-child(2){width:20%}.rep table.ppl th:nth-child(3){width:14%}.rep table.ppl th:nth-child(6){width:13%}
+.rep table.ppl td{overflow-wrap:anywhere}
 .rep h2{display:flex;gap:10px;align-items:baseline}
 .rep h2 .n{font:700 19px "JetBrains Mono",monospace;color:#1f6fb2;min-width:26px}
 .rep h3 .n{font:600 12.5px "JetBrains Mono",monospace;color:#5b6770;margin-right:8px}
@@ -556,6 +570,30 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .ph-done .label{margin:10px 0 -6px;align-self:flex-start}
 .ph-done .ph-steps{width:100%;text-align:left}
 .ph-close{font-size:13px;color:var(--muted)}
+.ph-menu{display:grid;gap:14px}
+.phone .ph-opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;justify-items:start;text-align:left;padding:18px 16px;min-height:88px;border-radius:16px;background:var(--panel);border:1px solid var(--line);color:var(--ink);box-shadow:var(--ph-shadow)}
+.phone .ph-opt svg{color:var(--signal-ink);background:var(--signal);border-radius:12px;padding:9px;width:52px;height:52px}
+.phone .ph-opt b{display:block;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.03em}
+.phone .ph-opt small{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.phone .ph-opt:active{transform:scale(.98)}
+.phone .ph-back{justify-self:start;align-self:flex-start;min-height:44px;padding:8px 14px;border-radius:999px;font-size:14px}
+.phone .ph-back::before{content:"‹";font-size:20px;line-height:1;margin-right:6px}
+.phone .ph-gal{justify-content:center;min-height:50px;border-radius:14px;font-weight:600}
+.ph-recwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.phone .ph-recbtn{width:84px;height:84px;padding:0;border-radius:50%;border:4px solid var(--line);background:var(--panel);display:grid;place-items:center}
+.phone .ph-recbtn span{width:44px;height:44px;border-radius:50%;background:var(--crit);transition:border-radius .15s,width .15s,height .15s}
+.phone .ph-recbtn.on{border-color:var(--crit)}
+.phone .ph-recbtn.on span{width:30px;height:30px;border-radius:6px;animation:ph-live 1.6s ease-in-out infinite}
+.ph-timer{font:700 34px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.ph-qwrap .label{margin:0 0 6px}
+.ph-qwrap:has(.ph-queue:empty){display:none}
+.ph-queue{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ph-queue li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13.5px}
+.ph-queue li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph-queue li small{font:600 12px var(--f-mono);color:var(--muted)}
+.ph-queue li.q-done small{color:var(--ok)}
+.ph-queue li.q-bad small{color:var(--crit)}
+.ph-queue li.q-sending small{color:var(--info)}
 @keyframes ph-fl{from{opacity:.8}to{opacity:0}}
 @keyframes ph-spin{to{transform:rotate(360deg)}}
 @keyframes ph-live{0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,.6)}60%{box-shadow:0 0 0 7px rgba(198,40,40,0)}}
@@ -576,6 +614,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .doclist:empty{display:none}
 .doclist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface-2)}
 .doclist li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.audlist li{grid-template-columns:minmax(0,1fr);gap:6px}
+.aud-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.audlist audio{width:100%;height:34px}
+.aud-sum{font-size:12.5px;color:var(--muted)}
 .doclist li small{font:500 11px var(--f-mono);color:var(--muted);white-space:nowrap}
 .doclist li.err small{color:var(--crit)}
 .docsum{border:1px solid var(--line);border-left:4px solid var(--info);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;display:grid;gap:6px;background:var(--surface-2)}
@@ -598,7 +640,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v18</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v20</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -696,15 +738,22 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
         <div class="phead"><span class="step" aria-hidden="true">3</span><p class="label">Contexto</p><span class="opt">opcional</span><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.5h7v3h-7z"/><path d="M8.5 5H5.5v15.5h13V5h-3"/><path d="M8.5 11.5h7M8.5 15.5h5"/></svg></div>
         <textarea id="ctx" aria-label="Contexto do ambiente (opcional)" placeholder="Ex.: oficina de manutenção de correias transportadoras, 6 mantenedores por turno, uso de lixadeira e solda."></textarea>
         <div class="docs stack">
-          <p class="label" style="margin:0">Documentos do setor (opcional)</p>
+          <p class="label" style="margin:0">Documentos e áudios do setor (opcional)</p>
           <div class="row">
             <label class="btn">Anexar documentos<input id="docPick" type="file" multiple accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md,image/jpeg,image/png,image/webp"></label>
+            <label class="btn">Anexar áudio<input id="audPick" type="file" multiple accept="audio/*,.m4a,.mp3,.wav,.ogg,.aac,.webm,.opus"></label>
+            <button id="audRec" type="button">Gravar áudio</button>
+          </div>
+          <div class="row">
             <button id="docRun" type="button" hidden>Extrair informações com IA</button>
             <button id="docClr" type="button" hidden>Remover documentos</button>
+            <button id="audClr" type="button" hidden>Remover áudios</button>
           </div>
           <ul class="doclist" id="docList"></ul>
           <div class="docsum" id="docSum" hidden></div>
-          <p class="hint">PGR, APR, laudos, checklists, fichas de EPI, relatórios anteriores (PDF, Word, Excel, texto ou foto do documento). A IA extrai o que importa e usa na análise e no relatório. Os arquivos não ficam salvos; o conteúdo é enviado ao serviço de IA escolhido.</p>
+          <ul class="doclist audlist" id="audList"></ul>
+          <div class="docsum" id="audSum" hidden></div>
+          <p class="hint"><b>Documentos:</b> PGR, APR, laudos, checklists, fichas de EPI, relatórios anteriores (PDF, Word, Excel, texto ou foto). <b>Áudios:</b> entrevistas com trabalhadores, relatos do supervisor ou observações faladas (também chegam pelo celular). A IA transcreve os áudios (com a chave do Gemini) e usa tudo na análise e no relatório. Os arquivos não ficam salvos; o conteúdo é enviado ao serviço de IA escolhido.</p>
         </div>
         <div id="keyBox" class="stack" hidden>
           <label class="label" for="apiKey" style="margin:0">Chave da API (Gemini ou Claude)</label>
@@ -742,7 +791,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v18</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v20</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -761,6 +810,15 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
     </div>
   </div>
   <div id="phLive" class="stack" hidden>
+    <div class="status" id="phStatus" role="status"></div>
+    <div id="phMenu" class="ph-menu" hidden>
+      <h2>O que você quer enviar?</h2>
+      <p class="hint">Celular conectado ao computador. Escolha uma opção; você pode voltar e trocar quando quiser.</p>
+      <button id="phGoPhotos" class="ph-opt" type="button"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span><b>Enviar fotos</b><small>Câmera ao vivo ou fotos salvas na galeria</small></span></button>
+      <button id="phGoAudio" class="ph-opt" type="button"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><b>Enviar áudios</b><small>Grave um relato ou envie um áudio salvo; a IA transcreve</small></span></button>
+    </div>
+    <div id="phPhotos" class="stack">
+    <button class="ph-back" type="button" hidden>Voltar às opções</button>
     <div class="ph-cam" id="phBox">
       <video id="phVideo" playsinline muted autoplay></video>
       <span class="rec" id="phRec">● AGUARDANDO</span>
@@ -772,12 +830,24 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       </div>
     </div>
     <div class="ph-sheet">
-      <div class="status" id="phStatus" role="status"></div>
+      <label class="btn ph-gal">Escolher fotos da galeria<input id="phGallery" type="file" accept="image/*" multiple></label>
       <div class="ph-recv"><p class="label">Fotos confirmadas</p><span class="ph-count"><b id="phCount">0</b> foto(s) nesta sessão</span></div>
       <div class="ph-strip" id="phStrip" aria-label="Fotos recebidas pelo computador"></div>
       <p class="hint ph-tip">Toque no botão redondo ou no vídeo para capturar. <b>AUTO</b> captura a cada 3 s enquanto você percorre o ambiente.</p>
-      <button id="phEnd" type="button">Desconectar</button>
     </div>
+    </div>
+    <div id="phAudio" class="stack" hidden>
+      <button class="ph-back" type="button" hidden>Voltar às opções</button>
+      <h2>Relatos em áudio</h2>
+      <p class="hint">Grave entrevistas com trabalhadores, relatos do supervisor ou suas observações durante a inspeção. O computador recebe e a IA transcreve e usa na análise e no relatório.</p>
+      <div class="ph-recwrap">
+        <button id="phRecBtn" class="ph-recbtn" type="button" aria-pressed="false" aria-label="Gravar áudio"><span></span></button>
+        <div><div class="ph-timer" id="phTimer">0:00</div><div class="hint">Toque para gravar e toque de novo para parar e enviar (até 10 min).</div></div>
+      </div>
+      <label class="btn ph-gal">Escolher áudio salvo no celular<input id="phAudioPick" type="file" accept="audio/*" multiple></label>
+    </div>
+    <div class="ph-qwrap"><p class="label">Envios para o computador</p><ul class="ph-queue" id="phQueue"></ul></div>
+    <button id="phEnd" type="button">Desconectar</button>
   </div>
   <div id="phDone" class="stack ph-done" hidden>
     <div class="ph-done-ic" aria-hidden="true"><svg viewBox="0 0 48 48" width="44" height="44"><g fill="none" stroke="currentColor" stroke-width="2.6"><rect x="6" y="6" width="13" height="13" rx="2.5"/><rect x="29" y="6" width="13" height="13" rx="2.5"/><rect x="6" y="29" width="13" height="13" rx="2.5"/></g><g fill="currentColor"><rect x="10.5" y="10.5" width="4" height="4" rx=".8"/><rect x="33.5" y="10.5" width="4" height="4" rx=".8"/><rect x="10.5" y="33.5" width="4" height="4" rx=".8"/><rect x="29" y="29" width="5" height="5" rx="1"/><rect x="37" y="29" width="5" height="5" rx="1"/><rect x="33" y="33" width="5" height="5" rx="1"/><rect x="29" y="37" width="5" height="5" rx="1"/><rect x="37" y="37" width="5" height="5" rx="1"/></g></svg></div>
@@ -814,11 +884,37 @@ const DOC_LIBS = {
 };
 const docs = []; // {name, kind, text, images:[Blob], note, err}
 let docInfo = null;
+const audios = []; // {id, name, blob, from, dur, status, info, err}
+function relatosBlock(){
+  const ok = audios.filter(a => a.info);
+  if (!ok.length) return "";
+  const data = ok.map(a => ({nome: a.name, origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 2500)}));
+  return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 15000) +
+    "\nUse os relatos como evidência complementar: confirme ou confronte com as imagens e os documentos e cite quando um risco ou pendência vier de relato.\n";
+}
 function docBlock(){
-  if (!docInfo) return "";
-  return "Informações extraídas dos documentos do setor (PGR, laudos, checklists etc.): " + JSON.stringify(docInfo).slice(0, 15000) +
+  if (!docInfo) return relatosBlock();
+  return relatosBlock() + "Informações extraídas dos documentos do setor (PGR, laudos, checklists etc.): " + JSON.stringify(docInfo).slice(0, 15000) +
     "\nConfronte os documentos com as imagens: aponte riscos documentados sem controle visível, riscos visíveis que não constam nos documentos e pendências documentais.\n";
 }
+// verificação de pessoas: EPI e adornos (descrição genérica, sem identificar ninguém)
+const PESSOAS_REGRAS = `Verificação de pessoas (obrigatória): examine cada pessoa visível nas imagens. Para cada uma, descreva-a só de forma genérica (posição na imagem, função aparente, cor da roupa), sem nome, sem reconhecimento facial e sem traços físicos que a identifiquem. Informe a atividade e os riscos ocupacionais a que está exposta, os EPIs em uso, os EPIs que faltam para essa atividade (NR-06, com CA válido; ex.: capacete, óculos, protetor auricular, luvas, calçado de segurança, máscara/respirador, cinto de segurança tipo paraquedista, vestimenta antichama) e os adornos visíveis (anéis, alianças, pulseiras, relógios, correntes, colares, brincos, piercings, crachá ou cordão pendurado, cabelo comprido solto). Adornos e cabelo solto são não conformidade junto a partes móveis de máquinas (risco de agarramento, NR-12), em instalações elétricas (NR-10 veda adornos) e em serviços de saúde (NR-32 veda adornos). Situação: "Não conforme" se faltar EPI exigido ou houver adorno em situação de risco; "Conforme" se estiver adequado; "Verificar em campo" se a imagem não permitir concluir (pessoa distante, parcialmente visível, mãos ocultas). Não invente pessoas: se não houver ninguém, use "total":0 e lista vazia. Toda não conformidade de pessoa deve virar também um risco na lista de riscos (NR-06 para EPI; NR-12, NR-10 ou NR-32 para adornos) e uma ação no plano de ação (fornecimento e exigência de uso do EPI, treinamento, DDS, fiscalização, regra de vedação de adornos).`;
+const PESSOAS_JSON = `"pessoas":{"total":0,"observacoes":[{"figura":"Figura 1","pessoa":"Trabalhador 1 – descrição genérica (ex.: à esquerda, uniforme azul)","atividade":"","riscos":"riscos ocupacionais a que está exposto","epis_em_uso":[""],"epis_faltantes":[{"epi":"","nr":"NR-06","motivo":"por que é exigido nesta atividade"}],"adornos":[{"adorno":"","risco":"","nr":"NR-12"}],"situacao":"Conforme|Não conforme|Verificar em campo","recomendacao":""}]}`;
+// normaliza a seção "pessoas" (a IA às vezes devolve listas como texto)
+function pessoasOf(d){
+  const P = d && typeof d.pessoas === "object" && d.pessoas ? d.pessoas : {};
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const lista = asList(P.observacoes || (Array.isArray(d?.pessoas) ? d.pessoas : [])).filter(o => o && typeof o === "object").map((o, i) => {
+    const epiF = asList(o.epis_faltantes).map(e => e && typeof e === "object" ? {epi: t(e.epi), nr: t(e.nr) || "NR-06", motivo: t(e.motivo)} : {epi: t(e), nr: "NR-06", motivo: ""}).filter(e => e.epi);
+    const ad = asList(o.adornos).map(a => a && typeof a === "object" ? {adorno: t(a.adorno), risco: t(a.risco), nr: t(a.nr)} : {adorno: t(a), risco: "", nr: ""}).filter(a => a.adorno && !/^(nenhum|n[ãa]o h[áa]|sem adornos?)\b/i.test(a.adorno));
+    let sit = t(o.situacao);
+    if (!sit) sit = epiF.length || ad.length ? "Não conforme" : "Verificar em campo";
+    const k = /n[ãa]o\s*conforme/i.test(sit) ? "crit" : /^conforme/i.test(sit) ? "ok" : "warn";
+    return {figura: t(o.figura), pessoa: t(o.pessoa) || `Pessoa ${i + 1}`, atividade: t(o.atividade), riscos: t(o.riscos), epiUso: asList(o.epis_em_uso).map(t).filter(x => x && !/^(nenhum|n[ãa]o)/i.test(x)), epiF, ad, sit, k, rec: t(o.recomendacao)};
+  });
+  return {total: Math.max(lista.length, Math.round(Number(P.total) || 0)), lista, nc: lista.filter(x => x.k === "crit").length, semEpi: lista.filter(x => x.epiF.length).length, comAd: lista.filter(x => x.ad.length).length};
+}
+
 function buildPrompt(ctx){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
@@ -829,6 +925,7 @@ Tarefas:
 3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 e observação curta.
 4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.).
 5. Monte um ciclo PDCA e um plano 5W2H com as 3 a 5 ações mais importantes.
+6. ${PESSOAS_REGRAS}
 Regras: baseie-se só no que é visível; se algo não puder ser confirmado pela imagem, diga "verificar em campo". Não invente pessoas nem números. Se a imagem não mostrar um ambiente de trabalho, avalie mesmo assim o que for possível (ex.: escritório, home office, ergonomia NR-17) e explique em "limitacoes".
 Escreva em português do Brasil, frases curtas.
 
@@ -839,6 +936,7 @@ Responda SOMENTE com um objeto JSON neste formato:
 "melhorias":[{"titulo":"","metodologia":"","descricao":""}],
 "pdca":{"plan":[""],"do":[""],"check":[""],"act":[""]},
 "plano_5w2h":[{"what":"","why":"","where":"","who":"","when":"","how":"","how_much":""}],
+${PESSOAS_JSON},
 "limitacoes":"string"}`;
 }
 
@@ -866,6 +964,10 @@ const EXAMPLE = {
     {what:"Remover extensões do piso",why:"Tropeço e choque (NR-10)",where:"Corredor central",who:"Eletricista autorizado",when:"15 dias",how:"Tomadas na bancada",how_much:"Verificar em campo"},
     {what:"Demarcar corredores",why:"Circulação segura (NR-12/NR-26)",where:"Toda a oficina",who:"Equipe 5S",when:"30 dias",how:"Faixa amarela 10 cm",how_much:"Verificar em campo"}
   ],
+  pessoas:{total:2,observacoes:[
+    {figura:"Figura 1",pessoa:"Trabalhador 1 – na esmerilhadeira, uniforme azul",atividade:"Esmerilhamento de peça",riscos:"Projeção de partículas, ruído, agarramento no rebolo",epis_em_uso:["Calçado de segurança"],epis_faltantes:[{epi:"Óculos de proteção / protetor facial",nr:"NR-06",motivo:"Projeção de partículas"},{epi:"Protetor auricular",nr:"NR-06",motivo:"Ruído da esmerilhadeira"}],adornos:[{adorno:"Aliança e relógio de pulso",risco:"Agarramento junto ao rebolo em movimento",nr:"NR-12"}],situacao:"Não conforme",recomendacao:"Paralisar a tarefa até o uso de óculos e protetor auricular; retirar aliança e relógio; DDS sobre vedação de adornos."},
+    {figura:"Figura 1",pessoa:"Trabalhador 2 – ao fundo, junto ao armário",atividade:"Separação de peças",riscos:"Queda de materiais, cortes",epis_em_uso:["Luvas","Calçado de segurança"],epis_faltantes:[],adornos:[],situacao:"Verificar em campo",recomendacao:"Pessoa distante na imagem: confirmar óculos e luvas adequados em campo."}
+  ]},
   limitacoes:"Relatório de exemplo, sem relação com nenhuma imagem real. Serve para mostrar o formato do resultado."
 };
 
@@ -953,6 +1055,17 @@ function render(d, isExample){
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
+  const PP = pessoasOf(d);
+  const ppl = PP.lista.map(o => `<li class="pp ${o.k}">
+      <div class="pp-h"><b>${esc(o.pessoa)}</b><span class="lc ${o.k}"><i></i>${esc(o.sit)}</span></div>
+      <div class="tags">${o.figura ? `<span class="cat">${esc(o.figura)}</span>` : ""}${o.atividade ? `<span class="sp">${esc(o.atividade)}</span>` : ""}</div>
+      ${o.riscos ? `<div class="med"><span>Riscos ocupacionais</span>${esc(o.riscos)}</div>` : ""}
+      <div class="pp-g">
+        <div><span>EPIs em uso</span>${o.epiUso.length ? o.epiUso.map(x => `<em class="ok-t">${esc(x)}</em>`).join("") : '<em class="mut">Nenhum visível</em>'}</div>
+        <div><span>EPIs faltando</span>${o.epiF.length ? o.epiF.map(e => `<em class="bad-t" title="${esc(e.motivo)}">${esc(e.epi)}</em>`).join("") : '<em class="mut">Nenhum</em>'}</div>
+        <div><span>Adornos</span>${o.ad.length ? o.ad.map(a => `<em class="bad-t" title="${esc(a.risco)}">${esc(a.adorno)}${a.nr ? ` · ${esc(a.nr)}` : ""}</em>`).join("") : '<em class="mut">Nenhum visível</em>'}</div>
+      </div>
+      ${o.rec ? `<div class="med"><span>Recomendação</span>${esc(o.rec)}</div>` : ""}</li>`).join("");
 
   let P = d.pdca;
   if (typeof P === "string" || Array.isArray(P)) P = {plan: P};
@@ -1020,6 +1133,11 @@ function render(d, isExample){
         </div>
         ${rows ? `<ol class="rlist">${rows}</ol>` : '<p class="empty">Nenhum risco visível identificado.</p>'}
       </div>
+    </section>
+
+    <section class="sec">
+      <div class="sh"><h3>Pessoas no ambiente: EPI e adornos</h3><span class="meta">${PP.total ? `${PP.total} pessoa(s) · ${PP.semEpi} sem EPI completo · ${PP.comAd} com adornos` : "nenhuma pessoa visível"}</span></div>
+      ${ppl ? `<ol class="rlist">${ppl}</ol>` : '<p class="empty">Nenhuma pessoa visível nas imagens analisadas.</p>'}
     </section>
 
     <section class="sec">
@@ -1230,7 +1348,7 @@ async function viaGemini(prompt, blobs, signal){
   const key = $("apiKey").value.trim();
   const model = await pickGeminiModel(key, signal);
   const parts = [];
-  for (const b of blobs) parts.push({inline_data:{mime_type:"image/jpeg", data: await blobToB64(b)}});
+  for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
   parts.push({text: prompt});
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${encodeURIComponent(key)}`, {
     method:"POST", signal, headers:{"content-type":"application/json"},
@@ -1396,6 +1514,7 @@ Regras:
 - Cite número de item somente quando tiver certeza. Se não tiver, cite só a NR e escreva "confirmar item na redação vigente".
 - Baseie-se apenas no que é visível. O que não puder ser confirmado pela imagem deve aparecer como "verificar em campo". Não invente pessoas, medições, datas ou valores.
 - Português do Brasil, linguagem técnica, impessoal e objetiva.
+- ${PESSOAS_REGRAS} No relatório, cite a figura em que cada pessoa aparece.
 - Se houver informações de documentos do setor, use-as no diagnóstico, na fundamentação do parecer e no plano de ação, e preencha "analise_documental". Sem documentos, deixe "analise_documental" com listas vazias.
 Ferramentas da qualidade obrigatórias:
 - Diagrama de Ishikawa (6M) para o principal problema de SST encontrado: até 4 causas por categoria, cada causa com no máximo 6 palavras.
@@ -1419,6 +1538,7 @@ Responda SOMENTE com um objeto JSON neste formato:
 "parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
 "cinco_s":{"necessario":true,"justificativa":"1-2 frases","seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":""}},
 "plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual"}],
+${PESSOAS_JSON},
 "analise_documental":{"documentos":[{"nome":"","tipo":"","contribuicao":"o que o documento acrescentou ao diagnóstico"}],"convergencias":["documentado e confirmado nas imagens"],"divergencias":["documentado sem controle visível, ou visível e não documentado"],"pendencias_documentais":["documento ausente, vencido ou incompleto"]},
 "consideracoes_finais":"1-2 parágrafos",
 "referencias":["NR-01 – Disposições Gerais e Gerenciamento de Riscos Ocupacionais"]}`;
@@ -1561,6 +1681,8 @@ function reportHTML(R, photos, meta){
   const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
   const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
+  const ppSit = k => k === "crit" ? LV.crit : k === "ok" ? LV.ok : LV.warn;
   let mx = "";
   for (let sv = 5; sv >= 1; sv--){
     mx += `<div class="ax">${sv}</div>`;
@@ -1604,13 +1726,14 @@ function reportHTML(R, photos, meta){
       <div><h4>Principais riscos</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
+    ${PP.total ? `<p><b>Pessoas no ambiente:</b> ${PP.total} pessoa(s) visível(is) nas imagens; ${PP.semEpi} sem EPI completo para a atividade e ${PP.comAd} com adornos em situação de risco${PP.nc ? ` (${PP.nc} em não conformidade)` : ""}. Detalhes na seção de EPI e adornos.</p>` : ""}
     <p class="cap">Notas de 0 a 100 (atual → após o plano de ação): SST ${SC.sstA} → ${SC.sstB}${SC.s5A !== null ? ` · 5S ${SC.s5A} → ${SC.s5B}` : ""} · Geral ${SC.gA} → ${SC.gB}.${S5 ? ` Implantação do 5S necessária: ${S5.necessario ? "sim" : "não"}.` : ""} Detalhes nas seções seguintes.</p>
   </section>
   ${H("Introdução")}${para(R.introducao)}
   ${H("Objetivo")}${para(R.objetivo)}
   ${H("Justificativa")}${para(R.justificativa)}
   ${H("Metodologia")}${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
@@ -1621,6 +1744,9 @@ function reportHTML(R, photos, meta){
     const lst = (t, a) => a.length ? `<h3>${t}</h3><ul>${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
     return `${H("Análise documental")}%%T:Documentos analisados%%<div class="tw"><table><thead><tr><th>Documento</th><th>Tipo</th><th>Contribuição para o diagnóstico</th></tr></thead><tbody>${rows}</tbody></table></div>${lst("Convergências (documentado e confirmado)", cv)}${lst("Divergências", dv)}${lst("Pendências documentais", pd)}`;
   })()}
+  ${meta.audios?.length ? `${H("Relatos em áudio")}
+  <p>Foram considerados ${meta.audios.length} relato(s) em áudio, transcritos por inteligência artificial e usados como evidência complementar às imagens e aos documentos. As transcrições completas constam no anexo.</p>
+  %%T:Relatos em áudio e informações de SST extraídas%%<div class="tw"><table><thead><tr><th style="width:20%">Relato</th><th>Resumo</th><th>Informações de SST</th></tr></thead><tbody>${meta.audios.map(a => `<tr><td><b>${esc(a.nome)}</b><div class="cap" style="margin:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · ${fmtDur(a.dur)}</div></td><td>${esc(a.resumo || "—")}</td><td>${asList(a.informacoes_sst).length ? `<ul class="lst">${asList(a.informacoes_sst).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "—"}</td></tr>`).join("")}</tbody></table></div>` : ""}
   ${H("Identificação e avaliação dos riscos")}
   %%T:Inventário de perigos e riscos identificados%%<div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
   ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
@@ -1629,6 +1755,12 @@ function reportHTML(R, photos, meta){
     <div><h3>Matriz de risco (NR-01)</h3><div class="fig"><div class="mxw"><span class="ax-y">Severidade →</span><div class="mx">${mx}</div></div><div class="ax-x">Probabilidade →</div><div class="mxl">${["ok","warn","high","crit"].map((k, i) => `<span><i style="background:${LV[k][2]}"></i>${LV[k][0]} ${["1–4","5–9","10–14","15–25"][i]}</span>`).join("")}</div></div>%%F:Matriz de risco severidade × probabilidade (números = itens da tabela)%%</div>
     <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p>%%F:Distribuição dos riscos por nível%%</div>
   </div>
+  ${H("Trabalhadores expostos: uso de EPI e adornos")}
+  ${PP.lista.length ? `<p>Foram observadas ${PP.total} pessoa(s) nas imagens. ${PP.semEpi} sem todos os EPIs exigidos para a atividade (NR-06) e ${PP.comAd} usando adornos em situação de risco (NR-12, junto a partes móveis; NR-10, em instalações elétricas; NR-32, em serviços de saúde). As pessoas são descritas de forma genérica, sem identificação individual.</p>
+  %%T:Verificação de EPI e adornos por pessoa observada%%<div class="tw"><table class="ppl"><thead><tr><th>Pessoa / figura</th><th>Atividade e riscos</th><th>EPIs em uso</th><th>EPIs faltando</th><th>Adornos</th><th>Situação</th></tr></thead><tbody>
+  ${PP.lista.map(o => `<tr><td><b>${esc(o.pessoa)}</b>${o.figura ? `<div class="cap" style="margin:0">${esc(o.figura)}</div>` : ""}</td><td>${esc(o.atividade || "—")}${o.riscos ? `<div class="cap" style="margin:2px 0 0">${esc(o.riscos)}</div>` : ""}</td><td>${o.epiUso.length ? esc(o.epiUso.join(", ")) : "Nenhum visível"}</td><td>${o.epiF.length ? `<ul class="lst">${o.epiF.map(e => `<li><b>${esc(e.epi)}</b>${e.motivo ? ` – ${esc(e.motivo)}` : ""} <span class="num">(${esc(e.nr)})</span></li>`).join("")}</ul>` : "—"}</td><td>${o.ad.length ? `<ul class="lst">${o.ad.map(a => `<li><b>${esc(a.adorno)}</b>${a.risco ? ` – ${esc(a.risco)}` : ""}${a.nr ? ` <span class="num">(${esc(a.nr)})</span>` : ""}</li>`).join("")}</ul>` : "Nenhum visível"}</td><td><span class="lv" style="background:${ppSit(o.k)[2]}">${esc(o.sit)}</span></td></tr>`).join("")}
+  </tbody></table></div>
+  ${PP.lista.some(o => o.rec) ? `<h3>Recomendações por pessoa observada</h3><ul>${PP.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.pessoa)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhuma pessoa visível nas imagens analisadas. A verificação de uso de EPI e de adornos deve ser feita em campo, durante a execução das atividades.</p>"}
   ${S5 ? `${H("Avaliação 5S (organização e housekeeping)")}
   <div class="sit" style="color:${S5.necessario ? "#c62828" : "#2e8b57"}">Implantação do 5S necessária: ${S5.necessario ? "Sim" : "Não"}</div>
   <p>Pontuação: <b>${S5.total}/${S5.max}</b> (${S5.pct}%) · Classificação: <b style="color:${S5.classe[1]}">${S5.classe[0]}</b>.${S5.justificativa ? " " + esc(S5.justificativa) : ""}</p>
@@ -1676,6 +1808,7 @@ function reportHTML(R, photos, meta){
   ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
   </tbody></table></div>
   ${H("Considerações finais")}${para(R.consideracoes_finais)}
+  ${meta.audios?.length ? `${H("Anexo – Transcrições dos relatos em áudio")}${meta.audios.map((a, i) => `<h3>${esc(a.nome)}</h3><p class="cap" style="margin-top:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · duração ${fmtDur(a.dur)} · transcrição automática, sujeita a revisão</p><p class="transc">${esc(String(a.transcricao || "").slice(0, 6000))}</p>`).join("")}` : ""}
   ${H("Referências normativas")}
   <ol class="refs">${asList(R.referencias).map(x => `<li>${esc(x)}</li>`).join("")}<li>Normas Regulamentadoras: redação vigente publicada pelo Ministério do Trabalho e Emprego (gov.br/trabalho-e-emprego).</li></ol>
   <div class="h2u" style="margin-top:34px">Controle de revisões</div>
@@ -1725,7 +1858,7 @@ async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
   const iso = $("rData").value || new Date().toISOString().slice(0, 10);
-  const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : []};
+  const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => ({nome: a.name, origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
   setStatus("Redigindo relatório técnico…");
@@ -1834,6 +1967,26 @@ function onPhoneConn(peer, conn){
         setStatus(`Foto do celular capturada (${frames.length} de ${maxImages}).`);
         const vb = document.querySelector(".video-box"); vb.classList.remove("flash"); void vb.offsetWidth; vb.classList.add("flash");
       });
+    } else if (d.type === "file_start"){
+      const n = Number(d.n), fid = String(d.fid || "");
+      if (!fid || !(n > 0 && n <= 4000)) return;
+      qr.files = qr.files || {};
+      qr.files[fid] = {kind: d.kind === "audio" ? "audio" : "photo", name: tr(String(d.name || "arquivo"), 80), mime: String(d.mime || ""), n, got: 0, a: new Array(n)};
+    } else if (d.type === "file_chunk"){
+      const F = qr.files?.[String(d.fid)], i = Number(d.i);
+      if (!F || !(i >= 0 && i < F.n)) return;
+      if (F.a[i] == null){ F.a[i] = String(d.d || ""); F.got++; }
+      if (F.got % 24 === 0 || F.got === F.n) conn.send({type: "file_ack", fid: d.fid, got: F.got});
+      if (F.got < F.n) return;
+      delete qr.files[d.fid];
+      try{
+        const bin = atob(F.a.join("")), u = new Uint8Array(bin.length);
+        for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
+        const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
+        if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
+        else if (frames.length >= maxImages){ conn.send({type: "full"}); }
+        else { normalize(blob).then(b => { addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto da galeria do celular recebida (${frames.length} de ${maxImages}).`); }); }
+      }catch(e){ conn.send({type: "file_bad", fid: d.fid}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
     }
@@ -1863,7 +2016,7 @@ $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi 
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
   qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true;
-  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo" e cada "Enviar foto" do celular entra na lista.`);
+  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
 };
 $("qrDeny").onclick = () => {
   if (!qr?.conn) return;
@@ -1989,6 +2142,9 @@ function phoneMode(id, k){
         msg("Conectado. Toque no botão redondo ou no vídeo para capturar.");
         $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false;
         startCall(); keepAwake();
+          if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
+          document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
+          setTimeout(pump, 400);
         clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 4000);
       }
       else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
@@ -2002,11 +2158,78 @@ function phoneMode(id, k){
       }
       else if (d.type === "full"){ msg("O computador atingiu o limite de fotos.", true); setAuto(false); }
       else if (d.type === "bad") msg(d.why || "A foto não foi capturada. Tente de novo.", true);
+        else if (d.type === "file_done" || d.type === "file_bad") fileReply(d);
     });
     c.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; });
     c.on("close", () => { if (c === conn) lost(why); });
   }
   let lastShot = 0;
+  // fila de arquivos: envia um por vez em partes pequenas; se a rede cair, reenvia ao reconectar
+  const queue = []; let sending = null;
+  function drawQueue(){
+    const ul = $("phQueue"); if (!ul) return; ul.innerHTML = "";
+    queue.slice(-8).reverse().forEach(q => { const li = document.createElement("li"); li.className = "q-" + q.state; const a = document.createElement("span"); a.textContent = (q.kind === "audio" ? "Áudio · " : "Foto · ") + q.name; const b = document.createElement("small"); b.textContent = q.state === "done" ? "enviado" : q.state === "bad" ? "falhou" : q.state === "sending" ? Math.round(q.pct || 0) + "%" : "na fila"; li.append(a, b); ul.append(li); });
+  }
+  function enqueue(blob, kind, name){ queue.push({id: rnd(8), blob, kind, name: name || (kind === "audio" ? "audio" : "foto"), mime: blob.type, state: "wait", pct: 0}); drawQueue(); pump(); }
+  async function pump(){
+    if (sending || !live()) return;
+    const q = queue.find(x => x.state === "wait" || x.state === "sending"); if (!q) return;
+    sending = q; q.state = "sending"; q.pct = 0; drawQueue();
+    const c = conn;
+    try{
+      let blob = q.blob;
+      if (q.kind === "photo") blob = await shrinkPhoto(blob);
+      const b64 = await blobToB64(blob), CH = 8000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
+      c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n});
+      for (let i = 0; i < n; i++){
+        if (c !== conn || !c.open) throw new Error("conexão");
+        const dc = c.dataChannel;
+        while (dc && dc.bufferedAmount > 128 * 1024 && c.open) await new Promise(r => setTimeout(r, 30));
+        c.send({type: "file_chunk", fid, i, d: b64.slice(i * CH, (i + 1) * CH)});
+        if (i % 8 === 0){ q.pct = (i + 1) / n * 100; drawQueue(); }
+      }
+      q.fid = fid; q.pct = 100; drawQueue();
+      await new Promise((res, rej) => { q.wait = {res, rej}; setTimeout(() => rej(new Error("sem confirmação")), 60000); });
+      q.state = "done"; q.blob = null;
+    }catch(e){ if (q.state === "sending") q.state = "wait"; }
+    finally{ sending = null; drawQueue(); }
+    if (live()) setTimeout(pump, 150);
+  }
+  async function shrinkPhoto(b){
+    try{
+      const bmp = await createImageBitmap(b), sc = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
+      cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
+      return await new Promise(r => cv.toBlob(x => r(x || b), "image/jpeg", 0.85));
+    }catch(e){ return b; }
+  }
+  function fileReply(d){
+    const q = queue.find(x => x.fid === d.fid);
+    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. A IA vai transcrever." : `Foto recebida pelo computador (${d.n} na lista).`); }
+    else if (d.type === "file_bad"){ if (q){ q.state = "bad"; q.wait?.rej(new Error("defeito")); } msg("Um arquivo chegou com defeito. Envie de novo.", true); }
+  }
+  // gravação de áudio no celular
+  let rec = null, recT0 = 0, recTick = null;
+  async function toggleRec(){
+    if (rec){ rec.stop(); return; }
+    try{
+      const ast = await navigator.mediaDevices.getUserMedia({audio: true});
+      const mime = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"].find(m => window.MediaRecorder?.isTypeSupported?.(m)) || "";
+      const r = new MediaRecorder(ast, mime ? {mimeType: mime} : undefined), chunks = [];
+      r.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      r.onstop = () => {
+        clearInterval(recTick); ast.getTracks().forEach(t => t.stop()); rec = null;
+        $("phRecBtn").classList.remove("on"); $("phRecBtn").setAttribute("aria-pressed", "false"); $("phTimer").textContent = "0:00";
+        const type = r.mimeType || "audio/mp4";
+        if (chunks.length) enqueue(new Blob(chunks, {type}), "audio", "relato-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + (/webm/.test(type) ? ".webm" : ".m4a"));
+      };
+      r.start(1000); rec = r; recT0 = Date.now();
+      $("phRecBtn").classList.add("on"); $("phRecBtn").setAttribute("aria-pressed", "true");
+      recTick = setInterval(() => { const s2 = (Date.now() - recT0) / 1000; $("phTimer").textContent = fmtDur(s2); if (s2 >= 600) r.stop(); }, 300);
+      msg("Gravando… toque de novo para parar e enviar.");
+    }catch(e){ msg("Não foi possível usar o microfone. Permita o acesso nas configurações do navegador.", true); }
+  }
+  function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); }
   function shot(){
     if (!live() || Date.now() - lastShot < 350) return; lastShot = Date.now();
     conn.send({type: "snap"});
@@ -2024,6 +2247,12 @@ function phoneMode(id, k){
     connect();
   };
   $("phShot").onclick = shot;
+  $("phGoPhotos").onclick = () => showScreen("phPhotos");
+  $("phGoAudio").onclick = () => showScreen("phAudio");
+  document.querySelectorAll(".ph-back").forEach(b => b.onclick = () => showScreen("phMenu"));
+  $("phGallery").onchange = e => { Array.from(e.target.files || []).slice(0, 30).forEach(f => enqueue(f, "photo", f.name)); e.target.value = ""; msg("Enviando fotos da galeria…"); };
+  $("phAudioPick").onchange = e => { Array.from(e.target.files || []).slice(0, 10).forEach(f => enqueue(f, "audio", f.name)); e.target.value = ""; msg("Enviando áudio…"); };
+  $("phRecBtn").onclick = toggleRec;
   $("phVideo").addEventListener("click", shot);
   $("phAuto").onclick = () => setAuto(!auto);
   $("phFlip").onclick = async () => {
@@ -2044,6 +2273,120 @@ function phoneMode(id, k){
   });
   addEventListener("pagehide", e => { if (e.persisted) return; try{ conn?.open && conn.send({type: "bye"}); }catch(x){} try{ peer?.destroy(); }catch(x){} });
   if (PEER_OPTS.host) window.__sstTest = {drop: () => conn?.peerConnection?.close(), dropVideo: () => mcall?.peerConnection?.close()}; // só no modo de teste local
+}
+
+/* ---------- relatos em áudio: conversão, transcrição e extração pela IA ---------- */
+async function audioToWavParts(blob, maxSec = 240){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const ac = new AC(); let buf;
+  try{ buf = await ac.decodeAudioData(await blob.arrayBuffer()); } finally{ try{ ac.close(); }catch(e){} }
+  const rate = 16000, len = Math.ceil(buf.duration * rate);
+  const off = new OfflineAudioContext(1, len, rate);
+  const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  const mono = (await off.startRendering()).getChannelData(0);
+  const parts = [], step = maxSec * rate;
+  for (let o = 0; o < mono.length; o += step){
+    const seg = mono.subarray(o, Math.min(mono.length, o + step));
+    const ab = new ArrayBuffer(44 + seg.length * 2), v = new DataView(ab);
+    const w = (off2, str) => { for (let i = 0; i < str.length; i++) v.setUint8(off2 + i, str.charCodeAt(i)); };
+    w(0, "RIFF"); v.setUint32(4, 36 + seg.length * 2, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, seg.length * 2, true);
+    for (let i = 0; i < seg.length; i++){ const x = Math.max(-1, Math.min(1, seg[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7fff, true); }
+    parts.push(new Blob([ab], {type: "audio/wav"}));
+  }
+  return {parts, dur: buf.duration};
+}
+const fmtDur = s => { s = Math.round(s || 0); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+function audioReady(){ return !sample && !inViewer && provider() === "gemini" && !!$("apiKey").value.trim(); }
+function drawAudios(){
+  const ul = $("audList"); if (!ul) return; ul.innerHTML = "";
+  audios.forEach(a => {
+    const li = document.createElement("li"); if (a.err) li.className = "err";
+    const top = document.createElement("div"); top.className = "aud-top";
+    const sp = document.createElement("span"); sp.textContent = `${a.from === "celular" ? "Celular" : "Computador"} · ${a.name}`; sp.title = a.name;
+    const sm = document.createElement("small"); sm.textContent = (a.dur ? fmtDur(a.dur) + " · " : "") + a.status;
+    top.append(sp, sm);
+    const au = document.createElement("audio"); au.controls = true; au.preload = "none"; au.src = a.url;
+    li.append(top, au);
+    if (a.info?.resumo){ const r = document.createElement("div"); r.className = "aud-sum"; r.textContent = a.info.resumo; li.append(r); }
+    ul.append(li);
+  });
+  $("audClr").hidden = !audios.length;
+  const done = audios.filter(a => a.info);
+  const box = $("audSum");
+  if (!done.length){ box.hidden = true; box.innerHTML = ""; return; }
+  const all = k => done.flatMap(a => asList(a.info[k])).slice(0, 6);
+  box.innerHTML = `<b>Informações extraídas dos relatos (${done.length} áudio(s))</b>${all("informacoes_sst").length ? `<ul>${all("informacoes_sst").map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}<div class="chips"><span class="chip">${done.flatMap(a => asList(a.info.riscos_relatados)).length} risco(s) relatado(s)</span><span class="chip">${done.flatMap(a => asList(a.info.sugestoes)).length} sugestão(ões)</span></div><div class="hint">Estas informações entram automaticamente na análise e no relatório técnico.</div>`;
+  box.hidden = false;
+}
+let audBusy = false;
+async function processAudios(){
+  if (audBusy) return;
+  const pend = audios.filter(a => !a.info && !a.err && !a.working);
+  if (!pend.length) return;
+  if (!audioReady()){
+    pend.forEach(a => { a.status = sample || inViewer ? "transcrição disponível só na versão do navegador com chave do Gemini" : provider() === "claude" ? "a transcrição de áudio precisa da chave do Gemini (grátis)" : "aguardando a chave do Gemini"; });
+    drawAudios(); return;
+  }
+  audBusy = true;
+  try{
+    for (const a of pend){
+      a.working = true; a.status = "convertendo…"; drawAudios();
+      try{
+        const {parts, dur} = await audioToWavParts(a.blob); a.dur = dur;
+        const res = [];
+        for (let i = 0; i < parts.length; i++){
+          a.status = parts.length > 1 ? `transcrevendo parte ${i + 1} de ${parts.length}…` : "transcrevendo…"; drawAudios();
+          const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. O áudio anexado é ${parts.length > 1 ? `a parte ${i + 1} de ${parts.length} de ` : ""}um relato gravado durante uma inspeção de SST (entrevista com trabalhador, supervisor ou observação falada do inspetor).
+1. Transcreva fielmente em português do Brasil (sem inventar trechos; marque [inaudível] quando não entender).
+2. Extraia as informações úteis para o diagnóstico do setor.
+Responda SOMENTE com um objeto JSON:
+{"transcricao":"texto completo","resumo":"1-2 frases","informacoes_sst":["fatos relevantes para SST"],"riscos_relatados":[{"perigo":"","detalhe":""}],"sugestoes":["melhorias sugeridas no relato"],"pessoas_funcoes":["funções ou cargos citados, sem nomes completos"]}`;
+          res.push(await viaGemini(prompt, [parts[i]], undefined));
+        }
+        a.info = {
+          transcricao: res.map(r => r.transcricao || "").join("\n"),
+          resumo: res.map(r => r.resumo || "").filter(Boolean).join(" "),
+          informacoes_sst: res.flatMap(r => asList(r.informacoes_sst)), riscos_relatados: res.flatMap(r => asList(r.riscos_relatados)),
+          sugestoes: res.flatMap(r => asList(r.sugestoes)), pessoas_funcoes: res.flatMap(r => asList(r.pessoas_funcoes))
+        };
+        a.status = "transcrito";
+      }catch(e){
+        a.err = true;
+        a.status = e?.code === "http" ? "falha: " + e.message : /decode|EncodingError|unable/i.test(String(e?.message || e?.name)) ? "formato de áudio não suportado pelo navegador" : "falha na transcrição";
+      }finally{ a.working = false; drawAudios(); }
+    }
+  }finally{ audBusy = false; }
+  if (audios.some(a => !a.info && !a.err)) processAudios();
+}
+function addAudio(blob, name, from){
+  const a = {id: rnd(8), name: name || ("audio-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".webm"), blob, from, url: URL.createObjectURL(blob), status: "na fila", dur: 0};
+  audios.push(a); drawAudios(); processAudios();
+  return a;
+}
+// gravação de áudio no próprio computador
+let deskRec = null;
+async function toggleDeskRec(){
+  if (deskRec){ deskRec.stop(); return; }
+  try{
+    const st2 = await navigator.mediaDevices.getUserMedia({audio: true});
+    const mime = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"].find(m => window.MediaRecorder?.isTypeSupported?.(m)) || "";
+    const rec = new MediaRecorder(st2, mime ? {mimeType: mime} : undefined), chunks = [], t0 = Date.now();
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    const tick = setInterval(() => { $("audRec").textContent = "Parar gravação " + fmtDur((Date.now() - t0) / 1000); }, 500);
+    rec.onstop = () => {
+      clearInterval(tick); st2.getTracks().forEach(t => t.stop()); deskRec = null; $("audRec").textContent = "Gravar áudio";
+      const type = rec.mimeType || "audio/webm";
+      addAudio(new Blob(chunks, {type}), "gravacao-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + (/mp4/.test(type) ? ".m4a" : ".webm"), "computador");
+    };
+    rec.start(1000); deskRec = rec; $("audRec").textContent = "Parar gravação 0:00";
+  }catch(e){ setStatus("Não foi possível usar o microfone: permita o acesso nas configurações do navegador.", true); }
+}
+if ($("audPick")){
+  $("audPick").onchange = e => { Array.from(e.target.files || []).slice(0, 10).forEach(f => addAudio(f, f.name, "computador")); e.target.value = ""; };
+  $("audRec").onclick = toggleDeskRec;
+  $("audClr").onclick = () => { audios.forEach(a => URL.revokeObjectURL(a.url)); audios.length = 0; drawAudios(); };
+  $("apiKey").addEventListener("input", () => { if (audios.some(a => !a.info && !a.err)) processAudios(); });
 }
 
 /* ---------- documentos: leitura no navegador e extração pela IA ---------- */
