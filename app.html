@@ -279,11 +279,12 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .pp-g em.bad-t{border-color:var(--crit);color:var(--crit);font-weight:600}
 .report .pp-g em.mut{color:var(--muted)}
 /* quadro de NRs */
-.report .nrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
-.report .nrc{display:grid;gap:2px;justify-items:start;text-align:left;padding:9px 10px;min-height:76px;border-radius:8px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font:inherit}
-.report .nrc b{font:700 14px var(--f-mono)}
-.report .nrc small{font-size:11.5px;line-height:1.25;color:var(--muted)}
-.report .nrc .st{margin-top:auto;font:600 11px var(--f-mono);color:var(--muted)}
+/* cards compactos: nome em uma linha, status curto */
+.report .nrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:5px}
+.report .nrc{display:grid;grid-template-columns:minmax(0,1fr);justify-content:stretch;align-content:start;gap:0;justify-items:start;text-align:left;padding:5px 7px 6px;min-height:0;min-width:0;border-radius:6px;border:1px solid var(--line);border-top:3px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font:inherit;line-height:1.25}
+.report .nrc b{font:700 12px var(--f-mono)}
+.report .nrc small{font-size:10px;line-height:1.25;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.report .nrc .st{margin-top:1px;font:700 9.5px var(--f-mono);letter-spacing:-.02em;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .report .nrc:hover:not(:disabled){border-color:var(--line-strong);transform:translateY(-1px)}
 .report .nrc.crit{border-top-color:#d32f2f;background:color-mix(in srgb,#d32f2f 7%,var(--panel))}.report .nrc.crit .st{color:#d32f2f}
 .report .nrc.ok{border-top-color:#2e9e5b;background:color-mix(in srgb,#2e9e5b 7%,var(--panel))}.report .nrc.ok .st{color:#2e9e5b}
@@ -828,7 +829,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v38</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v39</span></div>
       </div>
     </div>
     <div class="mode" id="mode" hidden>Modo: <b>verificando…</b></div>
@@ -1000,7 +1001,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v38</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v39</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1517,9 +1518,9 @@ function render(d, isExample){
     <section class="sec nrsec">
       <div class="sh"><h3>Normas Regulamentadoras</h3><span class="meta">${NRA.length} aplicável(is) · ${NRA.filter(m => m.nc).length} com não conformidade</span></div>
       <div class="nrgrid">${NR_LIST.map(([n, curto, , rev]) => { const m = NRC[n]; const off = (d.__nrOff || {})[n]; const k = rev ? "rev" : off ? "off" : m ? m.k : "na";
-        const st = rev ? "Revogada" : off ? "Fora do relatório" : !m || !m.aplic ? "Não aplicável" : m.itens.length ? `${m.nc ? m.nc + " NC · " : ""}${m.c} C${m.nv ? " · " + m.nv + " ?" : ""}` : "Aplicável";
-        return `<button type="button" class="nrc ${k}" data-nr="${n}"${rev ? " disabled" : ""} aria-label="NR-${String(n).padStart(2, "0")} ${curto}: ${st}"><b>NR-${String(n).padStart(2, "0")}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
-      <p class="hint" style="margin:8px 0 0">Clique em uma NR para ver o checklist: itens conformes (C), não conformes (NC) e não verificáveis pelas imagens (?).</p>
+        const st = rev ? "Revogada" : off ? "Fora do rel." : !m || !m.aplic ? "N/A" : m.itens.length ? [m.nc ? m.nc + "NC" : "", m.c + "C", m.nv ? m.nv + "?" : ""].filter(Boolean).join("·") : "Aplicável";
+        return `<button type="button" class="nrc ${k}" data-nr="${n}"${rev ? " disabled" : ""} title="NR-${String(n).padStart(2, "0")} – ${curto}" aria-label="NR-${String(n).padStart(2, "0")} ${curto}: ${st}"><b>NR-${String(n).padStart(2, "0")}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
+      <p class="hint" style="margin:6px 0 0;font-size:12px">Clique em uma NR para ver o checklist. C = conforme · NC = não conforme · ? = não verificável · N/A = não aplicável.</p>
     </section>
 
     <section class="sec">
