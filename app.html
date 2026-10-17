@@ -198,6 +198,13 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .banner::before{content:"";position:absolute;inset:0 auto 0 0;width:7px;background:repeating-linear-gradient(-45deg,var(--signal) 0 5px,var(--signal-ink) 5px 10px)}
 .report .banner b{font:700 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;background:var(--signal);color:var(--signal-ink);padding:2px 8px;border-radius:3px}
 /* alerta de risco crítico */
+.mon-dd{border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.mon-dd > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:10px 12px;font:600 13.5px var(--f-body);min-height:44px}
+.mon-dd > summary::-webkit-details-marker{display:none}
+.mon-dd > summary::after{content:"▸";margin-left:auto;font-size:14px;color:var(--muted);transition:transform .15s}
+.mon-dd[open] > summary::after{transform:rotate(90deg)}
+.mon-dd > summary b{font:500 12.5px var(--f-body);color:var(--muted)}
+.mon-dd > .mon-al{border:0;border-top:1px solid var(--line);border-radius:0 0 10px 10px}
 .mon-al{border:1px solid var(--line);border-radius:10px;padding:8px 12px 10px;margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 .mon-al legend{font:600 12px var(--f-body);padding:0 4px;color:var(--muted)}
 .mon-g{display:grid;gap:5px}.mon-g + .mon-g{margin-top:6px;padding-top:8px;border-top:1px dashed var(--line)}
@@ -951,7 +958,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v85</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v86</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1025,7 +1032,9 @@ api:
             </select>
             <button id="monBtn" type="button" disabled>Iniciar monitoramento</button>
           </div>
-          <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
+          <details class="mon-dd"><summary><span>Situações monitoradas</span> <b id="monAlN"></b></summary>
+            <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
+          </details>
           <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button></div>
           <p class="hint" id="alDirInfo" style="margin:0">As fotos com alerta podem ser gravadas automaticamente na pasta "Fotos Inspeção SST" dentro de Downloads (foto .jpg + .txt com data, hora e situações).</p>
           <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico (e as situações marcadas acima) toca um alerta sonoro. As pessoas não são identificadas.</p>
@@ -1151,7 +1160,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v85</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v86</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2639,8 +2648,9 @@ const MON_AL = [
   const f = $("monAl"); if (!f) return;
   const grp = (g, t) => `<div class="mon-g"><b>${t}</b>${MON_AL.filter(x => x[4] === g).map(([id, , , l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div>`;
   f.insertAdjacentHTML("beforeend", grp("p", "Pessoas (atos inseguros)") + grp("a", "Ambiente (condições inseguras)") + `<div class="mon-all"><button type="button" id="alAll">Marcar todas</button><button type="button" id="alNone">Desmarcar todas</button></div>`);
-  $("alAll").onclick = () => MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); });
-  $("alNone").onclick = () => MON_AL.forEach(([id]) => { $(id).checked = false; store("sst_" + id, null); });
+  $("alAll").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount(); };
+  $("alNone").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = false; store("sst_" + id, null); }); alCount(); };
+  f.addEventListener("change", alCount);
 })();
 function monHits(d, sel){
   const al = d && typeof d.alertas === "object" ? d.alertas : {}, obs = asList(d?.pessoas?.observacoes);
@@ -2655,6 +2665,9 @@ function monHits(d, sel){
   }).filter(Boolean);
 }
 MON_AL.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => store("sst_" + id, el.checked ? "1" : null); });
+// contagem no título da lista recolhível
+function alCount(){ const n = MON_AL.filter(([id]) => $(id)?.checked).length; if ($("monAlN")) $("monAlN").textContent = `(${n} de ${MON_AL.length} marcadas)`; }
+alCount();
 function tickMon(){
   if (!mon) return;
   const left = Math.round((mon.next - Date.now()) / 1000);
@@ -2690,7 +2703,7 @@ $("watchBtn").onclick = async () => {
     for (let i = 0; i < 40 && !($("video").videoWidth > 0); i++) await new Promise(r => setTimeout(r, 150));
     if (!stream){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
   }
-  MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); });
+  MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount();
   $("monInt").value = "30";
   startMon();
   setStatus(`Monitorando a cada 30 segundos: risco crítico e ${MON_AL.length} situações de atos e condições inseguras.`);
