@@ -208,7 +208,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · teste</div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v6</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -309,7 +309,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular</div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v6</span></div></div>
   </header>
   <div id="phAsk" class="stack">
     <h2>Conectar este celular?</h2>
@@ -1056,6 +1056,16 @@ function onPhoneConn(peer, conn){
       qrMsg("Pedido de conexão recebido. Autorize ou recuse.");
     } else if (conn !== qr.conn || !qr.ok){
       return;
+    } else if (d.type === "snap"){
+      // o celular pede a foto; o computador captura do vídeo ao vivo que já está recebendo
+      if (!remoteOn){ conn.send({type: "bad", why: "A imagem do celular não está ativa na tela do computador."}); return; }
+      if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
+      grabFrame().then(b => {
+        if (!b){ conn.send({type: "bad", why: "O computador ainda não recebeu imagem do celular."}); return; }
+        addBlob(b); conn.send({type: "got", n: frames.length});
+        setStatus(`Foto do celular capturada (${frames.length} de ${maxImages}).`);
+        const vb = document.querySelector(".video-box"); vb.classList.remove("flash"); void vb.offsetWidth; vb.classList.add("flash");
+      });
     } else if (d.type === "chunk"){
       // a foto chega em partes pequenas (base64) e é remontada aqui
       const n = Number(d.n), i = Number(d.i), pid = String(d.pid || "");
@@ -1111,14 +1121,14 @@ function deviceName(){
 function phoneMode(id, k){
   document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
-  let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false;
+  let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
   function done(title, text){
     if (ended) return; ended = true;
     try{ st?.getTracks().forEach(t => t.stop()); }catch(e){}
     try{ mcall?.close(); }catch(e){} try{ conn?.close(); }catch(e){} try{ peer?.destroy(); }catch(e){}
-    $("phDoneT").textContent = title; $("phDoneP").textContent = text; show("phDone");
+    $("phDoneT").textContent = title; $("phDoneP").textContent = text + (why ? " (motivo técnico: " + why + ")" : ""); show("phDone");
   }
   async function cam(){
     const old = st;
@@ -1139,40 +1149,30 @@ function phoneMode(id, k){
       conn.on("open", () => { clearTimeout(t); conn.send({type: "hello", k, device: deviceName()}); msg("Aguardando autorização no computador…"); });
       conn.on("data", d => {
         if (!d || typeof d !== "object") return;
-        if (d.type === "ok"){ msg("Conectado. A câmera deste celular está sendo transmitida para o computador."); $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false; mcall = peer.call(id, st); }
+        if (d.type === "ok"){ msg("Conectado. A câmera deste celular está sendo transmitida para o computador."); $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false; try{ st.getVideoTracks()[0].contentHint = "detail"; }catch(e){}
+          mcall = peer.call(id, st);
+          // prioriza nitidez (resolução) em vez de fluidez, para as fotos capturadas no computador
+          setTimeout(() => { try{ const snd = mcall.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 6000000; prm.degradationPreference = "maintain-resolution"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
+          mcall.on("error", e => { why = "vídeo: " + ((e && (e.type || e.message)) || "erro"); }); }
         else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
         else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
         else if (d.type === "got") msg(`Foto recebida pelo computador (${d.n} na lista).`);
         else if (d.type === "full") msg("O computador atingiu o limite de fotos.", true);
-        else if (d.type === "bad") msg("A foto chegou com defeito. Envie de novo.", true);
+        else if (d.type === "bad") msg(d.why || "A foto não foi capturada. Tente de novo.", true);
       });
+      conn.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; });
       conn.on("close", () => done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."));
     });
     peer.on("error", e => {
       if (e.type === "peer-unavailable") done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora.");
-      else if (!ended) msg("Falha de conexão (" + e.type + ").", true);
+      else if (!ended){ why = e.type || "erro"; msg("Falha de conexão (" + why + ").", true); }
     });
   };
-  $("phShot").onclick = async () => {
-    const v = $("phVideo"); if (!v.videoWidth || !conn?.open) return;
-    const s = Math.min(1, 1600 / Math.max(v.videoWidth, v.videoHeight));
-    const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
-    c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
-    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.82)); if (!b) return;
+  $("phShot").onclick = () => {
+    if (!conn?.open) return;
+    conn.send({type: "snap"});
+    $("phCount").textContent = ++sent; msg("Capturando foto no computador…");
     const box = $("phBox"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
-    $("phShot").disabled = true; msg("Enviando foto…");
-    try{
-      // partes pequenas com controle de fila: o Safari do iPhone derruba o canal com mensagens grandes
-      const b64 = await blobToB64(b), CH = 12000, n = Math.ceil(b64.length / CH), pid = rnd(8);
-      for (let i = 0; i < n; i++){
-        if (!conn?.open) return;
-        const dc = conn.dataChannel;
-        while (dc && dc.bufferedAmount > 192 * 1024 && conn.open) await new Promise(r => setTimeout(r, 25));
-        conn.send({type: "chunk", pid, i, n, d: b64.slice(i * CH, (i + 1) * CH)});
-        if (n > 1) msg(`Enviando foto… ${Math.round((i + 1) / n * 100)}%`);
-      }
-      $("phCount").textContent = ++sent;
-    }finally{ if (!ended) $("phShot").disabled = false; }
   };
   $("phFlip").onclick = async () => {
     facing = facing === "environment" ? "user" : "environment";
