@@ -50,17 +50,20 @@ header.top{position:relative;display:flex;align-items:center;justify-content:spa
 header.top .hero[hidden],header.top .hero-bg,header.top .hero-sh{display:none}
 /* com foto: o cenário da própria foto (só a parte sem a pessoa, ampliada) preenche o cabeçalho; a foto inteira fica à direita */
 header.top:has(.hero:not([hidden])){background:#3a2414}
-header.top:has(.hero:not([hidden])) .hero-bg{display:block;position:absolute;inset:0;background:var(--hero-grad,linear-gradient(180deg,#d9a46c,#7a4a2a 55%,#4a2c18))}
-header.top:has(.hero:not([hidden])) .hero-sh{display:block;position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,18,.5) 0%,rgba(10,14,18,.28) 35%,rgba(10,14,18,0) 52%)}
+header.top:has(.hero:not([hidden])) .hero-bg{display:block;position:absolute;inset:0;background:var(--hero-grad,linear-gradient(180deg,#d9a46c,#7a4a2a 55%,#4a2c18));filter:brightness(1.18) saturate(1.2)}
+header.top:has(.hero:not([hidden])) .hero-sh{display:none}
+header.top:has(.hero:not([hidden])) h1,header.top:has(.hero:not([hidden])) .sub{text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 14px rgba(0,0,0,.35)}
+header.top:has(.hero:not([hidden])) .sub{color:#fff}
+header.top:has(.hero:not([hidden])) .ver{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.4);text-shadow:none}
 header.top:has(.hero:not([hidden])) .brand,header.top:has(.hero:not([hidden])) .mode{position:relative;z-index:1}
 header.top:has(.hero:not([hidden])) .sub{color:rgba(255,255,255,.88)}
 header.top:has(.hero:not([hidden])) .mode{background:rgba(10,14,18,.45);backdrop-filter:blur(4px);border-color:rgba(255,255,255,.18)}
 header.top:has(.hero:not([hidden]))::after{z-index:2}
 header.top .hero{z-index:1}
-header.top .hero{position:absolute;top:0;right:0;bottom:5px;height:calc(100% - 5px);width:auto;aspect-ratio:var(--ar,1.788);object-fit:contain;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14%);mask-image:linear-gradient(90deg,transparent 0,#000 14%);pointer-events:none;filter:contrast(1.06) saturate(1.12);image-rendering:auto}
+header.top .hero{position:absolute;top:0;right:0;bottom:5px;height:calc(100% - 5px);width:auto;aspect-ratio:var(--ar,1.788);object-fit:contain;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14%);mask-image:linear-gradient(90deg,transparent 0,#000 14%);pointer-events:none;filter:brightness(1.06) contrast(1.08) saturate(1.18);image-rendering:auto}
 header.top:has(.hero:not([hidden])){min-height:260px;padding-right:min(calc(260px * var(--ar,1.788) - 60px),50%)}
 header.top:has(.hero:not([hidden])) .mode{align-self:flex-end}
-@media (max-width:640px){header.top:has(.hero:not([hidden])){padding-right:22px;min-height:0}header.top:has(.hero:not([hidden])) .hero-sh{background:linear-gradient(180deg,rgba(10,14,18,0) 0%,rgba(10,14,18,.12) 45%,rgba(10,14,18,.4) 100%)}header.top .hero{position:relative;order:-1;inset:auto;height:auto;width:calc(100% + 44px);max-width:none;margin:-18px -22px 4px;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}}
+@media (max-width:640px){header.top:has(.hero:not([hidden])){padding-right:22px;min-height:0}header.top .hero{position:relative;order:-1;inset:auto;height:auto;width:calc(100% + 44px);max-width:none;margin:-18px -22px 4px;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}}
 header.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:repeating-linear-gradient(-45deg,var(--signal) 0 12px,var(--bar) 12px 24px)}
 .brand{display:flex;gap:14px;align-items:center;min-width:0}
 .tri{width:40px;height:36px;flex:none}
@@ -288,6 +291,12 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .nrc.warn{border-top-color:#fbc02d}.report .nrc.warn .st{color:#a87f00}
 .report .nrc.na{opacity:.62}
 .report .nrc.rev{opacity:.4;cursor:default;text-decoration:line-through}
+.report .nrc.off{border-top-color:var(--muted);border-style:dashed;background:var(--bg)}.report .nrc.off b,.report .nrc.off small{text-decoration:line-through;opacity:.6}.report .nrc.off .st{color:#c62828}
+.nrd-off{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin:12px 0 0;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-size:13px}
+.nrd-off.on{border-color:#c62828;background:color-mix(in srgb,#c62828 8%,var(--panel))}
+.nrd-off button{font-weight:600}
+.nrd-off.on button{border-color:#c62828;color:#c62828}
+@media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
 .nrdlg{border:0;border-radius:14px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .nrdlg::backdrop{background:rgba(10,14,18,.55)}
 .nrd-in{padding:20px 22px;overflow:auto;max-height:calc(100vh - 32px)}
@@ -306,7 +315,18 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .nrd-pct{font:600 12.5px var(--f-mono);color:var(--muted)}
 .nrd-bar{height:8px;border-radius:4px;background:#f6c9c9;overflow:hidden;margin-bottom:10px}.nrd-bar i{display:block;height:100%;background:#2e9e5b}
 .nrd-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.nrd-list li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:10px 12px;border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px}
+.nrd-list li{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;overflow:hidden}
+.nrd-it{all:unset;box-sizing:border-box;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:start;width:100%;padding:10px 12px;cursor:pointer;color:var(--ink);font:inherit}
+.nrd-it:hover{background:var(--bg)}
+.nrd-it:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.nrd-it .vt{font:600 11.5px var(--f-mono);color:#2e9e5b;white-space:nowrap;padding-top:4px}
+.nrd-list li.rej{border-left-color:var(--muted)!important;background:var(--bg)}
+.nrd-list li.rej .rq,.nrd-list li.rej .sit,.nrd-list li.rej .ac{text-decoration:line-through;opacity:.55}
+.nrd-list li.rej .ic{background:var(--muted)!important}
+.nrd-list li.rej .vt{color:#c62828}
+.nrd-val{margin:8px 0 10px;font-size:13.5px;padding:9px 12px;border-radius:8px;background:var(--bg);border:1px dashed var(--line-strong)}
+.nrd-rejn{display:inline-block;margin-left:6px;font:600 12px var(--f-mono);color:#c62828}
+@media (max-width:560px){.nrd-it{grid-template-columns:30px minmax(0,1fr)}.nrd-it .vt{grid-column:2}}
 .nrd-list li.ok{border-left-color:#2e9e5b}.nrd-list li.crit{border-left-color:#d32f2f}.nrd-list li.warn{border-left-color:#fbc02d}
 .nrd-list .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 15px var(--f-body);color:#fff}
 .nrd-list li.ok .ic{background:#2e9e5b}.nrd-list li.crit .ic{background:#d32f2f}.nrd-list li.warn .ic{background:#d9a400}
@@ -808,7 +828,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v35</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v37</span></div>
       </div>
     </div>
     <div class="mode" id="mode" hidden>Modo: <b>verificando…</b></div>
@@ -980,7 +1000,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v35</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v37</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1179,14 +1199,16 @@ const NR_LIST = [[1,"Disposições gerais e GRO/PGR","Disposições Gerais e Ger
 const NRCHK_REGRAS = `Checklist de conformidade por NR (obrigatório): para cada NR aplicável ao que foi observado (atividades, máquinas, eletricidade, pessoas e EPIs, armazenamento, resíduos, edificação, ergonomia, incêndio, sinalização), monte um checklist de 4 a 12 requisitos dessa NR, cada um com o item (somente quando tiver certeza; senão "confirmar item"), o requisito em linguagem clara, a situação ("Conforme" quando a imagem mostra que o requisito é atendido; "Não conforme" quando mostra que não é; "Não verificável" quando depende de documento, treinamento, medição ou do que não aparece), a evidência (o que se vê e em qual figura) e a ação para os não conformes. Para ambientes de trabalho em geral avalie ao menos NR-01, NR-06, NR-08, NR-17, NR-23, NR-24 e NR-26, além das específicas do que aparece (ex.: NR-10, NR-11, NR-12, NR-20, NR-25, NR-33, NR-35). Seja coerente: cada item não conforme deve corresponder a um risco ou constatação já relatada.`;
 const NRCHK_JSON = `"checklist_nrs":[{"nr":"NR-12","aplicavel":true,"justificativa":"por que a NR se aplica a este setor","itens":[{"item":"12.38 ou confirmar item","requisito":"","situacao":"Conforme|Não conforme|Não verificável","evidencia":"Figura 1, …","acao":""}]}]`;
 const nrNum = x => { const m = String(x || "").match(/\d{1,2}/); return m ? Number(m[0]) : 0; };
-function nrChecks(d){
+// chave estável de um item do checklist (NR + requisito), usada na validação feita pelo usuário
+const nrKey = (n, req) => n + "|" + String(req || "").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, " ").trim().slice(0, 90);
+function nrChecks(d, validOnly){
   const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
-  const map = {};
+  const map = {}, rej = (d && d.__rej) || {};
   asList(d?.checklist_nrs).filter(x => x && typeof x === "object" && nrNum(x.nr)).forEach(x => {
     const n = nrNum(x.nr);
     const itens = asList(x.itens).filter(i => i && typeof i === "object" && t(i.requisito)).map(i => {
       const sit = t(i.situacao) || "Não verificável", k = /n[ãa]o\s*conforme/i.test(sit) ? "crit" : /^conforme/i.test(sit) ? "ok" : "warn";
-      return {item: t(i.item), req: t(i.requisito), sit, k, ev: t(i.evidencia), acao: t(i.acao)};
+      return {item: t(i.item), req: t(i.requisito), sit, k, ev: t(i.evidencia), acao: t(i.acao), key: nrKey(n, t(i.requisito))};
     });
     map[n] = {n, aplic: x.aplicavel !== false && !/n[ãa]o/i.test(String(x.aplicavel)), just: t(x.justificativa), itens, auto: false};
   });
@@ -1194,12 +1216,34 @@ function nrChecks(d){
   asList(d?.riscos).filter(r => r && typeof r === "object").forEach(r => {
     const n = nrNum(r.nr); if (!n) return;
     if (!map[n]) map[n] = {n, aplic: true, just: "Citada nos riscos identificados.", itens: [], auto: true};
-    if (map[n].auto) map[n].itens.push({item: t(r.item), req: t(r.perigo), sit: "Não conforme", k: "crit", ev: "", acao: t(r.medida)});
+    if (map[n].auto) map[n].itens.push({item: t(r.item), req: t(r.perigo), sit: "Não conforme", k: "crit", ev: "", acao: t(r.medida), key: nrKey(n, t(r.perigo))});
   });
-  Object.values(map).forEach(m => { m.c = m.itens.filter(i => i.k === "ok").length; m.nc = m.itens.filter(i => i.k === "crit").length; m.nv = m.itens.filter(i => i.k === "warn").length; const av = m.c + m.nc; m.pct = av ? Math.round(m.c / av * 100) : null; m.k = !m.aplic ? "na" : m.nc ? "crit" : m.c && !m.nv ? "ok" : m.c ? "okw" : "warn"; });
+  Object.values(map).forEach(m => {
+    m.itens.forEach(i => { i.rej = !!rej[i.key]; });
+    m.rejN = m.itens.filter(i => i.rej).length;
+    m.todos = m.itens;
+    m.itens = validOnly ? m.itens.filter(i => !i.rej) : m.itens;
+    const v = m.itens.filter(i => !i.rej);
+    m.c = v.filter(i => i.k === "ok").length; m.nc = v.filter(i => i.k === "crit").length; m.nv = v.filter(i => i.k === "warn").length; const av = m.c + m.nc; m.pct = av ? Math.round(m.c / av * 100) : null; m.k = !m.aplic ? "na" : m.nc ? "crit" : m.c && !m.nv ? "ok" : m.c ? "okw" : "warn";
+  });
   return map;
 }
-let curNR = {}, curRiscos = [];
+let curNR = {}, curRiscos = [], curRender = null;
+// cópia da análise sem os itens do checklist que o usuário não validou (vai para o relatório)
+const nrOff = () => (lastData && lastData.__nrOff) || {};
+const nrOffList = () => Object.keys(nrOff()).map(Number).sort((a, b) => a - b);
+const nrTxt = n => "NR-" + String(n).padStart(2, "0");
+function validatedData(d){
+  if (!d || (!d.__rej && !d.__nrOff)) return d;
+  const rej = d.__rej || {}, off = d.__nrOff || {};
+  const out = {...d};
+  if (Array.isArray(d.checklist_nrs)) out.checklist_nrs = d.checklist_nrs.filter(x => !(x && off[nrNum(x.nr)])).map(x => x && typeof x === "object" ? {...x, itens: asList(x.itens).filter(i => !(i && rej[nrKey(nrNum(x.nr), i.requisito)]))} : x);
+  if (Object.keys(off).length){
+    out.riscos = asList(d.riscos).filter(r => !(r && off[nrNum(r.nr)]));
+    out.nrs_desconsideradas = Object.keys(off).map(n => nrTxt(Number(n)));
+  }
+  return out;
+}
 
 function buildPrompt(ctx){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
@@ -1334,6 +1378,7 @@ function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; }
 /* ---------- render do relatório ---------- */
 function render(d, isExample){
   d = d && typeof d === "object" ? d : {};
+  curRender = {d, isExample};
   // texto tolerante: a IA às vezes devolve objeto ou lista onde se espera texto
   const txt = x => x == null ? "" : typeof x === "object" ? asList(x).map(txt).filter(Boolean).join(" · ") : String(x).trim();
   const rec = (x, key) => x && typeof x === "object" && !Array.isArray(x) ? x : (txt(x) ? {[key]: txt(x)} : null);
@@ -1471,8 +1516,8 @@ function render(d, isExample){
 
     <section class="sec nrsec">
       <div class="sh"><h3>Normas Regulamentadoras</h3><span class="meta">${NRA.length} aplicável(is) · ${NRA.filter(m => m.nc).length} com não conformidade</span></div>
-      <div class="nrgrid">${NR_LIST.map(([n, curto, , rev]) => { const m = NRC[n]; const k = rev ? "rev" : m ? m.k : "na";
-        const st = rev ? "Revogada" : !m || !m.aplic ? "Não aplicável" : m.itens.length ? `${m.nc ? m.nc + " NC · " : ""}${m.c} C${m.nv ? " · " + m.nv + " ?" : ""}` : "Aplicável";
+      <div class="nrgrid">${NR_LIST.map(([n, curto, , rev]) => { const m = NRC[n]; const off = (d.__nrOff || {})[n]; const k = rev ? "rev" : off ? "off" : m ? m.k : "na";
+        const st = rev ? "Revogada" : off ? "Fora do relatório" : !m || !m.aplic ? "Não aplicável" : m.itens.length ? `${m.nc ? m.nc + " NC · " : ""}${m.c} C${m.nv ? " · " + m.nv + " ?" : ""}` : "Aplicável";
         return `<button type="button" class="nrc ${k}" data-nr="${n}"${rev ? " disabled" : ""} aria-label="NR-${String(n).padStart(2, "0")} ${curto}: ${st}"><b>NR-${String(n).padStart(2, "0")}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
       <p class="hint" style="margin:8px 0 0">Clique em uma NR para ver o checklist: itens conformes (C), não conformes (NC) e não verificáveis pelas imagens (?).</p>
     </section>
@@ -1811,24 +1856,45 @@ if (!navigator.mediaDevices?.getUserMedia){ $("camBtn").disabled = true; $("vide
 /* ---------- checklist por NR (tela que abre ao clicar no card) ---------- */
 function openNR(n){
   const def = NR_LIST.find(x => x[0] === n); if (!def) return;
-  const m = curNR[n], code = "NR-" + String(n).padStart(2, "0");
+  const m = curNR[n], code = "NR-" + String(n).padStart(2, "0"), keepScroll = $("nrDlg").open ? $("nrDlg").querySelector(".nrd-in").scrollTop : 0;
   const rel = curRiscos.filter(r => nrNum(r.nr) === n);
   const ic = k => k === "ok" ? "✓" : k === "crit" ? "✗" : "?";
+  const off = !!((curRender?.d.__nrOff || {})[n]);
   let h = `<div class="nrd-h"><span class="nr big">${code}</span><div><h2 id="nrDlgT">${esc(def[2])}</h2><div class="nrd-ap ${m && m.aplic ? "y" : "n"}">${m && m.aplic ? "Aplicável a este setor" : "Não aplicável ao que foi observado nas imagens"}</div></div></div>`;
+  h += `<div class="nrd-off${off ? " on" : ""}"><button type="button" id="nrOffBtn" aria-pressed="${off ? "true" : "false"}">${off ? "Voltar a abordar esta NR no relatório" : "Não abordar esta NR no relatório"}</button><span>${off ? `<b>${code} está fora do relatório:</b> o checklist, os riscos e a fundamentação desta NR não entram no relatório nem na apresentação.` : "Use se esta norma não deve constar no relatório deste setor."}</span></div>`;
   if (m && m.just) h += `<p class="nrd-j">${esc(m.just)}</p>`;
   if (m && m.aplic && m.itens.length){
     h += `<div class="nrd-sum"><span class="lc ok"><i></i>${m.c} conforme(s)</span><span class="lc crit"><i></i>${m.nc} não conforme(s)</span><span class="lc warn"><i></i>${m.nv} não verificável(is)</span>${m.pct !== null ? `<span class="nrd-pct">${m.pct}% de conformidade nos itens verificáveis</span>` : ""}</div>`;
     if (m.pct !== null) h += `<div class="nrd-bar"><i style="width:${m.pct}%"></i></div>`;
     const order = {crit: 0, warn: 1, ok: 2};
-    h += `<ol class="nrd-list">${m.itens.slice().sort((a, b) => order[a.k] - order[b.k]).map(i => `<li class="${i.k}"><span class="ic" aria-hidden="true">${ic(i.k)}</span><div><div class="rq">${i.item ? `<span class="it">${esc(i.item)}</span>` : ""}${esc(i.req)}</div><div class="sit">${esc(i.sit)}${i.ev ? ` · ${esc(i.ev)}` : ""}</div>${i.acao && i.k !== "ok" ? `<div class="ac"><b>Ação:</b> ${esc(i.acao)}</div>` : ""}</div></li>`).join("")}</ol>`;
+    h += `<p class="nrd-val">Revise cada item: <b>clique no item de que você não concorda</b> e ele não entrará no relatório. Clique de novo para validar.${m.rejN ? ` <span class="nrd-rejn">${m.rejN} item(ns) fora do relatório</span>` : ""}</p>`;
+    h += `<ol class="nrd-list">${m.itens.slice().sort((a, b) => order[a.k] - order[b.k]).map(i => `<li class="${i.k}${i.rej ? " rej" : ""}"><button type="button" class="nrd-it" data-key="${esc(i.key)}" aria-pressed="${i.rej ? "true" : "false"}" title="${i.rej ? "Clique para validar e incluir no relatório" : "Clique se não concorda: o item sai do relatório"}"><span class="ic" aria-hidden="true">${ic(i.k)}</span><div><div class="rq">${i.item ? `<span class="it">${esc(i.item)}</span>` : ""}${esc(i.req)}</div><div class="sit">${esc(i.sit)}${i.ev ? ` · ${esc(i.ev)}` : ""}</div>${i.acao && i.k !== "ok" ? `<div class="ac"><b>Ação:</b> ${esc(i.acao)}</div>` : ""}</div><span class="vt">${i.rej ? "✗ Não concordo · fora do relatório" : "✓ Validado"}</span></button></li>`).join("")}</ol>`;
     if (m.auto) h += `<p class="hint">Checklist montado a partir dos riscos citados com esta NR. Faça uma nova análise para receber o checklist completo da norma.</p>`;
   } else if (!m || !m.aplic){
     h += `<p class="hint">Nada nas imagens indica atividades ou condições cobertas por esta norma. Se o setor tiver atividades desse tipo fora das fotos, inclua imagens delas ou informe no contexto.</p>`;
   }
   if (rel.length) h += `<h3 class="nrd-s">Riscos relacionados</h3><ul class="nrd-r">${rel.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lc ${L.k}"><i></i>${L.t} ${L.r}</span> ${esc(r.perigo)}</li>`; }).join("")}</ul>`;
-  $("nrDlgBody").innerHTML = h;
-  const dlg = $("nrDlg"); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+  $("nrDlgBody").innerHTML = h; $("nrDlgBody").dataset.nr = n;
+  const dlg = $("nrDlg"); if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+  dlg.querySelector(".nrd-in").scrollTop = keepScroll;
 }
+// validação: o item clicado deixa de ir para o relatório (e volta com novo clique)
+$("nrDlgBody").addEventListener("click", e => {
+  if (e.target.closest("#nrOffBtn") && curRender){
+    const d = curRender.d, n = Number($("nrDlgBody").dataset.nr), y = scrollY; d.__nrOff = d.__nrOff || {};
+    if (d.__nrOff[n]) delete d.__nrOff[n]; else d.__nrOff[n] = 1;
+    render(d, curRender.isExample); scrollTo(0, y); openNR(n);
+    if (report && !$("tech").hidden && d === lastData) showReport();
+    return;
+  }
+  const b = e.target.closest(".nrd-it"); if (!b || !curRender) return;
+  const d = curRender.d; d.__rej = d.__rej || {};
+  if (d.__rej[b.dataset.key]) delete d.__rej[b.dataset.key]; else d.__rej[b.dataset.key] = 1;
+  const n = Number($("nrDlgBody").dataset.nr), y = scrollY;
+  render(d, curRender.isExample); scrollTo(0, y);
+  openNR(n);
+  if (report && !$("tech").hidden && d === lastData) showReport();
+});
 $("report").addEventListener("click", e => { const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
 $("nrDlgX").onclick = () => $("nrDlg").close();
 $("nrDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
@@ -2051,7 +2117,7 @@ const MXC = {crit: "#d32f2f", high: "#f57c00", warn: "#fbc02d", ok: "#2e9e5b"}; 
 function reportPrompt(meta, ctx, base, n){
   return `Você é engenheiro(a) de segurança do trabalho no Brasil e vai redigir um RELATÓRIO TÉCNICO DE INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO a partir da(s) ${n} imagem(ns) anexada(s). Cite-as como Figura 1, Figura 2 etc., na ordem de envio.
 Dados da inspeção: empresa/unidade: ${meta.emp || "não informado"}; setor/área: ${meta.setor || "não informado"}; data: ${meta.data}; responsável técnico: ${meta.resp || "não informado"}.
-${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}${base ? "Análise preliminar feita por IA (ponto de partida; corrija o que a imagem contrariar): " + JSON.stringify(base).slice(0, 12000) + "\n" : ""}
+${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}${base ? "Análise preliminar feita por IA (ponto de partida; corrija o que a imagem contrariar): " + JSON.stringify(base).slice(0, 12000) + "\n" : ""}${base?.nrs_desconsideradas?.length ? `IMPORTANTE: o responsável técnico decidiu NÃO abordar estas NRs neste relatório: ${base.nrs_desconsideradas.join(", ")}. Não as cite em riscos, parecer, fundamentação, checklist, referências nem plano de ação.\n` : ""}
 Regras:
 - Fundamente o parecer nas Normas Regulamentadoras do MTE com a redação vigente. Considere a NR-01 atualizada (GRO/PGR, inventário de riscos e plano de ação, incluindo fatores de riscos psicossociais relacionados ao trabalho) e as NRs aplicáveis ao que aparece (ex.: NR-05, NR-06, NR-07, NR-08, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22, NR-23, NR-24, NR-26, NR-33, NR-35).
 - Cite número de item somente quando tiver certeza. Se não tiver, cite só a NR e escreva "confirmar item na redação vigente".
@@ -2248,7 +2314,7 @@ function flowSVG(steps){
 }
 function reportHTML(R, photos, meta){
   const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
-  const riscos = asList(R.riscos).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
+  const riscos = asList(R.riscos).filter(r => r && !nrOff()[nrNum(r.nr)]).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const counts = {crit:0, high:0, warn:0, ok:0}; riscos.forEach(r => counts[level(r.severidade, r.probabilidade).k]++);
   const maxC = Math.max(1, ...Object.values(counts));
   const gut = asList(R.gut).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
@@ -2264,7 +2330,8 @@ function reportHTML(R, photos, meta){
   const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
   const RS = residuosOf(R.residuos ? R : (lastData || {}));
   const AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
-  const NRA = Object.values(nrChecks(R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos})).filter(m => m.aplic && m.itens.length).sort((a, b) => a.n - b.n);
+  const NRA = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos}, true)).filter(m => m.aplic && m.itens.length && !nrOff()[m.n]).sort((a, b) => a.n - b.n);
+  const NRrej = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : {}, true)).reduce((t, m) => t + m.rejN, 0);
   const DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
   const prC = pr => /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2];
@@ -2363,7 +2430,7 @@ function reportHTML(R, photos, meta){
     <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p>%%F:Distribuição dos riscos por nível%%</div>
   </div>
   ${NRA.length ? `${H("Checklist de conformidade por NR", "Requisitos de cada Norma Regulamentadora aplicável, verificados nas imagens.")}
-  <p>Foram avaliadas ${NRA.length} NR(s) aplicáveis ao setor. Itens marcados como "não verificável" dependem de documentos, treinamentos ou medições e devem ser confirmados em campo.</p>
+  <p>Foram avaliadas ${NRA.length} NR(s) aplicáveis ao setor. Itens marcados como "não verificável" dependem de documentos, treinamentos ou medições e devem ser confirmados em campo.${NRrej ? ` Na validação do responsável técnico, ${NRrej} item(ns) apontado(s) pela análise automática foram desconsiderados e não constam deste relatório.` : ""}${nrOffList().length ? ` Por decisão do responsável técnico, não são abordadas neste relatório: ${nrOffList().map(nrTxt).join(", ")}.` : ""}</p>
   %%T:Resumo da conformidade por NR%%<div class="tw"><table class="nrsum"><thead><tr><th>NR</th><th>Título</th><th>Conformes</th><th>Não conformes</th><th>Não verificáveis</th><th>Conformidade</th></tr></thead><tbody>
   ${NRA.map(m => `<tr><td class="num"><b>NR-${String(m.n).padStart(2, "0")}</b></td><td>${esc((NR_LIST.find(x => x[0] === m.n) || [])[2] || "")}</td><td class="num">${m.c}</td><td class="num">${m.nc ? `<span class="lv" style="background:${LV.crit[2]}">${m.nc}</span>` : 0}</td><td class="num">${m.nv}</td><td class="num">${m.pct === null ? "—" : m.pct + "%"}</td></tr>`).join("")}
   </tbody></table></div>
@@ -2438,7 +2505,7 @@ function reportHTML(R, photos, meta){
   ${para(P.texto)}
   <h3>Fundamentação normativa</h3>
   %%T:Fundamentação normativa das constatações%%<div class="tw"><table><thead><tr><th>NR / item</th><th>Constatação</th><th>Exigência normativa</th></tr></thead><tbody>
-  ${asList(P.fundamentacao).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
+  ${asList(P.fundamentacao).filter(f => f && !nrOff()[nrNum(f.nr)]).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
   </tbody></table></div>
   ${H("Documentos e registros de evidências de SST", "Documentos e registros que o setor deve manter como evidência legal.")}
   ${DR.length ? `<p>Para as atividades e riscos observados, as Normas Regulamentadoras exigem que o setor mantenha os documentos e registros abaixo, que servem de evidência do cumprimento legal em fiscalizações, auditorias e na gestão do PGR. A situação indica se é preciso implantar, atualizar ou apenas confirmar a existência em campo.</p>
@@ -2804,7 +2871,7 @@ async function buildPptx(R, photos, meta){
   const LVC = {crit: "C62828", high: "E0661B", warn: "D9A400", ok: "2E8B57"};
   const hexOf = c => dxHex(c) || MUT;
   const logo = load("sst_logo");
-  const riscos = asList(R.riscos).filter(r => r && typeof r === "object").slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
+  const riscos = asList(R.riscos).filter(r => r && typeof r === "object" && !nrOff()[nrNum(r.nr)]).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const S5 = prep5S(R), SC = scores(riscos, S5);
   const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
@@ -2941,7 +3008,8 @@ async function buildPptx(R, photos, meta){
   table(s, [[H("#"), H("Perigo / risco"), H("Atual"), H("Residual")]].concat(SC.res.map((x, i) => [C(i + 1), C(tr(String(x.r.perigo || ""), 70)), badge(`${x.a.r} ${x.a.t}`, LVC[x.a.k]), badge(`${x.b.r} ${x.b.t}`, LVC[x.b.k])])), [0.45, 3.9, 1.3, 1.3], {x: 5.85, y: TOP + 0.05});
 
   // checklist por NR
-  const NRA = Object.values(nrChecks(R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos})).filter(m => m.aplic && m.itens.length).sort((a, b) => a.n - b.n);
+  const NRA = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos}, true)).filter(m => m.aplic && m.itens.length && !nrOff()[m.n]).sort((a, b) => a.n - b.n);
+  const NRrej = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : {}, true)).reduce((t, m) => t + m.rejN, 0);
   if (NRA.length){
     s = slide("Conformidade por Norma Regulamentadora", "Checklist de cada NR aplicável: conformes, não conformes e não verificáveis pelas imagens.");
     table(s, [[H("NR"), H("Título"), H("Conformes"), H("Não conformes"), H("Não verificáveis"), H("Conformidade")]].concat(NRA.map(m => [C("NR-" + String(m.n).padStart(2, "0"), {bold: true, color: NV}), C((NR_LIST.find(x => x[0] === m.n) || [])[2] || ""), C(m.c, {align: "center", color: "2E7D32", bold: true}), m.nc ? badge(m.nc, LVC.crit) : C(0, {align: "center"}), C(m.nv, {align: "center"}), C(m.pct === null ? "—" : m.pct + "%", {align: "center", bold: true})])), [1.1, 5.3, 1.3, 1.5, 1.6, 1.53]);
@@ -3035,7 +3103,7 @@ async function buildPptx(R, photos, meta){
   s = slide("Parecer técnico", "Conclusão técnica fundamentada nas Normas Regulamentadoras.");
   s.addText("SITUAÇÃO: " + sit.toUpperCase(), {x: 0.5, y: TOP, w: 6.3, h: 0.5, fontFace: F, fontSize: 15, bold: true, color: sitC, align: "center", line: {color: sitC, width: 2}});
   s.addText(tr(String(Pa.texto || "—").split(/\n+/).filter(x => x.trim()).slice(0, 2).join("\n\n"), 900), {x: 0.5, y: TOP + 0.65, w: 6.3, h: 4.2, fontFace: FS, fontSize: 14, color: INK, valign: "top", fit: "shrink", paraSpaceAfter: 6});
-  const fund = asList(Pa.fundamentacao).slice(0, 6);
+  const fund = asList(Pa.fundamentacao).filter(f => f && !nrOff()[nrNum(f.nr)]).slice(0, 6);
   if (fund.length) table(s, [[H("NR / item"), H("Constatação"), H("Exigência")]].concat(fund.map(f => [C([f.nr, f.item].filter(Boolean).join(" · "), {color: NV, bold: true}), C(tr(String(f.constatacao || ""), 110)), C(tr(String(f.exigencia || ""), 110))])), [1.2, 2.25, 2.25], {x: 7.1, fs: 11});
 
   // checklist final e controle
@@ -3080,7 +3148,7 @@ async function generateReport(){
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
   setStatus("Redigindo relatório técnico…");
   try{
-    const R = await callAI(reportPrompt(meta, $("ctx").value.trim(), lastData, blobs.length), blobs, ctl.signal);
+    const R = await callAI(reportPrompt(meta, $("ctx").value.trim(), validatedData(lastData), blobs.length), blobs, ctl.signal);
     report = {R, photos: await Promise.all(blobs.map(blobToDataURL)), meta};
     showReport();
     setStatus(`Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. Revise antes de assinar.`);
