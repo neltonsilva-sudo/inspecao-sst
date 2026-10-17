@@ -198,6 +198,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .banner::before{content:"";position:absolute;inset:0 auto 0 0;width:7px;background:repeating-linear-gradient(-45deg,var(--signal) 0 5px,var(--signal-ink) 5px 10px)}
 .report .banner b{font:700 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;background:var(--signal);color:var(--signal-ink);padding:2px 8px;border-radius:3px}
 /* alerta de risco crítico */
+.mon-quick{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.4;color:var(--muted);cursor:pointer}
+.mon-quick input{width:16px;height:16px;margin-top:2px;flex:none;accent-color:var(--ok)}
+.mon-quick b{color:var(--ink)}
 .mon-dd{border:1px solid var(--line);border-radius:10px;background:var(--panel)}
 .mon-dd > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:10px 12px;font:600 13.5px var(--f-body);min-height:44px}
 .mon-dd > summary::-webkit-details-marker{display:none}
@@ -964,7 +967,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v91</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v92</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1039,6 +1042,7 @@ api:
             </select>
             <button id="monBtn" type="button" disabled>Iniciar monitoramento</button>
           </div>
+          <label class="mon-quick"><input type="checkbox" id="monQuick" checked> <span><b>Verificação rápida (recomendado)</b> – modelo Flash-Lite, resposta em poucos segundos. Desmarque para uma verificação mais precisa e mais lenta.</span></label>
           <details class="mon-dd"><summary><span>Situações monitoradas</span> <b id="monAlN"></b></summary>
             <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
           </details>
@@ -1167,7 +1171,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v91</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v92</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1255,7 +1259,7 @@ let maxImages = MAX_DEFAULT;
 const frames = []; // {blob, url}
 let stream = null, sample = null, ctl = null;
 const inViewer = !!window.claude;
-const MODEL = "claude-opus-5-5";
+const MODEL = "claude-opus-5-5", MODEL_FAST = "claude-haiku-5-5"; // o rápido é usado na verificação do monitoramento
 
 /* ---------- prompt ---------- */
 /* ---------- documentos do setor ---------- */
@@ -2372,7 +2376,7 @@ async function viaApi(prompt, blobs, signal, again = true, opts = {}){
     method:"POST", signal,
     headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01",
              "anthropic-dangerous-direct-browser-access":"true","anthropic-beta":"server-side-fallback-2026-07-01"},
-    body: JSON.stringify({model:MODEL, max_tokens:12800, output_config:{effort: opts.fast ? "low" : "medium"}, fallbacks:"default",
+    body: JSON.stringify({model: opts.lite ? MODEL_FAST : MODEL, max_tokens:12800, output_config:{effort: opts.fast ? "low" : "medium"}, fallbacks:"default",
                           messages:[{role:"user", content}]})
   });
   const j = await res.json().catch(() => ({}));
@@ -2386,7 +2390,7 @@ async function viaApi(prompt, blobs, signal, again = true, opts = {}){
 }
 
 function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
-let geminiModel = null, geminiAlt = [];
+let geminiModel = null, geminiAlt = [], geminiLite = null;
 async function pickGeminiModel(key, signal){
   if (geminiModel) return geminiModel;
   try{
@@ -2399,6 +2403,7 @@ async function pickGeminiModel(key, signal){
     // reservas para quando o modelo principal estiver sobrecarregado (erro 503)
     const lite = all.filter(m => /^models\/gemini-\d+(\.\d+)?-flash-lite$/.test(m.name)).sort((a,b) => parseFloat(b.name.split("-")[1]) - parseFloat(a.name.split("-")[1]));
     geminiAlt = [...ok.slice(1, 3), ...lite.slice(0, 1)].map(m => m.name);
+    geminiLite = lite[0]?.name || null; // modelo rápido para o monitoramento
   }catch(e){ if (e?.name === "AbortError") throw e; }
   return geminiModel || "models/gemini-2.5-flash";
 }
@@ -2408,7 +2413,8 @@ const wait = (ms, signal) => new Promise((res, rej) => { const t = setTimeout(re
 const thinkCfg = (m, budget = 0) => /gemini-3/.test(m) ? {thinkingLevel: "low"} : /gemini-2\.5-pro/.test(m) ? {thinkingBudget: Math.max(128, budget)} : /gemini-2\.5/.test(m) ? {thinkingBudget: budget} : null;
 async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   const key = $("apiKey").value.trim();
-  const model = await pickGeminiModel(key, signal);
+  let model = await pickGeminiModel(key, signal);
+  if (opts.lite && geminiLite) model = geminiLite; // monitoramento: Flash-Lite responde em poucos segundos
   blobs = await fitBudget(blobs, 13.5e6); // ~18 MB depois de virar base64
   const parts = [];
   for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
@@ -2641,8 +2647,9 @@ Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição, ol
 Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
   const t0 = Date.now();
   try{
-    const small = await shrinkTo(blob, 768); // basta para pessoas, EPI e postura, e a resposta vem bem mais rápida
-    const r = await callAI(prompt, [small], ctl.signal, {fast: true, budget: 384});
+    const quick = $("monQuick")?.checked !== false;
+    const small = await shrinkTo(blob, quick ? 640 : 768); // basta para pessoas, EPI e postura, e a resposta vem bem mais rápida
+    const r = await callAI(prompt, [small], ctl.signal, quick ? {fast: true, lite: true, budget: 0} : {fast: true, budget: 384});
     const al = r && typeof r.alertas === "object" ? r.alertas : {};
     const c = al.critico && (al.critico.ocorre === true || al.critico.ocorre === "true") ? [String(al.critico.onde || "situação grave na imagem")] : [];
     const secs = Math.round((Date.now() - t0) / 1000), cena = String(r?.cena || "");
@@ -2708,6 +2715,7 @@ MON_AL.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load(
 // contagem no título da lista recolhível
 function alCount(){ const n = MON_AL.filter(([id]) => $(id)?.checked).length; if ($("monAlN")) $("monAlN").textContent = `(${n} de ${MON_AL.length} marcadas)`; }
 alCount();
+{ const q = $("monQuick"); if (q){ q.checked = load("sst_monQuick") !== "0"; q.onchange = () => store("sst_monQuick", q.checked ? null : "0"); } }
 EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => store("sst_" + id, el.checked ? "1" : null); });
 function tickMon(){
   if (!mon) return;
