@@ -884,7 +884,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v59</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v60</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1066,7 +1066,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v59</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v60</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1807,17 +1807,18 @@ async function decodeAny(file){
   if (RAW_RX.test(name)){ setStatus("Lendo foto RAW da câmera…"); return await createImageBitmap(await rawPreview(file)); }
   return await imgEl(file); // SVG, ICO e outros que o navegador abre como imagem
 }
-async function normalize(file){
+async function normalize(file, ready){
   // reduz para ~1280px e converte para JPEG; devolve null se o arquivo não for uma imagem legível
   try{
     const bmp = await decodeAny(file);
     const bw = bmp.naturalWidth || bmp.width, bh = bmp.naturalHeight || bmp.height;
     if (!bw || !bh) throw new Error("vazio");
+    if (ready && /jpeg/.test(file.type) && Math.max(bw, bh) <= 1280) return file; // já veio pronta do celular: não comprime de novo
     const s = Math.min(1, 1280 / Math.max(bw, bh));
     const c = document.createElement("canvas"); c.width = Math.round(bw*s); c.height = Math.round(bh*s);
     const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
     setStatus("");
-    return await new Promise(r => c.toBlob(r, "image/jpeg", 0.86));
+    return await new Promise(r => c.toBlob(r, "image/jpeg", 0.82)); // 0,82: imperceptível a olho nu (PSNR > 40 dB) e ~17% menor que 0,86
   }catch(e){ return null; }
 }
 // barra de progresso das fotos (anexadas no computador ou recebidas do celular)
@@ -2049,7 +2050,7 @@ function grabFrame(){
     const s = Math.min(1, 1280 / v.videoWidth);
     const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
     c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
-    c.toBlob(res, "image/jpeg", 0.86);
+    c.toBlob(res, "image/jpeg", 0.82);
   });
 }
 $("snapBtn").onclick = async () => {
@@ -2186,8 +2187,24 @@ async function parseLoose(text){
 }
 const blobToB64 = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1]); r.onerror = rej; r.readAsDataURL(b); });
 
+// o pedido à IA tem limite de tamanho (Gemini: 20 MB; Claude: 32 MB). Se as fotos juntas passarem do orçamento,
+// reduz só a cópia enviada nesta chamada (as fotos do sistema e do relatório continuam iguais)
+async function fitBudget(blobs, max){
+  const tot = blobs.reduce((t, b) => t + b.size, 0);
+  if (tot <= max) return blobs;
+  const f = Math.sqrt(max / tot) * 0.92, side = Math.max(640, Math.round(1280 * f));
+  return Promise.all(blobs.map(async b => {
+    try{
+      const bmp = await createImageBitmap(b), sc = Math.min(1, side / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas"); c.width = Math.round(bmp.width * sc); c.height = Math.round(bmp.height * sc);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+      return await new Promise(r => c.toBlob(x => r(x || b), "image/jpeg", 0.8));
+    }catch(e){ return b; }
+  }));
+}
 async function viaApi(prompt, blobs, signal, again = true){
   const key = $("apiKey").value.trim();
+  blobs = await fitBudget(blobs, 22e6);
   const content = [];
   for (const b of blobs) content.push({type:"image", source:{type:"base64", media_type:"image/jpeg", data: await blobToB64(b)}});
   content.push({type:"text", text: prompt});
@@ -2209,32 +2226,46 @@ async function viaApi(prompt, blobs, signal, again = true){
 }
 
 function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
-let geminiModel = null;
+let geminiModel = null, geminiAlt = [];
 async function pickGeminiModel(key, signal){
   if (geminiModel) return geminiModel;
   try{
     const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=" + encodeURIComponent(key), {signal});
     const j = await r.json();
-    const ok = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes("generateContent") && /^models\/gemini-\d+(\.\d+)?-flash$/.test(m.name));
+    const all = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes("generateContent"));
+    const ok = all.filter(m => /^models\/gemini-\d+(\.\d+)?-flash$/.test(m.name));
     ok.sort((a,b) => parseFloat(b.name.split("-")[1]) - parseFloat(a.name.split("-")[1]));
     if (ok.length) geminiModel = ok[0].name;
+    // reservas para quando o modelo principal estiver sobrecarregado (erro 503)
+    const lite = all.filter(m => /^models\/gemini-\d+(\.\d+)?-flash-lite$/.test(m.name)).sort((a,b) => parseFloat(b.name.split("-")[1]) - parseFloat(a.name.split("-")[1]));
+    geminiAlt = [...ok.slice(1, 3), ...lite.slice(0, 1)].map(m => m.name);
   }catch(e){ if (e?.name === "AbortError") throw e; }
   return geminiModel || "models/gemini-2.5-flash";
 }
+let busyNote = ""; // aviso que aparece junto do cronômetro enquanto o Gemini está sobrecarregado
+const wait = (ms, signal) => new Promise((res, rej) => { const t = setTimeout(res, ms); signal?.addEventListener("abort", () => { clearTimeout(t); rej(new DOMException("Abortado", "AbortError")); }, {once: true}); });
 async function viaGemini(prompt, blobs, signal, again = true){
   const key = $("apiKey").value.trim();
   const model = await pickGeminiModel(key, signal);
+  blobs = await fitBudget(blobs, 13.5e6); // ~18 MB depois de virar base64
   const parts = [];
   for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
   parts.push({text: prompt});
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${encodeURIComponent(key)}`, {
-    method:"POST", signal, headers:{"content-type":"application/json"},
-    body: JSON.stringify({contents:[{role:"user", parts}], generationConfig:{responseMimeType:"application/json", temperature:0.2}})
-  });
-  const j = await res.json().catch(() => ({}));
+  const body = JSON.stringify({contents:[{role:"user", parts}], generationConfig:{responseMimeType:"application/json", temperature:0.2}});
+  // Gemini sobrecarregado (503/500/504): tenta de novo com pausas e, se continuar, usa outro modelo
+  const tries = [model, model, model, ...geminiAlt.filter(m => m !== model)], pause = [0, 3000, 8000, 2000, 2000, 2000];
+  let res, j;
+  for (let a = 0; a < tries.length; a++){
+    if (a){ busyNote = ` · Gemini sobrecarregado, tentando de novo${tries[a] !== model ? " com outro modelo (" + tries[a].replace("models/", "") + ")" : ""} (${a}/${tries.length - 1})`; await wait(pause[a] || 2000, signal).catch(e => { busyNote = ""; throw e; }); }
+    try{ res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${tries[a]}:generateContent?key=${encodeURIComponent(key)}`, {method:"POST", signal, headers:{"content-type":"application/json"}, body}); }
+    catch(e){ busyNote = ""; throw e; }
+    j = await res.json().catch(() => ({}));
+    if (![500, 503, 504].includes(res.status)) break;
+  }
+  busyNote = "";
   if (!res.ok){
     const msg = (j.error && j.error.message) || ("HTTP " + res.status);
-    throw {code:"http", status: /API key/i.test(msg) ? 401 : res.status, message: res.status === 429 ? "limite gratuito do Gemini atingido. Aumente o intervalo ou aguarde alguns minutos" : msg};
+    throw {code:"http", status: /API key/i.test(msg) ? 401 : res.status, message: res.status === 429 ? "limite gratuito do Gemini atingido. Aumente o intervalo ou aguarde alguns minutos" : [500, 503, 504].includes(res.status) ? "o Gemini está sobrecarregado agora (tentamos várias vezes e com outros modelos). Aguarde 1 ou 2 minutos e clique em Analisar de novo" : msg};
   }
   if (j.promptFeedback?.blockReason) throw {code:"refused"};
   const cand = j.candidates?.[0] || {}, fin = cand.finishReason || "";
@@ -2284,7 +2315,7 @@ function handleErr(e){
 // roda uma análise; devolve os dados ou null se falhou (status já mostra o motivo)
 async function analyze(blobs, label){
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
-  const t0 = Date.now(); const tick = setInterval(() => setStatus(`${label}… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`${label}… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus(label + "…");
   const prompt = buildPrompt($("ctx").value.trim());
   try{
@@ -3525,7 +3556,7 @@ async function generateReport(){
   const iso = $("rData").value || new Date().toISOString().slice(0, 10);
   const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
-  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus("Redigindo relatório técnico…");
   try{
     const full = reportPrompt(meta, $("ctx").value.trim(), validatedData(lastData), blobs.length);
@@ -3738,7 +3769,7 @@ function onPhoneConn(peer, conn){
       const n = Number(d.n), fid = String(d.fid || "");
       if (!fid || !(n > 0 && n <= 4000)) return;
       qr.files = qr.files || {};
-      qr.files[fid] = {kind: d.kind === "audio" ? "audio" : "photo", name: tr(String(d.name || "arquivo"), 80), mime: String(d.mime || ""), n, got: 0, a: new Array(n), pos: Math.max(1, Number(d.pos) || 1), tot: Math.max(1, Number(d.tot) || 1)};
+      qr.files[fid] = {kind: d.kind === "audio" ? "audio" : "photo", name: tr(String(d.name || "arquivo"), 80), mime: String(d.mime || ""), n, got: 0, a: new Array(n), pos: Math.max(1, Number(d.pos) || 1), tot: Math.max(1, Number(d.tot) || 1), pre: !!d.pre};
       qr.files[fid].tot = Math.max(qr.files[fid].pos, qr.files[fid].tot);
     } else if (d.type === "file_chunk"){
       const F = qr.files?.[String(d.fid)], i = Number(d.i);
@@ -3757,7 +3788,7 @@ function onPhoneConn(peer, conn){
         const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
         if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
         else if (frames.length >= maxImages){ conn.send({type: "full"}); }
-        else { normalize(blob).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto do celular recebida (${frames.length} de ${maxImages}).`); }); }
+        else { normalize(blob, F.pre).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto do celular recebida (${frames.length} de ${maxImages}).`); }); }
       }catch(e){ conn.send({type: "file_bad", fid: d.fid}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
@@ -3938,6 +3969,7 @@ function phoneMode(id, k){
         if (!c.relay) startCall(); keepAwake();
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
           document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
+          queue.forEach(x => { if (x.state === "sent") x.state = "wait"; });
           drawQueue(); setTimeout(pump, 400);
         clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 4000);
       }
@@ -3962,44 +3994,47 @@ function phoneMode(id, k){
   const queue = []; let sending = null;
   function drawQueue(){
     const ul = $("phQueue"); if (!ul) return; ul.innerHTML = "";
-    const ok = queue.filter(q => q.state === "done").length, bad = queue.filter(q => q.state === "bad").length;
+    const ok = queue.filter(q => q.state === "done").length, bad = queue.filter(q => q.state === "bad").length, sent = queue.filter(q => q.state === "sent").length;
     const act = queue.length - bad, cur = queue.find(q => q.state === "sending");
-    const pb = $("phQBar"); pb.classList.toggle("done", act > 0 && ok === act); pb.querySelector("i").style.width = (act ? Math.round((ok + (cur ? (cur.pct || 0) / 100 : 0)) / act * 100) : 0) + "%";
+    const pb = $("phQBar"); pb.classList.toggle("done", act > 0 && ok === act); pb.querySelector("i").style.width = (act ? Math.round((ok + sent * 0.97 + (cur ? (cur.pct || 0) / 100 : 0)) / act * 100) : 0) + "%";
     $("phQSum").textContent = queue.length ? `· ${ok} de ${queue.length} enviado(s)${bad ? ", " + bad + " com falha" : ""}${queue.length > 30 ? " (mostrando os 30 últimos)" : ""}` : "";
-    queue.slice(-30).reverse().forEach(q => { const li = document.createElement("li"); li.className = "q-" + q.state; const a = document.createElement("span"); a.textContent = (q.kind === "audio" ? "Áudio · " : "Foto · ") + q.name; const b = document.createElement("small"); b.textContent = q.state === "done" ? "enviado" : q.state === "bad" ? "falhou" : q.state === "sending" ? Math.round(q.pct || 0) + "%" : live() ? "na fila" : "aguardando o computador autorizar"; li.append(a, b); ul.append(li); });
+    queue.slice(-30).reverse().forEach(q => { const li = document.createElement("li"); li.className = "q-" + q.state; const a = document.createElement("span"); a.textContent = (q.kind === "audio" ? "Áudio · " : "Foto · ") + q.name; const b = document.createElement("small"); b.textContent = q.state === "done" ? "enviado" : q.state === "bad" ? "falhou" : q.state === "sending" ? Math.round(q.pct || 0) + "%" : q.state === "sent" ? "confirmando…" : live() ? "na fila" : "aguardando o computador autorizar"; li.append(a, b); ul.append(li); });
   }
   function enqueue(blob, kind, name){ queue.push({id: rnd(8), blob, kind, name: name || (kind === "audio" ? "audio" : "foto"), mime: blob.type, state: "wait", pct: 0}); drawQueue(); pump(); }
+  // envio contínuo: prepara a próxima foto enquanto esta segue e não espera a confirmação do computador para começar a próxima
   async function pump(){
     if (sending || !live()) return;
-    const q = queue.find(x => x.state === "wait" || x.state === "sending"); if (!q) return;
+    const q = queue.find(x => x.state === "wait"); if (!q) return;
     sending = q; q.state = "sending"; q.pct = 0; drawQueue();
     const c = conn;
     try{
-      let blob = q.blob;
-      if (q.kind === "photo") blob = await shrinkPhoto(blob);
-      const b64 = await blobToB64(blob), CH = 8000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
-      const act = queue.filter(x => x.state !== "bad"), pos = act.filter(x => x.state === "done").length + 1;
-      c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n, pos, tot: Math.max(pos, act.length)});
+      const blob = q.kind === "photo" ? await (q.prep || (q.prep = shrinkPhoto(q.blob))) : q.blob;
+      const nx = queue.find(x => x.state === "wait" && x.kind === "photo" && !x.prep); if (nx) nx.prep = shrinkPhoto(nx.blob);
+      const b64 = await blobToB64(blob), CH = 16000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
+      const act = queue.filter(x => x.state !== "bad"), pos = act.filter(x => x.state === "done" || x.state === "sent").length + 1;
+      c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n, pos, tot: Math.max(pos, act.length), pre: q.kind === "photo" ? 1 : 0});
       for (let i = 0; i < n; i++){
         if (c !== conn || !c.open) throw new Error("conexão");
         const dc = c.dataChannel;
-        while (dc && dc.bufferedAmount > 128 * 1024 && c.open) await new Promise(r => setTimeout(r, 30));
+        while (dc && dc.bufferedAmount > 256 * 1024 && c.open) await new Promise(r => setTimeout(r, 20));
         c.send({type: "file_chunk", fid, i, d: b64.slice(i * CH, (i + 1) * CH)});
         if (i % 4 === 0){ q.pct = (i + 1) / n * 100; drawQueue(); }
       }
-      q.fid = fid; q.pct = 100; drawQueue();
-      await new Promise((res, rej) => { q.wait = {res, rej}; setTimeout(() => rej(new Error("sem confirmação")), 60000); });
-      q.state = "done"; q.blob = null;
+      q.fid = fid; q.pct = 100; q.state = "sent";
+      q.wait = {res: () => { q.state = "done"; q.blob = null; q.prep = null; drawQueue(); }, rej: () => {}};
+      // sem confirmação em 90 s: volta para a fila e reenvia
+      setTimeout(() => { if (q.state === "sent" && q.fid === fid){ q.state = "wait"; drawQueue(); pump(); } }, 90000);
     }catch(e){ if (q.state === "sending") q.state = "wait"; }
     finally{ sending = null; drawQueue(); }
-    if (live()) setTimeout(pump, 150);
+    if (live()) setTimeout(pump, 0);
   }
   async function shrinkPhoto(b){
     try{
-      const bmp = await createImageBitmap(b), sc = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      // mesmo tamanho que o sistema usa na análise e no relatório (1280 px): menos dados, mesma qualidade final
+      const bmp = await createImageBitmap(b), sc = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
       const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
       cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
-      return await new Promise(r => cv.toBlob(x => r(x || b), "image/jpeg", 0.85));
+      return await new Promise(r => cv.toBlob(x => r(x || b), "image/jpeg", 0.82));
     }catch(e){ return b; }
   }
   function fileReply(d){
@@ -4300,7 +4335,7 @@ Responda SOMENTE com um objeto JSON neste formato:
 "pendencias_prazos":["ações vencidas, documentos vencidos ou prazos"],
 "verificar_na_inspecao":["o que conferir em campo ou nas fotos"]}`;
   ctl = new AbortController(); updateGo(); drawDocs(); $("stopRow").hidden = false;
-  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Lendo ${ok.length} documento(s) com IA… ${Math.round((Date.now()-t0)/1000)} s`), 1000);
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Lendo ${ok.length} documento(s) com IA… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus(`Lendo ${ok.length} documento(s) com IA…`);
   try{
     docInfo = await callAI(prompt, imgs, ctl.signal);
