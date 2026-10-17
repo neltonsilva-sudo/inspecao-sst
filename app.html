@@ -601,6 +601,8 @@ button.newrep:hover{background:var(--crit);color:#fff}
 .rep table.psi{table-layout:fixed}.rep table.psi td{overflow-wrap:break-word}.rep table.psi th:nth-child(1){width:15%}.rep table.psi th:nth-child(2){width:19%}.rep table.psi th:nth-child(3){width:13%}.rep table.psi th:nth-child(4){width:14%}.rep table.psi th:nth-child(5){width:15%}.rep table.psi th:nth-child(6){width:24%}
 .rep table.arm{table-layout:fixed}.rep table.arm td{overflow-wrap:break-word}.rep table.arm th:nth-child(1){width:16%}.rep table.arm th:nth-child(2){width:14%}.rep table.arm th:nth-child(3){width:18%}.rep table.arm th:nth-child(4){width:18%}.rep table.arm th:nth-child(5){width:22%}.rep table.arm th:nth-child(6){width:12%}
 .rep table.lay{table-layout:fixed}.rep table.lay td{overflow-wrap:break-word}.rep table.lay th:nth-child(1){width:20%}.rep table.lay th:nth-child(2){width:14%}.rep table.lay th:nth-child(3){width:20%}.rep table.lay th:nth-child(4){width:20%}.rep table.lay th:nth-child(5){width:26%}
+.rep table.s5a tr.cont td:first-child{border-top-color:transparent}
+.rep table.s5a{table-layout:fixed}.rep table.s5a td{overflow-wrap:break-word;vertical-align:top}.rep table.s5a th:nth-child(1){width:13%}.rep table.s5a th:nth-child(2){width:19%}.rep table.s5a th:nth-child(3){width:26%}.rep table.s5a th:nth-child(4){width:13%}.rep table.s5a th:nth-child(5){width:10%}.rep table.s5a th:nth-child(6){width:19%}
 .rep table.res{table-layout:fixed}.rep table.res td{overflow-wrap:anywhere}.rep table.res th:nth-child(1){width:18%}.rep table.res th:nth-child(4){width:12%}.rep table.res th:nth-child(6){width:12%}
 .rep table.cores td:nth-child(odd){width:16%}
 .rep table.nrchk{table-layout:fixed}.rep table.nrchk td{overflow-wrap:anywhere}.rep table.nrchk th:nth-child(1){width:13%}.rep table.nrchk th:nth-child(3){width:16%}
@@ -967,7 +969,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v97</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v98</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1172,7 +1174,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v97</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v98</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2834,6 +2836,7 @@ Ferramentas da qualidade obrigatórias:
 - Avaliação 5S (Seiri/utilização, Seiton/organização, Seiso/limpeza, Seiketsu/padronização, Shitsuke/disciplina): nota de 0 a 5 por senso, com constatação baseada no que é visível e ação recomendada. "necessario" = true se algum senso tiver nota 3 ou menor.
 - Projeção após o plano de ação: para cada risco, informe severidade_residual e probabilidade_residual (1 a 5) esperadas depois de implantadas as medidas, de forma realista (a severidade só cai se a medida eliminar ou reduzir o perigo; EPI e sinalização reduzem pouco). Para cada senso do 5S, informe nota_apos (0 a 5) esperada após a implantação.
 - Plano de ação 5W2H com prioridade coerente com a GUT. Informe a "ferramenta" de origem de cada ação (NR, 5S, Ergonomia, Kaizen, Gestão visual etc.).
+- Plano de implantação do 5S (quando algum senso tiver nota 3 ou menor): em "acoes" de CADA senso com nota 3 ou menor, liste de 2 a 5 ações concretas, ligadas ao que se vê nas figuras (cite a figura e o local), com como fazer, responsável (função), prazo e evidência de conclusão — ex.: Seiri: triagem com etiqueta vermelha e área de descarte; Seiton: quadro de sombras, demarcação de piso e identificação de prateleiras; Seiso: rotina de limpeza de 5 min por turno e mapa de limpeza; Seiketsu: padrão visual com fotos do "como deve ficar" e checklist; Shitsuke: auditoria 5S periódica, responsáveis por área e treinamento. Em "implantacao", informe as etapas em ordem (lançamento/treinamento, dia D de triagem, organização, limpeza, padronização, auditorias), a auditoria (frequência, quem e como) e indicadores com meta (ex.: nota 5S ≥ 80/100 em 60 dias). Senso com nota 4 ou 5: "acoes" vazio.
 - Se a implantação do 5S for necessária, inclua no plano de ação ações específicas de implantação do 5S para os sensos deficientes (ex.: triagem com etiqueta vermelha e descarte, definição de layout e demarcação de áreas, local identificado para cada item, cronograma e checklist de limpeza, padrões visuais e procedimento do setor, auditorias 5S periódicas e treinamento da equipe), com "ferramenta":"5S".
 
 Responda SOMENTE com um objeto JSON neste formato:
@@ -2847,7 +2850,7 @@ Responda SOMENTE com um objeto JSON neste formato:
 "gut":[{"problema":"","g":1,"u":1,"t":1,"justificativa":"curta"}],
 "rei":[{"acao":"","esforco":1,"impacto":1}],
 "parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
-"cinco_s":{"necessario":true,"justificativa":"1-2 frases","seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":""}},
+"cinco_s":{"necessario":true,"justificativa":"1-2 frases","implantacao":{"etapas":["etapa da implantação em ordem"],"auditoria":"frequência, quem audita e como (checklist, pontuação)","indicadores":["indicador e meta"]},"seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":"","acoes":[{"acao":"passo concreto","como":"como fazer (materiais, método)","responsavel":"","prazo":"","evidencia":"como verificar que foi feito"}]},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":"","acoes":[{"acao":"passo concreto","como":"como fazer (materiais, método)","responsavel":"","prazo":"","evidencia":"como verificar que foi feito"}]},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":"","acoes":[{"acao":"passo concreto","como":"como fazer (materiais, método)","responsavel":"","prazo":"","evidencia":"como verificar que foi feito"}]},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":"","acoes":[{"acao":"passo concreto","como":"como fazer (materiais, método)","responsavel":"","prazo":"","evidencia":"como verificar que foi feito"}]},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":"","acoes":[{"acao":"passo concreto","como":"como fazer (materiais, método)","responsavel":"","prazo":"","evidencia":"como verificar que foi feito"}]}},
 "plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual|Documentação|Layout|Resíduos"}],
 ${DOCREG_JSON},
 ${SUG_JSON},
@@ -2933,6 +2936,14 @@ const S5DEF = [
   ["seiketsu","Seiketsu","Padronização","Padronizar o setor com gestão visual, fotos do padrão e procedimento simples","Padrão visual do setor"],
   ["shitsuke","Shitsuke","Disciplina","Treinar a equipe e realizar auditorias 5S periódicas com registro de pontuação","Treinamento e auditoria 5S"]
 ];
+// ações-padrão do método 5S, usadas quando o relatório não detalhou as ações de um senso com nota baixa
+const S5ACT = {
+  seiri: [{acao: "Triagem com etiqueta vermelha", como: "Marcar tudo o que não é usado na rotina e levar para uma área de descarte temporária", resp: "Líder do setor", prazo: "1 semana", ev: "Área de descarte com itens etiquetados e registro do destino"}, {acao: "Destinar itens desnecessários", como: "Descartar, doar ou devolver ao almoxarifado os itens etiquetados", resp: "Líder do setor", prazo: "2 semanas", ev: "Lista de itens destinados"}],
+  seiton: [{acao: "Definir local fixo para cada item", como: "Quadro de sombras para ferramentas, prateleiras identificadas e itens de uso frequente perto do posto", resp: "Equipe do setor", prazo: "3 semanas", ev: "Ferramentas e materiais nos locais identificados"}, {acao: "Demarcar o piso", como: "Faixas amarelas para circulação e áreas de armazenamento (NR-26)", resp: "Manutenção", prazo: "3 semanas", ev: "Piso demarcado conforme o layout"}],
+  seiso: [{acao: "Rotina de limpeza por turno", como: "5 minutos de limpeza ao fim de cada turno, com mapa de limpeza e responsáveis por área", resp: "Equipe do setor", prazo: "1 semana", ev: "Checklist de limpeza preenchido"}, {acao: "Eliminar fontes de sujeira", como: "Corrigir vazamentos e instalar coleta de cavacos, poeira e resíduos na origem", resp: "Manutenção", prazo: "1 mês", ev: "Fontes de sujeira corrigidas"}],
+  seiketsu: [{acao: "Padrão visual do setor", como: "Fotos do 'como deve ficar' afixadas em cada área e etiquetas de identificação padronizadas", resp: "Líder do setor", prazo: "1 mês", ev: "Fotos do padrão afixadas"}, {acao: "Checklist 5S do posto", como: "Checklist simples dos 5 sensos para conferência diária", resp: "Líder do setor", prazo: "1 mês", ev: "Checklists preenchidos"}],
+  shitsuke: [{acao: "Auditoria 5S periódica", como: "Auditoria com pontuação dos 5 sensos e divulgação do resultado no quadro do setor", resp: "SST / qualidade", prazo: "Quinzenal", ev: "Registro das auditorias e evolução da nota"}, {acao: "Treinamento e responsáveis por área", como: "Treinamento rápido de 5S e definição de um responsável por área", resp: "Gestor do setor", prazo: "2 semanas", ev: "Lista de presença e quadro de responsáveis"}]
+};
 // lê a avaliação 5S do relatório (ou da análise anterior) e completa o plano com ações de implantação quando faltar
 function prep5S(R){
   const cs = R.cinco_s || {};
@@ -2941,7 +2952,11 @@ function prep5S(R){
     const has = v.nota !== undefined && v.nota !== null && v.nota !== "";
     const nota = has ? clamp(v.nota, 0, 5) : null;
     const apos = nota === null ? null : (v.nota_apos != null && v.nota_apos !== "" ? Math.max(nota, clamp(v.nota_apos, 0, 5)) : (nota <= 3 ? Math.min(5, nota + 2) : nota));
-    return {k, jp, pt, nota, apos, constatacao: v.constatacao || v.obs || "", acao: v.acao || (has && nota <= 3 ? acaoPadrao : ""), acaoPadrao, titulo};
+    const tx = x => x == null ? "" : String(typeof x === "object" ? Object.values(x).join(" ") : x).trim();
+    let acoes = asList(v.acoes).map(a => a && typeof a === "object" ? {acao: tx(a.acao), como: tx(a.como), resp: tx(a.responsavel), prazo: tx(a.prazo), ev: tx(a.evidencia)} : {acao: tx(a), como: "", resp: "", prazo: "", ev: ""}).filter(a => a.acao);
+    if (has && nota <= 3 && !acoes.length) acoes = (S5ACT[k] || []).map(a => ({...a})); // padrão do método quando o relatório não detalhou
+    if (!has || nota > 3) acoes = [];
+    return {k, jp, pt, nota, apos, constatacao: v.constatacao || v.obs || "", acao: v.acao || (has && nota <= 3 ? acaoPadrao : ""), acaoPadrao, titulo, acoes};
   });
   const avaliados = rows.filter(r => r.nota !== null);
   if (!avaliados.length) return null;
@@ -2952,7 +2967,12 @@ function prep5S(R){
   if (necessario && !plano.some(a => /5\s*s/i.test(String(a.ferramenta || "")))){
     fracos.forEach(r => plano.push({acao: `5S – ${r.titulo} (${r.jp})`, por_que: `Senso ${r.jp} com nota ${r.nota}/5: ${r.constatacao || "abaixo do padrão"}`, onde: "Setor inspecionado", quem: "Líder do setor e equipe 5S", quando: "30 dias", como: r.acao || r.acaoPadrao, quanto: "Baixo custo (verificar em campo)", prioridade: r.nota <= 2 ? "Alta" : "Média", ferramenta: "5S", auto: true}));
   }
-  return {rows, total, max, pct, necessario, justificativa: cs.justificativa || "", plano, classe: pct >= 80 ? ["Bom", "#2e8b57"] : pct >= 60 ? ["Regular", "#a87f00"] : ["Insatisfatório", "#c62828"]};
+  const imp = cs.implantacao && typeof cs.implantacao === "object" ? cs.implantacao : {};
+  const implantacao = {etapas: asList(imp.etapas).map(String).filter(Boolean), auditoria: imp.auditoria ? String(imp.auditoria) : "", indicadores: asList(imp.indicadores).map(String).filter(Boolean)};
+  if (necessario && !implantacao.etapas.length) implantacao.etapas = ["Lançamento: reunião com a equipe e treinamento rápido sobre os 5 sensos", "Dia D: triagem com etiqueta vermelha e descarte do que não é usado (Seiri)", "Organização: definição de locais, demarcação e identificação (Seiton)", "Limpeza inicial e eliminação das fontes de sujeira (Seiso)", "Padronização: fotos do padrão, checklist e gestão visual (Seiketsu)", "Auditorias periódicas e reconhecimento da equipe (Shitsuke)"];
+  if (necessario && !implantacao.auditoria) implantacao.auditoria = "Auditoria 5S quinzenal nos primeiros 3 meses e mensal depois, com checklist dos 5 sensos (nota 0 a 5 cada) e registro da pontuação.";
+  if (necessario && !implantacao.indicadores.length) implantacao.indicadores = ["Nota da auditoria 5S ≥ 80/100 em até 60 dias", "100% das áreas demarcadas e identificadas"];
+  return {rows, total, max, pct, necessario, justificativa: cs.justificativa || "", plano, implantacao, classe: pct >= 80 ? ["Bom", "#2e8b57"] : pct >= 60 ? ["Regular", "#a87f00"] : ["Insatisfatório", "#c62828"]};
 }
 // notas de 0 a 100, regra fixa e transparente: SST desconta por risco; 5S = % dos sensos; geral = média
 const PEN = {crit: 20, high: 12, warn: 6, ok: 2};
@@ -3215,7 +3235,13 @@ function reportHTML(R, photos, meta){
   %%T:Avaliação 5S por senso%%<div class="tw"><table><thead><tr><th>Senso</th><th>Nota</th><th>Constatação</th><th>Ação recomendada</th></tr></thead><tbody>
   ${S5.rows.map(r => r.nota === null ? "" : `<tr><td><b>${r.jp}</b><div class="cap" style="margin:0">${r.pt}</div></td><td style="min-width:110px"><div class="num">${r.nota}/5</div><div class="gb"><i style="width:${r.nota*20}%;background:${r.nota >= 4 ? LV.ok[1] : r.nota === 3 ? LV.warn[1] : LV.crit[1]}"></i></div></td><td>${esc(r.constatacao || "—")}</td><td>${esc(r.acao || "Manter o padrão atual.")}</td></tr>`).join("")}
   </tbody></table></div>
-  <p class="cap">Nota 0 a 5 por senso. Sensos com nota 3 ou menor exigem ação de implantação, que consta no plano de ação com a ferramenta "5S".</p>` : ""}
+  <p class="cap">Nota 0 a 5 por senso. Sensos com nota 3 ou menor exigem ação de implantação, detalhada abaixo e incluída no plano de ação com a ferramenta "5S".</p>
+  ${S5.necessario && S5.rows.some(r => r.acoes.length) ? `<h3>Plano de implantação do 5S – ações detalhadas</h3>
+  %%T:Ações de implantação do 5S por senso%%<div class="tw"><table class="s5a"><thead><tr><th>Senso</th><th>Ação</th><th>Como fazer</th><th>Responsável</th><th>Prazo</th><th>Evidência de conclusão</th></tr></thead><tbody>
+  ${S5.rows.filter(r => r.acoes.length).map(r => r.acoes.map((a, i) => `<tr${i ? ' class="cont"' : ""}>${i ? "<td></td>" : `<td><b>${r.jp}</b><div class="cap" style="margin:0">${r.pt} · nota ${r.nota}/5</div></td>`}<td><b>${esc(a.acao)}</b></td><td>${esc(a.como || "—")}</td><td>${esc(a.resp || "—")}</td><td>${esc(a.prazo || "—")}</td><td>${esc(a.ev || "—")}</td></tr>`).join("")).join("")}
+  </tbody></table></div>
+  ${S5.implantacao.etapas.length ? `<h3>Etapas da implantação</h3><ol>${S5.implantacao.etapas.map(e => `<li>${esc(e)}</li>`).join("")}</ol>` : ""}
+  ${S5.implantacao.auditoria || S5.implantacao.indicadores.length ? `<h3>Auditoria e indicadores</h3>${S5.implantacao.auditoria ? `<p><b>Auditoria:</b> ${esc(S5.implantacao.auditoria)}</p>` : ""}${S5.implantacao.indicadores.length ? `<ul>${S5.implantacao.indicadores.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}` : ""}` : ""}` : ""}
   ${H("Análise de causas – Diagrama de Ishikawa", "Causas do principal problema de SST, organizadas pelos 6M.")}
   <p>Efeito analisado: <b>${esc(R.ishikawa?.efeito || "—")}</b>.</p>
   <div class="fig">${ishikawaSVG(R.ishikawa)}</div>%%F:Diagrama de Ishikawa (causa e efeito, 6M)%%
@@ -3855,6 +3881,11 @@ async function buildPptx(R, photos, meta){
       s.addText(`${r.nota} → ${r.apos}`, {x: 11.6, y: y + 0.28, w: 1.2, h: 0.4, fontFace: F, fontSize: 13, bold: true, color: INK, align: "right"});
     });
     s.addText("Barra colorida: nota atual · barra azul: nota esperada após a implantação (0 a 5).", {x: 6.5, y: 6.6, w: 6.3, h: 0.3, fontFace: FS, fontSize: 11, italic: true, color: MUT});
+    const acs = S5.necessario ? S5.rows.flatMap(r => r.acoes.map(a => ({r, a}))) : [];
+    for (let k = 0; k < acs.length; k += 9){
+      s = slide(k ? "Plano de implantação do 5S – continuação" : "Plano de implantação do 5S", k ? `Ações ${k + 1} a ${Math.min(k + 9, acs.length)} de ${acs.length}.` : "Ações detalhadas para os sensos com nota 3 ou menor.");
+      table(s, [[H("Senso"), H("Ação"), H("Como fazer"), H("Responsável"), H("Prazo")]].concat(acs.slice(k, k + 9).map(({r, a}) => [C(r.jp, {bold: true}), C(tr(a.acao, 70), {bold: true}), C(tr(a.como || "—", 120)), C(tr(a.resp || "—", 40)), C(tr(a.prazo || "—", 30))])), [1.4, 3.0, 5.3, 1.6, 1.03], {fs: 11});
+    }
   }
 
   // Ishikawa
