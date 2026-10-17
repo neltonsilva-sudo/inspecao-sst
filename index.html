@@ -1026,7 +1026,7 @@ async function qrStart(){
   catch(e){ qrMsg("Não foi possível carregar o módulo de conexão. Verifique a internet.", true); return; }
   qrStop();
   const id = "inspecao-sst-" + rnd(16), k = rnd(12), peer = new Peer(id, PEER_OPTS);
-  qr = {peer, id, k, conn: null, call: null, ok: false, device: ""};
+  qr = {peer, id, k, conn: null, call: null, ok: false, device: "", parts: {}};
   peer.on("open", () => { if (qr?.peer === peer) showQR(); });
   peer.on("connection", conn => onPhoneConn(peer, conn));
   peer.on("call", call => {
@@ -1056,11 +1056,22 @@ function onPhoneConn(peer, conn){
       qrMsg("Pedido de conexão recebido. Autorize ou recuse.");
     } else if (conn !== qr.conn || !qr.ok){
       return;
-    } else if (d.type === "photo"){
+    } else if (d.type === "chunk"){
+      // a foto chega em partes pequenas (base64) e é remontada aqui
+      const n = Number(d.n), i = Number(d.i), pid = String(d.pid || "");
+      if (!pid || !(n > 0 && n <= 2000) || !(i >= 0 && i < n)) return;
+      const P = qr.parts[pid] || (qr.parts[pid] = {n, got: 0, a: new Array(n)});
+      if (P.a[i] == null){ P.a[i] = String(d.d || ""); P.got++; }
+      if (P.got < P.n) return;
+      delete qr.parts[pid];
       if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
-      addBlob(new Blob([d.data], {type: "image/jpeg"}));
-      conn.send({type: "got", n: frames.length});
-      setStatus(`Foto recebida do celular (${frames.length} de ${maxImages}).`);
+      try{
+        const bin = atob(P.a.join("")), u = new Uint8Array(bin.length);
+        for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
+        addBlob(new Blob([u], {type: "image/jpeg"}));
+        conn.send({type: "got", n: frames.length});
+        setStatus(`Foto recebida do celular (${frames.length} de ${maxImages}).`);
+      }catch(e){ conn.send({type: "bad"}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
     }
@@ -1123,7 +1134,7 @@ function phoneMode(id, k){
     try{ await loadScript(PEER_JS); }catch(e){ done("Sem conexão", "Não foi possível carregar o módulo de conexão. Verifique a internet e leia o QR code de novo."); return; }
     peer = new Peer(PEER_OPTS);
     peer.on("open", () => {
-      conn = peer.connect(id, {reliable: true});
+      conn = peer.connect(id, {reliable: true, serialization: "json"});
       const t = setTimeout(() => { if (!conn.open) done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora."); }, 20000);
       conn.on("open", () => { clearTimeout(t); conn.send({type: "hello", k, device: deviceName()}); msg("Aguardando autorização no computador…"); });
       conn.on("data", d => {
@@ -1133,6 +1144,7 @@ function phoneMode(id, k){
         else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
         else if (d.type === "got") msg(`Foto recebida pelo computador (${d.n} na lista).`);
         else if (d.type === "full") msg("O computador atingiu o limite de fotos.", true);
+        else if (d.type === "bad") msg("A foto chegou com defeito. Envie de novo.", true);
       });
       conn.on("close", () => done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."));
     });
@@ -1146,10 +1158,21 @@ function phoneMode(id, k){
     const s = Math.min(1, 1600 / Math.max(v.videoWidth, v.videoHeight));
     const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
     c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
-    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.85)); if (!b) return;
-    conn.send({type: "photo", data: await b.arrayBuffer()});
-    $("phCount").textContent = ++sent; msg("Enviando foto…");
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.82)); if (!b) return;
     const box = $("phBox"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+    $("phShot").disabled = true; msg("Enviando foto…");
+    try{
+      // partes pequenas com controle de fila: o Safari do iPhone derruba o canal com mensagens grandes
+      const b64 = await blobToB64(b), CH = 12000, n = Math.ceil(b64.length / CH), pid = rnd(8);
+      for (let i = 0; i < n; i++){
+        if (!conn?.open) return;
+        const dc = conn.dataChannel;
+        while (dc && dc.bufferedAmount > 192 * 1024 && conn.open) await new Promise(r => setTimeout(r, 25));
+        conn.send({type: "chunk", pid, i, n, d: b64.slice(i * CH, (i + 1) * CH)});
+        if (n > 1) msg(`Enviando foto… ${Math.round((i + 1) / n * 100)}%`);
+      }
+      $("phCount").textContent = ++sent;
+    }finally{ if (!ended) $("phShot").disabled = false; }
   };
   $("phFlip").onclick = async () => {
     facing = facing === "environment" ? "user" : "environment";
