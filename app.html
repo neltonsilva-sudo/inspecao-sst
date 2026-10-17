@@ -816,6 +816,14 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .phone .ph-recbtn.on span{width:30px;height:30px;border-radius:6px;animation:ph-live 1.6s ease-in-out infinite}
 .ph-timer{font:700 34px/1 var(--f-mono);font-variant-numeric:tabular-nums}
 .ph-qwrap .label{margin:0 0 6px}
+.upbar{display:grid;gap:6px}
+.upbar[hidden]{display:none}
+.upbar-t{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;color:var(--ink)}
+.upbar-t b{font-variant-numeric:tabular-nums}
+.upbar-track{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.upbar-track i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#F5A623,#F26B1D);transition:width .25s ease}
+.upbar.done .upbar-track i{background:var(--ok,#1f9d55)}
+.ph-qwrap .upbar{margin:0 0 10px}
 .ph-qwrap:has(.ph-queue:empty){display:none}
 .ph-queue{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .ph-queue li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13.5px}
@@ -876,7 +884,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v57</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v59</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -986,6 +994,7 @@ api:
           <label class="btn accent">Anexar fotos<input id="attach" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.avif,.svg,.ico,.heic,.heif,.tif,.tiff,.dng,.cr2,.cr3,.crw,.nef,.nrw,.arw,.orf,.rw2,.raf,.pef,.srw,.raw" multiple></label>
           <button id="clrBtn" type="button" hidden>Remover todas</button>
         </div>
+        <div class="upbar" id="upBar" hidden role="progressbar" aria-valuemin="0" aria-valuemax="100"><div class="upbar-t"><span></span><b></b></div><div class="upbar-track"><i></i></div></div>
         <div class="dropz" id="dropz">
           <div class="thumbs" id="thumbs"></div>
           <div class="dropmsg" aria-hidden="true">Solte as fotos aqui</div>
@@ -1057,7 +1066,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v57</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v59</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1119,7 +1128,7 @@ api:
       </div>
       <label class="btn ph-gal">Escolher áudio salvo no celular<input id="phAudioPick" type="file" accept="audio/*,.m4a,.mp3,.aac,.wav,.ogg,.oga,.opus,.amr,.3gp,.caf,.flac,.webm" multiple></label>
     </div>
-    <div class="ph-qwrap"><p class="label">Envios para o computador</p><ul class="ph-queue" id="phQueue"></ul></div>
+    <div class="ph-qwrap"><p class="label">Envios para o computador <span id="phQSum"></span></p><div class="upbar" id="phQBar"><div class="upbar-track"><i></i></div></div><ul class="ph-queue" id="phQueue"></ul></div>
     <button id="phEnd" type="button">Desconectar</button>
   </div>
   <div id="phDone" class="stack ph-done" hidden>
@@ -1811,13 +1820,26 @@ async function normalize(file){
     return await new Promise(r => c.toBlob(r, "image/jpeg", 0.86));
   }catch(e){ return null; }
 }
+// barra de progresso das fotos (anexadas no computador ou recebidas do celular)
+let upT = null;
+function upBar(frac, text){
+  const w = $("upBar"); clearTimeout(upT);
+  const p = Math.round(Math.max(0, Math.min(1, frac)) * 100);
+  w.hidden = false; w.classList.toggle("done", p >= 100); w.setAttribute("aria-valuenow", p);
+  w.querySelector("i").style.width = p + "%"; w.querySelector("span").textContent = text; w.querySelector("b").textContent = p + "%";
+  upT = setTimeout(() => { w.hidden = true; }, p >= 100 ? 1800 : 20000); // some sozinha ao terminar ou se o envio parar
+}
 async function onFiles(list){
   const arr = Array.from(list || []), bad = [];
+  let i = 0;
+  if (arr.length) upBar(0, `Adicionando fotos: 0 de ${arr.length}`);
   for (const f of arr){
     if (frames.length >= maxImages){ setStatus(`Limite de ${maxImages} imagens atingido. As fotos excedentes foram ignoradas.`, true); break; }
     const b = await normalize(f);
     if (b) addBlob(b); else bad.push(f.name || "arquivo");
+    i++; upBar(i / arr.length, i < arr.length ? `Adicionando fotos: ${i} de ${arr.length}` : `${arr.length - bad.length} foto(s) adicionada(s)`);
   }
+  if (i < arr.length) upBar(1, `${i - bad.length} foto(s) adicionada(s)`);
   if (bad.length) setStatus(`Não foi possível abrir como foto: ${bad.slice(0, 4).join(", ")}${bad.length > 4 ? "…" : ""}. Envie uma imagem (JPG, PNG, HEIC, RAW, TIFF…).`, true);
 }
 $("pick").onchange = e => { onFiles(e.target.files); e.target.value = ""; };
@@ -2151,9 +2173,20 @@ function parseJSON(text){
   if (a >= 0 && b > a) return JSON.parse(text.slice(a, b+1));
   throw new Error("Resposta sem JSON");
 }
+// resposta longa (muitas fotos) às vezes vem com pequenos erros de JSON (vírgula sobrando, aspas sem escape): conserta antes de desistir
+const JSONREPAIR_JS = "https://cdn.jsdelivr.net/npm/jsonrepair@3.8.1/lib/umd/jsonrepair.min.js";
+async function parseLoose(text){
+  try{ return parseJSON(text); }catch(e){}
+  try{
+    await loadScript(JSONREPAIR_JS);
+    const a = text.indexOf("{"); if (a < 0) return null;
+    const v = JSON.parse(window.JSONRepair.jsonrepair(text.slice(a).replace(/```\s*$/, "")));
+    return v && typeof v === "object" ? v : null;
+  }catch(e){ return null; }
+}
 const blobToB64 = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1]); r.onerror = rej; r.readAsDataURL(b); });
 
-async function viaApi(prompt, blobs, signal){
+async function viaApi(prompt, blobs, signal, again = true){
   const key = $("apiKey").value.trim();
   const content = [];
   for (const b of blobs) content.push({type:"image", source:{type:"base64", media_type:"image/jpeg", data: await blobToB64(b)}});
@@ -2169,8 +2202,10 @@ async function viaApi(prompt, blobs, signal){
   if (!res.ok) throw {code:"http", message: (j.error && j.error.message) || ("HTTP " + res.status), status: res.status};
   if (j.stop_reason === "refusal") throw {code:"refused", message:"A análise foi recusada para estas imagens."};
   const text = (j.content || []).filter(c => c.type === "text").map(c => c.text).join("");
-  try{ return parseJSON(text); }
-  catch(e){ throw {code:"http", status:0, message: j.stop_reason === "max_tokens" ? "a resposta foi cortada por tamanho. Tente com menos fotos" : "a IA respondeu fora do formato esperado. Clique em Analisar de novo"}; }
+  const out = await parseLoose(text); if (out) return out;
+  if (j.stop_reason === "max_tokens") throw {code:"http", status:0, message: "a resposta foi cortada por tamanho. Tente com menos fotos"};
+  if (again) return viaApi(prompt, blobs, signal, false); // refaz uma vez sozinho
+  throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
 function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
@@ -2186,7 +2221,7 @@ async function pickGeminiModel(key, signal){
   }catch(e){ if (e?.name === "AbortError") throw e; }
   return geminiModel || "models/gemini-2.5-flash";
 }
-async function viaGemini(prompt, blobs, signal){
+async function viaGemini(prompt, blobs, signal, again = true){
   const key = $("apiKey").value.trim();
   const model = await pickGeminiModel(key, signal);
   const parts = [];
@@ -2206,8 +2241,10 @@ async function viaGemini(prompt, blobs, signal){
   const text = (cand.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
   const cut = "a resposta do Gemini foi cortada por tamanho. Tente com menos fotos por análise";
   if (!text) throw fin === "MAX_TOKENS" ? {code:"http", status:0, message: cut} : (/SAFETY|RECITATION|PROHIBITED|BLOCK/.test(fin) ? {code:"refused"} : {code:"http", status:0, message: "o Gemini não devolveu resposta (" + (fin || "vazia") + "). Tente de novo"});
-  try{ return parseJSON(text); }
-  catch(e){ throw {code:"http", status:0, message: fin === "MAX_TOKENS" ? cut : "a IA respondeu fora do formato esperado. Clique em Analisar de novo"}; }
+  const out = await parseLoose(text); if (out) return out;
+  if (fin === "MAX_TOKENS") throw {code:"http", status:0, message: cut};
+  if (again) return viaGemini(prompt, blobs, signal, false); // refaz uma vez sozinho
+  throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
 const ERR = {
@@ -3701,11 +3738,16 @@ function onPhoneConn(peer, conn){
       const n = Number(d.n), fid = String(d.fid || "");
       if (!fid || !(n > 0 && n <= 4000)) return;
       qr.files = qr.files || {};
-      qr.files[fid] = {kind: d.kind === "audio" ? "audio" : "photo", name: tr(String(d.name || "arquivo"), 80), mime: String(d.mime || ""), n, got: 0, a: new Array(n)};
+      qr.files[fid] = {kind: d.kind === "audio" ? "audio" : "photo", name: tr(String(d.name || "arquivo"), 80), mime: String(d.mime || ""), n, got: 0, a: new Array(n), pos: Math.max(1, Number(d.pos) || 1), tot: Math.max(1, Number(d.tot) || 1)};
+      qr.files[fid].tot = Math.max(qr.files[fid].pos, qr.files[fid].tot);
     } else if (d.type === "file_chunk"){
       const F = qr.files?.[String(d.fid)], i = Number(d.i);
       if (!F || !(i >= 0 && i < F.n)) return;
       if (F.a[i] == null){ F.a[i] = String(d.d || ""); F.got++; }
+      if (F.got === 1 || F.got % 4 === 0 || F.got === F.n){
+        const what = F.kind === "audio" ? "áudio" : "foto", fr = (F.pos - 1 + F.got / F.n) / F.tot;
+        upBar(F.got === F.n && F.pos === F.tot ? 1 : Math.min(fr, 0.99), F.got === F.n && F.pos === F.tot ? `${F.tot} arquivo(s) recebido(s) do celular` : `Recebendo do celular: ${what} ${F.pos} de ${F.tot}`);
+      }
       if (F.got % 24 === 0 || F.got === F.n) conn.send({type: "file_ack", fid: d.fid, got: F.got});
       if (F.got < F.n) return;
       delete qr.files[d.fid];
@@ -3896,7 +3938,7 @@ function phoneMode(id, k){
         if (!c.relay) startCall(); keepAwake();
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
           document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
-          setTimeout(pump, 400);
+          drawQueue(); setTimeout(pump, 400);
         clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 4000);
       }
       else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
@@ -3920,7 +3962,11 @@ function phoneMode(id, k){
   const queue = []; let sending = null;
   function drawQueue(){
     const ul = $("phQueue"); if (!ul) return; ul.innerHTML = "";
-    queue.slice(-8).reverse().forEach(q => { const li = document.createElement("li"); li.className = "q-" + q.state; const a = document.createElement("span"); a.textContent = (q.kind === "audio" ? "Áudio · " : "Foto · ") + q.name; const b = document.createElement("small"); b.textContent = q.state === "done" ? "enviado" : q.state === "bad" ? "falhou" : q.state === "sending" ? Math.round(q.pct || 0) + "%" : "na fila"; li.append(a, b); ul.append(li); });
+    const ok = queue.filter(q => q.state === "done").length, bad = queue.filter(q => q.state === "bad").length;
+    const act = queue.length - bad, cur = queue.find(q => q.state === "sending");
+    const pb = $("phQBar"); pb.classList.toggle("done", act > 0 && ok === act); pb.querySelector("i").style.width = (act ? Math.round((ok + (cur ? (cur.pct || 0) / 100 : 0)) / act * 100) : 0) + "%";
+    $("phQSum").textContent = queue.length ? `· ${ok} de ${queue.length} enviado(s)${bad ? ", " + bad + " com falha" : ""}${queue.length > 30 ? " (mostrando os 30 últimos)" : ""}` : "";
+    queue.slice(-30).reverse().forEach(q => { const li = document.createElement("li"); li.className = "q-" + q.state; const a = document.createElement("span"); a.textContent = (q.kind === "audio" ? "Áudio · " : "Foto · ") + q.name; const b = document.createElement("small"); b.textContent = q.state === "done" ? "enviado" : q.state === "bad" ? "falhou" : q.state === "sending" ? Math.round(q.pct || 0) + "%" : live() ? "na fila" : "aguardando o computador autorizar"; li.append(a, b); ul.append(li); });
   }
   function enqueue(blob, kind, name){ queue.push({id: rnd(8), blob, kind, name: name || (kind === "audio" ? "audio" : "foto"), mime: blob.type, state: "wait", pct: 0}); drawQueue(); pump(); }
   async function pump(){
@@ -3932,13 +3978,14 @@ function phoneMode(id, k){
       let blob = q.blob;
       if (q.kind === "photo") blob = await shrinkPhoto(blob);
       const b64 = await blobToB64(blob), CH = 8000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
-      c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n});
+      const act = queue.filter(x => x.state !== "bad"), pos = act.filter(x => x.state === "done").length + 1;
+      c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n, pos, tot: Math.max(pos, act.length)});
       for (let i = 0; i < n; i++){
         if (c !== conn || !c.open) throw new Error("conexão");
         const dc = c.dataChannel;
         while (dc && dc.bufferedAmount > 128 * 1024 && c.open) await new Promise(r => setTimeout(r, 30));
         c.send({type: "file_chunk", fid, i, d: b64.slice(i * CH, (i + 1) * CH)});
-        if (i % 8 === 0){ q.pct = (i + 1) / n * 100; drawQueue(); }
+        if (i % 4 === 0){ q.pct = (i + 1) / n * 100; drawQueue(); }
       }
       q.fid = fid; q.pct = 100; drawQueue();
       await new Promise((res, rej) => { q.wait = {res, rej}; setTimeout(() => rej(new Error("sem confirmação")), 60000); });
@@ -4011,7 +4058,7 @@ function phoneMode(id, k){
   };
   // envio direto da galeria (sem abrir a câmera): os arquivos entram na fila e seguem assim que o computador autorizar
   function quick(input, kind){
-    const fs = Array.from(input.files || []).slice(0, kind === "audio" ? 10 : 30); input.value = "";
+    const fs = Array.from(input.files || []).slice(0, kind === "audio" ? 10 : 50); input.value = "";
     if (!fs.length) return;
     fs.forEach(f => enqueue(f, kind, f.name));
     show("phLive"); keepAwake();
@@ -4030,7 +4077,7 @@ function phoneMode(id, k){
   $("phGoPhotos").onclick = () => showScreen("phPhotos");
   $("phGoAudio").onclick = () => showScreen("phAudio");
   document.querySelectorAll(".ph-back").forEach(b => b.onclick = () => showScreen("phMenu"));
-  $("phGallery").onchange = e => { Array.from(e.target.files || []).slice(0, 30).forEach(f => enqueue(f, "photo", f.name)); e.target.value = ""; msg("Enviando fotos da galeria…"); };
+  $("phGallery").onchange = e => { Array.from(e.target.files || []).slice(0, 50).forEach(f => enqueue(f, "photo", f.name)); e.target.value = ""; msg("Enviando fotos da galeria…"); };
   $("phAudioPick").onchange = e => { Array.from(e.target.files || []).slice(0, 10).forEach(f => enqueue(f, "audio", f.name)); e.target.value = ""; msg("Enviando áudio…"); };
   $("phRecBtn").onclick = toggleRec;
   $("phVideo").addEventListener("click", shot);
