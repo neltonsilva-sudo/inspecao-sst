@@ -9,7 +9,7 @@ Página de teste que usa uma webcam (ex.: Logitech Brio 500) ou fotos para anali
 
 ## Como usar
 
-1. Abra a página no Google Chrome (GitHub Pages ou o `index.html` direto).
+1. Abra https://neltonsilva-sudo.github.io/inspecao-sst/ no Google Chrome. O link é sempre o mesmo: o `index.html` é um carregador que busca sempre a versão mais nova (`app.html`), sem cópia antiga do cache.
 2. Cole uma chave do Google Gemini (gratuita, em aistudio.google.com/apikey) ou da Anthropic. A página reconhece pelo prefixo e a chave fica salva só no navegador.
 3. Clique em **Ligar câmera**, escolha a câmera e em **Iniciar monitoramento** ou **Capturar quadro** + **Analisar ambiente**.
 
