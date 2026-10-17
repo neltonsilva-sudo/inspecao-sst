@@ -209,6 +209,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 button.watch{width:100%;min-height:48px;font-weight:700;font-size:15px;background:var(--crit);border-color:var(--crit);color:#fff}
 button.watch:hover{filter:brightness(1.08)}
 button.watch.on{background:var(--panel);color:var(--crit)}
+.al-save{flex-wrap:wrap}.al-save button{flex:1 1 200px}
 .hist .hmsg{display:block;font-size:11px;font-weight:600;color:var(--crit);line-height:1.25;margin-top:2px}
 .mon-alert{border:2px solid var(--crit);background:#fdecec;color:#7a1414;border-radius:10px;padding:10px 12px;font-size:13.5px}
 .mon-alert ul{margin:4px 0 0;padding-left:18px}
@@ -938,7 +939,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v82</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v83</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1004,6 +1005,8 @@ api:
             <button id="monBtn" type="button" disabled>Iniciar monitoramento</button>
           </div>
           <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
+          <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button></div>
+          <p class="hint" id="alDirInfo" style="margin:0">As fotos com alerta podem ser gravadas automaticamente na pasta "Fotos Inspeção SST" dentro de Downloads (foto .jpg + .txt com data, hora e situações).</p>
           <div class="mon-alert" id="monAlert" role="alert" hidden></div>
           <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico (e as situações marcadas acima) toca um alerta sonoro. As pessoas não são identificadas.</p>
         </div>
@@ -1128,7 +1131,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v82</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v83</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2476,6 +2479,48 @@ function beep(){
   }catch(e){}
 }
 function critOf(d){ return (d.riscos || []).filter(r => level(r.severidade, r.probabilidade).k === "crit"); }
+// pasta do computador para os alertas (Chrome/Edge: File System Access); nos demais, botão de download
+const alName = t => { const p = n => String(n).padStart(2, "0"); return `alerta_${t.getFullYear()}-${p(t.getMonth() + 1)}-${p(t.getDate())}_${p(t.getHours())}-${p(t.getMinutes())}-${p(t.getSeconds())}`; };
+const alTxt = h => `ALERTA DO MONITORAMENTO – Inspeção SST\r\nData: ${h.t.toLocaleDateString("pt-BR")}\r\nHora: ${h.t.toLocaleTimeString("pt-BR")}\r\n\r\nSituações encontradas:\r\n${(h.msgs || []).map(m => "- " + m).join("\r\n")}\r\n`;
+let alDir = null;
+async function idbKV(k, v){ const db = await idb(); return new Promise((res, rej) => { const tx = db.transaction("sessao", v === undefined ? "readonly" : "readwrite"), st = tx.objectStore("sessao"); const q = v === undefined ? st.get(k) : v === null ? st.delete(k) : st.put(v, k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function alWrite(name, data){ const fh = await alDir.getFileHandle(name, {create: true}); const w = await fh.createWritable(); await w.write(data); await w.close(); }
+async function alSave(h){
+  if (!alDir || !h || h.saved) return;
+  try{
+    if ((await alDir.queryPermission({mode: "readwrite"})) !== "granted"){ alInfo(`Pasta "${alDir.name}" precisa ser autorizada de novo: clique no botão da pasta.`, true); return; }
+    const n = alName(h.t); await alWrite(n + ".jpg", h.blob); await alWrite(n + ".txt", new Blob([alTxt(h)], {type: "text/plain"})); h.saved = true;
+    alInfo(`Salvando os alertas na pasta "${alDir.name}" (último: ${n}.jpg).`);
+  }catch(e){ alInfo("Não foi possível gravar na pasta: " + (e.message || e), true); }
+}
+function alInfo(t, err){ const el = $("alDirInfo"); if (!el) return; el.textContent = t; el.style.color = err ? "var(--crit)" : ""; }
+const AL_DIR = "Fotos Inspeção SST";
+function alBtn(){ if ($("alDir")) $("alDir").textContent = alDir ? `📁 Salvando em: ${alDir.name} (trocar)` : `📁 Salvar alertas em Downloads › ${AL_DIR}`; }
+if (!window.showDirectoryPicker){ $("alDir").hidden = true; alInfo("Para gravar os alertas direto na pasta Fotos Inspeção SST, use o Chrome ou o Edge no computador. Aqui, use Baixar fotos dos alertas (vão para Downloads com o nome começando por \"Fotos Inspecao SST\")."); }
+$("alDir").onclick = async () => {
+  try{
+    if (alDir && (await alDir.queryPermission({mode: "readwrite"})) !== "granted"){
+      if ((await alDir.requestPermission({mode: "readwrite"})) === "granted"){ alInfo(`Pasta "${alDir.name}" autorizada.`); for (const h of history.slice().reverse()) await alSave(h); return; }
+    }
+    alInfo(`Na janela que abriu (em Downloads), escolha uma pasta ou crie uma com "Nova pasta" e clique em Selecionar. A pasta "${AL_DIR}" é criada dentro dela.`);
+    const base = await window.showDirectoryPicker({id: "sst-alertas", mode: "readwrite", startIn: "downloads"});
+    // usa a pasta escolhida se ela já for a "Fotos Inspeção SST"; senão cria essa pasta dentro dela
+    alDir = /fotos\s*inspe/i.test(normTxt(base.name)) ? base : await base.getDirectoryHandle(AL_DIR, {create: true});
+    await idbKV("pasta", alDir).catch(() => {});
+    history.forEach(h => { h.saved = false; }); alBtn();
+    for (const h of history.slice().reverse()) await alSave(h);
+    alInfo(`Os alertas serão gravados na pasta "${alDir.name}": uma foto .jpg e um .txt com data, hora e situações.`);
+  }catch(e){ if (e?.name !== "AbortError") alInfo("Não foi possível usar a pasta: " + (e.message || e), true); }
+};
+$("alDl").onclick = async () => {
+  if (!history.length){ alInfo("Ainda não há fotos de alerta para baixar."); return; }
+  for (const h of history.slice().reverse()){
+    const n = alName(h.t);
+    for (const [blob, ext] of [[h.blob, ".jpg"], [new Blob([alTxt(h)], {type: "text/plain"}), ".txt"]]){ const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Fotos Inspecao SST - " + n + ext; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); await new Promise(r => setTimeout(r, 250)); }
+  }
+  alInfo(`${history.length} foto(s) de alerta baixada(s) para a pasta Downloads (o navegador pode pedir para permitir vários downloads).`);
+};
+setTimeout(() => idbKV("pasta").then(h => { if (h && h.kind === "directory"){ alDir = h; alBtn(); alInfo(`Pasta escolhida: "${h.name}". Se o navegador pedir, clique no botão da pasta para autorizar de novo.`); } }).catch(() => {}), 0); // depois que o banco do navegador estiver pronto
 // guarda só os quadros em que houve alerta (até 100, salvos no navegador com a inspeção)
 let monCount = 0;
 function addHistory(blob, data, msgs = [], t = new Date()){
@@ -2509,6 +2554,7 @@ async function cycle(){
   const msgs = [...(crit.length ? [`Risco crítico: ${crit.map(r => r.perigo).join("; ")}`] : []), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
+    alSave(history[0]); // e gravado na pasta escolhida, se houver
     beep();
     const now = new Date(), quando = `${now.toLocaleDateString("pt-BR")} às ${now.toLocaleTimeString("pt-BR")}`;
     $("monAlert").innerHTML = `<b>⚠ Alerta em ${quando}</b><ul>${msgs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>`; $("monAlert").hidden = false;
@@ -4689,7 +4735,7 @@ async function restoreSession(){
     (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; drawDocs(); drawDocInfo();
     if (s.lastData){ lastData = s.lastData; render(lastData, false); }
     if (s.report){ const blobs = frames.map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
-    setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}). Para começar do zero, clique em Nova inspeção.`);
+    setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}). Para começar do zero, clique em Gerar novo relatório.`);
   }catch(e){ console.warn(e); }
   finally{ restoring = false; updateGo(); }
 }
