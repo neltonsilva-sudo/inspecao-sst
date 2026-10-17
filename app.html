@@ -50,17 +50,17 @@ header.top{position:relative;display:flex;align-items:center;justify-content:spa
 header.top .hero[hidden],header.top .hero-bg,header.top .hero-sh{display:none}
 /* com foto: o cenário da própria foto (só a parte sem a pessoa, ampliada) preenche o cabeçalho; a foto inteira fica à direita */
 header.top:has(.hero:not([hidden])){background:#3a2414}
-header.top:has(.hero:not([hidden])) .hero-bg{display:block;position:absolute;inset:0;background-image:var(--hero);background-size:calc(100% / .58) auto;background-position:0 38%;background-repeat:no-repeat;filter:blur(1.5px) saturate(1.05);transform:scale(1.03)}
-header.top:has(.hero:not([hidden])) .hero-sh{display:block;position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,18,.74) 0%,rgba(10,14,18,.5) 38%,rgba(10,14,18,.12) 62%,rgba(10,14,18,0) 75%)}
+header.top:has(.hero:not([hidden])) .hero-bg{display:block;position:absolute;inset:0;background:var(--hero-grad,linear-gradient(180deg,#d9a46c,#7a4a2a 55%,#4a2c18))}
+header.top:has(.hero:not([hidden])) .hero-sh{display:block;position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,18,.55) 0%,rgba(10,14,18,.32) 40%,rgba(10,14,18,0) 70%)}
 header.top:has(.hero:not([hidden])) .brand,header.top:has(.hero:not([hidden])) .mode{position:relative;z-index:1}
 header.top:has(.hero:not([hidden])) .sub{color:rgba(255,255,255,.88)}
 header.top:has(.hero:not([hidden])) .mode{background:rgba(10,14,18,.45);backdrop-filter:blur(4px);border-color:rgba(255,255,255,.18)}
 header.top:has(.hero:not([hidden]))::after{z-index:2}
 header.top .hero{z-index:1}
 header.top .hero{position:absolute;top:0;right:0;bottom:5px;height:calc(100% - 5px);width:auto;aspect-ratio:var(--ar,1.788);object-fit:contain;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 42%);mask-image:linear-gradient(90deg,transparent 0,#000 42%);pointer-events:none}
-header.top:has(.hero:not([hidden])){min-height:230px;padding-right:min(calc(230px * var(--ar,1.788) - 40px),48%)}
+header.top:has(.hero:not([hidden])){min-height:260px;padding-right:min(calc(260px * var(--ar,1.788) - 60px),50%)}
 header.top:has(.hero:not([hidden])) .mode{align-self:flex-end}
-@media (max-width:640px){header.top:has(.hero:not([hidden])){padding-right:22px;min-height:0}header.top:has(.hero:not([hidden])) .hero-sh{background:linear-gradient(180deg,rgba(10,14,18,0) 0%,rgba(10,14,18,.25) 45%,rgba(10,14,18,.7) 100%)}header.top:has(.hero:not([hidden])) .hero-bg{background-size:auto 260%;background-position:0 30%}header.top .hero{position:relative;order:-1;inset:auto;height:auto;width:calc(100% + 44px);max-width:none;margin:-18px -22px 4px;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}}
+@media (max-width:640px){header.top:has(.hero:not([hidden])){padding-right:22px;min-height:0}header.top:has(.hero:not([hidden])) .hero-sh{background:linear-gradient(180deg,rgba(10,14,18,0) 0%,rgba(10,14,18,.12) 45%,rgba(10,14,18,.4) 100%)}header.top .hero{position:relative;order:-1;inset:auto;height:auto;width:calc(100% + 44px);max-width:none;margin:-18px -22px 4px;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}}
 header.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:repeating-linear-gradient(-45deg,var(--signal) 0 12px,var(--bar) 12px 24px)}
 .brand{display:flex;gap:14px;align-items:center;min-width:0}
 .tri{width:40px;height:36px;flex:none}
@@ -270,10 +270,17 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .report .pp .med{font-size:13.5px;overflow-wrap:anywhere}
 .report .pp .med span,.report .pp-g span{display:block;font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 .report .pp-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:8px}
-.report .pp-g em{display:inline-block;font-style:normal;font-size:12.5px;padding:2px 8px;margin:0 4px 4px 0;border-radius:999px;border:1px solid var(--line)}
+.report .pp-g em{display:inline-block;font-style:normal;font-size:12.5px;padding:3px 9px;margin:0 4px 4px 0;border-radius:8px;border:1px solid var(--line)}
 .report .pp-g em.ok-t{border-color:var(--ok);color:var(--ok)}
 .report .pp-g em.bad-t{border-color:var(--crit);color:var(--crit);font-weight:600}
 .report .pp-g em.mut{color:var(--muted)}
+.report .edg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(175px,100%),1fr));gap:10px}
+.report .edl{margin:0;padding-left:18px;font-size:13.5px}
+.report .edl li{margin:2px 0}
+.report .lyp{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-left:5px solid var(--info);border-radius:6px;background:var(--panel);font-size:14px}
+.report .lyp span{display:block;font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.cor{display:inline-flex;align-items:center;gap:4px;margin-right:6px;font-weight:700;text-transform:capitalize}
+.cor i{width:11px;height:11px;border-radius:3px;border:1px solid rgba(0,0,0,.35);display:inline-block}
 .report .lc{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:var(--lcell);font:600 12px var(--f-body);white-space:nowrap}
 .report .lc i{width:8px;height:8px;background:var(--lc)}
 .report .lc b{font:600 11.5px var(--f-mono);padding-left:6px;border-left:1px solid var(--line)}
@@ -417,6 +424,8 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .rep .lst li{margin:4px 0}
 .rep table.ppl{table-layout:fixed}.rep table.ppl th:nth-child(1){width:17%}.rep table.ppl th:nth-child(2){width:20%}.rep table.ppl th:nth-child(3){width:14%}.rep table.ppl th:nth-child(6){width:13%}
 .rep table.ppl td{overflow-wrap:anywhere}
+.rep table.res{table-layout:fixed}.rep table.res td{overflow-wrap:anywhere}.rep table.res th:nth-child(1){width:18%}.rep table.res th:nth-child(4){width:12%}.rep table.res th:nth-child(6){width:12%}
+.rep table.cores td:nth-child(odd){width:16%}
 .rep table.dreg,.rep table.sug{table-layout:fixed}.rep table.dreg td,.rep table.sug td{overflow-wrap:anywhere}
 .rep table.dreg th:nth-child(1){width:22%}.rep table.dreg th:nth-child(2){width:9%}.rep table.dreg th:nth-child(5){width:13%}.rep table.dreg th:nth-child(6){width:12%}
 .rep table.sug th:nth-child(1){width:5%}.rep table.sug th:nth-child(2){width:31%}.rep table.sug th:nth-child(3){width:22%}.rep table.sug th:nth-child(5){width:11%}.rep table.sug th:nth-child(6){width:12%}
@@ -755,7 +764,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v31</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v33</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -926,7 +935,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v31</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v33</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1065,6 +1074,61 @@ function docRegOf(d){
   }).sort((a, b) => (ordS[a.sit.toLowerCase()] ?? 2) - (ordS[b.sit.toLowerCase()] ?? 2) || (ordP[a.pr.toLowerCase()] ?? 3) - (ordP[b.pr.toLowerCase()] ?? 3));
 }
 
+// descarte de resíduos: material no recipiente errado, sem separação ou perigoso no lixo comum
+const RES_CORES = [["azul","Papel e papelão"],["vermelho","Plástico"],["verde","Vidro"],["amarelo","Metal"],["preto","Madeira"],["laranja","Resíduos perigosos"],["branco","Resíduos de serviços de saúde"],["roxo","Resíduos radioativos"],["marrom","Resíduos orgânicos"],["cinza","Não reciclável, misturado ou contaminado"]];
+const RES_HEX = {azul:"#1565c0", vermelho:"#d32f2f", verde:"#2e7d32", amarelo:"#fbc02d", preto:"#212121", laranja:"#f57c00", branco:"#ffffff", roxo:"#6a1b9a", marrom:"#6d4c41", cinza:"#9e9e9e"};
+const RESIDUOS_REGRAS = `Descarte de resíduos (obrigatório): examine lixeiras, coletores, tambores, caçambas, bags e o piso. Identifique materiais descartados de forma incorreta: no recipiente de cor ou tipo errado, misturados sem separação, resíduo perigoso no lixo comum (estopas, panos, luvas ou embalagens com óleo, graxa, tinta ou solvente; lâmpadas; pilhas e baterias; aerossóis; filtros de óleo), resíduo jogado no chão ou fora do coletor, coletor sem identificação, sem tampa ou transbordando. Para cada caso informe o material, onde foi descartado (recipiente e cor), o destino correto pela cor da Resolução CONAMA 275/2001 (azul papel; vermelho plástico; verde vidro; amarelo metal; preto madeira; laranja perigosos; branco serviços de saúde; roxo radioativos; marrom orgânicos; cinza não reciclável ou contaminado), a classe pela ABNT NBR 10004 (Classe I perigoso; Classe II A não inerte; Classe II B inerte), o risco (incêndio, contaminação, corte, saúde, ambiental) e a fundamentação: NR-25 (resíduos industriais), Lei 12.305/2010 (Política Nacional de Resíduos Sólidos e PGRS), NR-26 (identificação de produtos e recipientes) e, se couber, NR-32 (perfurocortantes e serviços de saúde) e NR-20 (inflamáveis). Só relate o que for visível; se não der para identificar o material, diga "verificar em campo". Se não houver coletores nem resíduos visíveis, use "total":0. Todo descarte incorreto deve virar também um risco na lista de riscos e uma ação no plano de ação (coletores identificados por cor, segregação na fonte, treinamento, coleta de perigosos por empresa licenciada), e o PGRS, o inventário de resíduos e os manifestos de transporte (MTR) devem ser considerados nos documentos e registros.`;
+const RESIDUOS_JSON = `"residuos":{"total":0,"observacoes":[{"figura":"Figura 1","material":"","onde":"recipiente onde está (tipo e cor)","destino_correto":"recipiente correto","cor_correta":"azul|vermelho|verde|amarelo|preto|laranja|branco|roxo|marrom|cinza","classe":"Classe I perigoso|Classe II A|Classe II B","problema":"recipiente incorreto|sem separação|perigoso no lixo comum|descartado no chão|coletor inadequado","risco":"","norma":"NR-25; CONAMA 275/2001; Lei 12.305/2010","situacao":"Não conforme|Conforme|Verificar em campo","recomendacao":""}]}`;
+function residuosOf(d){
+  const P = d && typeof d.residuos === "object" && d.residuos ? d.residuos : {};
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const lista = asList(P.observacoes || (Array.isArray(d?.residuos) ? d.residuos : [])).filter(o => o && typeof o === "object" && t(o.material)).map(o => {
+    const sit = t(o.situacao) || "Não conforme";
+    const k = /n[ãa]o\s*conforme/i.test(sit) ? "crit" : /^conforme/i.test(sit) ? "ok" : "warn";
+    const cor = t(o.cor_correta).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(/[^a-z]/)[0];
+    return {fig: t(o.figura), mat: t(o.material), onde: t(o.onde), dest: t(o.destino_correto), cor: RES_HEX[cor] ? cor : "", classe: t(o.classe), prob: t(o.problema), risco: t(o.risco), norma: t(o.norma), sit, k, rec: t(o.recomendacao)};
+  });
+  return {total: Math.max(lista.length, Math.round(Number(P.total) || 0)), lista, nc: lista.filter(x => x.k === "crit").length, perig: lista.filter(x => /classe\s*i(?!i)\b|perigos/i.test(x.classe)).length};
+}
+const corChip = c => c ? `<span class="cor"><i style="background:${RES_HEX[c]}"></i>${c}</span>` : "";
+
+// análise detalhista: varredura sistemática de cada imagem
+const DETALHE_REGRAS = `Análise detalhista (obrigatório): examine CADA imagem de forma sistemática, área por área: piso, paredes, teto e pintura; corredores; bancadas e postos de trabalho; máquinas e equipamentos (proteções, partes móveis, dispositivos de parada); instalações elétricas (quadros, cabos, tomadas, extensões); paredes, estruturas, prateleiras e estantes; teto, iluminação e ventilação; saídas, rotas de fuga, extintores, hidrantes e sinalização; pessoas e EPIs; armazenamento de materiais; resíduos e coletores; ergonomia (posturas, alturas, alcances, levantamento de cargas); organização e limpeza. Registre todas as constatações, inclusive as pequenas, cada uma como item separado (não junte vários problemas em um só), com a localização na imagem (ex.: "Figura 2, canto inferior esquerdo") e a quantidade quando visível. Liste todos os riscos encontrados, sem limite artificial de itens. Só não invente o que não é visível.`;
+// materiais armazenados ou acondicionados em local errado
+const ARM_REGRAS = `Armazenamento e acondicionamento (obrigatório): identifique materiais guardados ou acondicionados em local errado ou de forma insegura: obstruindo extintores, hidrantes, saídas de emergência, rotas de fuga ou quadros elétricos; sobre corredores e áreas de circulação; empilhamento instável ou acima da altura segura; materiais pesados em prateleiras altas ou sobre armários (risco de queda); produtos químicos sem rótulo, sem bacia de contenção ou incompatíveis juntos; inflamáveis fora de armário apropriado ou perto de fonte de ignição; cilindros de gás sem fixação, sem capacete ou junto de fontes de calor; materiais encostados em máquinas ou painéis; ferramentas e peças soltas fora do local definido. Para cada caso informe o material, onde está, o problema, o local ou forma correta, o risco e a fundamentação (NR-11 armazenamento de materiais, NR-20 inflamáveis, NR-23 proteção contra incêndio e desobstrução, NR-26 rotulagem e FDS, NR-10 acesso aos quadros, NR-12 áreas de circulação; item só com certeza). Todo caso não conforme deve virar também um risco e uma ação no plano de ação.`;
+const ARM_JSON = `"armazenamento":{"total":0,"observacoes":[{"figura":"Figura 1","material":"","local_atual":"onde está","problema":"obstrui extintor|obstrui saída|obstrui quadro elétrico|sobre corredor|empilhamento instável|altura excessiva|risco de queda|químico sem rótulo ou contenção|incompatíveis juntos|inflamável fora de armário|cilindro sem fixação|fora do local definido","local_correto":"onde e como deve ficar","risco":"","norma":"NR-11; NR-23","situacao":"Não conforme|Conforme|Verificar em campo","recomendacao":""}]}`;
+// layout do ambiente
+const LAYOUT_REGRAS = `Layout do ambiente (obrigatório): avalie se o arranjo físico está disposto da melhor forma para segurança, fluxo e produtividade: fluxo de materiais e de pessoas (cruzamentos, retornos, transporte desnecessário), largura e demarcação dos corredores e áreas de circulação, distância entre máquinas e postos, posição das áreas de estoque e de expedição em relação aos postos, acesso livre a saídas, extintores e quadros elétricos, iluminação natural, ergonomia dos postos (alturas e alcances) e separação entre áreas de trânsito de veículos e de pedestres. Dê uma nota de 0 a 10 ao layout atual e a nota esperada com a proposta. Liste os pontos fortes e os problemas (cada um com impacto, fundamentação — NR-12 arranjo físico e circulação, NR-17 ergonomia, NR-23 rotas de fuga, NR-08 edificações, NR-11 circulação de veículos; item só com certeza — e sugestão) e descreva uma proposta de layout melhorado com princípios Lean (fluxo contínuo, redução de transporte e movimentação, células de trabalho, gestão visual, zonas demarcadas).`;
+const LAYOUT_JSON = `"layout":{"nota":0,"nota_apos":0,"avaliacao":"2-3 frases","pontos_fortes":[""],"problemas":[{"problema":"","local":"Figura 1, …","impacto":"segurança|fluxo|transporte|ergonomia|produtividade","norma":"NR-12","sugestao":""}],"proposta":"descrição do layout melhorado em 3-6 frases","principios":["fluxo contínuo","redução de transporte"]}`;
+// condições da edificação: piso, paredes, teto e pintura
+const EDIF_REGRAS = `Condições da edificação (obrigatório): avalie separadamente o PISO (buracos, desníveis, saliências, trincas, piso escorregadio, óleo ou água no chão, ralos, rampas, demarcação de corredores gasta ou ausente), as PAREDES (trincas, infiltração, umidade, mofo, reboco solto, furos, fiação aparente), o TETO e a COBERTURA (goteiras, telhas quebradas ou deslocadas, forro solto, estruturas corroídas, iluminação queimada ou insuficiente, ventilação) e a PINTURA (descascada, suja, desgastada, cores de segurança e demarcações de piso, faixas de máquinas e áreas de extintor). Para cada elemento informe o estado (Bom, Regular, Ruim ou Não visível), as constatações com a localização na imagem, o risco (queda, escorregão, choque, queda de material, saúde) e a fundamentação: NR-08 (edificações: pisos sem saliências e depressões, proteção contra intempéries e umidade), NR-24 (condições sanitárias e de conforto), NR-26 (cores e sinalização de segurança), NR-12 (demarcação das áreas de circulação), NR-17 (iluminação) e NR-10 (fiação). Item só com certeza. Problemas em estado Ruim devem virar risco e ação no plano de ação.`;
+const EDIF_JSON = `"edificacao":[{"elemento":"Piso|Paredes|Teto e cobertura|Pintura e demarcações","estado":"Bom|Regular|Ruim|Não visível","constatacoes":["Figura 1, …"],"risco":"","norma":"NR-08","recomendacao":""}]`;
+function edifOf(d){
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  return asList(d?.edificacao).filter(x => x && typeof x === "object" && t(x.elemento)).map(x => {
+    const est = t(x.estado) || "Não visível", k = /ruim/i.test(est) ? "crit" : /regular/i.test(est) ? "warn" : /bom/i.test(est) ? "ok" : "high";
+    return {el: t(x.elemento), est, k: k === "high" ? "warn" : k, nv: !/ruim|regular|bom/i.test(est), cons: asList(x.constatacoes).map(t).filter(Boolean), risco: t(x.risco), norma: t(x.norma), rec: t(x.recomendacao)};
+  });
+}
+function armOf(d){
+  const P = d && typeof d.armazenamento === "object" && d.armazenamento ? d.armazenamento : {};
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const lista = asList(P.observacoes || (Array.isArray(d?.armazenamento) ? d.armazenamento : [])).filter(o => o && typeof o === "object" && t(o.material)).map(o => {
+    const sit = t(o.situacao) || "Não conforme", k = /n[ãa]o\s*conforme/i.test(sit) ? "crit" : /^conforme/i.test(sit) ? "ok" : "warn";
+    return {fig: t(o.figura), mat: t(o.material), local: t(o.local_atual), prob: t(o.problema), certo: t(o.local_correto), risco: t(o.risco), norma: t(o.norma), sit, k, rec: t(o.recomendacao)};
+  });
+  return {total: Math.max(lista.length, Math.round(Number(P.total) || 0)), lista, nc: lista.filter(x => x.k === "crit").length};
+}
+function layoutOf(d){
+  const L = d && typeof d.layout === "object" && d.layout ? d.layout : null;
+  if (!L) return null;
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const probs = asList(L.problemas).map(x => x && typeof x === "object" ? {p: t(x.problema), local: t(x.local), imp: t(x.impacto), norma: t(x.norma), sug: t(x.sugestao)} : {p: t(x), local: "", imp: "", norma: "", sug: ""}).filter(x => x.p);
+  const nota = L.nota === undefined || L.nota === "" ? null : clamp(L.nota, 0, 10);
+  const apos = nota === null ? null : Math.max(nota, clamp(L.nota_apos === undefined || L.nota_apos === "" ? nota + 2 : L.nota_apos, 0, 10));
+  return {nota, apos, aval: t(L.avaliacao), fortes: asList(L.pontos_fortes).map(t).filter(Boolean), probs, proposta: t(L.proposta), princ: asList(L.principios).map(t).filter(Boolean)};
+}
+
 function buildPrompt(ctx){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
@@ -1077,6 +1141,11 @@ Tarefas:
 5. Monte um ciclo PDCA e um plano 5W2H com as 3 a 5 ações mais importantes.
 6. ${PESSOAS_REGRAS}
 7. ${DOCREG_REGRAS}
+8. ${RESIDUOS_REGRAS}
+9. ${ARM_REGRAS}
+10. ${LAYOUT_REGRAS}
+11. ${EDIF_REGRAS}
+${DETALHE_REGRAS}
 Regras: baseie-se só no que é visível; se algo não puder ser confirmado pela imagem, diga "verificar em campo". Não invente pessoas nem números. Se a imagem não mostrar um ambiente de trabalho, avalie mesmo assim o que for possível (ex.: escritório, home office, ergonomia NR-17) e explique em "limitacoes".
 Escreva em português do Brasil, frases curtas.
 
@@ -1089,6 +1158,10 @@ ${DOCREG_JSON},
 "pdca":{"plan":[""],"do":[""],"check":[""],"act":[""]},
 "plano_5w2h":[{"what":"","why":"","where":"","who":"","when":"","how":"","how_much":""}],
 ${PESSOAS_JSON},
+${RESIDUOS_JSON},
+${ARM_JSON},
+${LAYOUT_JSON},
+${EDIF_JSON},
 "limitacoes":"string"}`;
 }
 
@@ -1122,6 +1195,21 @@ const EXAMPLE = {
     {what:"Remover extensões do piso",why:"Tropeço e choque (NR-10)",where:"Corredor central",who:"Eletricista autorizado",when:"15 dias",how:"Tomadas na bancada",how_much:"Verificar em campo"},
     {what:"Demarcar corredores",why:"Circulação segura (NR-12/NR-26)",where:"Toda a oficina",who:"Equipe 5S",when:"30 dias",how:"Faixa amarela 10 cm",how_much:"Verificar em campo"}
   ],
+  edificacao:[
+    {elemento:"Piso",estado:"Ruim",constatacoes:["Figura 1, centro: mancha de óleo junto à bancada","Figura 1, frente: demarcação do corredor apagada"],risco:"Escorregão e queda",norma:"NR-08; NR-12",recomendacao:"Limpar e conter o óleo; repintar a faixa do corredor."},
+    {elemento:"Paredes",estado:"Regular",constatacoes:["Figura 1, fundo: reboco com trincas e fiação aparente"],risco:"Choque elétrico",norma:"NR-08; NR-10",recomendacao:"Embutir a fiação em eletroduto e recuperar o reboco."},
+    {elemento:"Teto e cobertura",estado:"Bom",constatacoes:["Iluminação geral adequada"],risco:"",norma:"NR-17",recomendacao:""},
+    {elemento:"Pintura e demarcações",estado:"Ruim",constatacoes:["Faixas de piso e área do extintor sem pintura"],risco:"Circulação insegura",norma:"NR-26",recomendacao:"Repintar demarcações com as cores de segurança."}
+  ],
+  armazenamento:{total:2,observacoes:[
+    {figura:"Figura 1",material:"Caixas de peças empilhadas",local_atual:"Na frente do extintor, ao lado da porta",problema:"obstrui extintor",local_correto:"Área de estocagem demarcada; extintor com área livre de 1 m sinalizada no piso",risco:"Atraso no combate a princípio de incêndio",norma:"NR-23; NR-26",situacao:"Não conforme",recomendacao:"Remover as caixas hoje e demarcar a área do extintor."},
+    {figura:"Figura 1",material:"Galão de solvente sem rótulo",local_atual:"Sobre a bancada, junto à esmerilhadeira",problema:"inflamável fora de armário",local_correto:"Armário para inflamáveis, com rótulo e FDS disponível",risco:"Incêndio por fagulhas da esmerilhadeira",norma:"NR-20; NR-26",situacao:"Não conforme",recomendacao:"Guardar em armário corta-fogo, rotular e afastar de fontes de ignição."}
+  ]},
+  layout:{nota:5,nota_apos:8,avaliacao:"Bancadas e estoque dividem o mesmo corredor, o que obriga a cruzar o fluxo de peças com a circulação de pessoas. A esmerilhadeira fica no caminho da porta.",pontos_fortes:["Boa iluminação natural","Bancadas em altura adequada"],problemas:[{problema:"Corredor principal usado como estoque",local:"Figura 1, centro",impacto:"segurança",norma:"NR-12",sugestao:"Demarcar corredor de 1,20 m e criar área de estocagem fixa"},{problema:"Esmerilhadeira próxima da porta e da rota de fuga",local:"Figura 1, à direita",impacto:"segurança",norma:"NR-23",sugestao:"Reposicionar a esmerilhadeira no fundo da oficina, com anteparo"}],proposta:"Organizar a oficina em fluxo em U: recebimento junto à porta, bancadas de desmontagem, usinagem no fundo e expedição de volta à porta. Estoque em estantes na parede lateral, corredor central livre e demarcado, e esmerilhadeira isolada no fundo com anteparo.",principios:["Fluxo contínuo","Redução de transporte","Zonas demarcadas","Gestão visual"]},
+  residuos:{total:2,observacoes:[
+    {figura:"Figura 1",material:"Estopas e luvas sujas de óleo",onde:"Lixeira azul de papel, junto à bancada",destino_correto:"Coletor laranja de resíduos perigosos, com tampa",cor_correta:"laranja",classe:"Classe I perigoso",problema:"perigoso no lixo comum",risco:"Incêndio e contaminação do papel reciclável",norma:"NR-25; CONAMA 275/2001; NBR 10004; Lei 12.305/2010",situacao:"Não conforme",recomendacao:"Instalar coletor laranja com tampa e destinar por empresa licenciada com MTR."},
+    {figura:"Figura 1",material:"Garrafas PET e copos plásticos",onde:"Tambor de sucata metálica",destino_correto:"Coletor vermelho de plástico",cor_correta:"vermelho",classe:"Classe II A",problema:"recipiente incorreto",risco:"Perda da reciclagem e desorganização",norma:"CONAMA 275/2001; Lei 12.305/2010",situacao:"Não conforme",recomendacao:"Identificar coletores por cor e fazer DDS de segregação na fonte."}
+  ]},
   pessoas:{total:2,observacoes:[
     {figura:"Figura 1",pessoa:"Trabalhador 1 – na esmerilhadeira, uniforme azul",atividade:"Esmerilhamento de peça",riscos:"Projeção de partículas, ruído, agarramento no rebolo",epis_em_uso:["Calçado de segurança"],epis_faltantes:[{epi:"Óculos de proteção / protetor facial",nr:"NR-06",motivo:"Projeção de partículas"},{epi:"Protetor auricular",nr:"NR-06",motivo:"Ruído da esmerilhadeira"}],adornos:[{adorno:"Aliança e relógio de pulso",risco:"Agarramento junto ao rebolo em movimento",nr:"NR-12"}],situacao:"Não conforme",recomendacao:"Paralisar a tarefa até o uso de óculos e protetor auricular; retirar aliança e relógio; DDS sobre vedação de adornos."},
     {figura:"Figura 1",pessoa:"Trabalhador 2 – ao fundo, junto ao armário",atividade:"Separação de peças",riscos:"Queda de materiais, cortes",epis_em_uso:["Luvas","Calçado de segurança"],epis_faltantes:[],adornos:[],situacao:"Verificar em campo",recomendacao:"Pessoa distante na imagem: confirmar óculos e luvas adequados em campo."}
@@ -1213,7 +1301,7 @@ function render(d, isExample){
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
-  const PP = pessoasOf(d), DR = docRegOf(d);
+  const PP = pessoasOf(d), DR = docRegOf(d), RS = residuosOf(d), AR = armOf(d), LY = layoutOf(d), ED = edifOf(d);
   const ppl = PP.lista.map(o => `<li class="pp ${o.k}">
       <div class="pp-h"><b>${esc(o.pessoa)}</b><span class="lc ${o.k}"><i></i>${esc(o.sit)}</span></div>
       <div class="tags">${o.figura ? `<span class="cat">${esc(o.figura)}</span>` : ""}${o.atividade ? `<span class="sp">${esc(o.atividade)}</span>` : ""}</div>
@@ -1297,6 +1385,51 @@ function render(d, isExample){
       <div class="sh"><h3>Pessoas no ambiente: EPI e adornos</h3><span class="meta">${PP.total ? `${PP.total} pessoa(s) · ${PP.semEpi} sem EPI completo · ${PP.comAd} com adornos` : "nenhuma pessoa visível"}</span></div>
       ${ppl ? `<ol class="rlist">${ppl}</ol>` : '<p class="empty">Nenhuma pessoa visível nas imagens analisadas.</p>'}
     </section>
+
+    <section class="sec">
+      <div class="sh"><h3>Descarte de resíduos</h3><span class="meta">${RS.total ? `${RS.nc} descarte(s) incorreto(s)${RS.perig ? ` · ${RS.perig} perigoso(s)` : ""}` : "nenhum resíduo visível"}</span></div>
+      ${RS.lista.length ? `<ol class="rlist">${RS.lista.map(o => `<li class="pp ${o.k}">
+        <div class="pp-h"><b>${esc(o.mat)}</b><span class="lc ${o.k}"><i></i>${esc(o.sit)}</span></div>
+        <div class="tags">${o.fig ? `<span class="cat">${esc(o.fig)}</span>` : ""}${o.classe ? `<span class="cat">${esc(o.classe)}</span>` : ""}${o.prob ? `<span class="sp">${esc(o.prob)}</span>` : ""}</div>
+        <div class="pp-g">
+          <div><span>Descartado em</span><em class="bad-t">${esc(o.onde || "—")}</em></div>
+          <div><span>Destino correto</span><em class="ok-t">${corChip(o.cor)}${esc(o.dest || "—")}</em></div>
+          <div><span>Risco</span>${esc(o.risco || "—")}</div>
+        </div>
+        ${o.norma ? `<div class="med"><span>Fundamentação</span>${esc(o.norma)}</div>` : ""}
+        ${o.rec ? `<div class="med"><span>Recomendação</span>${esc(o.rec)}</div>` : ""}</li>`).join("")}</ol>` : '<p class="empty">Nenhum resíduo ou coletor visível nas imagens analisadas.</p>'}
+    </section>
+
+    <section class="sec">
+      <div class="sh"><h3>Armazenamento e acondicionamento</h3><span class="meta">${AR.total ? `${AR.nc} material(is) em local errado` : "nenhum caso visível"}</span></div>
+      ${AR.lista.length ? `<ol class="rlist">${AR.lista.map(o => `<li class="pp ${o.k}">
+        <div class="pp-h"><b>${esc(o.mat)}</b><span class="lc ${o.k}"><i></i>${esc(o.sit)}</span></div>
+        <div class="tags">${o.fig ? `<span class="cat">${esc(o.fig)}</span>` : ""}${o.prob ? `<span class="sp">${esc(o.prob)}</span>` : ""}</div>
+        <div class="pp-g">
+          <div><span>Onde está</span><em class="bad-t">${esc(o.local || "—")}</em></div>
+          <div><span>Local / forma correta</span><em class="ok-t">${esc(o.certo || "—")}</em></div>
+          <div><span>Risco</span>${esc(o.risco || "—")}</div>
+        </div>
+        ${o.norma ? `<div class="med"><span>Fundamentação</span>${esc(o.norma)}</div>` : ""}
+        ${o.rec ? `<div class="med"><span>Recomendação</span>${esc(o.rec)}</div>` : ""}</li>`).join("")}</ol>` : '<p class="empty">Nenhum material armazenado em local inadequado nas imagens.</p>'}
+    </section>
+
+    ${ED.length ? `<section class="sec">
+      <div class="sh"><h3>Piso, paredes, teto e pintura</h3><span class="meta">${ED.filter(x => x.k === "crit").length} em estado ruim</span></div>
+      <div class="edg">${ED.map(x => `<article class="pp ${x.k}"><div class="pp-h"><b>${esc(x.el)}</b><span class="lc ${x.k}"><i></i>${esc(x.est)}</span></div>
+        ${x.cons.length ? `<ul class="edl">${x.cons.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
+        ${x.risco || x.norma ? `<div class="tags">${x.norma ? `<span class="nr">${esc(x.norma)}</span>` : ""}${x.risco ? `<span class="sp">${esc(x.risco)}</span>` : ""}</div>` : ""}
+        ${x.rec ? `<div class="med"><span>Recomendação</span>${esc(x.rec)}</div>` : ""}</article>`).join("")}</div>
+    </section>` : ""}
+
+    ${LY ? `<section class="sec">
+      <div class="sh"><h3>Layout do ambiente</h3>${LY.nota !== null ? `<span class="meta">nota ${fmt(LY.nota)}/10 → ${fmt(LY.apos)}/10 com a proposta</span>` : ""}</div>
+      ${LY.aval ? `<p class="lead" style="margin:0 0 10px">${esc(LY.aval)}</p>` : ""}
+      ${LY.fortes.length ? `<div class="tags" style="margin-bottom:10px">${LY.fortes.map(x => `<span class="lc ok"><i></i>${esc(x)}</span>`).join("")}</div>` : ""}
+      ${LY.probs.length ? `<ol class="rlist">${LY.probs.map(x => `<li class="pp warn"><div class="pp-h"><b>${esc(x.p)}</b>${x.imp ? `<span class="cat">${esc(x.imp)}</span>` : ""}</div><div class="tags">${x.local ? `<span class="sp">${esc(x.local)}</span>` : ""}${x.norma ? `<span class="nr">${esc(x.norma)}</span>` : ""}</div>${x.sug ? `<div class="med"><span>Sugestão</span>${esc(x.sug)}</div>` : ""}</li>`).join("")}</ol>` : ""}
+      ${LY.proposta ? `<div class="med lyp"><span>Proposta de layout</span>${esc(LY.proposta)}</div>` : ""}
+      ${LY.princ.length ? `<div class="tags" style="margin-top:8px">${LY.princ.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>` : ""}
+    </section>` : ""}
 
     <section class="sec">
       <div class="sh"><h3>Avaliação 5S</h3><span class="meta">${fmt(s5total)}/25</span></div>
@@ -1792,12 +1925,17 @@ Regras:
 - Baseie-se apenas no que é visível. O que não puder ser confirmado pela imagem deve aparecer como "verificar em campo". Não invente pessoas, medições, datas ou valores.
 - Português do Brasil, linguagem técnica, impessoal e objetiva.
 - ${PESSOAS_REGRAS} No relatório, cite a figura em que cada pessoa aparece.
+- ${RESIDUOS_REGRAS}
+- ${ARM_REGRAS}
+- ${EDIF_REGRAS}
+- ${LAYOUT_REGRAS} Inclua no plano de ação as mudanças de layout prioritárias, com "ferramenta":"Layout".
+- ${DETALHE_REGRAS} Nas observações de cada figura, descreva com detalhe tudo o que tem relevância para SST.
 - ${DOCREG_REGRAS} Inclua no plano de ação a implantação ou atualização dos documentos de prioridade alta, com "ferramenta":"Documentação".
 - ${SUG_REGRAS}
 - Se houver informações de documentos do setor, use-as no diagnóstico, na fundamentação do parecer e no plano de ação, e preencha "analise_documental". Sem documentos, deixe "analise_documental" com listas vazias.
 Ferramentas da qualidade obrigatórias:
 - Diagrama de Ishikawa (6M) para o principal problema de SST encontrado: até 4 causas por categoria, cada causa com no máximo 6 palavras.
-- Matriz GUT (gravidade, urgência, tendência de 1 a 5) para 3 a 8 problemas.
+- Matriz GUT (gravidade, urgência, tendência de 1 a 5) para 3 a 12 problemas.
 - Matriz REI, relação esforço × impacto (1 a 5 cada), para cada ação proposta.
 - Avaliação 5S (Seiri/utilização, Seiton/organização, Seiso/limpeza, Seiketsu/padronização, Shitsuke/disciplina): nota de 0 a 5 por senso, com constatação baseada no que é visível e ação recomendada. "necessario" = true se algum senso tiver nota 3 ou menor.
 - Projeção após o plano de ação: para cada risco, informe severidade_residual e probabilidade_residual (1 a 5) esperadas depois de implantadas as medidas, de forma realista (a severidade só cai se a medida eliminar ou reduzir o perigo; EPI e sinalização reduzem pouco). Para cada senso do 5S, informe nota_apos (0 a 5) esperada após a implantação.
@@ -1816,10 +1954,14 @@ Responda SOMENTE com um objeto JSON neste formato:
 "rei":[{"acao":"","esforco":1,"impacto":1}],
 "parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
 "cinco_s":{"necessario":true,"justificativa":"1-2 frases","seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":""}},
-"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual|Documentação"}],
+"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual|Documentação|Layout|Resíduos"}],
 ${DOCREG_JSON},
 ${SUG_JSON},
 ${PESSOAS_JSON},
+${RESIDUOS_JSON},
+${ARM_JSON},
+${LAYOUT_JSON},
+${EDIF_JSON},
 "analise_documental":{"documentos":[{"nome":"","tipo":"","contribuicao":"o que o documento acrescentou ao diagnóstico"}],"convergencias":["documentado e confirmado nas imagens"],"divergencias":["documentado sem controle visível, ou visível e não documentado"],"pendencias_documentais":["documento ausente, vencido ou incompleto"]},
 "consideracoes_finais":"1-2 parágrafos",
 "referencias":["NR-01 – Disposições Gerais e Gerenciamento de Riscos Ocupacionais"]}`;
@@ -1985,6 +2127,8 @@ function reportHTML(R, photos, meta){
   const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
   const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
+  const RS = residuosOf(R.residuos ? R : (lastData || {}));
+  const AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
   const DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
   const prC = pr => /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2];
@@ -2040,6 +2184,10 @@ function reportHTML(R, photos, meta){
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
     ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
+    ${ED.length ? `<p><b>Edificação:</b> ${ED.map(x => `${x.el.toLowerCase()} ${x.est.toLowerCase()}`).join("; ")}.</p>` : ""}
+    ${AR.nc ? `<p><b>Armazenamento:</b> ${AR.nc} material(is) acondicionado(s) em local errado ou de forma insegura.</p>` : ""}
+    ${LY && LY.nota !== null ? `<p><b>Layout:</b> nota ${String(LY.nota).replace(".", ",")}/10, com projeção de ${String(LY.apos).replace(".", ",")}/10 após a proposta de rearranjo.</p>` : ""}
+    ${RS.nc ? `<p><b>Descarte de resíduos:</b> ${RS.nc} descarte(s) incorreto(s)${RS.perig ? `, dos quais ${RS.perig} de resíduo perigoso (Classe I)` : ""}. Detalhes na seção de descarte de resíduos.</p>` : ""}
     ${PP.total ? `<p><b>Pessoas no ambiente:</b> ${PP.total} pessoa(s) visível(is) nas imagens; ${PP.semEpi} sem EPI completo para a atividade e ${PP.comAd} com adornos em situação de risco${PP.nc ? ` (${PP.nc} em não conformidade)` : ""}. Detalhes na seção de EPI e adornos.</p>` : ""}
     ${counts.crit ? call("crit", "Ponto crítico", `${counts.crit} risco(s) crítico(s) exigem ação imediata: ${esc(top3[0]?.perigo || "")}${top3[0]?.nr ? ` (${esc(top3[0].nr)})` : ""}.`) : ""}
     <p class="cap">Notas de 0 a 100 (atual → após o plano de ação): SST ${SC.sstA} → ${SC.sstB}${SC.s5A !== null ? ` · 5S ${SC.s5A} → ${SC.s5B}` : ""} · Geral ${SC.gA} → ${SC.gB}.${S5 ? ` Implantação do 5S necessária: ${S5.necessario ? "sim" : "não"}.` : ""} Detalhes nas seções seguintes.</p>
@@ -2056,7 +2204,7 @@ function reportHTML(R, photos, meta){
   ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
   <div class="fig flow">${flowSVG(["Registro das imagens", "Análise por IA", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
   ${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
@@ -2084,6 +2232,30 @@ function reportHTML(R, photos, meta){
   ${PP.lista.map(o => `<tr><td><b>${esc(o.pessoa)}</b>${o.figura ? `<div class="cap" style="margin:0">${esc(o.figura)}</div>` : ""}</td><td>${esc(o.atividade || "—")}${o.riscos ? `<div class="cap" style="margin:2px 0 0">${esc(o.riscos)}</div>` : ""}</td><td>${o.epiUso.length ? esc(o.epiUso.join(", ")) : "Nenhum visível"}</td><td>${o.epiF.length ? `<ul class="lst">${o.epiF.map(e => `<li><b>${esc(e.epi)}</b>${e.motivo ? ` – ${esc(e.motivo)}` : ""} <span class="num">(${esc(e.nr)})</span></li>`).join("")}</ul>` : "—"}</td><td>${o.ad.length ? `<ul class="lst">${o.ad.map(a => `<li><b>${esc(a.adorno)}</b>${a.risco ? ` – ${esc(a.risco)}` : ""}${a.nr ? ` <span class="num">(${esc(a.nr)})</span>` : ""}</li>`).join("")}</ul>` : "Nenhum visível"}</td><td><span class="lv" style="background:${ppSit(o.k)[2]}">${esc(o.sit)}</span></td></tr>`).join("")}
   </tbody></table></div>
   ${PP.lista.some(o => o.rec) ? `<h3>Recomendações por pessoa observada</h3><ul>${PP.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.pessoa)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhuma pessoa visível nas imagens analisadas. A verificação de uso de EPI e de adornos deve ser feita em campo, durante a execução das atividades.</p>"}
+  ${ED.length ? `${H("Condições da edificação: piso, paredes, teto e pintura", "Estado de conservação dos elementos construtivos e das demarcações.")}
+  %%T:Condições da edificação%%<div class="tw"><table class="res"><thead><tr><th>Elemento</th><th>Estado</th><th>Constatações</th><th>Risco e fundamentação</th><th>Recomendação</th></tr></thead><tbody>
+  ${ED.map(x => `<tr><td><b>${esc(x.el)}</b></td><td><span class="lv" style="background:${LV[x.k][2]}">${esc(x.est)}</span></td><td>${x.cons.length ? `<ul class="lst">${x.cons.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : "—"}</td><td>${esc(x.risco || "—")}${x.norma ? `<div class="cap" style="margin:2px 0 0">${esc(x.norma)}</div>` : ""}</td><td>${esc(x.rec || "—")}</td></tr>`).join("")}
+  </tbody></table></div>` : ""}
+  ${H("Armazenamento e acondicionamento de materiais", "Materiais guardados em local errado ou de forma insegura.")}
+  ${AR.lista.length ? `<p>Foram observados ${AR.total} caso(s), com ${AR.nc} não conformidade(s). Materiais devem ficar em locais definidos e identificados, sem obstruir circulação, saídas, extintores e quadros elétricos, com produtos químicos rotulados e inflamáveis em armários próprios.</p>
+  %%T:Materiais acondicionados em local errado%%<div class="tw"><table class="res"><thead><tr><th>Material / figura</th><th>Onde está</th><th>Local ou forma correta</th><th>Problema</th><th>Risco e fundamentação</th><th>Situação</th></tr></thead><tbody>
+  ${AR.lista.map(o => `<tr><td><b>${esc(o.mat)}</b>${o.fig ? `<div class="cap" style="margin:0">${esc(o.fig)}</div>` : ""}</td><td>${esc(o.local || "—")}</td><td>${esc(o.certo || "—")}</td><td>${esc(o.prob || "—")}</td><td>${esc(o.risco || "—")}${o.norma ? `<div class="cap" style="margin:2px 0 0">${esc(o.norma)}</div>` : ""}</td><td><span class="lv" style="background:${LV[o.k][2]}">${esc(o.sit)}</span></td></tr>`).join("")}
+  </tbody></table></div>
+  ${AR.lista.some(o => o.rec) ? `<h3>Recomendações para o armazenamento</h3><ul>${AR.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.mat)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhum material acondicionado em local inadequado foi identificado nas imagens. Confirmar em campo as áreas de estocagem e de produtos químicos.</p>"}
+  ${LY ? `${H("Avaliação do layout do ambiente", "Arranjo físico, fluxo de materiais e pessoas, circulação e ergonomia.")}
+  ${LY.nota !== null ? `<div class="sit" style="color:${LY.nota >= 7 ? "#2e8b57" : LY.nota >= 5 ? "#a87f00" : "#c62828"}">Nota do layout: ${String(LY.nota).replace(".", ",")}/10 → ${String(LY.apos).replace(".", ",")}/10 com a proposta</div>` : ""}
+  ${para(LY.aval)}
+  ${LY.fortes.length ? `<h3>Pontos fortes</h3><ul>${LY.fortes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+  ${LY.probs.length ? `%%T:Problemas de layout e sugestões%%<div class="tw"><table class="res"><thead><tr><th>Problema</th><th>Local</th><th>Impacto</th><th>Fundamentação</th><th>Sugestão</th></tr></thead><tbody>${LY.probs.map(x => `<tr><td><b>${esc(x.p)}</b></td><td>${esc(x.local || "—")}</td><td>${esc(x.imp || "—")}</td><td>${esc(x.norma || "—")}</td><td>${esc(x.sug || "—")}</td></tr>`).join("")}</tbody></table></div>` : ""}
+  ${LY.proposta ? `<h3>Proposta de layout</h3>${para(LY.proposta)}` : ""}
+  ${LY.princ.length ? `<p class="cap">Princípios aplicados: ${esc(LY.princ.join(" · "))}.</p>` : ""}` : ""}
+  ${H("Descarte de resíduos", "Materiais descartados no recipiente errado, sem separação ou em local inadequado.")}
+  ${RS.lista.length ? `<p>Foram observados ${RS.total} ponto(s) de descarte, com ${RS.nc} não conformidade(s)${RS.perig ? ` e ${RS.perig} resíduo(s) perigoso(s) (Classe I) fora do coletor adequado` : ""}. A segregação na fonte, com coletores identificados pelo código de cores da Resolução CONAMA 275/2001, é exigida pela NR-25 e pela Política Nacional de Resíduos Sólidos (Lei 12.305/2010).</p>
+  %%T:Descartes observados e destino correto%%<div class="tw"><table class="res"><thead><tr><th>Material / figura</th><th>Descartado em</th><th>Destino correto</th><th>Classe (NBR 10004)</th><th>Risco e fundamentação</th><th>Situação</th></tr></thead><tbody>
+  ${RS.lista.map(o => `<tr><td><b>${esc(o.mat)}</b>${o.fig ? `<div class="cap" style="margin:0">${esc(o.fig)}</div>` : ""}</td><td>${esc(o.onde || "—")}${o.prob ? `<div class="cap" style="margin:2px 0 0">${esc(o.prob)}</div>` : ""}</td><td>${corChip(o.cor)}${esc(o.dest || "—")}</td><td>${esc(o.classe || "—")}</td><td>${esc(o.risco || "—")}${o.norma ? `<div class="cap" style="margin:2px 0 0">${esc(o.norma)}</div>` : ""}</td><td><span class="lv" style="background:${LV[o.k][2]}">${esc(o.sit)}</span></td></tr>`).join("")}
+  </tbody></table></div>
+  ${RS.lista.some(o => o.rec) ? `<h3>Recomendações para o descarte</h3><ul>${RS.lista.filter(o => o.rec).map(o => `<li><b>${esc(o.mat)}:</b> ${esc(o.rec)}</li>`).join("")}</ul>` : ""}` : "<p>Nenhum resíduo ou coletor visível nas imagens analisadas. Verificar em campo a segregação dos resíduos e a identificação dos coletores.</p>"}
+  %%T:Código de cores para coletores (Resolução CONAMA 275/2001)%%<div class="tw"><table class="cores"><thead><tr><th>Cor</th><th>Tipo de resíduo</th><th>Cor</th><th>Tipo de resíduo</th></tr></thead><tbody>${[0,1,2,3,4].map(i => `<tr>${[RES_CORES[i], RES_CORES[i+5]].map(([c, t]) => `<td>${corChip(c)}</td><td>${t}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
   ${S5 ? `${H("Avaliação 5S (organização e housekeeping)", "Avaliação de utilização, organização, limpeza, padronização e disciplina.")}
   <div class="sit" style="color:${S5.necessario ? "#c62828" : "#2e8b57"}">Implantação do 5S necessária: ${S5.necessario ? "Sim" : "Não"}</div>
   <p>Pontuação: <b>${S5.total}/${S5.max}</b> (${S5.pct}%) · Classificação: <b style="color:${S5.classe[1]}">${S5.classe[0]}</b>.${S5.justificativa ? " " + esc(S5.justificativa) : ""}</p>
@@ -2492,7 +2664,7 @@ async function buildPptx(R, photos, meta){
   const logo = load("sst_logo");
   const riscos = asList(R.riscos).filter(r => r && typeof r === "object").slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const S5 = prep5S(R), SC = scores(riscos, S5);
-  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
   const gut = asList(R.gut).map(g => { const G = clamp(g.g,1,5), U = clamp(g.u,1,5), T = clamp(g.t,1,5); return {...g, G, U, T, s: G*U*T}; }).sort((a, b) => b.s - a.s);
   const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
@@ -2582,7 +2754,7 @@ async function buildPptx(R, photos, meta){
     s.addText(t, {x, y: 4.65, w: 1.35, h: 0.33, fontFace: F, fontSize: 11, bold: true, color: counts[k] ? "FFFFFF" : MUT, align: "center"});
   });
   s.addText("Riscos por nível (matriz NR-01)", {x: 0.5, y: 5.1, w: 6, h: 0.3, fontFace: FS, fontSize: 11, italic: true, color: MUT});
-  bul(s, [`Situação: ${sit}`, PP.total ? `${PP.total} pessoa(s) observada(s): ${PP.semEpi} sem EPI completo, ${PP.comAd} com adornos` : "", DR.length ? `${DR.length} documento(s) e registro(s): ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar` : "", SG.length ? `${SG.length} sugestões de melhoria com fundamentação legal` : "", S5 ? `5S: ${S5.total}/${S5.max} (${S5.pct}%), implantação ${S5.necessario ? "necessária" : "não necessária"}` : "", `${plano.length} ação(ões) no plano 5W2H`], {x: 6.7, y: 3.95, w: 6.1, h: 2.0, fontSize: 14});
+  bul(s, [`Situação: ${sit}`, PP.total ? `${PP.total} pessoa(s) observada(s): ${PP.semEpi} sem EPI completo, ${PP.comAd} com adornos` : "", RS.nc ? `${RS.nc} descarte(s) incorreto(s) de resíduos${RS.perig ? `, ${RS.perig} perigoso(s)` : ""}` : "", AR.nc ? `${AR.nc} material(is) acondicionado(s) em local errado` : "", LY && LY.nota !== null ? `Layout: ${LY.nota}/10 → ${LY.apos}/10 com a proposta` : "", DR.length ? `${DR.length} documento(s) e registro(s): ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar` : "", SG.length ? `${SG.length} sugestões de melhoria com fundamentação legal` : "", S5 ? `5S: ${S5.total}/${S5.max} (${S5.pct}%), implantação ${S5.necessario ? "necessária" : "não necessária"}` : "", `${plano.length} ação(ões) no plano 5W2H`], {x: 6.7, y: 3.95, w: 6.1, h: 2.0, fontSize: 14});
   if (counts.crit) callout(s, "Ponto crítico", `${counts.crit} risco(s) crítico(s) exigem ação imediata: ${riscos[0]?.perigo || ""}${riscos[0]?.nr ? ` (${riscos[0].nr})` : ""}.`, 6.05, true, 0.8);
 
   // metodologia com fluxo
@@ -2630,6 +2802,32 @@ async function buildPptx(R, photos, meta){
   s = slide("Trabalhadores expostos: EPI e adornos", "Verificação individual do uso de EPI e de adornos, sem identificar as pessoas.");
   if (PP.lista.length) table(s, [[H("Pessoa / figura"), H("Atividade e riscos"), H("EPIs em uso"), H("EPIs faltando"), H("Adornos"), H("Situação")]].concat(PP.lista.map(o => [C(o.pessoa + (o.figura ? "\n" + o.figura : "")), C([o.atividade, o.riscos].filter(Boolean).join("\n")), C(o.epiUso.join(", ") || "Nenhum visível"), C(o.epiF.map(e => `${e.epi} (${e.nr})`).join("\n") || "—", {color: o.epiF.length ? "C62828" : INK, bold: !!o.epiF.length}), C(o.ad.map(a => a.adorno + (a.nr ? ` (${a.nr})` : "")).join("\n") || "Nenhum visível", {color: o.ad.length ? "C62828" : INK, bold: !!o.ad.length}), badge(o.sit, LVC[o.k])])), [2.3, 2.6, 1.8, 2.2, 2.0, 1.43]);
   else callout(s, "Observação", "Nenhuma pessoa visível nas imagens analisadas. Verificar o uso de EPI e de adornos em campo, durante a execução das atividades.", TOP, false, 0.9);
+
+  // edificação
+  if (ED.length){
+    s = slide("Piso, paredes, teto e pintura", "Estado de conservação da edificação e das demarcações (NR-08, NR-24, NR-26).");
+    table(s, [[H("Elemento"), H("Estado"), H("Constatações"), H("Risco e fundamentação"), H("Recomendação")]].concat(ED.map(x => [C(x.el, {bold: true}), badge(x.est, x.k === "crit" ? LVC.crit : x.k === "ok" ? LVC.ok : LVC.warn), C(x.cons.join("\n") || "—"), C([x.risco, x.norma].filter(Boolean).join("\n") || "—"), C(x.rec || "—")])), [1.9, 1.2, 3.7, 2.6, 2.93], {fs: 11});
+  }
+
+  // armazenamento
+  s = slide("Armazenamento e acondicionamento", "Materiais guardados em local errado ou de forma insegura (NR-11, NR-20, NR-23, NR-26).");
+  if (AR.lista.length) table(s, [[H("Material / figura"), H("Onde está"), H("Local / forma correta"), H("Problema"), H("Risco e fundamentação"), H("Situação")]].concat(AR.lista.map(o => [C(o.mat + (o.fig ? "\n" + o.fig : ""), {bold: true}), C(o.local, {color: "C62828"}), C(o.certo, {color: "2E7D32", bold: true}), C(o.prob), C([o.risco, o.norma].filter(Boolean).join("\n")), badge(o.sit, LVC[o.k])])), [2.2, 2.2, 2.5, 1.6, 2.4, 1.43]);
+  else callout(s, "Observação", "Nenhum material acondicionado em local inadequado nas imagens. Confirmar em campo as áreas de estocagem e de produtos químicos.", TOP, false, 0.9);
+
+  // layout
+  if (LY){
+    s = slide("Avaliação do layout do ambiente", LY.nota !== null ? `Nota atual ${String(LY.nota).replace(".", ",")}/10 → ${String(LY.apos).replace(".", ",")}/10 com a proposta.` : "Arranjo físico, fluxo e circulação.");
+    if (LY.probs.length) table(s, [[H("Problema"), H("Local"), H("Fundamentação"), H("Sugestão")]].concat(LY.probs.map(x => [C(x.p, {bold: true}), C(x.local), C(x.norma, {color: BL, bold: true}), C(x.sug)])), [2.6, 1.6, 1.4, 2.6], {fs: 11});
+    s.addShape(pp.ShapeType.rect, {x: 8.95, y: TOP, w: 3.88, h: 4.85, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
+    s.addShape(pp.ShapeType.rect, {x: 8.95, y: TOP, w: 3.88, h: 0.42, fill: {color: CR}, line: {color: LINE, width: 0.75}});
+    s.addText("PROPOSTA DE LAYOUT", {x: 9.05, y: TOP, w: 3.7, h: 0.42, fontFace: FS, fontSize: 12, bold: true, color: NV, valign: "middle"});
+    s.addText([{text: LY.proposta || LY.aval || "—", options: {breakLine: true}}].concat(LY.princ.length ? [{text: "Princípios: " + LY.princ.join(" · "), options: {italic: true, color: MUT, fontSize: 11}}] : []), {x: 9.05, y: TOP + 0.5, w: 3.7, h: 4.25, fontFace: FS, fontSize: 12.5, color: INK, valign: "top", fit: "shrink", paraSpaceAfter: 6});
+  }
+
+  // resíduos
+  s = slide("Descarte de resíduos", "Materiais no recipiente errado, sem separação ou em local inadequado (CONAMA 275/2001, NR-25).");
+  if (RS.lista.length) table(s, [[H("Material / figura"), H("Descartado em"), H("Destino correto"), H("Classe"), H("Risco e fundamentação"), H("Situação")]].concat(RS.lista.map(o => [C(o.mat + (o.fig ? "\n" + o.fig : ""), {bold: true}), C([o.onde, o.prob].filter(Boolean).join("\n"), {color: "C62828"}), C((o.cor ? o.cor.toUpperCase() + " – " : "") + (o.dest || "—"), {color: "2E7D32", bold: true}), C(o.classe), C([o.risco, o.norma].filter(Boolean).join("\n")), badge(o.sit, LVC[o.k])])), [2.3, 2.3, 2.3, 1.3, 2.7, 1.43]);
+  else callout(s, "Observação", "Nenhum resíduo ou coletor visível nas imagens analisadas. Verificar em campo a segregação e a identificação dos coletores.", TOP, false, 0.9);
 
   // 5S
   if (S5){
@@ -2757,7 +2955,19 @@ drawLogo();
 function drawHero(){
   const h = $("hero"), u = load("sst_hero");
   $("heroClr").hidden = !u;
-  h.onload = () => { const hd = h.closest("header"); if (h.naturalWidth) hd.style.setProperty("--ar", (h.naturalWidth / h.naturalHeight).toFixed(4)); hd.style.setProperty("--hero", `url("${h.currentSrc || h.src}")`); h.hidden = false; };
+  h.onload = () => {
+    const hd = h.closest("header");
+    if (h.naturalWidth) hd.style.setProperty("--ar", (h.naturalWidth / h.naturalHeight).toFixed(4));
+    // o fundo do cabeçalho continua a foto: degradê com as cores da borda esquerda dela (nítido, sem ampliar a imagem)
+    try{
+      const c = document.createElement("canvas"), W = 40, Hh = 24; c.width = W; c.height = Hh;
+      const g = c.getContext("2d", {willReadFrequently: true}); g.drawImage(h, 0, 0, W, Hh);
+      const px = g.getImageData(0, 0, 4, Hh).data, stops = [];
+      for (let y = 0; y < Hh; y += 3){ let r = 0, gg = 0, b = 0; for (let x = 0; x < 4; x++){ const i = (y * 4 + x) * 4; r += px[i]; gg += px[i + 1]; b += px[i + 2]; } stops.push(`rgb(${r >> 2},${gg >> 2},${b >> 2}) ${Math.round(y / (Hh - 1) * 100)}%`); }
+      hd.style.setProperty("--hero-grad", `linear-gradient(180deg,${stops.join(",")})`);
+    }catch(e){}
+    h.hidden = false;
+  };
   h.onerror = () => { h.hidden = true; h.removeAttribute("src"); };
   h.src = u || "cabecalho.jpg";
 }
