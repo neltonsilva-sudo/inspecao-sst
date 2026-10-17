@@ -644,7 +644,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v20</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v21</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -812,7 +812,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v20</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v21</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1968,9 +1968,10 @@ function exportDoc(){
 }
 function showReport(){
   const t = $("tech"); t.hidden = false;
-  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="dlRep">Baixar relatório</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button>'}<button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div>` + reportHTML(report.R, report.photos, report.meta);
   if ($("prtBtn")) $("prtBtn").onclick = () => window.print();
   $("dlRep").onclick = downloadReport;
+  $("dlDocx").onclick = downloadDocx;
   $("closeRep").onclick = () => { t.hidden = true; };
 }
 async function downloadReport(){
@@ -1983,6 +1984,270 @@ async function downloadReport(){
   }
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html], {type:"text/html"})); a.download = name;
   document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+/* ---------- relatório em Word (.docx): converte o relatório pronto em documento nativo do Word ---------- */
+const DOCX_JS = "https://cdn.jsdelivr.net/npm/docx@9.5.1/dist/index.iife.js";
+const DX_W = 10206; // largura útil da página A4 com margens de 15 mm, em twips
+function dxHex(c){
+  c = String(c || "").trim(); if (!c) return undefined;
+  let m = c.match(/#([0-9a-f]{6})/i); if (m) return m[1].toUpperCase();
+  m = c.match(/#([0-9a-f]{3})\b/i); if (m) return m[1].split("").map(x => x + x).join("").toUpperCase();
+  m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i); if (m) return [m[1], m[2], m[3]].map(x => Number(x).toString(16).padStart(2, "0")).join("").toUpperCase();
+  return undefined;
+}
+const dxBytes = u => { const b = atob(String(u).split(",")[1] || ""); const a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; };
+async function dxSvg(svg){
+  const vb = svg.getAttribute("viewBox"), p = vb ? vb.split(/[\s,]+/).map(Number) : null;
+  const w = Math.round(p?.[2] || Number(svg.getAttribute("width")) || 600), h = Math.round(p?.[3] || Number(svg.getAttribute("height")) || 300);
+  const cl = svg.cloneNode(true); cl.setAttribute("width", w); cl.setAttribute("height", h); cl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  const img = new Image(); img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(cl));
+  await img.decode();
+  const k = 2, c = document.createElement("canvas"); c.width = w * k; c.height = h * k;
+  const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+  return {data: dxBytes(c.toDataURL("image/png")), w, h};
+}
+const dxImgSize = src => new Promise(res => { const i = new Image(); i.onload = () => res([i.naturalWidth || 4, i.naturalHeight || 3]); i.onerror = () => res([4, 3]); i.src = src; });
+async function buildDocx(R, photos, meta){
+  await loadScript(DOCX_JS);
+  const D = window.docx;
+  const {Paragraph, TextRun, Table, TableRow, TableCell, ImageRun, WidthType, ShadingType, AlignmentType, HeadingLevel, BorderStyle, PageNumber, TabStopType, LevelFormat, VerticalAlign, Header, Footer, LineRuleType} = D;
+  const root = document.createElement("div"); root.innerHTML = reportHTML(R, photos, meta);
+  const rep = root.querySelector(".rep");
+  const GRAY = "5B6770", NAVY = "1F3A5F", LINE = "D5DBE0";
+  const sh = fill => fill ? {type: ShadingType.CLEAR, fill, color: "auto"} : undefined;
+  const clean = t => t.replace(/\s+/g, " ");
+  let olN = 0;
+  // texto com negrito, cor e destaque (selos de nível) preservados
+  function inl(node, f = {}){
+    const out = [];
+    node.childNodes.forEach(n => {
+      if (n.nodeType === 3){ const t = clean(n.textContent); if (t.trim() || (t && out.length)) out.push(new TextRun({text: t, bold: f.b, italics: f.i, color: f.c, size: f.sz, shading: sh(f.sh), font: f.mono ? "Consolas" : undefined})); return; }
+      if (n.nodeType !== 1) return;
+      const tg = n.tagName.toUpperCase();
+      if (tg === "BR"){ out.push(new TextRun({text: "", break: 1})); return; }
+      if (tg === "SVG" || tg === "STYLE" || tg === "AUDIO" || n.matches(".gb,.db,.pips")) return;
+      const g = {...f};
+      if (tg === "B" || tg === "STRONG") g.b = true;
+      if (tg === "EM" || tg === "I") g.i = true;
+      if (tg === "SMALL"){ g.sz = Math.min(f.sz || 20, 16); if (n.closest("th")){ out.push(new TextRun({text: "", break: 1})); g.b = false; } }
+      if (n.classList.contains("lv") || n.classList.contains("rk1")){ g.sh = dxHex(n.getAttribute("style")) || "E3E7EA"; g.b = true; }
+      const col = n.style?.color && dxHex(n.style.color); if (col) g.c = col;
+      if (n.classList.contains("cap")) { g.c = GRAY; g.sz = Math.min(f.sz || 20, 16); }
+      if (n.classList.contains("lv")) out.push(new TextRun({text: " ", shading: sh(g.sh), size: g.sz}));
+      out.push(...inl(n, g));
+      if (n.classList.contains("lv")) out.push(new TextRun({text: " ", shading: sh(g.sh), size: g.sz}));
+    });
+    return out;
+  }
+  const P = (el, o = {}) => new Paragraph({children: inl(el, o.f || {}), spacing: {after: 100, line: 300, lineRule: LineRuleType.AUTO}, ...o.p});
+  const txtP = (t, f = {}, p = {}) => new Paragraph({children: [new TextRun({text: t, ...f})], spacing: {after: 100}, ...p});
+  function list(el, f = {}, inCell){
+    const ord = el.tagName === "OL", inst = ++olN, out = [];
+    el.querySelectorAll(":scope > li").forEach(li => {
+      out.push(new Paragraph({children: inl(li, f), spacing: {after: inCell ? 30 : 60}, ...(ord ? {numbering: {reference: "ord", level: 0, instance: inst}} : {bullet: {level: 0}})}));
+    });
+    return out;
+  }
+  // conteúdo de célula: blocos (listas, legendas) ou texto corrido
+  function cellKids(td, f){
+    const hasBlock = [...td.children].some(c => /^(UL|OL|DIV|P)$/.test(c.tagName));
+    if (!hasBlock) return [new Paragraph({children: inl(td, f), spacing: {after: 0}})];
+    const out = []; let run = document.createElement("span");
+    const flush = () => { if (run.textContent.trim()) out.push(new Paragraph({children: inl(run, f), spacing: {after: 30}})); run = document.createElement("span"); };
+    [...td.childNodes].forEach(n => {
+      if (n.nodeType === 1 && /^(UL|OL)$/.test(n.tagName)){ flush(); out.push(...list(n, f, true)); }
+      else if (n.nodeType === 1 && /^(DIV|P)$/.test(n.tagName)){ flush(); if (n.textContent.trim()) out.push(new Paragraph({children: inl(n, n.classList.contains("cap") ? {...f, c: GRAY, sz: Math.min(f.sz || 18, 15)} : f), spacing: {after: 30}})); }
+      else run.append(n.cloneNode(true));
+    });
+    flush();
+    return out.length ? out : [new Paragraph("")];
+  }
+  function table(t, opt = {}){
+    const rows = [...t.rows]; if (!rows.length) return null;
+    const ncol = Math.max(...rows.map(r => [...r.cells].reduce((s, c) => s + (c.colSpan || 1), 0)));
+    // largura proporcional ao texto, sem quebrar palavras no meio (a maior palavra da coluna sempre cabe)
+    const wgt = Array(ncol).fill(3), word = Array(ncol).fill(2);
+    rows.forEach(r => { let i = 0; [...r.cells].forEach(c => { if ((c.colSpan || 1) === 1){ const t = clean(c.textContent).trim(), L = t.length, isH = c.tagName === "TH";
+      wgt[i] = Math.max(wgt[i], Math.min(isH ? Math.min(L, 14) : L, 48)); word[i] = Math.max(word[i], ...t.split(" ").map(x => x.length).concat(0)); } i += c.colSpan || 1; }); });
+    const small = ncol >= 6 ? 16 : 18, perCh = small === 16 ? 92 : 102; // twips por caractere, aproximado
+    const minW = word.map(x => Math.min(x + 2, 22) * perCh + 160);
+    let cw = wgt.map(x => x / wgt.reduce((a, b) => a + b, 0) * DX_W);
+    const fixed = Array(ncol).fill(false);
+    for (let k = 0; k < ncol; k++){ // garante o mínimo de cada coluna e redistribui o restante pelas demais
+      cw.forEach((w, i) => { if (w < minW[i] - 1) fixed[i] = true; });
+      const need = minW.reduce((a, m, i) => a + (fixed[i] ? m : 0), 0);
+      const freeW = wgt.reduce((a, w, i) => a + (fixed[i] ? 0 : w), 0) || 1, rest = Math.max(0, DX_W - need);
+      cw = cw.map((w, i) => fixed[i] ? minW[i] : wgt[i] / freeW * rest);
+    }
+    const sc = DX_W / cw.reduce((a, b) => a + b, 0); cw = cw.map(w => Math.round(w * sc));
+    const border = opt.noBorder ? {style: BorderStyle.NONE, size: 0, color: "FFFFFF"} : {style: BorderStyle.SINGLE, size: 4, color: LINE};
+    return new Table({
+      width: {size: DX_W, type: WidthType.DXA}, columnWidths: cw,
+      borders: {top: border, bottom: border, left: border, right: border, insideHorizontal: border, insideVertical: border},
+      rows: rows.map(r => {
+        const head = r.parentElement.tagName === "THEAD" || [...r.cells].every(c => c.tagName === "TH");
+        let i = 0;
+        return new TableRow({tableHeader: head, cantSplit: true, children: [...r.cells].map(c => {
+          const span = c.colSpan || 1, w = cw.slice(i, i + span).reduce((a, b) => a + b, 0); i += span;
+          const fill = head ? "1C2328" : dxHex(c.getAttribute("style") || "");
+          const f = head ? {b: true, c: "FFFFFF", sz: small - 1} : {sz: small};
+          return new TableCell({children: cellKids(c, f), columnSpan: span > 1 ? span : undefined, width: {size: w, type: WidthType.DXA}, shading: sh(fill), verticalAlign: VerticalAlign.TOP, margins: {top: 50, bottom: 50, left: 80, right: 80}});
+        })});
+      })
+    });
+  }
+  const img = (data, type, w, h, maxW) => { const s = Math.min(1, maxW / w); return new ImageRun({type, data, transformation: {width: Math.round(w * s), height: Math.round(h * s)}}); };
+  // matriz de risco (grade HTML) vira tabela colorida
+  function matrix(mx){
+    const cells = [...mx.children], rows = [];
+    for (let r = 0; r < 6; r++) rows.push(cells.slice(r * 6, r * 6 + 6));
+    const cw = [700, ...Array(5).fill(1100)];
+    const b = {style: BorderStyle.SINGLE, size: 6, color: "FFFFFF"};
+    return new Table({width: {size: cw.reduce((a, x) => a + x, 0), type: WidthType.DXA}, columnWidths: cw, alignment: AlignmentType.CENTER,
+      borders: {top: b, bottom: b, left: b, right: b, insideHorizontal: b, insideVertical: b},
+      rows: rows.map((row, ri) => new TableRow({height: {value: ri < 5 ? 520 : 300, rule: "atLeast"}, children: row.map((c, ci) => new TableCell({width: {size: cw[ci], type: WidthType.DXA}, shading: sh(dxHex(c.getAttribute("style") || "")), verticalAlign: VerticalAlign.CENTER,
+        children: [new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: [...c.querySelectorAll(".d")].map(d => d.textContent).join(" ") || (c.classList.contains("ax") ? c.textContent : ""), bold: true, size: c.classList.contains("ax") ? 16 : 18, color: c.classList.contains("ax") ? GRAY : "1C2328"})]})]}))}))});
+  }
+  const out = [];
+  async function walk(el){
+    for (const n of [...el.childNodes]){
+      if (n.nodeType === 3){ if (n.textContent.trim()) out.push(txtP(clean(n.textContent).trim())); continue; }
+      if (n.nodeType !== 1) continue;
+      const tg = n.tagName.toUpperCase(), cl = n.classList;
+      if (tg === "STYLE" || tg === "SCRIPT") continue;
+      if (cl.contains("cover")){ await cover(n); continue; }
+      if (cl.contains("toc")){
+        out.push(new Paragraph({heading: HeadingLevel.HEADING_1, children: [new TextRun("Sumário")]}));
+        n.querySelectorAll("li").forEach(li => { const num = li.querySelector(".n")?.textContent || ""; out.push(new Paragraph({spacing: {after: 60}, tabStops: [{type: TabStopType.LEFT, position: 560}], children: [new TextRun({text: num, bold: true, color: NAVY}), new TextRun("\t" + clean(li.textContent).trim().slice(num.length).trim())]})); });
+        out.push(new Paragraph({children: [], pageBreakBefore: true, spacing: {after: 0}})); continue;
+      }
+      if (tg === "H1"){ out.push(new Paragraph({children: [new TextRun({text: clean(n.textContent).trim(), bold: true, size: 40, color: NAVY})], spacing: {after: 200}})); continue; }
+      if (tg === "H2" || cl.contains("h2u")){
+        const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim();
+        out.push(new Paragraph({heading: HeadingLevel.HEADING_1, children: num ? [new TextRun({text: num + "  ", color: "1F6FB2"}), new TextRun(t)] : [new TextRun(t)]})); continue;
+      }
+      if (tg === "H3"){ const num = n.querySelector(".n")?.textContent || "", t = clean(n.textContent).trim().slice(num.length).trim(); out.push(new Paragraph({heading: HeadingLevel.HEADING_2, children: num ? [new TextRun({text: num + "  ", color: GRAY}), new TextRun(t)] : [new TextRun(t)]})); continue; }
+      if (tg === "H4"){ out.push(new Paragraph({keepNext: true, spacing: {before: 120, after: 60}, children: [new TextRun({text: clean(n.textContent).trim(), bold: true, color: NAVY})]})); continue; }
+      if (cl.contains("tcap")){ out.push(P(n, {f: {sz: 17}, p: {keepNext: true, spacing: {before: 160, after: 60}}})); continue; }
+      if (cl.contains("fcap")){ out.push(P(n, {f: {sz: 17, c: GRAY}, p: {alignment: AlignmentType.CENTER, spacing: {before: 40, after: 160}}})); continue; }
+      if (cl.contains("sit")){ out.push(P(n, {f: {b: true, sz: 24, c: dxHex(n.style.color)}, p: {spacing: {before: 80, after: 120}}})); continue; }
+      if (tg === "P"){
+        if (cl.contains("cap")) out.push(P(n, {f: {sz: 17, c: GRAY}}));
+        else if (cl.contains("disc")) out.push(P(n, {f: {sz: 16, c: GRAY, i: true}, p: {spacing: {before: 240}}}));
+        else if (cl.contains("local")) out.push(P(n, {p: {spacing: {before: 360, after: 360}}}));
+        else out.push(P(n, {p: {alignment: AlignmentType.JUSTIFIED}}));
+        continue;
+      }
+      if (tg === "UL" || tg === "OL"){ out.push(...list(n)); continue; }
+      if (tg === "TABLE"){ const t = table(n); if (t) out.push(t, new Paragraph({children: [], spacing: {after: 120}})); continue; }
+      if (cl.contains("figs")){
+        const figs = [...n.querySelectorAll("figure")], cols = figs.length > 8 ? 3 : 2, cwid = Math.floor(DX_W / cols), maxW = cols === 3 ? 200 : 310;
+        const none = {style: BorderStyle.NONE, size: 0, color: "FFFFFF"}, rows = [];
+        for (let i = 0; i < figs.length; i += cols){
+          const cells = [];
+          for (let j = 0; j < cols; j++){
+            const fg = figs[i + j];
+            if (!fg){ cells.push(new TableCell({width: {size: cwid, type: WidthType.DXA}, children: [new Paragraph("")]})); continue; }
+            const src = fg.querySelector("img")?.getAttribute("src") || "", [w, h] = await dxImgSize(src);
+            const kids = [];
+            if (/^data:image\/(jpe?g|png)/i.test(src)) kids.push(new Paragraph({alignment: AlignmentType.CENTER, children: [img(dxBytes(src), /png/i.test(src) ? "png" : "jpg", w, h, maxW)]}));
+            kids.push(new Paragraph({alignment: AlignmentType.CENTER, spacing: {after: 120}, children: inl(fg.querySelector("figcaption") || fg, {sz: 15, c: GRAY})}));
+            cells.push(new TableCell({width: {size: cwid, type: WidthType.DXA}, margins: {top: 60, bottom: 60, left: 60, right: 60}, children: kids}));
+          }
+          rows.push(new TableRow({cantSplit: true, children: cells}));
+        }
+        if (rows.length) out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: Array(cols).fill(cwid), borders: {top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none}, rows}));
+        continue;
+      }
+      if (cl.contains("dr")){
+        const k = n.querySelector("i"), pct = parseFloat(k?.style.width) || 0, col = dxHex(k?.getAttribute("style") || "") || "9AA7B0";
+        out.push(new Paragraph({spacing: {after: 40}, tabStops: [{type: TabStopType.LEFT, position: 1500}], children: [new TextRun({text: clean(n.querySelector("span")?.textContent || ""), bold: true, size: 18}), new TextRun({text: "\t", size: 18}), new TextRun({text: " ".repeat(Math.max(1, Math.round(pct / 2.5))), shading: sh(col), size: 18}), new TextRun({text: "  " + (n.querySelector("b")?.textContent || ""), bold: true, size: 18})]}));
+        continue;
+      }
+      if (cl.contains("mxw")){ const mx = n.querySelector(".mx"); if (mx) out.push(new Paragraph({alignment: AlignmentType.CENTER, spacing: {after: 40}, children: [new TextRun({text: "Severidade (linhas, 5 → 1) × Probabilidade (colunas, 1 → 5)", size: 15, color: GRAY})]}), matrix(mx)); continue; }
+      if (cl.contains("ax-x")) continue;
+      if (cl.contains("mxl")){ out.push(new Paragraph({alignment: AlignmentType.CENTER, spacing: {before: 60, after: 60}, children: [...n.querySelectorAll("span")].flatMap(s => [new TextRun({text: "   ", shading: sh(dxHex(s.querySelector("i")?.getAttribute("style") || "")), size: 16}), new TextRun({text: " " + clean(s.textContent).trim() + "   ", size: 16})])})); continue; }
+      if (tg === "SVG" || tg === "svg"){
+        try{ const s = await dxSvg(n); out.push(new Paragraph({alignment: AlignmentType.CENTER, keepNext: true, spacing: {before: 80, after: 40}, children: [img(s.data, "png", s.w, s.h, s.w > 300 ? 640 : 300)]})); }catch(e){}
+        continue;
+      }
+      if (cl.contains("signs")){
+        const none = {style: BorderStyle.NONE, size: 0, color: "FFFFFF"}, half = Math.floor(DX_W / 2);
+        out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [half, half], borders: {top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none},
+          rows: [new TableRow({cantSplit: true, children: [...n.querySelectorAll(".sign")].map(sg => new TableCell({width: {size: half, type: WidthType.DXA}, margins: {left: 200, right: 200}, children: [
+            new Paragraph({spacing: {before: 720}, border: {top: {style: BorderStyle.SINGLE, size: 6, color: "1C2328", space: 4}}, alignment: AlignmentType.CENTER, children: inl(sg.querySelector("div:not(.ln)") || sg, {b: true})}),
+            new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: clean(sg.querySelector("small")?.textContent || ""), size: 16, color: GRAY})]})]}))})]}));
+        continue;
+      }
+      if (tg === "IMG") continue;
+      await walk(n); // div, section, .two, .tw, .fig…
+    }
+  }
+  async function cover(c){
+    out.push(new Paragraph({spacing: {before: 600, after: 60}, children: [new TextRun({text: "▲ " + clean(c.querySelector(".rk")?.textContent || "Relatório técnico de inspeção").toUpperCase(), bold: true, size: 22, color: "B38F00", characterSpacing: 40})]}));
+    out.push(new Paragraph({spacing: {after: 480}, children: [new TextRun({text: clean(c.querySelector(".cv-sub")?.textContent || ""), size: 18, color: GRAY})]}));
+    out.push(new Paragraph({spacing: {after: 480}, border: {bottom: {style: BorderStyle.SINGLE, size: 18, color: "F5C400", space: 8}}, children: [new TextRun({text: clean(c.querySelector("h1")?.textContent || ""), bold: true, size: 48, color: NAVY})]}));
+    const dl = [...c.querySelectorAll("dl.meta > div")];
+    if (dl.length){
+      const none = {style: BorderStyle.NONE, size: 0, color: "FFFFFF"}, line = {style: BorderStyle.SINGLE, size: 4, color: LINE};
+      out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [3400, DX_W - 3400], borders: {top: none, bottom: line, left: none, right: none, insideHorizontal: line, insideVertical: none},
+        rows: dl.map(d => new TableRow({children: [
+          new TableCell({width: {size: 3400, type: WidthType.DXA}, margins: {top: 80, bottom: 80}, children: [new Paragraph({children: [new TextRun({text: clean(d.querySelector("dt")?.textContent || "").toUpperCase(), size: 16, bold: true, color: GRAY})]})]}),
+          new TableCell({width: {size: DX_W - 3400, type: WidthType.DXA}, margins: {top: 80, bottom: 80}, children: [new Paragraph({children: [new TextRun({text: clean(d.querySelector("dd")?.textContent || ""), size: 22, bold: true})]})]})]}))}));
+    }
+    const nt = [...c.querySelectorAll(".notas .nt")];
+    if (nt.length){
+      const w = Math.floor(DX_W / nt.length), b = {style: BorderStyle.SINGLE, size: 4, color: LINE};
+      out.push(new Paragraph({spacing: {before: 480, after: 100}, children: [new TextRun({text: "NOTAS DE AVALIAÇÃO (0 A 100): ATUAL → APÓS O PLANO DE AÇÃO", size: 16, bold: true, color: GRAY})]}));
+      out.push(new Table({width: {size: w * nt.length, type: WidthType.DXA}, columnWidths: Array(nt.length).fill(w), borders: {top: b, bottom: b, left: b, right: b, insideHorizontal: b, insideVertical: b},
+        rows: [new TableRow({children: nt.map(x => { const bs = [...x.querySelectorAll(".nt-v b")]; return new TableCell({width: {size: w, type: WidthType.DXA}, shading: sh("F6F8F9"), margins: {top: 120, bottom: 120, left: 120, right: 120}, children: [
+          new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: clean(x.querySelector(".nt-t")?.textContent || ""), size: 17, bold: true, color: GRAY})]}),
+          new Paragraph({alignment: AlignmentType.CENTER, spacing: {before: 60}, children: [new TextRun({text: bs[0]?.textContent || "", bold: true, size: 40, color: dxHex(bs[0]?.style.color)}), new TextRun({text: "  →  ", size: 28, color: GRAY}), new TextRun({text: bs[1]?.textContent || "", bold: true, size: 40, color: dxHex(bs[1]?.style.color)})]}),
+          new Paragraph({alignment: AlignmentType.CENTER, children: [new TextRun({text: clean(x.querySelector(".nt-c")?.textContent || ""), size: 16, color: GRAY})]})]}); })})]}));
+    }
+    const ctl = c.querySelector("table.ctl");
+    if (ctl){ out.push(new Paragraph({spacing: {before: 600}, children: []})); const t = table(ctl); if (t) out.push(t); }
+    out.push(new Paragraph({children: [], pageBreakBefore: true, spacing: {after: 0}}));
+  }
+  await walk(rep);
+  const code = clean(rep.querySelector("table.ctl td")?.textContent || "").trim();
+  const hdrTxt = "Relatório Técnico de SST" + (meta.emp || meta.setor ? " · " + (meta.emp || meta.setor) : "");
+  const hf = (l, rKids) => new Paragraph({tabStops: [{type: TabStopType.RIGHT, position: DX_W}], children: [new TextRun({text: l, size: 16, color: GRAY}), new TextRun({text: "\t", size: 16}), ...rKids]});
+  return new D.Document({
+    creator: meta.resp || "Inspeção SST", title: R.titulo || "Relatório Técnico de SST", description: "Relatório técnico de inspeção de SST",
+    styles: {
+      default: {document: {run: {font: "Arial", size: 20, color: "1C2328"}, paragraph: {spacing: {line: 276, lineRule: LineRuleType.AUTO}}}},
+      paragraphStyles: [
+        {id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Arial", size: 28, bold: true, color: NAVY}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 360, after: 160}, border: {bottom: {style: BorderStyle.SINGLE, size: 8, color: "1C2328", space: 4}}}},
+        {id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: {font: "Arial", size: 22, bold: true, color: "1C2328"}, paragraph: {keepNext: true, keepLines: true, spacing: {before: 240, after: 100}}}
+      ]
+    },
+    numbering: {config: [{reference: "ord", levels: [{level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.START, style: {paragraph: {indent: {left: 420, hanging: 300}}}}]}]},
+    sections: [{
+      properties: {titlePage: true, page: {size: {width: 11906, height: 16838}, margin: {top: 1020, bottom: 1020, left: 850, right: 850, header: 480, footer: 480}}},
+      headers: {default: new Header({children: [hf(hdrTxt, [new TextRun({text: code ? code + " · Rev. 00" : "Rev. 00", size: 16, color: GRAY})])]}), first: new Header({children: [new Paragraph("")]})},
+      footers: {default: new Footer({children: [hf("Documento técnico · uso interno", [new TextRun({children: ["Página ", PageNumber.CURRENT, " de ", PageNumber.TOTAL_PAGES], size: 16, color: GRAY})])]}), first: new Footer({children: [new Paragraph("")]})},
+      children: out
+    }]
+  });
+}
+async function downloadDocx(){
+  const btn = $("dlDocx"), old = btn.textContent;
+  btn.disabled = true; btn.textContent = "Gerando Word…";
+  try{
+    const doc = await buildDocx(report.R, report.photos, report.meta);
+    const blob = await window.docx.Packer.toBlob(doc), name = "relatorio-tecnico-sst-" + (report.meta.iso || "inspecao") + ".docx";
+    if (inViewer){
+      const dl = await claude.use("downloads");
+      if (!dl){ setStatus("Download indisponível nesta visualização.", true); return; }
+      try{ await dl.save({filename: name, data: blob}); }catch(e){ if (e?.code !== "declined") setStatus("Não foi possível baixar o arquivo Word.", true); }
+      return;
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    setStatus("Relatório em Word baixado. Abra no Word, Google Docs ou LibreOffice para editar.");
+  }catch(e){ console.error(e); setStatus("Não foi possível gerar o arquivo Word. Verifique a internet e tente de novo.", true); }
+  finally{ btn.disabled = false; btn.textContent = old; }
 }
 async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
