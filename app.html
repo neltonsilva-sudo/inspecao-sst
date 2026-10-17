@@ -64,17 +64,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .hint{font-size:12.5px;color:var(--muted);margin:0}
 .status{font:500 13px var(--f-mono);color:var(--muted);min-height:1.4em}
 .status.err{color:var(--crit)}
-/* Relatório */
-.report{display:flex;flex-direction:column;gap:20px}
-.banner{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 12px;border-radius:4px;background:repeating-linear-gradient(-45deg,var(--signal) 0 10px,var(--signal-ink) 10px 20px);}
-.banner span{background:var(--panel);padding:3px 10px;border-radius:3px;font-weight:600}
-.summary{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center}
-@media (max-width:560px){.summary{grid-template-columns:minmax(0,1fr)}}
-.gauge{width:132px;height:132px}
-.gauge text{font-family:var(--f-display)}
+/* Relatório (estilos compartilhados: títulos, chips, tabelas) */
 h2{font:700 22px/1.15 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 10px;text-wrap:balance}
 h3{font:700 17px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 8px}
-.env{font-weight:600}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .chip{font:500 12px var(--f-mono);padding:3px 8px;border-radius:3px;border:1px solid var(--line)}
 .chip.crit{background:var(--cell-crit);border-color:transparent}
@@ -83,38 +75,13 @@ h3{font:700 17px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.0
 .chip.ok{background:var(--cell-ok);border-color:transparent}
 .two{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
-.risk{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:1150px){.risk{grid-template-columns:minmax(0,1fr)}.risk .mwrap{max-width:300px}}
-.matrix{display:grid;grid-template-columns:22px repeat(5,minmax(0,1fr));gap:3px;font:500 11px var(--f-mono)}
-.matrix .c{aspect-ratio:1;border-radius:3px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:2px;padding:2px}
-.matrix .ax{display:grid;place-items:center;color:var(--muted)}
-.dot{width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font-size:10px}
-.axis-note{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-top:4px;padding-left:25px}
-.tbl{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
 th{font:600 11px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:2px solid var(--line);white-space:nowrap}
 td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
 td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
-.sev{border-left:5px solid var(--line)}
-.sev.crit{border-left-color:var(--crit)} .sev.high{border-left-color:var(--high)} .sev.warn{border-left-color:var(--warn)} .sev.ok{border-left-color:var(--ok)}
 .nr{font:500 12px var(--f-mono);white-space:nowrap;background:var(--bg);padding:1px 6px;border-radius:3px}
-.s5{display:grid;gap:8px}
-.s5 .r{display:grid;grid-template-columns:110px minmax(0,1fr) 34px;gap:10px;align-items:center}
-.s5 .jp{font-weight:600}
-.s5 .jp small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
-.bar{height:10px;background:var(--bg);border-radius:5px;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:5px}
-.s5 .obs{grid-column:2/4;font-size:12.5px;color:var(--muted);margin-top:-4px}
-.pdca{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (max-width:560px){.pdca{grid-template-columns:minmax(0,1fr)}}
-.pdca .q{border:1px solid var(--line);border-radius:4px;padding:10px 12px}
-.pdca .q h4{margin:0 0 4px;font:700 15px var(--f-display);text-transform:uppercase;letter-spacing:.04em;display:flex;gap:8px;align-items:baseline}
-.pdca .q h4 b{font:700 22px var(--f-display);color:var(--info)}
 .pdca ul,.list{margin:0;padding-left:18px}
 .pdca li,.list li{margin:3px 0}
-.imp{display:grid;gap:10px}
-.imp .it{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
-.tag{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:3px;background:var(--bg);border:1px solid var(--line);white-space:nowrap}
 .row select{flex:1;width:auto;min-width:0}
 .mon{border-top:1px solid var(--line);padding-top:12px}
 .mon.on .label{color:var(--crit)}
@@ -124,10 +91,165 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .hist img{width:56px;height:42px;object-fit:contain;background:#0d1114;border-radius:3px;display:block}
 .hist .t{font:500 12px var(--f-mono);color:var(--muted)}
 .hist .sc{font:700 20px var(--f-display)}
-.alert{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:4px;background:var(--cell-crit);border:2px solid var(--crit);font-weight:600}
-.alert b{font:700 16px var(--f-display);letter-spacing:.05em;color:var(--crit);text-transform:uppercase;white-space:nowrap}
-.limit{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
-.empty{color:var(--muted)}
+/* Painel de diagnóstico (dashboard). Tudo escopado em .report; responde à largura do próprio painel (container query) */
+.report{display:flex;flex-direction:column;gap:24px;min-width:0;container:rep / inline-size}
+@media (min-width:901px){.report.panel{padding:20px 22px}}
+.report .empty{color:var(--muted);margin:0}
+.report .sec{display:flex;flex-direction:column;gap:12px;min-width:0}
+.report .sh{display:flex;align-items:baseline;justify-content:space-between;gap:6px 12px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.report h2{font:700 26px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;margin:0;text-wrap:balance}
+.report h3{font:700 18px/1.15 var(--f-display);text-transform:uppercase;letter-spacing:.03em;margin:0;display:flex;align-items:center;gap:8px}
+.report h3::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--signal);flex:none}
+.report .meta{font:500 12px var(--f-mono);color:var(--muted)}
+.report .eyebrow{font:600 11.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.report .lead{margin:6px 0 0;max-width:75ch}
+@container rep (max-width:420px){.report h2{font-size:22px}}
+/* selo de exemplo */
+.report .banner{position:relative;display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:8px 12px 8px 20px;border:1px solid var(--line);border-radius:6px;background:var(--bg);overflow:hidden}
+.report .banner::before{content:"";position:absolute;inset:0 auto 0 0;width:7px;background:repeating-linear-gradient(-45deg,var(--signal) 0 5px,var(--signal-ink) 5px 10px)}
+.report .banner b{font:700 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;background:var(--signal);color:var(--signal-ink);padding:2px 8px;border-radius:3px}
+/* alerta de risco crítico */
+.report .alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:start;padding:14px 16px;border-radius:8px;background:var(--cell-crit);border:1px solid var(--crit);border-left:7px solid var(--crit)}
+.report .alert svg{width:32px;height:32px;grid-row:1 / span 3;color:var(--crit)}
+.report .alert b{font:700 19px/1.1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;color:var(--crit)}
+.report .alert p{margin:0;font-weight:600}
+.report .alert small{font-size:13px}
+/* faixa de indicadores */
+.report .kpis{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@container rep (min-width:640px){.report .kpis{grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,.9fr)}}
+@container rep (min-width:440px) and (max-width:639.98px){.report .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.report .k-lv{grid-column:1 / -1;order:3}}
+.report .kpi{display:flex;flex-direction:column;gap:10px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.report .kt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:600 11px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0}
+.report .kt span{font:500 11px var(--f-mono);letter-spacing:0;text-transform:none}
+.report .k-score .kb{display:flex;align-items:center;gap:12px}
+.report .gauge{width:104px;height:104px;flex:none}
+.report .gauge .gv{font:700 34px var(--f-display);fill:var(--ink)}
+.report .gauge .gs{font:500 10px var(--f-mono);fill:var(--muted)}
+.report .kt .band{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;background:var(--lcell);font:600 12px/1.3 var(--f-body);letter-spacing:0;text-transform:none;color:var(--ink);white-space:nowrap}
+.report .k-score .kt{align-items:center;flex-wrap:wrap}
+.report .band i,.report .lc i,.report .legend i{flex:none;border-radius:50%}
+.report .band i{width:8px;height:8px;background:var(--lc)}
+.report .scale{margin:0;padding:0;list-style:none;display:grid;gap:2px;font:500 11px/1.5 var(--f-mono);color:var(--muted)}
+.report .scale li{display:flex;align-items:center;gap:6px}
+.report .scale i{width:7px;height:7px;border-radius:50%;background:var(--lc)}
+.report .scale .cur{color:var(--ink);font-weight:600}
+.report .lv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.report .lv div{min-width:0;padding:8px 7px 7px;border:1px solid var(--line);border-top:4px solid var(--lc);border-radius:6px;background:var(--panel)}
+.report .lv b{display:block;font:700 30px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.report .lv span{display:block;font-size:12px;font-weight:600;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.report .lv small{display:block;font:500 10.5px var(--f-mono);color:var(--muted)}
+@container rep (max-width:400px){.report .lv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.report .lv .zero b{color:var(--muted);font-weight:600}
+.report .lv .crit.on{background:var(--cell-crit)}
+.report .crit{--lc:var(--crit);--lcell:var(--cell-crit)}
+.report .high{--lc:var(--high);--lcell:var(--cell-high)}
+.report .warn{--lc:var(--warn);--lcell:var(--cell-warn)}
+.report .ok{--lc:var(--ok);--lcell:var(--cell-ok)}
+.report .dist{display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden;background:var(--line)}
+.report .dist i{display:block;height:100%;background:var(--lc)}
+.report .k-5s .big{font:700 40px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.report .k-5s .big small{font:600 18px var(--f-display);color:var(--muted);margin-left:2px}
+.report .meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.report .meter i{display:block;height:100%;border-radius:4px}
+.report .k-5s p{margin:0;font-size:12.5px;color:var(--muted)}
+/* riscos: matriz + lista */
+.report .nrs{display:flex;flex-wrap:wrap;gap:4px}
+.report .risk{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@container rep (min-width:700px){.report .risk{grid-template-columns:minmax(0,262px) minmax(0,1fr)}}
+.report .mwrap{width:100%;max-width:340px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.report .mwrap .kt{margin-bottom:10px}
+@container rep (min-width:480px) and (max-width:699.98px){.report .mwrap{max-width:none;display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr);gap:0 20px;align-items:end}.report .mwrap .kt{grid-column:1 / -1}.report .mwrap .legend{grid-template-columns:minmax(0,1fr);gap:8px;margin:0 0 24px;padding:0;border-top:0}}
+.report .matrix{display:grid;grid-template-columns:16px 14px repeat(5,minmax(0,1fr));gap:3px;font:500 11px var(--f-mono)}
+.report .matrix .yt{grid-column:1;grid-row:1 / 6;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;font:600 10.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.report .matrix .xt{grid-column:3 / 8;text-align:center;font:600 10.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.report .matrix .ax{display:grid;place-items:center;color:var(--muted)}
+.report .matrix .c{position:relative;aspect-ratio:1;min-width:0;border-radius:4px;background:var(--lcell);display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:2px;padding:3px}
+.report .matrix .c em{position:absolute;right:3px;bottom:1px;font:500 9px var(--f-mono);font-style:normal;color:var(--ink);opacity:.5}
+.report .matrix .c.has{box-shadow:inset 0 0 0 2px var(--lc)}
+.report .dot{width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font:600 10px var(--f-mono);position:relative}
+.report .legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);list-style:none;font-size:12px}
+.report .legend li{display:flex;align-items:center;gap:6px;min-width:0}
+.report .legend i{width:12px;height:12px;border-radius:3px;background:var(--lcell);box-shadow:inset 0 0 0 2px var(--lc)}
+.report .legend small{margin-left:auto;font:500 10.5px var(--f-mono);color:var(--muted);white-space:nowrap}
+.report .rlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.report .ri{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:6px 12px;align-items:start;padding:11px 12px;border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:6px;background:var(--panel)}
+.report .ri .n{grid-row:1 / span 3;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font:600 11.5px var(--f-mono)}
+.report .ri .pg{font-weight:600;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+.report .ri .tags,.report .ri .med{grid-column:2 / 4;min-width:0}
+.report .ri .tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.report .ri .med{font-size:13.5px;overflow-wrap:anywhere}
+.report .ri .med span{display:block;font:600 10.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+@container rep (max-width:420px){.report .ri .lc{grid-column:2 / 4;grid-row:2;justify-self:start}.report .ri .tags{grid-row:3}.report .ri .med{grid-row:4}.report .ri .n{grid-row:1 / span 4}}
+.report .lc{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:var(--lcell);font:600 12px var(--f-body);white-space:nowrap}
+.report .lc i{width:8px;height:8px;background:var(--lc)}
+.report .lc b{font:600 11.5px var(--f-mono);padding-left:6px;border-left:1px solid var(--line)}
+.report .nr{display:inline-flex;align-items:baseline;gap:5px;font:600 12px var(--f-mono);white-space:nowrap;background:var(--ink);color:var(--panel);padding:2px 8px;border-radius:4px}
+.report .nr small{font-size:11px;font-weight:500;opacity:.8}
+.report .cat{font:600 11px var(--f-body);letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--line);border-radius:4px;color:var(--muted)}
+.report .sp{font:500 11.5px var(--f-mono);color:var(--muted);white-space:nowrap}
+/* 5S */
+.report .s5wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:center}
+@container rep (min-width:560px){.report .s5wrap{grid-template-columns:220px minmax(0,1fr)}}
+.report .radar{display:block;width:100%;max-width:240px;height:auto;margin:0 auto;overflow:visible}
+.report .radar .rg{fill:none;stroke:var(--line);stroke-width:1}
+.report .radar .rv{fill:var(--info);fill-opacity:.2;stroke:var(--info);stroke-width:2;stroke-linejoin:round}
+.report .radar .rp{fill:var(--info)}
+.report .radar .rl{font:600 11px var(--f-body);fill:var(--muted)}
+.report .radar .rn{font:600 11px var(--f-mono);fill:var(--ink)}
+.report .s5{display:grid;gap:10px}
+.report .s5 .r{display:grid;grid-template-columns:100px minmax(0,1fr) 34px;gap:3px 12px;align-items:center}
+.report .s5 .jp{font-weight:600;line-height:1.2}
+.report .s5 .jp small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+.report .pips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+.report .pips i{height:9px;border-radius:2px;background:var(--line)}
+.report .pips i.on{background:var(--lc)}
+.report .s5 .v{font:600 12px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.report .s5 .obs{grid-column:2 / 4;font-size:12.5px;color:var(--muted);line-height:1.35}
+/* pontos de melhoria */
+.report .imp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}
+.report .it{display:flex;flex-direction:column;gap:6px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.report .it-h{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.report .it-h span:first-child{font:600 12px var(--f-mono);color:var(--muted)}
+.report .it b{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.report .it p{margin:0;font-size:13.5px;overflow-wrap:anywhere}
+.report .tag{font:600 10.5px var(--f-body);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid var(--info);color:var(--info);overflow-wrap:anywhere}
+/* PDCA */
+.report .pdca{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+@container rep (min-width:520px){.report .pdca{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.report .q{min-width:0;padding:12px 14px;border:1px solid var(--line);border-top:4px solid var(--qc);border-radius:8px;background:var(--panel)}
+.report .q-p{--qc:var(--info)} .report .q-d{--qc:var(--ok)} .report .q-c{--qc:var(--warn)} .report .q-a{--qc:var(--high)}
+.report .q h4{display:flex;align-items:center;gap:10px;margin:0 0 8px;font:700 16px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.04em}
+.report .q h4 b{width:32px;height:32px;flex:none;display:grid;place-items:center;border:2px solid var(--qc);border-radius:6px;background:var(--bg);font:700 20px var(--f-display)}
+.report .q h4 small{display:block;font:500 11px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);margin-top:2px}
+.report .q ul{margin:0;padding:0;list-style:none;display:grid;gap:5px}
+.report .q li{position:relative;padding-left:16px;font-size:13.5px;overflow-wrap:anywhere}
+.report .q li::before{content:"";position:absolute;left:2px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--qc)}
+/* 5W2H */
+.report .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.report table{border-collapse:collapse;width:100%;font-size:13.5px}
+.report .w2h{min-width:680px}
+.report th{background:var(--bg);font:600 11px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.report td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.report tbody tr:last-child td{border-bottom:0}
+.report td.what b{font-weight:600}
+.report td.what .n{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:6px;border-radius:50%;background:var(--ink);color:var(--panel);font:600 10.5px var(--f-mono);vertical-align:1px}
+.report td.when{font:500 12.5px var(--f-mono);white-space:nowrap}
+.report td .empty{font-family:var(--f-body)}
+@container rep (max-width:640px){
+  .report .tbl{overflow:visible;border:0;border-radius:0}
+  .report .w2h{min-width:0}
+  .report .w2h thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .report .w2h,.report .w2h tbody,.report .w2h tr{display:block}
+  .report .w2h tr{padding:10px 12px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+  .report .w2h td{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;padding:3px 0;border:0;overflow-wrap:anywhere}
+  .report .w2h td::before{content:attr(data-l);font:600 10.5px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .report .w2h td.what{display:block;font-size:15px;padding:0 0 8px;margin-bottom:5px;border-bottom:1px solid var(--line)}
+  .report .w2h td.what::before,.report .w2h td.empty::before{display:none}
+  .report .w2h td.empty{display:block}
+  .report td.when{white-space:normal}
+}
+.report .limit{display:flex;gap:10px;align-items:flex-start;margin:0;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.report .limit svg{flex:none;width:16px;height:16px;margin-top:2px}
 .fields{display:grid;gap:8px}
 .fields label{display:grid;gap:4px;font-size:12.5px;color:var(--muted);font-weight:600}
 input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
@@ -545,104 +667,163 @@ function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; }
 
 /* ---------- render do relatório ---------- */
 function render(d, isExample){
+  d = d && typeof d === "object" ? d : {};
+  // texto tolerante: a IA às vezes devolve objeto ou lista onde se espera texto
+  const txt = x => x == null ? "" : typeof x === "object" ? asList(x).map(txt).filter(Boolean).join(" · ") : String(x).trim();
+  const rec = (x, key) => x && typeof x === "object" && !Array.isArray(x) ? x : (txt(x) ? {[key]: txt(x)} : null);
+  const fmt = n => String(Math.round(n * 10) / 10).replace(".", ",");
   const riscos = asList(d.riscos).filter(r => r && typeof r === "object");
   riscos.sort((a,b) => level(b.severidade,b.probabilidade).r - level(a.severidade,a.probabilidade).r);
-  const score = clamp(d.nota_geral, 0, 100);
-  const sc = score >= 75 ? "var(--ok)" : score >= 50 ? "var(--warn)" : "var(--crit)";
-  const C = 2*Math.PI*52;
+  const score = Math.round(clamp(d.nota_geral, 0, 100));
+  const band = score >= 75 ? ["ok","Adequado"] : score >= 50 ? ["warn","Atenção"] : ["crit","Insatisfatório"];
   const counts = {crit:0,high:0,warn:0,ok:0};
   riscos.forEach(r => counts[level(r.severidade,r.probabilidade).k]++);
+  const LV = [["crit","Crítico","15–25"],["high","Alto","10–14"],["warn","Moderado","5–9"],["ok","Baixo","1–4"]];
+
+  // nota geral: arco de 270°
+  const GR = 44, GC = 2*Math.PI*GR, GA = GC*0.75;
+  const gauge = `<svg class="gauge" viewBox="0 0 120 120" role="img" aria-label="Nota geral ${score} de 100: ${band[1]}">
+      <circle cx="60" cy="60" r="${GR}" fill="none" style="stroke:var(--line)" stroke-width="11" stroke-linecap="round" stroke-dasharray="${GA} ${GC}" transform="rotate(135 60 60)"/>
+      ${score ? `<circle cx="60" cy="60" r="${GR}" fill="none" style="stroke:var(--${band[0]})" stroke-width="11" stroke-linecap="round" stroke-dasharray="${GA*score/100} ${GC}" transform="rotate(135 60 60)"/>` : ""}
+      <text class="gv" x="60" y="70" text-anchor="middle">${score}</text>
+      <text class="gs" x="60" y="104" text-anchor="middle">de 100</text>
+    </svg>`;
+
+  // 5S
+  const S5 = [["seiri","Seiri","Utilização"],["seiton","Seiton","Organização"],["seiso","Seiso","Limpeza"],["seiketsu","Seiketsu","Padronização"],["shitsuke","Shitsuke","Disciplina"]];
+  const cs = d.cinco_s && typeof d.cinco_s === "object" ? d.cinco_s : {};
+  const s5v = S5.map(([k]) => { const e = cs[k]; return clamp(e && typeof e === "object" ? e.nota : e, 0, 5); });
+  const s5total = s5v.reduce((a,b) => a + b, 0);
+  const lvOf = v => v >= 4 ? "ok" : v >= 3 ? "warn" : "crit";
+  const s5rows = S5.map(([k,jp,pt], i) => {
+    const v = s5v[i], e = cs[k], obs = e && typeof e === "object" ? txt(e.obs) : "";
+    const pips = [1,2,3,4,5].map(n => `<i${v >= n - 0.5 ? ' class="on"' : ""}></i>`).join("");
+    return `<div class="r ${lvOf(v)}"><div class="jp">${jp}<small>${pt}</small></div><div class="pips" role="img" aria-label="${jp}: ${fmt(v)} de 5">${pips}</div><div class="v">${fmt(v)}/5</div>${obs ? `<div class="obs">${esc(obs)}</div>` : ""}</div>`;
+  }).join("");
+  const cx = 120, cy = 104, rad = 60;
+  const pt = (i, f) => { const a = (-90 + i*72) * Math.PI / 180; return [cx + Math.cos(a)*rad*f, cy + Math.sin(a)*rad*f]; };
+  const poly = f => S5.map((_, i) => pt(i, typeof f === "function" ? f(i) : f).map(n => n.toFixed(1)).join(",")).join(" ");
+  const radar = `<svg class="radar" viewBox="0 0 240 200" role="img" aria-label="Radar 5S: ${S5.map(([,jp],i) => jp + " " + fmt(s5v[i])).join(", ")}">
+      ${[1,2,3,4,5].map(l => `<polygon class="rg" points="${poly(l/5)}"/>`).join("")}
+      ${S5.map((_, i) => { const [x,y] = pt(i,1); return `<line class="rg" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join("")}
+      <polygon class="rv" points="${poly(i => Math.max(s5v[i], 0.15)/5)}"/>
+      ${S5.map((_, i) => { const [x,y] = pt(i, Math.max(s5v[i], 0.15)/5); return `<circle class="rp" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`; }).join("")}
+      ${S5.map(([,jp], i) => { const [x,y] = pt(i, 1.2); const an = Math.abs(x - cx) < 8 ? "middle" : x > cx ? "start" : "end"; const dy = y < cy - 40 ? -6 : y > cy + 20 ? 10 : 0;
+        return `<text class="rl" x="${x.toFixed(1)}" y="${(y + dy).toFixed(1)}" text-anchor="${an}">${jp} <tspan class="rn">${fmt(s5v[i])}</tspan></text>`; }).join("")}
+    </svg>`;
 
   // matriz 5x5: linhas = severidade 5→1, colunas = probabilidade 1→5
-  let mx = "";
+  let mx = `<div class="yt">Severidade</div>`;
   for (let s = 5; s >= 1; s--){
     mx += `<div class="ax">${s}</div>`;
     for (let p = 1; p <= 5; p++){
       const L = level(s,p);
-      const dots = riscos.map((r,i) => (clamp(r.severidade,1,5)===s && clamp(r.probabilidade,1,5)===p) ? `<span class="dot" title="${esc(r.perigo)}">${i+1}</span>` : "").join("");
-      mx += `<div class="c" style="background:var(--cell-${L.k})">${dots}</div>`;
+      const dots = riscos.map((r,i) => (clamp(r.severidade,1,5)===s && clamp(r.probabilidade,1,5)===p) ? `<span class="dot" title="${i+1}. ${esc(txt(r.perigo))}">${i+1}</span>` : "").join("");
+      mx += `<div class="c ${L.k}${dots ? " has" : ""}" title="S${s} × P${p} = ${L.r} (${L.t})">${dots}<em>${L.r}</em></div>`;
     }
   }
-  mx += `<div></div>` + [1,2,3,4,5].map(p => `<div class="ax">${p}</div>`).join("");
+  mx += `<div></div><div></div>` + [1,2,3,4,5].map(p => `<div class="ax">${p}</div>`).join("") + `<div class="xt">Probabilidade</div>`;
 
   const rows = riscos.map((r,i) => {
-    const L = level(r.severidade, r.probabilidade);
-    return `<tr><td class="num sev ${L.k}">${i+1}</td><td>${esc(r.perigo)}<div class="hint">${esc(r.categoria)}</div></td>
-      <td><span class="nr">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</span></td>
-      <td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}<div><span class="chip ${L.k}">${L.t}</span></div></td>
-      <td>${esc(r.medida)}</td></tr>`;
+    const L = level(r.severidade, r.probabilidade), nr = txt(r.nr), item = txt(r.item), cat = txt(r.categoria), med = txt(r.medida);
+    return `<li class="ri ${L.k}"><span class="n">${i+1}</span>
+      <div class="pg">${esc(txt(r.perigo)) || "Perigo não descrito"}</div>
+      <span class="lc ${L.k}"><i></i>${L.t}<b title="Severidade × Probabilidade">${L.r}</b></span>
+      <div class="tags">${nr ? `<span class="nr">${esc(nr)}${item ? `<small>${esc(item)}</small>` : ""}</span>` : ""}${cat ? `<span class="cat">${esc(cat)}</span>` : ""}<span class="sp" title="Severidade × Probabilidade">S${clamp(r.severidade,1,5)} × P${clamp(r.probabilidade,1,5)}</span></div>
+      ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
+  const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
 
-  const S5 = [["seiri","Seiri","Utilização"],["seiton","Seiton","Organização"],["seiso","Seiso","Limpeza"],["seiketsu","Seiketsu","Padronização"],["shitsuke","Shitsuke","Disciplina"]];
-  const cs = d.cinco_s || {};
-  let s5total = 0;
-  const s5 = S5.map(([k,jp,pt]) => {
-    const v = clamp(cs[k]?.nota, 0, 5); s5total += v;
-    const col = v >= 4 ? "var(--ok)" : v >= 3 ? "var(--warn)" : "var(--crit)";
-    return `<div class="r"><div class="jp">${jp}<small>${pt}</small></div><div class="bar"><i style="width:${v*20}%;background:${col}"></i></div><div class="num">${v}/5</div><div class="obs">${esc(cs[k]?.obs)}</div></div>`;
-  }).join("");
+  let P = d.pdca;
+  if (typeof P === "string" || Array.isArray(P)) P = {plan: P};
+  P = P && typeof P === "object" ? P : {};
+  const quad = (cls, letter, name, en, arr) => {
+    const items = asList(arr).map(txt).filter(Boolean);
+    return `<div class="q ${cls}"><h4><b>${letter}</b><span>${name}<small>${en}</small></span></h4>${items.length ? `<ul>${items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : '<p class="empty">Sem ações nesta etapa.</p>'}</div>`;
+  };
 
-  const P = d.pdca || {};
-  const quad = (letter, name, arr) => `<div class="q"><h4><b>${letter}</b>${name}</h4><ul>${asList(arr).map(x=>`<li>${esc(x)}</li>`).join("") || '<li class="empty">—</li>'}</ul></div>`;
+  const imp = asList(d.melhorias).map(m => rec(m, "titulo")).filter(Boolean).map((m,i) => `<article class="it">
+      <div class="it-h"><span>${String(i+1).padStart(2,"0")}</span>${txt(m.metodologia) ? `<span class="tag">${esc(txt(m.metodologia))}</span>` : ""}</div>
+      <b>${esc(txt(m.titulo)) || "Melhoria"}</b>${txt(m.descricao) ? `<p>${esc(txt(m.descricao))}</p>` : ""}</article>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
 
-  const imp = asList(d.melhorias).map(m => `<div class="it"><span class="tag">${esc(m.metodologia)}</span><div><b>${esc(m.titulo)}</b><div>${esc(m.descricao)}</div></div></div>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
+  const W = [["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto"]];
+  const w2hList = asList(d.plano_5w2h).map(a => rec(a, "what")).filter(Boolean);
+  const w2h = w2hList.map((a,i) => `<tr>${W.map(([k,l]) => {
+      const v = esc(txt(a[k]));
+      if (k === "what") return `<td class="what" data-l="${l}"><span class="n">${i+1}</span><b>${v || "Ação"}</b></td>`;
+      return `<td data-l="${l}"${k === "when" ? ' class="when"' : ""}>${v || '<span class="empty">—</span>'}</td>`;
+    }).join("")}</tr>`).join("");
 
-  const w2h = asList(d.plano_5w2h).map(a => `<tr><td><b>${esc(a.what)}</b></td><td>${esc(a.why)}</td><td>${esc(a.where)}</td><td>${esc(a.who)}</td><td>${esc(a.when)}</td><td>${esc(a.how)}</td><td>${esc(a.how_much)}</td></tr>`).join("");
-
+  const top = riscos[0] || {};
   $("report").innerHTML = `
-    ${!isExample && counts.crit ? `<div class="alert" role="alert"><b>Alerta</b><span>${counts.crit} risco(s) crítico(s): ${esc(riscos[0].perigo)}</span></div>` : ""}
-    ${isExample ? '<div class="banner"><span>Relatório de exemplo · capture imagens e clique em Analisar para gerar o seu</span></div>' : ""}
-    <div class="summary">
-      <svg class="gauge" viewBox="0 0 132 132" role="img" aria-label="Nota geral ${score} de 100">
-        <circle cx="66" cy="66" r="52" fill="none" stroke="var(--line)" stroke-width="12"/>
-        <circle cx="66" cy="66" r="52" fill="none" stroke="${sc}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C*score/100} ${C}" transform="rotate(-90 66 66)"/>
-        <text x="66" y="72" text-anchor="middle" font-size="38" font-weight="700" fill="var(--ink)">${score}</text>
-        <text x="66" y="92" text-anchor="middle" font-size="12" fill="var(--muted)">NOTA GERAL</text>
-      </svg>
-      <div>
-        <h2>Diagnóstico do ambiente</h2>
-        <div class="env">${esc(d.ambiente)}</div>
-        <p style="margin:6px 0 0">${esc(d.resumo)}</p>
-        <div class="chips">
-          <span class="chip crit">${counts.crit} crítico</span><span class="chip high">${counts.high} alto</span>
-          <span class="chip warn">${counts.warn} moderado</span><span class="chip ok">${counts.ok} baixo</span>
-          <span class="chip">5S ${s5total}/25</span>
+    ${!isExample && counts.crit ? `<div class="alert" role="alert">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 1.5 21h21L12 2.5z" fill="currentColor"/><path d="M11 9h2v6h-2zM11 16.6h2v2h-2z" style="fill:var(--cell-crit)"/></svg>
+      <b>Alerta · risco crítico</b>
+      <p>${counts.crit} risco(s) crítico(s): ${esc(txt(top.perigo))}${txt(top.nr) ? ` (${esc(txt(top.nr))})` : ""}</p>
+      ${txt(top.medida) ? `<small><strong>Ação imediata:</strong> ${esc(txt(top.medida))}</small>` : ""}
+    </div>` : ""}
+    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Capture imagens e clique em Analisar para gerar o seu.</span></div>' : ""}
+
+    <header class="head">
+      <p class="eyebrow">Diagnóstico do ambiente</p>
+      <h2>${esc(txt(d.ambiente)) || "Ambiente não identificado"}</h2>
+      ${txt(d.resumo) ? `<p class="lead">${esc(txt(d.resumo))}</p>` : ""}
+    </header>
+
+    <div class="kpis">
+      <section class="kpi k-score" aria-label="Nota geral">
+        <p class="kt">Nota geral <span class="band ${band[0]}"><i></i>${band[1]}</span></p>
+        <div class="kb">${gauge}
+          <div><ul class="scale" aria-label="Faixas da nota">${[["ok","75–100"],["warn","50–74"],["crit","0–49"]].map(([k,f]) => `<li class="${k}${k === band[0] ? " cur" : ""}"><i></i>${f}</li>`).join("")}</ul></div>
         </div>
-      </div>
+      </section>
+      <section class="kpi k-lv" aria-label="Riscos por nível">
+        <p class="kt">Riscos por nível <span>${riscos.length} no total</span></p>
+        <div class="lv">${LV.map(([k,t,rg]) => `<div class="${k} ${counts[k] ? "on" : "zero"}"><b>${counts[k]}</b><span>${t}</span><small>${rg}</small></div>`).join("")}</div>
+        <div class="dist" role="img" aria-label="Distribuição: ${LV.map(([k,t]) => counts[k] + " " + t.toLowerCase()).join(", ")}">${LV.filter(([k]) => counts[k]).map(([k]) => `<i class="${k}" style="flex:${counts[k]}"></i>`).join("")}</div>
+      </section>
+      <section class="kpi k-5s ${lvOf(s5total/5)}" aria-label="Avaliação 5S">
+        <p class="kt">Avaliação 5S <span>${Math.round(s5total*4)}%</span></p>
+        <div class="big">${fmt(s5total)}<small>/25</small></div>
+        <div class="meter"><i style="width:${s5total*4}%;background:var(--lc)"></i></div>
+        <p>Média ${fmt(s5total/5)} por senso</p>
+      </section>
     </div>
 
-    <div>
-      <h3>Riscos identificados pelas NRs</h3>
+    <section class="sec">
+      <div class="sh"><h3>Riscos identificados pelas NRs</h3>${nrs.length ? `<div class="nrs">${nrs.map(n => `<span class="nr">${esc(n)}</span>`).join("")}</div>` : ""}</div>
       <div class="risk">
         <div class="mwrap">
-          <p class="label">Matriz de risco · NR-01 (GRO/PGR)</p>
-          <div class="matrix" aria-label="Matriz severidade por probabilidade">${mx}</div>
-          <div class="axis-note"><span>Linhas: severidade</span><span>Colunas: probabilidade</span></div>
+          <p class="kt">Matriz de risco <span>NR-01 · GRO/PGR</span></p>
+          <div class="matrix" role="img" aria-label="Matriz severidade por probabilidade com ${riscos.length} risco(s) posicionados">${mx}</div>
+          <ul class="legend">${LV.map(([k,t,rg]) => `<li class="${k}"><i></i>${t}<small>${rg}</small></li>`).join("")}</ul>
         </div>
-        <div class="tbl">
-          <table><thead><tr><th>#</th><th>Perigo</th><th>NR</th><th>S×P</th><th>Medida de controle</th></tr></thead>
-          <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum risco visível identificado.</td></tr>'}</tbody></table>
-        </div>
+        ${rows ? `<ol class="rlist">${rows}</ol>` : '<p class="empty">Nenhum risco visível identificado.</p>'}
       </div>
-    </div>
+    </section>
 
-    <div class="two">
-      <div><h3>Avaliação 5S</h3><div class="s5">${s5}</div></div>
-      <div><h3>Pontos de melhoria</h3><div class="imp">${imp}</div></div>
-    </div>
+    <section class="sec">
+      <div class="sh"><h3>Avaliação 5S</h3><span class="meta">${fmt(s5total)}/25</span></div>
+      <div class="s5wrap">${radar}<div class="s5">${s5rows}</div></div>
+    </section>
 
-    <div>
-      <h3>Ciclo PDCA</h3>
-      <div class="pdca">${quad("P","Planejar",P.plan)}${quad("D","Executar",P.do)}${quad("C","Verificar",P.check)}${quad("A","Agir",P.act)}</div>
-    </div>
+    <section class="sec">
+      <div class="sh"><h3>Pontos de melhoria</h3></div>
+      <div class="imp">${imp}</div>
+    </section>
 
-    <div>
-      <h3>Plano de ação 5W2H</h3>
-      <div class="tbl"><table><thead><tr><th>O quê</th><th>Por quê</th><th>Onde</th><th>Quem</th><th>Quando</th><th>Como</th><th>Quanto</th></tr></thead>
-      <tbody>${w2h || '<tr><td colspan="7" class="empty">—</td></tr>'}</tbody></table></div>
-    </div>
+    <section class="sec">
+      <div class="sh"><h3>Ciclo PDCA</h3></div>
+      <div class="pdca">${quad("q-p","P","Planejar","Plan",P.plan)}${quad("q-d","D","Executar","Do",P.do)}${quad("q-c","C","Verificar","Check",P.check)}${quad("q-a","A","Agir","Act",P.act)}</div>
+    </section>
 
-    <p class="limit"><b>Limitações:</b> ${esc(d.limitacoes)} Análise por imagem apoia, mas não substitui, a inspeção de campo e a avaliação do profissional de SST.</p>`;
+    <section class="sec">
+      <div class="sh"><h3>Plano de ação 5W2H</h3>${w2hList.length ? `<span class="meta">${w2hList.length} ação(ões)</span>` : ""}</div>
+      <div class="tbl"><table class="w2h"><thead><tr>${W.map(([,l]) => `<th>${l}</th>`).join("")}</tr></thead>
+      <tbody>${w2h || '<tr><td colspan="7" class="empty">Nenhuma ação proposta.</td></tr>'}</tbody></table></div>
+    </section>
+
+    <p class="limit"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4.5M8 4.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span><b>Limitações:</b> ${esc(txt(d.limitacoes))} Análise por imagem apoia, mas não substitui, a inspeção de campo e a avaliação do profissional de SST.</span></p>`;
 }
 
 /* ---------- imagens ---------- */
