@@ -229,6 +229,9 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .lamp-card b{font:700 14px var(--f-body)}
 .lamp-row[data-st="alert"] .lamp-card b{color:var(--crit)}
 .lamp-card #lampD{color:var(--muted)}
+.lamp-saw{font-size:12.5px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;margin-top:4px}
+.lamp-saw.err{color:var(--crit);border-color:var(--crit);background:#fdecec}
+.lamp-btns{gap:8px;flex-wrap:wrap}.lamp-btns button{min-height:34px;padding:5px 12px}
 #lampAck{justify-self:start;margin-top:6px;min-height:34px;padding:5px 12px;font-weight:700;border-color:var(--crit);color:var(--crit)}
 .mon-alert{border:0;background:none;color:#7a1414;padding:0;font-size:13px}
 .mon-alert ul{margin:4px 0 0;padding-left:18px}
@@ -958,7 +961,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v86</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v87</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1020,7 +1023,8 @@ api:
               <b id="lampT">Monitoramento desligado</b>
               <div id="lampD">Clique em Monitorar situações de risco para começar.</div>
               <div class="mon-alert" id="monAlert" hidden></div>
-              <button type="button" id="lampAck" hidden>Ciente – parar de piscar</button>
+              <div id="lampSaw" class="lamp-saw" hidden></div>
+              <div class="row lamp-btns"><button type="button" id="lampAck" hidden>Ciente – parar de piscar</button><button type="button" id="monNow" hidden>Verificar agora</button></div>
             </div>
           </div>
           <button id="watchBtn" type="button" class="watch">🛡️ Monitorar situações de risco</button>
@@ -1160,7 +1164,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v86</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v87</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2398,7 +2402,7 @@ async function pickGeminiModel(key, signal){
 let busyNote = ""; // aviso que aparece junto do cronômetro enquanto o Gemini está sobrecarregado
 const wait = (ms, signal) => new Promise((res, rej) => { const t = setTimeout(res, ms); signal?.addEventListener("abort", () => { clearTimeout(t); rej(new DOMException("Abortado", "AbortError")); }, {once: true}); });
 // nível de "raciocínio" por família de modelo (os mais antigos não aceitam o parâmetro)
-const thinkCfg = m => /gemini-3/.test(m) ? {thinkingLevel: "low"} : /gemini-2\.5-pro/.test(m) ? {thinkingBudget: 128} : /gemini-2\.5/.test(m) ? {thinkingBudget: 0} : null;
+const thinkCfg = (m, budget = 0) => /gemini-3/.test(m) ? {thinkingLevel: "low"} : /gemini-2\.5-pro/.test(m) ? {thinkingBudget: Math.max(128, budget)} : /gemini-2\.5/.test(m) ? {thinkingBudget: budget} : null;
 async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   const key = $("apiKey").value.trim();
   const model = await pickGeminiModel(key, signal);
@@ -2407,7 +2411,7 @@ async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
   parts.push({text: prompt});
   let think = !!opts.fast;
-  const body = m => { const gc = {responseMimeType:"application/json", temperature:0.2}; const tc = think && thinkCfg(m); if (tc) gc.thinkingConfig = tc; return JSON.stringify({contents:[{role:"user", parts}], generationConfig: gc}); };
+  const body = m => { const gc = {responseMimeType:"application/json", temperature:0.2}; const tc = think && thinkCfg(m, opts.budget || 0); if (tc) gc.thinkingConfig = tc; return JSON.stringify({contents:[{role:"user", parts}], generationConfig: gc}); };
   // Gemini sobrecarregado (503/500/504): tenta de novo com pausas e, se continuar, usa outro modelo
   // ordem: principal → outros modelos (em pico costumam estar livres) → principal de novo após uma pausa maior
   const alt = geminiAlt.filter(m => m !== model), tries = [model, ...alt, model, model];
@@ -2580,14 +2584,15 @@ function drawHistory(cur){
 async function cycle(){
   if (ctl) return; // ainda analisando o quadro anterior
   const blob = await grabFrame();
-  if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); return; }
+  if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); lampSaw("Monitoramento parado: a câmera ficou sem imagem. Ligue a câmera e clique em Monitorar de novo.", true); return; }
   const sel = MON_AL.filter(([id]) => $(id).checked);
   const data = await monCheck(blob, sel);
   if (!data) return;
   monCount++;
   const crit = data.critico, hits = monHits(data, sel);
   const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
-  if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${new Date().toLocaleTimeString("pt-BR")}.`);
+  if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${data.hora}.`);
+  lampSaw(data.cena ? `IA viu (${data.hora}): ${data.cena}` : `Verificação das ${data.hora} concluída.`);
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     alSave(history[0]); // e gravado na pasta escolhida, se houver
@@ -2603,7 +2608,11 @@ function lamp(st, t, d){
   const r = $("lampRow"); if (!r) return;
   r.dataset.st = st; $("lampT").textContent = t; $("lampD").textContent = d || "";
   $("lampAck").hidden = st !== "alert"; if (st !== "alert") $("monAlert").hidden = true;
+  $("monNow").hidden = !mon; if (st === "off") $("lampSaw").hidden = true;
 }
+// o que a IA enxergou no último quadro (ou o motivo da falha)
+function lampSaw(t, err){ const el = $("lampSaw"); if (!el) return; el.textContent = t; el.hidden = !t; el.classList.toggle("err", !!err); }
+$("monNow").onclick = () => { if (!mon) return; if (ctl){ setStatus("Aguarde: ainda verificando o quadro anterior."); return; } mon.next = Date.now() + mon.sec * 1000; cycle(); };
 $("lampAck").onclick = () => mon ? lamp("ok", "Monitorando – nenhuma situação de risco", "Alerta reconhecido. As fotos do alerta ficam guardadas em Alertas do monitoramento.") : lamp("off", "Monitoramento desligado", "Alerta reconhecido.");
 // verificação dedicada de cada quadro do monitoramento: pergunta curta e direta só sobre as situações de alerta
 // (bem mais rápida e confiável do que a análise completa); na dúvida, alerta
@@ -2615,14 +2624,19 @@ Situações:
 ${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
 - "critico": qualquer outra situação de risco grave e iminente à vida ou à integridade (NR-03), como incêndio, choque elétrico, queda iminente, prensamento ou atropelamento.
 Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
-Responda SOMENTE com JSON: {"alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
+Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição, se os olhos estão abertos ou fechados, postura, EPI) e o ambiente, em uma ou duas frases curtas.
+Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
   try{
-    const r = await callAI(prompt, [blob], ctl.signal, {fast: true});
+    const r = await callAI(prompt, [blob], ctl.signal, {fast: true, budget: 1024}); // um pouco de raciocínio: repara em detalhes como olhos fechados
     const al = r && typeof r.alertas === "object" ? r.alertas : {};
     const c = al.critico && (al.critico.ocorre === true || al.critico.ocorre === "true") ? [String(al.critico.onde || "situação grave na imagem")] : [];
     setStatus(`Monitoramento: quadro das ${hora} verificado.`);
-    return {alertas: al, critico: c};
-  }catch(e){ handleErr(e); return null; }
+    return {alertas: al, critico: c, cena: String(r?.cena || ""), hora};
+  }catch(e){
+    handleErr(e);
+    if (e?.code !== "cancelled" && e?.name !== "AbortError") lampSaw(`Falha na verificação das ${hora}: ${$("status").textContent}`, true);
+    return null;
+  }
   finally{ ctl = null; $("stopRow").hidden = true; updateGo(); }
 }
 // situações que o monitoramento pode alertar além do risco crítico (id do campo, chave pedida à IA, descrição)
@@ -2636,7 +2650,7 @@ const MON_AL = [
   ["alCarga", "carga_suspensa", "pessoa sob carga suspensa (ponte rolante, talha, guindaste) ou na rota de empilhadeira e veículos em movimento — NR-11", "Pessoa sob carga suspensa ou na rota de veículos", "p"],
   ["alAltura", "altura_sem_protecao", "pessoa trabalhando em altura (acima de 2 m, escada, andaime, telhado, plataforma) sem cinto/linha de vida ou proteção contra queda — NR-35", "Trabalho em altura sem proteção", "p"],
   ["alFumo", "fumando", "pessoa fumando ou com chama aberta em área proibida ou perto de inflamáveis — NR-20/NR-23", "Fumando ou chama em área proibida", "p"],
-  ["alSono", "dormindo_caido", "pessoa dormindo, desacordada ou caída", "Pessoa dormindo, desacordada ou caída", "p"],
+  ["alSono", "dormindo_caido", "pessoa dormindo ou de olhos fechados aparentando sono, cochilando, com a cabeça caída ou apoiada, debruçada, desacordada ou caída no chão", "Pessoa dormindo, desacordada ou caída", "p"],
   // ambiente: condições inseguras
   ["alFogo", "fogo_vazamento", "fogo, fumaça, faísca descontrolada ou vazamento de gás, líquido ou produto químico", "Fogo, fumaça ou vazamento", "a"],
   ["alProt", "maquina_sem_protecao", "máquina ou equipamento em operação sem proteção ou com a proteção removida/aberta — NR-12", "Máquina operando sem proteção", "a"],
@@ -2686,7 +2700,7 @@ function startMon(){
 }
 function stopMon(){
   if (mon) clearInterval(mon.timer); mon = null;
-  $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on");
+  $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on"); $("monNow").hidden = true;
   if ($("lampRow").dataset.st !== "alert") lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   $("monBtn").textContent = "Iniciar monitoramento"; $("monInt").disabled = false; $("monBox").classList.remove("on"); $("rec").textContent = "● AO VIVO";
   $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
