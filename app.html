@@ -328,6 +328,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .nrd-off button{font-weight:600}
 .nrd-off.on button{border-color:#c62828;color:#c62828}
 @media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
+#lvDlg{width:min(960px,calc(100vw - 24px))}
 .nrdlg{border:0;border-radius:14px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .facedlg{width:min(980px,calc(100vw - 24px))}
 .facegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
@@ -339,13 +340,21 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .lvd-h{display:flex;align-items:center;gap:12px;margin-bottom:6px}.lvd-h h2{margin:0;font:700 22px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
 .lvd-h .lvd-n{min-width:46px;height:46px;border-radius:10px;display:grid;place-items:center;font:700 24px var(--f-display);color:#fff;background:var(--lc)}
 .lvd-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
-.lvd-list li{border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:10px;padding:12px 14px;background:var(--panel)}
+.lvd-c{border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:10px;padding:12px 14px;background:var(--panel)}
 .lvd-list .p{font-weight:700;font-size:15px;line-height:1.35}
 .lvd-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .lvd-tags span,.lvd-tags button{font:600 12px var(--f-body);padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);min-height:0}
 .lvd-tags button{cursor:pointer;border-color:var(--ink)}.lvd-tags b{font-family:var(--f-mono)}
 .lvd-m{margin:4px 0 0;font-size:14px;line-height:1.45}.lvd-m em{font-style:normal;font-weight:700;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:block}
 .lvd-res{margin-top:6px;font-size:13px;color:var(--muted)}
+.lvd-list li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,280px);gap:10px;align-items:stretch}
+.lvd-f{margin:0;border:1px solid var(--line);border-top:4px solid var(--lc);border-radius:10px;padding:8px;background:var(--panel);display:flex;flex-direction:column;justify-content:center}
+.lvd-fi{position:relative;display:block;line-height:0}.lvd-fi img{width:100%;height:auto;border-radius:5px;display:block}
+.lvd-fi i{position:absolute;border:3px solid var(--lc);border-radius:4px;box-shadow:0 0 0 2px #fff,0 0 0 9999px rgba(0,0,0,.25)}
+.lvd-fi{overflow:hidden;border-radius:5px}
+.lvd-f figcaption{font:600 11.5px var(--f-body);color:var(--muted);margin-top:5px}
+.lvd-f.none{display:grid;place-items:center;min-height:110px;text-align:center;font-size:12.5px;color:var(--muted);border-style:dashed;padding:10px}
+@media (max-width:640px){.lvd-list li{grid-template-columns:minmax(0,1fr)}}
 .nrd-in{padding:20px 22px;overflow:auto;max-height:calc(100vh - 32px)}
 .nrd-h{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
 .nrd-h h2{margin:0;font:700 19px/1.25 var(--f-display);text-transform:uppercase}
@@ -906,7 +915,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v70</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v71</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1091,7 +1100,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v70</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v71</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1374,6 +1383,7 @@ ${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}
 Tarefas:
 1. Identifique o tipo de ambiente e as atividades visíveis.
 2. Liste os perigos e riscos visíveis citando a Norma Regulamentadora aplicável (NR-01 GRO/PGR, NR-06 EPI, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22 mineração, NR-23, NR-24, NR-26 sinalização, NR-33, NR-35 etc.) e, quando tiver segurança, o item. Classifique pela matriz da NR-01: severidade 1-5 e probabilidade 1-5. Categoria: Físico, Químico, Biológico, Ergonômico ou Acidente.
+   Para CADA risco informe em "figura" o número da imagem em que ele aparece com mais clareza (1 = primeira imagem enviada; 0 se vier só de relato, documento ou contexto) e em "area" a região dessa imagem que mostra a situação de risco, como [ymin,xmin,ymax,xmax] em inteiros de 0 a 1000 (deixe [] se não for possível delimitar).
 3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 e observação curta.
 4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.) e a fundamentação legal de cada uma (NR e item só com certeza; CLT arts. 157, 158, 166, 167 ou 184 quando couber).
 5. Monte um plano 5W2H com as ações mais importantes e um ciclo PDCA COERENTE com ele: em "plan", o planejamento de CADA ação que será executada (o que fazer, responsável, prazo e recursos), além das metas; em "do", a execução exatamente das ações planejadas, na mesma ordem; em "check", para CADA ação executada, como verificar se ela foi realmente implementada e se está gerando efeito positivo, isto é, resolvendo o problema ou a situação (indicador, inspeção ou auditoria, critério de sucesso e frequência); em "act", para cada verificação, o que fazer se a ação NÃO resolveu (ação corretiva: rever a causa, reforçar ou trocar a medida) e, se resolveu, como padronizar (procedimento, treinamento, check-list). Nenhuma ação pode aparecer em "do" sem o planejamento em "plan" e sem a verificação em "check".
@@ -1391,7 +1401,7 @@ Escreva em português do Brasil, frases curtas.
 
 Responda SOMENTE com um objeto JSON neste formato:
 {"ambiente":"string","resumo":"2-3 frases","nota_geral":0-100,
-"riscos":[{"perigo":"string","categoria":"Acidente","nr":"NR-12","item":"12.38 ou vazio","severidade":1-5,"probabilidade":1-5,"medida":"controle recomendado"}],
+"riscos":[{"perigo":"string","categoria":"Acidente","nr":"NR-12","item":"12.38 ou vazio","severidade":1-5,"probabilidade":1-5,"medida":"controle recomendado","figura":1,"area":[ymin,xmin,ymax,xmax]}],
 "cinco_s":{"seiri":{"nota":0-5,"obs":""},"seiton":{"nota":0-5,"obs":""},"seiso":{"nota":0-5,"obs":""},"seiketsu":{"nota":0-5,"obs":""},"shitsuke":{"nota":0-5,"obs":""}},
 "melhorias":[{"titulo":"","metodologia":"","descricao":"","fundamentacao":"NR e item / CLT"}],
 ${DOCREG_JSON},
@@ -2179,10 +2189,15 @@ function openLevel(k){
     const S = clamp(r.severidade, 1, 5), P = clamp(r.probabilidade, 1, 5), n = nrNum(r.nr);
     const hasRes = r.severidade_residual != null && r.severidade_residual !== "" && r.probabilidade_residual != null && r.probabilidade_residual !== "";
     const R2 = hasRes ? level(Math.min(S, clamp(r.severidade_residual, 1, 5)), Math.min(P, clamp(r.probabilidade_residual, 1, 5))) : null;
-    return `<li><div class="p">${esc(r.perigo || "Risco")}</div>
+    const fi = Math.round(Number(r.figura)) - 1, fr = fi >= 0 ? frames[fi] : null;
+    const ar = asList(r.area).map(Number), okA = fr && ar.length === 4 && ar.every(v => isFinite(v)) && ar[2] > ar[0] && ar[3] > ar[1];
+    const [y0, x0, y1, x1] = okA ? ar.map(v => clamp(v, 0, 1000) / 10) : [];
+    const foto = fr ? `<figure class="lvd-f"><span class="lvd-fi"><img src="${fr.url}" alt="Figura ${fi + 1}: ${esc(r.perigo || "situação de risco")}">${okA ? `<i style="top:${y0}%;left:${x0}%;width:${x1 - x0}%;height:${y1 - y0}%"></i>` : ""}</span><figcaption>Figura ${fi + 1}${okA ? " · área do risco destacada" : ""}</figcaption></figure>`
+      : `<div class="lvd-f none">${r.figura != null && Number(r.figura) > 0 ? `A Figura ${Math.round(Number(r.figura))} não está mais entre as fotos da inspeção.` : "Sem foto indicada para este risco" + (r.figura === undefined ? " (análise feita antes desta versão: faça uma nova análise para ver as fotos)." : ".")}</div>`;
+    return `<li><div class="lvd-c"><div class="p">${esc(r.perigo || "Risco")}</div>
       <div class="lvd-tags">${r.categoria ? `<span>${esc(r.categoria)}</span>` : ""}${r.nr ? (n && NR_LIST.some(x => x[0] === n) ? `<button type="button" data-nr="${n}" title="Abrir o checklist desta NR">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""} ›</button>` : `<span>${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</span>`) : ""}<span>S ${S} × P ${P} = <b>${S * P}</b></span></div>
       ${r.medida ? `<p class="lvd-m"><em>Medida de controle</em>${esc(r.medida)}</p>` : ""}
-      ${R2 ? `<div class="lvd-res">Após o controle: <span class="lc ${R2.k}"><i></i>${R2.t} ${R2.r}</span></div>` : ""}</li>`; }).join("")}</ol>`;
+      ${R2 ? `<div class="lvd-res">Após o controle: <span class="lc ${R2.k}"><i></i>${R2.t} ${R2.r}</span></div>` : ""}</div>${foto}</li>`; }).join("")}</ol>`;
   $("lvDlgBody").innerHTML = h;
   $("lvDlgBody").querySelectorAll("[data-nr]").forEach(b => b.onclick = () => { $("lvDlg").close(); openNR(Number(b.dataset.nr)); });
   if (!$("lvDlg").open) $("lvDlg").showModal();
