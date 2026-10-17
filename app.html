@@ -552,10 +552,16 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 #qrBox:has(#qrAsk:not([hidden])) .qr-steps li:nth-child(3)::before{background:var(--signal);border-color:var(--signal);color:var(--signal-ink)}
 #qrBox:has(#qrArea:not([hidden])) .qr-steps li:nth-child(1),
 #qrBox:has(#qrAsk:not([hidden])) .qr-steps li:nth-child(-n+2),
-#qrBox:has(#qrEnd:not([hidden])):has(#qrArea[hidden]):has(#qrAsk[hidden]) .qr-steps li{color:var(--muted);font-weight:400}
+#qrBox:has(#qrEnd:not([hidden])):has(#qrArea[hidden]):has(#qrAsk[hidden]) .qr-steps li:nth-child(-n+3){color:var(--muted);font-weight:400}
 #qrBox:has(#qrArea:not([hidden])) .qr-steps li:nth-child(1)::before,
 #qrBox:has(#qrAsk:not([hidden])) .qr-steps li:nth-child(-n+2)::before,
 #qrBox:has(#qrEnd:not([hidden])):has(#qrArea[hidden]):has(#qrAsk[hidden]) .qr-steps li::before{content:"";background:var(--ok) var(--qr-check) center/15px no-repeat;border-color:var(--ok)}
+/* passo 4: celular conectado fica em destaque enquanto a sessão está ativa */
+.qr-steps li:nth-child(4) b{font-weight:inherit}
+#qrBox:has(#qrEnd:not([hidden])):has(#qrArea[hidden]):has(#qrAsk[hidden]) .qr-steps li:nth-child(4){color:var(--ok);font-weight:700}
+#qrBox:has(#qrEnd:not([hidden])):has(#qrArea[hidden]):has(#qrAsk[hidden]) .qr-steps li:nth-child(4)::before{box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 25%,transparent);animation:qr-on 1.8s ease-in-out infinite}
+@keyframes qr-on{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--ok) 10%,transparent)}}
+@media (prefers-reduced-motion:reduce){#qrBox .qr-steps li:nth-child(4)::before{animation:none}}
 .qr{display:grid;justify-items:center;gap:10px;padding:16px 14px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .qr::before{content:"Aponte a câmera do celular para o código";font:600 11.5px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:center}
 .qr svg{width:100%;max-width:220px;height:auto;background:#fff;padding:8px;border-radius:10px;display:block;margin:0 auto;box-shadow:var(--qr-shadow)}
@@ -739,7 +745,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v28</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v29</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -823,6 +829,7 @@ api:
           <li><span>Gere o QR code e leia com a câmera do celular.</span></li>
           <li><span>No celular, toque em <b>Permitir e conectar</b>.</span></li>
           <li><span>Autorize aqui o pedido de conexão.</span></li>
+          <li><span><b>Celular conectado:</b> fotos, áudios e vídeo do celular chegam a este painel.</span></li>
         </ol>
         <div id="qrArea" class="qr" hidden></div>
         <div id="qrAsk" class="ask" hidden role="alert">
@@ -909,7 +916,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v28</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v29</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
