@@ -208,7 +208,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v6</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v7</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -309,7 +309,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v6</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v7</span></div></div>
   </header>
   <div id="phAsk" class="stack">
     <h2>Conectar este celular?</h2>
@@ -1026,15 +1026,16 @@ async function qrStart(){
   catch(e){ qrMsg("Não foi possível carregar o módulo de conexão. Verifique a internet.", true); return; }
   qrStop();
   const id = "inspecao-sst-" + rnd(16), k = rnd(12), peer = new Peer(id, PEER_OPTS);
-  qr = {peer, id, k, conn: null, call: null, ok: false, device: "", parts: {}};
+  qr = {peer, id, k, conn: null, call: null, ok: false, device: "", parts: {}, resume: "", grace: null};
   peer.on("open", () => { if (qr?.peer === peer) showQR(); });
   peer.on("connection", conn => onPhoneConn(peer, conn));
   peer.on("call", call => {
     if (!qr || qr.peer !== peer || !qr.ok || call.peer !== qr.conn?.peer){ call.close(); return; }
+    try{ qr.call?.close(); }catch(e){}
     qr.call = call; call.answer(); call.on("stream", s => { if (qr?.call === call) useRemote(s); });
   });
   peer.on("disconnected", () => { if (qr?.peer === peer && !peer.destroyed) try{ peer.reconnect(); }catch(e){} });
-  peer.on("error", e => { if (qr?.peer === peer) qrMsg("Falha na conexão (" + (e.type || "erro") + "). Gere um novo QR code.", true); });
+  peer.on("error", e => { if (qr?.peer === peer && e.type !== "peer-unavailable") qrMsg("Falha na conexão (" + (e.type || "erro") + "). Gere um novo QR code.", true); });
 }
 function showQR(){
   const url = location.origin + location.pathname + "?conectar=" + qr.id + "&k=" + qr.k + (PEER_OPTS.host ? "&peerhost=" + params.get("peerhost") : "");
@@ -1048,14 +1049,24 @@ function onPhoneConn(peer, conn){
   conn.on("data", d => {
     if (!d || typeof d !== "object" || !qr) return;
     if (d.type === "hello"){
-      const bad = d.k !== qr.k, busy = qr.conn && qr.conn !== conn;
-      if (bad || busy){ conn.send({type: "deny", reason: bad ? "QR code inválido." : "Outro celular já está conectado."}); setTimeout(() => conn.close(), 400); return; }
+      if (d.k !== qr.k){ conn.send({type: "deny", reason: "QR code inválido."}); setTimeout(() => conn.close(), 400); return; }
+      // reconexão automática do mesmo celular já autorizado (queda de rede), dentro da mesma sessão
+      if (d.r && qr.resume && d.r === qr.resume){
+        clearTimeout(qr.grace); qr.grace = null;
+        if (qr.conn && qr.conn !== conn) try{ qr.conn.close(); }catch(e){}
+        qr.conn = conn; qr.ok = true; conn.send({type: "ok", r: qr.resume});
+        qrMsg(`Conectado: ${qr.device} (reconectado após oscilação da rede).`);
+        return;
+      }
+      if (qr.conn || qr.ok){ conn.send({type: "deny", reason: "Outro celular já está conectado."}); setTimeout(() => conn.close(), 400); return; }
       qr.conn = conn; qr.device = tr(String(d.device || "Celular"), 40);
       $("qrAskTxt").textContent = `${qr.device} quer se conectar a esta inspeção.`;
       $("qrAsk").hidden = false; $("qrArea").hidden = true;
       qrMsg("Pedido de conexão recebido. Autorize ou recuse.");
     } else if (conn !== qr.conn || !qr.ok){
       return;
+    } else if (d.type === "ping"){
+      conn.send({type: "pong"});
     } else if (d.type === "snap"){
       // o celular pede a foto; o computador captura do vídeo ao vivo que já está recebendo
       if (!remoteOn){ conn.send({type: "bad", why: "A imagem do celular não está ativa na tela do computador."}); return; }
@@ -1066,32 +1077,25 @@ function onPhoneConn(peer, conn){
         setStatus(`Foto do celular capturada (${frames.length} de ${maxImages}).`);
         const vb = document.querySelector(".video-box"); vb.classList.remove("flash"); void vb.offsetWidth; vb.classList.add("flash");
       });
-    } else if (d.type === "chunk"){
-      // a foto chega em partes pequenas (base64) e é remontada aqui
-      const n = Number(d.n), i = Number(d.i), pid = String(d.pid || "");
-      if (!pid || !(n > 0 && n <= 2000) || !(i >= 0 && i < n)) return;
-      const P = qr.parts[pid] || (qr.parts[pid] = {n, got: 0, a: new Array(n)});
-      if (P.a[i] == null){ P.a[i] = String(d.d || ""); P.got++; }
-      if (P.got < P.n) return;
-      delete qr.parts[pid];
-      if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
-      try{
-        const bin = atob(P.a.join("")), u = new Uint8Array(bin.length);
-        for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
-        addBlob(new Blob([u], {type: "image/jpeg"}));
-        conn.send({type: "got", n: frames.length});
-        setStatus(`Foto recebida do celular (${frames.length} de ${maxImages}).`);
-      }catch(e){ conn.send({type: "bad"}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
     }
   });
-  conn.on("close", () => { if (qr && qr.conn === conn) phoneGone("A conexão com o celular terminou."); });
+  conn.on("close", () => {
+    if (!qr || qr.conn !== conn) return;
+    if (!qr.ok){ phoneGone("A conexão com o celular terminou."); return; }
+    // queda inesperada: espera o celular reconectar sozinho antes de encerrar a sessão
+    qr.conn = null;
+    qrMsg("A conexão com o celular oscilou. Aguardando reconexão automática…");
+    clearTimeout(qr.grace);
+    qr.grace = setTimeout(() => { if (qr && !qr.conn) phoneGone("O celular não reconectou."); }, 45000);
+  });
 }
 function phoneGone(text){ qrStop(); qrMsg(text + " Para conectar de novo, gere e leia um novo QR code."); }
 function qrStop(){
   if (!qr) return;
   const q = qr; qr = null;
+  clearTimeout(q.grace);
   try{ q.conn?.open && q.conn.send({type: "bye"}); }catch(e){}
   setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
   $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
@@ -1101,8 +1105,8 @@ $("qrBtn").onclick = qrStart;
 $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi desconectado e o QR code anterior não vale mais."); };
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
-  qr.ok = true; qr.conn.send({type: "ok"}); $("qrAsk").hidden = true;
-  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo" e as fotos enviadas entram na lista.`);
+  qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true;
+  qrMsg(`Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo" e cada "Enviar foto" do celular entra na lista.`);
 };
 $("qrDeny").onclick = () => {
   if (!qr?.conn) return;
@@ -1122,51 +1126,92 @@ function phoneMode(id, k){
   document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
   let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
+  let resumeKey = "", tries = 0, ping = null, retrying = false;
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
+  function teardown(){
+    clearInterval(ping); ping = null;
+    try{ mcall?.close(); }catch(e){} try{ conn?.close(); }catch(e){} try{ peer?.destroy(); }catch(e){}
+    mcall = null; conn = null; peer = null;
+  }
   function done(title, text){
     if (ended) return; ended = true;
+    teardown();
     try{ st?.getTracks().forEach(t => t.stop()); }catch(e){}
-    try{ mcall?.close(); }catch(e){} try{ conn?.close(); }catch(e){} try{ peer?.destroy(); }catch(e){}
     $("phDoneT").textContent = title; $("phDoneP").textContent = text + (why ? " (motivo técnico: " + why + ")" : ""); show("phDone");
   }
   async function cam(){
     const old = st;
     st = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: facing}, width: {ideal: 1920}, height: {ideal: 1080}}});
     old?.getTracks().forEach(t => t.stop());
+    try{ st.getVideoTracks()[0].contentHint = "detail"; }catch(e){}
     $("phVideo").srcObject = st; await $("phVideo").play().catch(() => {});
   }
+  function startCall(){
+    try{ mcall?.close(); }catch(e){}
+    mcall = peer.call(id, st);
+    mcall.on("error", e => { why = "vídeo: " + ((e && (e.type || e.message)) || "erro"); });
+    // vídeo moderado (até 2,5 Mbps) que se ajusta à rede, mantendo a nitidez quando possível
+    setTimeout(() => { try{ const snd = mcall.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 2500000; prm.degradationPreference = "balanced"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
+  }
+  // queda inesperada: tenta reconectar na mesma sessão (o computador continua aberto e já autorizou)
+  function lost(reason){
+    if (ended || retrying) return;
+    if (!resumeKey){ done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."); return; }
+    if (tries >= 4){ done("Desconectado", "A rede oscilou e não foi possível reconectar. Leia o QR code na tela do computador de novo."); return; }
+    retrying = true; tries++;
+    $("phShot").disabled = true; $("phRec").textContent = "● RECONECTANDO";
+    msg(`A rede oscilou${reason ? " (" + reason + ")" : ""}. Reconectando… tentativa ${tries} de 4`, true);
+    teardown();
+    setTimeout(() => { retrying = false; if (!ended) connect(); }, 2500);
+  }
+  function connect(){
+    peer = new Peer(PEER_OPTS);
+    const myPeer = peer;
+    peer.on("open", () => {
+      if (myPeer !== peer) return;
+      const c = conn = peer.connect(id, {reliable: true, serialization: "json"});
+      const t = setTimeout(() => { if (c === conn && !c.open){ if (resumeKey) lost("sem resposta"); else done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora."); } }, 20000);
+      c.on("open", () => {
+        clearTimeout(t);
+        c.send({type: "hello", k, r: resumeKey || undefined, device: deviceName()});
+        if (!resumeKey) msg("Aguardando autorização no computador…");
+      });
+      c.on("data", d => {
+        if (!d || typeof d !== "object" || c !== conn) return;
+        if (d.type === "ok"){
+          if (d.r) resumeKey = String(d.r);
+          tries = 0;
+          msg("Conectado. A câmera deste celular está sendo transmitida para o computador.");
+          $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false;
+          startCall();
+          clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 5000);
+        }
+        else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
+        else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
+        else if (d.type === "got") msg(`Foto capturada pelo computador (${d.n} na lista).`);
+        else if (d.type === "full") msg("O computador atingiu o limite de fotos.", true);
+        else if (d.type === "bad") msg(d.why || "A foto não foi capturada. Tente de novo.", true);
+      });
+      c.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; });
+      c.on("close", () => { if (c === conn) lost(why); });
+    });
+    peer.on("error", e => {
+      if (myPeer !== peer) return;
+      if (e.type === "peer-unavailable"){
+        if (resumeKey) done("Sessão encerrada", "O computador encerrou a inspeção. Para conectar de novo, leia o novo QR code na tela do computador.");
+        else done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora.");
+      } else if (!ended){ why = e.type || "erro"; if (resumeKey) lost(why); else msg("Falha de conexão (" + why + ").", true); }
+    });
+  }
+  if (PEER_OPTS.host) window.__sstTest = {drop: () => conn?.peerConnection?.close()}; // só no modo de teste local
   $("phCancel").onclick = () => done("Conexão cancelada", "Nenhuma imagem foi enviada. Para conectar, leia o QR code de novo.");
   $("phAllow").onclick = async () => {
     show("phLive"); msg("Abrindo a câmera…");
     try{ await cam(); }catch(e){ done("Câmera bloqueada", "Permita o uso da câmera para este site nas configurações do navegador e leia o QR code de novo."); return; }
     msg("Conectando ao computador…");
     try{ await loadScript(PEER_JS); }catch(e){ done("Sem conexão", "Não foi possível carregar o módulo de conexão. Verifique a internet e leia o QR code de novo."); return; }
-    peer = new Peer(PEER_OPTS);
-    peer.on("open", () => {
-      conn = peer.connect(id, {reliable: true, serialization: "json"});
-      const t = setTimeout(() => { if (!conn.open) done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora."); }, 20000);
-      conn.on("open", () => { clearTimeout(t); conn.send({type: "hello", k, device: deviceName()}); msg("Aguardando autorização no computador…"); });
-      conn.on("data", d => {
-        if (!d || typeof d !== "object") return;
-        if (d.type === "ok"){ msg("Conectado. A câmera deste celular está sendo transmitida para o computador."); $("phRec").textContent = "● TRANSMITINDO"; $("phShot").disabled = false; try{ st.getVideoTracks()[0].contentHint = "detail"; }catch(e){}
-          mcall = peer.call(id, st);
-          // prioriza nitidez (resolução) em vez de fluidez, para as fotos capturadas no computador
-          setTimeout(() => { try{ const snd = mcall.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 6000000; prm.degradationPreference = "maintain-resolution"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
-          mcall.on("error", e => { why = "vídeo: " + ((e && (e.type || e.message)) || "erro"); }); }
-        else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
-        else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
-        else if (d.type === "got") msg(`Foto recebida pelo computador (${d.n} na lista).`);
-        else if (d.type === "full") msg("O computador atingiu o limite de fotos.", true);
-        else if (d.type === "bad") msg(d.why || "A foto não foi capturada. Tente de novo.", true);
-      });
-      conn.on("error", e => { why = (e && (e.type || e.message)) || "erro no canal de dados"; });
-      conn.on("close", () => done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."));
-    });
-    peer.on("error", e => {
-      if (e.type === "peer-unavailable") done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora.");
-      else if (!ended){ why = e.type || "erro"; msg("Falha de conexão (" + why + ").", true); }
-    });
+    connect();
   };
   $("phShot").onclick = () => {
     if (!conn?.open) return;
@@ -1182,7 +1227,7 @@ function phoneMode(id, k){
       if (sender) await sender.replaceTrack(st.getVideoTracks()[0]);
     }catch(e){ msg("Não foi possível trocar a câmera.", true); }
   };
-  $("phEnd").onclick = () => { try{ conn?.open && conn.send({type: "bye"}); }catch(e){} setTimeout(() => done("Desconectado", "Você desconectou este celular. Para conectar de novo, leia o QR code na tela do computador."), 200); };
+  $("phEnd").onclick = () => { why = ""; try{ conn?.open && conn.send({type: "bye"}); }catch(e){} setTimeout(() => done("Desconectado", "Você desconectou este celular. Para conectar de novo, leia o QR code na tela do computador."), 200); };
   addEventListener("pagehide", () => { try{ conn?.open && conn.send({type: "bye"}); }catch(e){} try{ peer?.destroy(); }catch(e){} });
 }
 
