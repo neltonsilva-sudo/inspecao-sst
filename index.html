@@ -169,6 +169,12 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
 .rep .gb i{display:block;height:100%;background:#1f6fb2;border-radius:0 4px 4px 0}
 .rep .sit{display:inline-flex;align-items:center;gap:8px;font:700 15px "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:6px 12px;border-radius:4px;border:2px solid currentColor;margin-bottom:10px}
 .rep ol.refs,.rep ul{margin:0 0 10px;padding-left:20px}
+.rep .notas{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}
+.rep .nt{border:1px solid #d5dbe0;border-radius:6px;padding:10px 12px}
+.rep .nt-t{font:600 11px "Barlow",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5b6770}
+.rep .nt-v{display:flex;align-items:baseline;gap:8px;font:700 30px/1.1 "Barlow Condensed",sans-serif;margin-top:2px}
+.rep .nt-v span{font-size:18px;color:#9aa7b0}
+.rep .nt-c{font-size:12px;color:#3d474e}
 .rep .sign{margin:48px auto 0;max-width:340px;text-align:center}
 .rep .sign .ln{border-top:1px solid #1c2328;margin-bottom:6px}
 .rep .sign small{color:#5b6770}
@@ -221,7 +227,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v10</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v12</span></div>
       </div>
     </div>
     <div class="mode" id="mode">Modo: <b>verificando…</b></div>
@@ -322,7 +328,7 @@ input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);b
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v10</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v12</span></div></div>
   </header>
   <div id="phAsk" class="stack">
     <h2>Conectar este celular?</h2>
@@ -844,7 +850,10 @@ Ferramentas da qualidade obrigatórias:
 - Diagrama de Ishikawa (6M) para o principal problema de SST encontrado: até 4 causas por categoria, cada causa com no máximo 6 palavras.
 - Matriz GUT (gravidade, urgência, tendência de 1 a 5) para 3 a 8 problemas.
 - Matriz REI, relação esforço × impacto (1 a 5 cada), para cada ação proposta.
-- Plano de ação 5W2H com prioridade coerente com a GUT.
+- Avaliação 5S (Seiri/utilização, Seiton/organização, Seiso/limpeza, Seiketsu/padronização, Shitsuke/disciplina): nota de 0 a 5 por senso, com constatação baseada no que é visível e ação recomendada. "necessario" = true se algum senso tiver nota 3 ou menor.
+- Projeção após o plano de ação: para cada risco, informe severidade_residual e probabilidade_residual (1 a 5) esperadas depois de implantadas as medidas, de forma realista (a severidade só cai se a medida eliminar ou reduzir o perigo; EPI e sinalização reduzem pouco). Para cada senso do 5S, informe nota_apos (0 a 5) esperada após a implantação.
+- Plano de ação 5W2H com prioridade coerente com a GUT. Informe a "ferramenta" de origem de cada ação (NR, 5S, Ergonomia, Kaizen, Gestão visual etc.).
+- Se a implantação do 5S for necessária, inclua no plano de ação ações específicas de implantação do 5S para os sensos deficientes (ex.: triagem com etiqueta vermelha e descarte, definição de layout e demarcação de áreas, local identificado para cada item, cronograma e checklist de limpeza, padrões visuais e procedimento do setor, auditorias 5S periódicas e treinamento da equipe), com "ferramenta":"5S".
 
 Responda SOMENTE com um objeto JSON neste formato:
 {"titulo":"Relatório Técnico de Inspeção de Segurança do Trabalho – <setor>",
@@ -852,12 +861,13 @@ Responda SOMENTE com um objeto JSON neste formato:
 "metodologia":"1-2 parágrafos: inspeção visual por imagens, matriz de risco severidade × probabilidade (NR-01), Ishikawa, GUT, REI e 5W2H",
 "descricao_ambiente":"1 parágrafo",
 "fotos":[{"legenda":"legenda curta da Figura N","observacoes":"o que se observa de SST nesta figura"}],
-"riscos":[{"perigo":"","categoria":"Físico|Químico|Biológico|Ergonômico|Acidente|Psicossocial","nr":"NR-12","item":"","severidade":1,"probabilidade":1,"medida":"medida de controle seguindo a hierarquia de controles"}],
+"riscos":[{"perigo":"","categoria":"Físico|Químico|Biológico|Ergonômico|Acidente|Psicossocial","nr":"NR-12","item":"","severidade":1,"probabilidade":1,"medida":"medida de controle seguindo a hierarquia de controles","severidade_residual":1,"probabilidade_residual":1}],
 "ishikawa":{"efeito":"problema principal","metodo":[""],"maquina":[""],"mao_de_obra":[""],"material":[""],"meio_ambiente":[""],"medicao":[""]},
 "gut":[{"problema":"","g":1,"u":1,"t":1,"justificativa":"curta"}],
 "rei":[{"acao":"","esforco":1,"impacto":1}],
 "parecer":{"situacao":"Conforme|Parcialmente conforme|Não conforme","texto":"parecer técnico fundamentado em 2-4 parágrafos","fundamentacao":[{"nr":"NR-12","item":"","constatacao":"","exigencia":"o que a norma exige"}]},
-"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa"}],
+"cinco_s":{"necessario":true,"justificativa":"1-2 frases","seiri":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiton":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiso":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"seiketsu":{"nota":0,"nota_apos":0,"constatacao":"","acao":""},"shitsuke":{"nota":0,"nota_apos":0,"constatacao":"","acao":""}},
+"plano_acao":[{"acao":"","por_que":"","onde":"","quem":"","quando":"","como":"","quanto":"","prioridade":"Alta|Média|Baixa","ferramenta":"NR|5S|Ergonomia|Kaizen|Gestão visual"}],
 "consideracoes_finais":"1-2 parágrafos",
 "referencias":["NR-01 – Disposições Gerais e Gerenciamento de Riscos Ocupacionais"]}`;
 }
@@ -904,6 +914,69 @@ function reiSVG(rei){
 }
 const quad = a => a.i >= 3 ? (a.e <= 3 ? "Ganho rápido" : "Projeto estratégico") : (a.e <= 3 ? "Tarefa simples" : "Reavaliar");
 
+const S5DEF = [
+  ["seiri","Seiri","Utilização","Separar o necessário do desnecessário com etiqueta vermelha e descartar ou realocar o que não é usado","Triagem com etiqueta vermelha"],
+  ["seiton","Seiton","Organização","Definir layout, demarcar áreas e identificar o local de cada item (quadro de sombras, etiquetas)","Layout, demarcação e identificação"],
+  ["seiso","Seiso","Limpeza","Criar cronograma e checklist de limpeza com responsáveis, eliminando as fontes de sujeira","Cronograma e checklist de limpeza"],
+  ["seiketsu","Seiketsu","Padronização","Padronizar o setor com gestão visual, fotos do padrão e procedimento simples","Padrão visual do setor"],
+  ["shitsuke","Shitsuke","Disciplina","Treinar a equipe e realizar auditorias 5S periódicas com registro de pontuação","Treinamento e auditoria 5S"]
+];
+// lê a avaliação 5S do relatório (ou da análise anterior) e completa o plano com ações de implantação quando faltar
+function prep5S(R){
+  const cs = R.cinco_s || {};
+  const rows = S5DEF.map(([k, jp, pt, acaoPadrao, titulo]) => {
+    const v = cs[k] || {};
+    const has = v.nota !== undefined && v.nota !== null && v.nota !== "";
+    const nota = has ? clamp(v.nota, 0, 5) : null;
+    const apos = nota === null ? null : (v.nota_apos != null && v.nota_apos !== "" ? Math.max(nota, clamp(v.nota_apos, 0, 5)) : (nota <= 3 ? Math.min(5, nota + 2) : nota));
+    return {k, jp, pt, nota, apos, constatacao: v.constatacao || v.obs || "", acao: v.acao || (has && nota <= 3 ? acaoPadrao : ""), acaoPadrao, titulo};
+  });
+  const avaliados = rows.filter(r => r.nota !== null);
+  if (!avaliados.length) return null;
+  const total = avaliados.reduce((a, r) => a + r.nota, 0), max = avaliados.length * 5, pct = Math.round(total / max * 100);
+  const fracos = avaliados.filter(r => r.nota <= 3);
+  const necessario = cs.necessario === true || fracos.length > 0;
+  const plano = (R.plano_acao || []).slice();
+  if (necessario && !plano.some(a => /5\s*s/i.test(String(a.ferramenta || "")))){
+    fracos.forEach(r => plano.push({acao: `5S – ${r.titulo} (${r.jp})`, por_que: `Senso ${r.jp} com nota ${r.nota}/5: ${r.constatacao || "abaixo do padrão"}`, onde: "Setor inspecionado", quem: "Líder do setor e equipe 5S", quando: "30 dias", como: r.acao || r.acaoPadrao, quanto: "Baixo custo (verificar em campo)", prioridade: r.nota <= 2 ? "Alta" : "Média", ferramenta: "5S", auto: true}));
+  }
+  return {rows, total, max, pct, necessario, justificativa: cs.justificativa || "", plano, classe: pct >= 80 ? ["Bom", "#2e8b57"] : pct >= 60 ? ["Regular", "#a87f00"] : ["Insatisfatório", "#c62828"]};
+}
+// notas de 0 a 100, regra fixa e transparente: SST desconta por risco; 5S = % dos sensos; geral = média
+const PEN = {crit: 20, high: 12, warn: 6, ok: 2};
+const classe = n => n >= 85 ? ["Excelente", "#2e8b57"] : n >= 70 ? ["Bom", "#2e8b57"] : n >= 50 ? ["Regular", "#a87f00"] : ["Crítico", "#c62828"];
+function scores(riscos, S5){
+  const res = riscos.map(r => {
+    const s0 = clamp(r.severidade,1,5), p0 = clamp(r.probabilidade,1,5);
+    const s1 = r.severidade_residual != null && r.severidade_residual !== "" ? Math.min(s0, clamp(r.severidade_residual,1,5)) : s0;
+    const p1 = r.probabilidade_residual != null && r.probabilidade_residual !== "" ? Math.min(p0, clamp(r.probabilidade_residual,1,5)) : Math.max(1, p0 - 2);
+    return {r, a: level(s0, p0), b: level(s1, p1), s1, p1};
+  });
+  const sstA = Math.max(0, 100 - res.reduce((t, x) => t + PEN[x.a.k], 0));
+  const sstB = Math.max(0, 100 - res.reduce((t, x) => t + PEN[x.b.k], 0));
+  let s5A = null, s5B = null;
+  if (S5){
+    const av = S5.rows.filter(x => x.nota !== null);
+    s5A = S5.pct;
+    s5B = Math.round(av.reduce((t, x) => t + x.apos, 0) / (av.length * 5) * 100);
+  }
+  const gA = s5A === null ? sstA : Math.round((sstA + s5A) / 2), gB = s5B === null ? sstB : Math.round((sstB + s5B) / 2);
+  return {res, sstA, sstB, s5A, s5B, gA, gB};
+}
+function scoreSVG(rows){
+  const L = 120, W = 600, PW = W - L - 60, BH = 16, GAP = 10, GH = BH * 2 + 4 + GAP, H = 24 + rows.length * GH + 26;
+  const X = v => L + v / 100 * PW;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Notas atuais e projetadas após o plano de ação">`;
+  [0, 25, 50, 75, 100].forEach(v => { s += `<line x1="${X(v)}" y1="18" x2="${X(v)}" y2="${H-24}" stroke="#e3e7ea"/><text x="${X(v)}" y="${H-8}" text-anchor="middle" font-size="11" fill="#5b6770">${v}</text>`; });
+  s += `<rect x="${L}" y="2" width="12" height="10" rx="2" fill="#9aa7b0"/><text x="${L+16}" y="11" font-size="11" fill="#1c2328">Atual</text><rect x="${L+70}" y="2" width="12" height="10" rx="2" fill="#1f6fb2"/><text x="${L+86}" y="11" font-size="11" fill="#1c2328">Após o plano de ação</text>`;
+  rows.forEach((r, i) => {
+    const y = 24 + i * GH;
+    s += `<text x="${L-10}" y="${y + BH + 6}" text-anchor="end" font-size="13" font-weight="600" fill="#1c2328">${r.label}</text>`;
+    s += `<rect x="${L}" y="${y}" width="${Math.max(2, X(r.a)-L)}" height="${BH}" rx="3" fill="#9aa7b0"/><text x="${X(r.a)+6}" y="${y+12}" font-size="12" font-weight="600" fill="#1c2328">${r.a}</text>`;
+    s += `<rect x="${L}" y="${y+BH+4}" width="${Math.max(2, X(r.b)-L)}" height="${BH}" rx="3" fill="#1f6fb2"/><text x="${X(r.b)+6}" y="${y+BH+16}" font-size="12" font-weight="700" fill="#1c2328">${r.b}</text>`;
+  });
+  return s + `</svg>`;
+}
 function reportHTML(R, photos, meta){
   const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
   const riscos = (R.riscos || []).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
@@ -914,7 +987,10 @@ function reportHTML(R, photos, meta){
   const P = R.parecer || {}, sit = String(P.situacao || "Verificar em campo");
   const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LV.crit[1] : /parcial/i.test(sit) ? "#a87f00" : /conforme/i.test(sit) ? LV.ok[1] : "#a87f00";
   const ord = {alta:0, "média":1, media:1, baixa:2};
-  const plano = (R.plano_acao || []).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const S5 = prep5S(R);
+  const SC = scores(riscos, S5);
+  const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
+  const plano = (S5 ? S5.plano : (R.plano_acao || [])).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = R.fotos || [];
   let mx = "";
   for (let sv = 5; sv >= 1; sv--){
@@ -935,11 +1011,15 @@ function reportHTML(R, photos, meta){
     <div><dt>Data da inspeção</dt><dd>${esc(meta.data)}</dd></div>
     <div><dt>Responsável técnico</dt><dd>${esc(meta.resp || "Não informado")}</dd></div>
   </dl>
+  <div class="notas" aria-label="Notas de avaliação: atual e após o plano de ação">
+    ${tile("Segurança do Trabalho (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? tile("5S", SC.s5A, SC.s5B) : ""}${tile("Nota geral", SC.gA, SC.gB)}
+  </div>
+  <p class="cap">Notas de 0 a 100: situação atual → projeção após a implantação do plano de ação (detalhes na seção "Notas de avaliação").</p>
   ${H("Introdução")}${para(R.introducao)}
   ${H("Objetivo")}${para(R.objetivo)}
   ${H("Justificativa")}${para(R.justificativa)}
   ${H("Metodologia")}${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${H("Identificação e avaliação dos riscos")}
@@ -950,6 +1030,13 @@ function reportHTML(R, photos, meta){
     <div><h3>Matriz de risco (NR-01)</h3><div class="mx">${mx}</div><p class="cap">Linhas: severidade (1 a 5). Colunas: probabilidade (1 a 5). Números = itens da tabela.</p></div>
     <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p></div>
   </div>
+  ${S5 ? `${H("Avaliação 5S (organização e housekeeping)")}
+  <div class="sit" style="color:${S5.necessario ? "#c62828" : "#2e8b57"}">Implantação do 5S necessária: ${S5.necessario ? "Sim" : "Não"}</div>
+  <p>Pontuação: <b>${S5.total}/${S5.max}</b> (${S5.pct}%) · Classificação: <b style="color:${S5.classe[1]}">${S5.classe[0]}</b>.${S5.justificativa ? " " + esc(S5.justificativa) : ""}</p>
+  <div class="tw"><table><thead><tr><th>Senso</th><th>Nota</th><th>Constatação</th><th>Ação recomendada</th></tr></thead><tbody>
+  ${S5.rows.map(r => r.nota === null ? "" : `<tr><td><b>${r.jp}</b><div class="cap" style="margin:0">${r.pt}</div></td><td style="min-width:110px"><div class="num">${r.nota}/5</div><div class="gb"><i style="width:${r.nota*20}%;background:${r.nota >= 4 ? LV.ok[1] : r.nota === 3 ? LV.warn[1] : LV.crit[1]}"></i></div></td><td>${esc(r.constatacao || "—")}</td><td>${esc(r.acao || "Manter o padrão atual.")}</td></tr>`).join("")}
+  </tbody></table></div>
+  <p class="cap">Nota 0 a 5 por senso. Sensos com nota 3 ou menor exigem ação de implantação, que consta no plano de ação com a ferramenta "5S".</p>` : ""}
   ${H("Análise de causas – Diagrama de Ishikawa")}
   <p>Efeito analisado: <b>${esc(R.ishikawa?.efeito || "—")}</b>.</p>
   ${ishikawaSVG(R.ishikawa)}
@@ -962,6 +1049,17 @@ function reportHTML(R, photos, meta){
   <div class="two"><div>${reiSVG(rei)}</div><div><div class="tw"><table><thead><tr><th>#</th><th>Ação</th><th>E</th><th>I</th><th>Quadrante</th></tr></thead><tbody>
   ${rei.map((a, i) => `<tr><td class="num">${i+1}</td><td>${esc(a.acao)}</td><td class="num">${a.e}</td><td class="num">${a.i}</td><td>${quad(a)}</td></tr>`).join("") || '<tr><td colspan="5">—</td></tr>'}
   </tbody></table></div><p class="cap">Executar primeiro os ganhos rápidos (baixo esforço, alto impacto) e planejar os projetos estratégicos.</p></div></div>
+  ${H("Notas de avaliação: situação atual × após o plano de ação")}
+  ${scoreSVG([{label: "SST (NRs)", a: SC.sstA, b: SC.sstB}].concat(SC.s5A !== null ? [{label: "5S", a: SC.s5A, b: SC.s5B}] : [], [{label: "Geral", a: SC.gA, b: SC.gB}]))}
+  <div class="tw"><table><thead><tr><th>Indicador</th><th>Atual</th><th>Após o plano</th><th>Ganho</th></tr></thead><tbody>
+  ${[["Segurança do Trabalho (NRs)", SC.sstA, SC.sstB]].concat(SC.s5A !== null ? [["5S", SC.s5A, SC.s5B]] : [], [["Nota geral", SC.gA, SC.gB]]).map(([t, a, b]) => `<tr><td><b>${t}</b></td><td class="num">${a} · ${classe(a)[0]}</td><td class="num">${b} · ${classe(b)[0]}</td><td class="num">+${b - a}</td></tr>`).join("")}
+  </tbody></table></div>
+  <h3>Risco atual × risco residual (após as medidas)</h3>
+  <div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Atual (S×P)</th><th>Residual (S×P)</th></tr></thead><tbody>
+  ${SC.res.map((x, i) => `<tr><td class="num">${i+1}</td><td>${esc(x.r.perigo)}</td><td><span class="num">${clamp(x.r.severidade,1,5)}×${clamp(x.r.probabilidade,1,5)}=${x.a.r}</span> <span class="lv" style="background:${LV[x.a.k][2]}">${LV[x.a.k][0]}</span></td><td><span class="num">${x.s1}×${x.p1}=${x.b.r}</span> <span class="lv" style="background:${LV[x.b.k][2]}">${LV[x.b.k][0]}</span></td></tr>`).join("") || '<tr><td colspan="4">—</td></tr>'}
+  </tbody></table></div>
+  ${S5 ? `<h3>5S atual × após a implantação</h3><div class="tw"><table><thead><tr><th>Senso</th><th>Atual</th><th>Após</th></tr></thead><tbody>${S5.rows.filter(r => r.nota !== null).map(r => `<tr><td><b>${r.jp}</b> · ${r.pt}</td><td class="num">${r.nota}/5</td><td class="num">${r.apos}/5</td></tr>`).join("")}</tbody></table></div>` : ""}
+  <p class="cap"><b>Como a nota é calculada.</b> SST (NRs): parte de 100 e desconta, por risco identificado, 20 pontos se crítico, 12 se alto, 6 se moderado e 2 se baixo (matriz severidade × probabilidade da NR-01). 5S: soma das notas dos cinco sensos em percentual. Geral: média de SST e 5S. A projeção usa o risco residual esperado após as medidas e a nota esperada de cada senso após a implantação do 5S; é uma estimativa que depende da execução completa do plano e deve ser confirmada em nova inspeção. Faixas: 85–100 Excelente, 70–84 Bom, 50–69 Regular, abaixo de 50 Crítico.</p>
   ${H("Parecer técnico")}
   <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
   ${para(P.texto)}
@@ -970,8 +1068,8 @@ function reportHTML(R, photos, meta){
   ${(P.fundamentacao || []).map(f => `<tr><td class="num">${esc(f.nr)}${f.item ? " · " + esc(f.item) : ""}</td><td>${esc(f.constatacao)}</td><td>${esc(f.exigencia)}</td></tr>`).join("") || '<tr><td colspan="3">—</td></tr>'}
   </tbody></table></div>
   ${H("Plano de ação (5W2H)")}
-  <div class="tw"><table><thead><tr><th>Prioridade</th><th>O quê</th><th>Por quê</th><th>Onde</th><th>Quem</th><th>Quando</th><th>Como</th><th>Quanto</th></tr></thead><tbody>
-  ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td><b>${esc(a.acao)}</b></td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="8">—</td></tr>'}
+  <div class="tw"><table><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê</th><th>Por quê</th><th>Onde</th><th>Quem</th><th>Quando</th><th>Como</th><th>Quanto</th></tr></thead><tbody>
+  ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
   </tbody></table></div>
   ${H("Considerações finais")}${para(R.consideracoes_finais)}
   ${H("Referências normativas")}
