@@ -347,6 +347,9 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .lvd-tags button{cursor:pointer;border-color:var(--ink)}.lvd-tags b{font-family:var(--f-mono)}
 .lvd-m{margin:4px 0 0;font-size:14px;line-height:1.45}.lvd-m em{font-style:normal;font-weight:700;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:block}
 .lvd-res{margin-top:6px;font-size:13px;color:var(--muted)}
+button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
+button.newrep:hover{background:var(--crit);color:#fff}
+#newRep{width:100%;margin-top:10px}
 .lvd-loc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px;padding:12px 14px;border:1px solid #f5c98a;background:#fff7ea;border-radius:10px;font-size:13.5px}
 .lvd-loc span{flex:1;min-width:220px}.lvd-loc .err{color:var(--crit)}
 .lvd-list li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,280px);gap:10px;align-items:stretch}
@@ -921,7 +924,7 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v74</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v75</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1068,7 +1071,7 @@ api:
           <p class="hint" id="keyHint">Gemini gratuito: crie a chave em aistudio.google.com/apikey. Sem "Lembrar", a chave vale só enquanto esta aba estiver aberta (use em computador compartilhado).</p>
         </div>
         <button class="primary" id="goBtn" type="button" disabled>Analisar ambiente</button>
-        <button id="newInsp" type="button" hidden>Nova inspeção (apagar a atual)</button>
+        <button id="newInsp" type="button" class="newrep">Gerar novo relatório (apagar tudo)</button>
         <div class="row" id="stopRow" hidden><button id="stopBtn" type="button">Parar</button></div>
         <div class="status" id="status" role="status"></div>
       </div>
@@ -1091,6 +1094,7 @@ api:
           <div class="logo-f"><span>Logo da empresa (opcional)</span><div class="row"><label class="btn">Escolher logo<input id="rLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><img id="rLogoPrev" alt="Logo escolhida" hidden><button id="rLogoClr" type="button" hidden>Remover</button></div></div>
         </div>
         <button class="primary" id="repBtn" type="button" disabled>Gerar relatório técnico</button>
+        <button id="newRep" type="button" class="newrep" title="Apaga fotos, anexos, análise e relatório, desconecta o celular e começa do zero">Gerar novo relatório (apagar tudo)</button>
         <p class="hint">Usa as imagens capturadas (ou o último quadro do monitoramento) e a análise mais recente. Monta introdução, objetivo, justificativa, metodologia, fotos, Ishikawa, matriz GUT, matriz REI, parecer pelas NRs e plano de ação.</p>
       </div>
     </section>
@@ -1106,7 +1110,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v74</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v75</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4582,11 +4586,10 @@ function saveSoon(){
   saveT = setTimeout(async () => {
     try{
       const has = frames.length || lastData || report || audios.length || docs.length;
-      if (!has){ await idbDel(); $("newInsp").hidden = true; return; }
+      if (!has){ await idbDel(); return; }
       await idbPut({t: Date.now(), ctx: $("ctx").value, frames: frames.map(f => f.blob), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
         audios: audios.filter(a => a.info || a.err).map(a => ({name: a.name, from: a.from, dur: a.dur, blob: a.blob, info: a.info, err: a.err, status: a.status})),
         docs: docs.filter(d => !d.err).map(d => ({name: d.name, kind: d.kind, note: d.note, text: d.text, images: d.images || []})), docInfo});
-      $("newInsp").hidden = false;
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
   }, 800);
 }
@@ -4601,20 +4604,29 @@ async function restoreSession(){
     (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; drawDocs(); drawDocInfo();
     if (s.lastData){ lastData = s.lastData; render(lastData, false); }
     if (s.report){ const blobs = frames.map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
-    $("newInsp").hidden = false;
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}). Para começar do zero, clique em Nova inspeção.`);
   }catch(e){ console.warn(e); }
   finally{ restoring = false; updateGo(); }
 }
+// "Gerar novo relatório": apaga tudo da inspeção atual, desconecta o celular e recomeça do zero
 async function newInspection(){
-  if (!confirm("Começar uma nova inspeção? As fotos, a análise, as validações e o relatório atuais serão apagados deste navegador.")) return;
+  if (!confirm("Gerar um novo relatório?\n\nIsto apaga TUDO da inspeção atual: fotos, áudios, documentos anexados, contexto, análise, validações das NRs e o relatório. Celulares conectados serão desconectados.\n\nEmpresa, responsável técnico e \"Elaborado por\" continuam preenchidos.")) return;
+  try{ ctl?.abort(); }catch(e){}
+  if (qr) qrStop(); // desconecta o celular (ele recebe o aviso de sessão encerrada)
+  try{ if (mon) stopMon(); }catch(e){}
+  try{ if (stream) stopCam(); }catch(e){}
   frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0;
   audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0;
-  docs.length = 0; docInfo = null; lastData = null; report = null;
+  history.length = 0;
+  docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
-  refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); render(EXAMPLE, true);
+  ["rSetor", "rRev"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
+  $("rData").value = new Date().toISOString().slice(0, 10);
+  ["lvDlg", "nrDlg", "faceDlg"].forEach(id => { try{ $(id)?.open && $(id).close(); }catch(e){} });
+  refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); render(EXAMPLE, true); updateGo();
   try{ await idbDel(); }catch(e){}
-  $("newInsp").hidden = true; setStatus("Nova inspeção iniciada.");
+  qrMsg("");
+  setStatus("Novo relatório iniciado: tudo da inspeção anterior foi apagado. Adicione as fotos do novo setor.");
   scrollTo({top: 0, behavior: "smooth"});
 }
 
@@ -4623,7 +4635,7 @@ function setMode(txt){ $("mode").innerHTML = "Modo: <b>" + esc(txt) + "</b>"; }
 async function init(){
   if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
   render(EXAMPLE, true); refreshThumbs();
-  $("newInsp").onclick = newInspection;
+  $("newInsp").onclick = newInspection; $("newRep").onclick = newInspection;
   $("ctx").addEventListener("input", saveSoon);
   if (inViewer){
     $("camHint").textContent = "Dentro do Claude, a análise usa a sua conta, sem chave. A câmera ao vivo e o monitoramento funcionam na versão para navegador (botão abaixo).";
