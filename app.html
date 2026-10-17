@@ -967,7 +967,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v93</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v94</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1042,7 +1042,7 @@ api:
             </select>
             <button id="monBtn" type="button" disabled>Iniciar monitoramento</button>
           </div>
-          <label class="mon-quick"><input type="checkbox" id="monQuick" checked> <span><b>Verificação rápida (recomendado)</b> – modelo Flash-Lite, resposta em poucos segundos. Desmarque para uma verificação mais precisa e mais lenta.</span></label>
+          <label class="mon-quick"><input type="checkbox" id="monQuick" checked> <span><b>Verificação rápida (recomendado)</b> – modelo Flash-Lite, resposta em poucos segundos. Para adornos pequenos, deixe a pessoa centralizada e próxima da câmera. Desmarque para uma verificação mais precisa e mais lenta.</span></label>
           <details class="mon-dd"><summary><span>Situações monitoradas</span> <b id="monAlN"></b></summary>
             <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
           </details>
@@ -1114,7 +1114,7 @@ api:
             <button id="audRec" type="button">Gravar áudio</button>
           </div>
           <div class="row">
-            <button id="docRun" type="button" hidden>Extrair informações com IA</button>
+            <button id="docRun" type="button" hidden>Extrair informações dos documentos</button>
             <button id="docClr" type="button" hidden>Remover documentos</button>
             <button id="audClr" type="button" hidden>Remover áudios</button>
           </div>
@@ -1122,7 +1122,7 @@ api:
           <div class="docsum" id="docSum" hidden></div>
           <ul class="doclist audlist" id="audList"></ul>
           <div class="docsum" id="audSum" hidden></div>
-          <p class="hint"><b>Documentos:</b> PGR, APR, laudos, checklists, fichas de EPI, relatórios anteriores (PDF, Word, Excel, texto ou foto). <b>Áudios:</b> entrevistas com trabalhadores, relatos do supervisor ou observações faladas (também chegam pelo celular). A IA transcreve os áudios (com a chave do Gemini) e usa tudo na análise e no relatório. Os arquivos não ficam salvos; o conteúdo é enviado ao serviço de IA escolhido.</p>
+          <p class="hint"><b>Documentos:</b> PGR, APR, laudos, checklists, fichas de EPI, relatórios anteriores (PDF, Word, Excel, texto ou foto). <b>Áudios:</b> entrevistas com trabalhadores, relatos do supervisor ou observações faladas (também chegam pelo celular). O sistema transcreve os áudios (com a chave do Gemini) e usa tudo na análise e no relatório. Os arquivos não ficam salvos; o conteúdo é enviado ao serviço de análise escolhido.</p>
         </div>
         <div id="keyBox" class="stack" hidden>
           <label class="label" for="apiKey" style="margin:0">Chave da API (Gemini ou Claude)</label>
@@ -1138,7 +1138,7 @@ api:
 
       <div class="panel stack" id="histBox" hidden>
         <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p class="label">Alertas do monitoramento</p></div>
-        <p class="hint" style="margin:0">Só ficam guardadas as fotos em que a IA notificou risco; as demais são descartadas após a análise. Clique numa foto para ver a análise daquele momento.</p>
+        <p class="hint" style="margin:0">Só ficam guardadas as fotos em que o monitoramento notificou risco; as demais são descartadas após a análise. Clique numa foto para ver a análise daquele momento.</p>
         <ol class="hist" id="hist"></ol>
       </div>
 
@@ -1171,7 +1171,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v93</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v94</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1201,7 +1201,7 @@ api:
       <h2>O que você quer enviar?</h2>
       <p class="hint">Celular conectado ao computador. Escolha uma opção; você pode voltar e trocar quando quiser.</p>
       <button id="phGoPhotos" class="ph-opt" type="button"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span><b>Enviar fotos</b><small>Câmera ao vivo ou fotos salvas na galeria</small></span></button>
-      <button id="phGoAudio" class="ph-opt" type="button"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><b>Enviar áudios</b><small>Grave um relato ou envie um áudio salvo; a IA transcreve</small></span></button>
+      <button id="phGoAudio" class="ph-opt" type="button"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><b>Enviar áudios</b><small>Grave um relato ou envie um áudio salvo; o sistema transcreve</small></span></button>
     </div>
     <div id="phPhotos" class="stack">
     <button class="ph-back" type="button" hidden>Voltar às opções</button>
@@ -1226,7 +1226,7 @@ api:
     <div id="phAudio" class="stack" hidden>
       <button class="ph-back" type="button" hidden>Voltar às opções</button>
       <h2>Relatos em áudio</h2>
-      <p class="hint">Grave entrevistas com trabalhadores, relatos do supervisor ou suas observações durante a inspeção. O computador recebe e a IA transcreve e usa na análise e no relatório.</p>
+      <p class="hint">Grave entrevistas com trabalhadores, relatos do supervisor ou suas observações durante a inspeção. O computador recebe, transcreve e usa na análise e no relatório.</p>
       <div class="ph-recwrap">
         <button id="phRecBtn" class="ph-recbtn" type="button" aria-pressed="false" aria-label="Gravar áudio"><span></span></button>
         <div><div class="ph-timer" id="phTimer">0:00</div><div class="hint">Toque para gravar e toque de novo para parar e enviar (até 10 min).</div></div>
@@ -1304,7 +1304,9 @@ function docBlock(){
 const PESSOAS_REGRAS = `Verificação de pessoas (obrigatória): examine cada pessoa visível nas imagens. Para cada uma, descreva-a só de forma genérica (posição na imagem, função aparente, cor da roupa), sem nome, sem reconhecimento facial e sem traços físicos que a identifiquem. Informe a atividade e os riscos ocupacionais a que está exposta, os EPIs em uso, os EPIs que faltam para essa atividade (NR-06, com CA válido; ex.: capacete, óculos, protetor auricular, luvas, calçado de segurança, máscara/respirador, cinto de segurança tipo paraquedista, vestimenta antichama) e os adornos visíveis (anéis, alianças, pulseiras, relógios, correntes, colares, brincos, piercings, crachá ou cordão pendurado, cabelo comprido solto). Adornos e cabelo solto são não conformidade junto a partes móveis de máquinas (risco de agarramento, NR-12), em instalações elétricas (NR-10 veda adornos) e em serviços de saúde (NR-32 veda adornos). Situação: "Não conforme" se faltar EPI exigido ou houver adorno em situação de risco; "Conforme" se estiver adequado; "Verificar em campo" se a imagem não permitir concluir (pessoa distante, parcialmente visível, mãos ocultas). Não invente pessoas: se não houver ninguém, use "total":0 e lista vazia. Toda não conformidade de pessoa deve virar também um risco na lista de riscos (NR-06 para EPI; NR-12, NR-10 ou NR-32 para adornos) e uma ação no plano de ação (fornecimento e exigência de uso do EPI, treinamento, DDS, fiscalização, regra de vedação de adornos).`;
 const PESSOAS_JSON = `"pessoas":{"total":0,"observacoes":[{"figura":"Figura 1","pessoa":"Trabalhador 1 – descrição genérica (ex.: à esquerda, uniforme azul)","atividade":"","riscos":"riscos ocupacionais a que está exposto","epis_em_uso":[""],"epis_faltantes":[{"epi":"","nr":"NR-06","motivo":"por que é exigido nesta atividade"}],"adornos":[{"adorno":"","risco":"","nr":"NR-12"}],"situacao":"Conforme|Não conforme|Verificar em campo","recomendacao":""}]}`;
 // normaliza a seção "pessoas" (a IA às vezes devolve listas como texto)
-function pessoasOf(d){
+// "Figura 47" com só 10 fotos é invenção: descarta
+const figOk = (fig, n) => { const m = String(fig || "").match(/\d+/); return !n || !m || (Number(m[0]) >= 1 && Number(m[0]) <= n); };
+function pessoasOf(d, n){
   const P = d && typeof d.pessoas === "object" && d.pessoas ? d.pessoas : {};
   const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
   const lista = asList(P.observacoes || (Array.isArray(d?.pessoas) ? d.pessoas : [])).filter(o => o && typeof o === "object").map((o, i) => {
@@ -1313,9 +1315,11 @@ function pessoasOf(d){
     let sit = t(o.situacao);
     if (!sit) sit = epiF.length || ad.length ? "Não conforme" : "Verificar em campo";
     const k = /n[ãa]o\s*conforme/i.test(sit) ? "crit" : /^conforme/i.test(sit) ? "ok" : "warn";
+    if (!figOk(o.figura, n)) return null;
     return {figura: t(o.figura), pessoa: t(o.pessoa) || `Pessoa ${i + 1}`, atividade: t(o.atividade), riscos: t(o.riscos), epiUso: asList(o.epis_em_uso).map(t).filter(x => x && !/^(nenhum|n[ãa]o)/i.test(x)), epiF, ad, sit, k, rec: t(o.recomendacao)};
   });
-  return {total: Math.max(lista.length, Math.round(Number(P.total) || 0)), lista, nc: lista.filter(x => x.k === "crit").length, semEpi: lista.filter(x => x.epiF.length).length, comAd: lista.filter(x => x.ad.length).length};
+  const lst = lista.filter(Boolean);
+  return {total: lst.length, lista: lst, nc: lst.filter(x => x.k === "crit").length, semEpi: lst.filter(x => x.epiF.length).length, comAd: lst.filter(x => x.ad.length).length};
 }
 
 // documentos e registros de evidência de SST que o setor precisa manter
@@ -1447,10 +1451,13 @@ function psiOf(d){
   return asList(d?.psicossociais).filter(x => x && typeof x === "object" && t(x.fator)).map(x => ({fator: t(x.fator), fonte: t(x.fonte), ev: t(x.evidencia), cat: t(x.categoria), L: level(x.severidade, x.probabilidade), sev: clamp(x.severidade, 1, 5), prob: clamp(x.probabilidade, 1, 5), nr: t(x.nr), medida: t(x.medida)})).sort((a, b) => b.L.r - a.L.r);
 }
 
-function buildPrompt(ctx){
+// regra principal: só o que há nas fontes da inspeção (sem suposições)
+const soEvid = n => `REGRA PRINCIPAL – SOMENTE EVIDÊNCIAS: registre apenas riscos, problemas, pessoas e constatações que aparecem nas ${n} imagem(ns) (Figura 1 a Figura ${n}), nas transcrições de áudio, nos documentos anexados ou no contexto digitado pelo usuário que estiverem nesta mensagem. Não faça suposições e não complete com o que é "comum" nesse tipo de setor; se não há evidência, não inclua o item (deixe a lista vazia). Pessoas: registre SOMENTE se estiverem claramente visíveis nas imagens; se nenhuma pessoa aparece, use "total":0 e lista vazia. Nunca cite figura inexistente (o maior número é Figura ${n}). Riscos psicossociais e análise documental: somente se houver relatos em áudio, documentos ou contexto digitado com essa informação. Não mencione inteligência artificial, IA, Gemini nem Claude no texto.
+`;
+function buildPrompt(ctx, n = 1){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
-${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}
+${soEvid(n)}${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}
 Tarefas:
 1. Identifique o tipo de ambiente e as atividades visíveis.
 2. Liste os perigos e riscos visíveis citando a Norma Regulamentadora aplicável (NR-01 GRO/PGR, NR-06 EPI, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22 mineração, NR-23, NR-24, NR-26 sinalização, NR-33, NR-35 etc.) e, quando tiver segurança, o item. Classifique pela matriz da NR-01: severidade 1-5 e probabilidade 1-5. Categoria: Físico, Químico, Biológico, Ergonômico ou Acidente.
@@ -1658,7 +1665,8 @@ function render(d, isExample){
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
-  const PP = pessoasOf(d), DR = docRegOf(d), RS = residuosOf(d), AR = armOf(d), LY = layoutOf(d), ED = edifOf(d), PS = psiOf(d);
+  const PP = pessoasOf(d, isExample ? 0 : frames.length), DR = docRegOf(d), RS = residuosOf(d), AR = armOf(d), LY = layoutOf(d), ED = edifOf(d);
+  const PS = isExample || audios.some(a => a.info) || docInfo || $("ctx").value.trim() ? psiOf(d) : []; // psicossociais só com relatos, documentos ou contexto
   const NRC = nrChecks(d), NRA = Object.values(NRC).filter(m => m.aplic).sort((a, b) => a.n - b.n);
   curNR = NRC; curRiscos = riscos;
   const ppl = PP.lista.map(o => `<li class="pp ${o.k}">
@@ -1696,7 +1704,7 @@ function render(d, isExample){
       <div class="it-h"><span>${String(i+1).padStart(2,"0")}</span>${txt(m.metodologia) ? `<span class="tag">${esc(txt(m.metodologia))}</span>` : ""}</div>
       <b>${esc(txt(m.titulo)) || "Melhoria"}</b>${txt(m.descricao) ? `<p>${esc(txt(m.descricao))}</p>` : ""}${txt(m.fundamentacao || m.fundamentacao_legal) ? `<p class="fund"><span>Base legal</span>${esc(txt(m.fundamentacao || m.fundamentacao_legal))}</p>` : ""}</article>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
 
-  const W = [["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto"]];
+  const W = [["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto (estimativa)"]];
   const w2hList = asList(d.plano_5w2h).map(a => rec(a, "what")).filter(Boolean);
   const w2h = w2hList.map((a,i) => `<tr>${W.map(([k,l]) => {
       const v = esc(txt(a[k]));
@@ -2180,7 +2188,7 @@ function openNR(n){
   const incl = !off && !!(m && m.aplic), busy = nrBusy === n;
   h += `<div class="nrd-imp ${busy ? "busy" : incl ? "yes" : "no"}"><b>Implementar esta NR no relatório?</b>
     <div class="nrd-yn" role="group" aria-label="Implementar ${code} no relatório"><button type="button" id="nrYes" aria-pressed="${incl}"${busy ? " disabled" : ""}>Sim</button><button type="button" id="nrNo" aria-pressed="${!incl && !busy}"${busy ? " disabled" : ""}>Não</button></div>
-    <span>${busy ? `Gerando o checklist da ${code} com a IA a partir das fotos do setor…` : incl ? `<b>Sim:</b> o checklist desta NR aparece abaixo e entra no relatório.` : off ? `<b>Não:</b> ${code} fica fora do relatório (checklist, riscos e fundamentação).` : `A análise não indicou esta NR para o setor. Marque <b>Sim</b> para a IA montar o checklist e incluí-lo no relatório.`}</span>
+    <span>${busy ? `Gerando o checklist da ${code} a partir das fotos do setor…` : incl ? `<b>Sim:</b> o checklist desta NR aparece abaixo e entra no relatório.` : off ? `<b>Não:</b> ${code} fica fora do relatório (checklist, riscos e fundamentação).` : `A análise não indicou esta NR para o setor. Marque <b>Sim</b> para montar o checklist e incluí-lo no relatório.`}</span>
     ${nrErr && nrErr.n === n ? `<span class="err">${esc(nrErr.msg)}</span>` : ""}</div>`;
   if (m && m.just) h += `<p class="nrd-j">${esc(m.just)}</p>`;
   if (m && m.aplic && m.itens.length){
@@ -2215,8 +2223,8 @@ async function setNR(n, yes){
   const ok = sample || (!inViewer && $("apiKey").value.trim());
   if (!ok || !blobs.length){
     // sem IA ou sem fotos: checklist mínimo para verificação em campo
-    d.checklist_nrs.push({nr: code, aplicavel: true, justificativa: "Incluída pelo responsável técnico.", manual: true, itens: [{item: "confirmar item", requisito: `Atender aos requisitos aplicáveis da ${code} – ${def[2]}`, situacao: "Não verificável", evidencia: !blobs.length ? "Sem imagens para análise" : "Checklist não gerado: informe a chave da IA", acao: "Verificar em campo"}]});
-    nrErr = !blobs.length ? {n, msg: "Capture ou envie fotos do setor para a IA montar o checklist completo."} : {n, msg: "Informe a chave da IA (Gemini ou Claude) para gerar o checklist completo desta NR."};
+    d.checklist_nrs.push({nr: code, aplicavel: true, justificativa: "Incluída pelo responsável técnico.", manual: true, itens: [{item: "confirmar item", requisito: `Atender aos requisitos aplicáveis da ${code} – ${def[2]}`, situacao: "Não verificável", evidencia: !blobs.length ? "Sem imagens para análise" : "Checklist não gerado: informe a chave da API", acao: "Verificar em campo"}]});
+    nrErr = !blobs.length ? {n, msg: "Capture ou envie fotos do setor para montar o checklist completo."} : {n, msg: "Informe a chave da API (Gemini ou Claude) para gerar o checklist completo desta NR."};
     refreshNR(n); return;
   }
   nrBusy = n; refreshNR(n);
@@ -2257,7 +2265,7 @@ function openLevel(k){
   let h = `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Riscos de nível ${t.toLowerCase()}</h2><div class="hint" style="margin:0">Severidade × probabilidade de ${rg} (matriz de risco da NR-01)</div></div></div>`;
   // análise feita antes de a IA informar a foto de cada risco: localiza só as fotos, sem refazer a análise
   const semFoto = curRiscos.some(r => r.figura === undefined), podeLoc = semFoto && frames.length && curRender && !curRender.isExample;
-  if (podeLoc) h += `<div class="lvd-loc"><span>${locBusy ? "Inserindo a foto correspondente a cada problema (a IA localiza a foto e a área de cada risco)…" : locErr ? `<b class="err">${esc(locErr)}</b>` : "Não foi possível inserir as fotos automaticamente. Clique para tentar de novo."}</span><button type="button" id="lvLoc" class="accent"${locBusy ? " disabled" : ""}>${locBusy ? "Localizando…" : "Localizar as fotos dos riscos"}</button></div>`;
+  if (podeLoc) h += `<div class="lvd-loc"><span>${locBusy ? "Inserindo a foto correspondente a cada problema (o sistema localiza a foto e a área de cada risco)…" : locErr ? `<b class="err">${esc(locErr)}</b>` : "Não foi possível inserir as fotos automaticamente. Clique para tentar de novo."}</span><button type="button" id="lvLoc" class="accent"${locBusy ? " disabled" : ""}>${locBusy ? "Localizando…" : "Localizar as fotos dos riscos"}</button></div>`;
   if (!list.length) h += `<p class="hint">Nenhum risco classificado neste nível na análise atual.</p>`;
   else h += `<ol class="lvd-list ${k}">${list.map(({r, L}) => {
     const S = clamp(r.severidade, 1, 5), P = clamp(r.probabilidade, 1, 5), n = nrNum(r.nr);
@@ -2386,7 +2394,7 @@ async function viaApi(prompt, blobs, signal, again = true, opts = {}){
   const out = await parseLoose(text); if (out) return out;
   if (j.stop_reason === "max_tokens") throw {code:"http", status:0, message: "a resposta foi cortada por tamanho. Tente com menos fotos"};
   if (again) return viaApi(prompt, blobs, signal, false, opts); // refaz uma vez sozinho
-  throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
+  throw {code:"http", status:0, message: "a análise respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
 function provider(){ return /^sk-ant-/.test($("apiKey").value.trim()) ? "claude" : "gemini"; }
@@ -2448,7 +2456,7 @@ async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   const out = await parseLoose(text); if (out) return out;
   if (fin === "MAX_TOKENS") throw {code:"http", status:0, message: cut};
   if (again) return viaGemini(prompt, blobs, signal, false, opts); // refaz uma vez sozinho
-  throw {code:"http", status:0, message: "a IA respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
+  throw {code:"http", status:0, message: "a análise respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
 }
 
 const ERR = {
@@ -2483,7 +2491,7 @@ function handleErr(e){
   else {
     console.error(e);
     const m = String(e?.message || e || "");
-    setStatus(/fetch|network|load failed/i.test(m) ? "Falha na análise: sem conexão com o serviço de IA. Verifique a internet e tente de novo." : "Falha na análise: " + (m || "erro desconhecido") + ". Tente de novo.", true);
+    setStatus(/fetch|network|load failed/i.test(m) ? "Falha na análise: sem conexão com o serviço de análise. Verifique a internet e tente de novo." : "Falha na análise: " + (m || "erro desconhecido") + ". Tente de novo.", true);
   }
 }
 // roda uma análise; devolve os dados ou null se falhou (status já mostra o motivo)
@@ -2491,7 +2499,7 @@ async function analyze(blobs, label, extra = "", opts = {}){
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`${label}… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus(label + "…");
-  const prompt = buildPrompt($("ctx").value.trim()) + extra;
+  const prompt = buildPrompt($("ctx").value.trim(), blobs.length) + extra;
   try{
     const data = await callAI(prompt, blobs, ctl.signal, opts);
     render(data, false); lastData = data; locTried = false; saveSoon();
@@ -2601,7 +2609,8 @@ async function cycle(){
   const crit = data.critico, hits = monHits(data, sel);
   const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
   if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${data.hora}.`);
-  lampSaw(data.cena ? `IA viu (${data.hora}, em ${data.secs} s): ${data.cena}` : `Verificação das ${data.hora} concluída em ${data.secs} s.`);
+  const enq = /parcialmente|cortad|fora do quadro|de costas|muito longe|ao fundo|canto|borda/i.test(data.cena) ? " ⚠ Pessoa só em parte do quadro: aproxime ou centralize a câmera para o sistema ver mãos, pulsos e rosto." : "";
+  lampSaw(data.cena ? `O sistema viu (${data.hora}, em ${data.secs} s): ${data.cena}${enq}` : `Verificação das ${data.hora} concluída em ${data.secs} s.`);
   if (msgs.length){
     addHistory(blob, data, msgs); saveSoon(); // quadro com alerta: guardado
     alSave(history[0]); // e gravado na pasta escolhida, se houver
@@ -2659,12 +2668,13 @@ Situações:
 ${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
 - "critico": qualquer outra situação de risco grave e iminente à vida ou à integridade (NR-03), como incêndio, choque elétrico, queda iminente, prensamento ou atropelamento.
 ${sel.some(x => x[1] === "sem_epi") && epiReq().length ? `EPIs OBRIGATÓRIOS nesta área: ${epiReq().join(", ")}. Em "sem_epi", confira CADA pessoa visível contra essa lista e marque "ocorre": true se faltar qualquer um deles; em "onde", diga qual EPI falta e em qual pessoa.\n` : ""}Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
+Para adornos, examine com atenção as mãos e dedos, os pulsos, o pescoço e as orelhas de cada pessoa. Se a pessoa estiver cortada, de costas, muito longe ou com mãos/rosto fora do quadro, diga isso em "cena" (ex.: "mãos fora do quadro").
 Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição na imagem e roupa; olhos abertos ou fechados; postura: costas apoiadas ou não, coluna reta ou curvada, pescoço e cabeça retos ou inclinados; EPIs em uso; adornos visíveis) e o ambiente, em uma ou duas frases curtas. NUNCA descreva cabelo, calvície, barba, tatuagem, cor da pele, idade ou outro traço físico que identifique a pessoa.
 Responda SOMENTE com JSON: {"cena":"","alertas":{${[...sel.map(x => x[1]), "critico"].map(k => `"${k}":{"ocorre":false,"certeza":"alta|média|baixa","onde":""}`).join(",")}}}`;
   const t0 = Date.now();
   try{
     const quick = $("monQuick")?.checked !== false;
-    const small = await shrinkTo(blob, quick ? 640 : 768); // basta para pessoas, EPI e postura, e a resposta vem bem mais rápida
+    const small = await shrinkTo(blob, 1024); // resolução para enxergar objetos pequenos (anel, relógio) sem perder a rapidez
     const r = await callAI(prompt, [small], ctl.signal, quick ? {fast: true, lite: true, budget: 0} : {fast: true, budget: 384});
     const al = r && typeof r.alertas === "object" ? r.alertas : {};
     const c = al.critico && (al.critico.ocorre === true || al.critico.ocorre === "true") ? [String(al.critico.onde || "situação grave na imagem")] : [];
@@ -2712,7 +2722,7 @@ const epiReq = () => EPI_REQ.filter(([id]) => $(id)?.checked).map(([, l]) => l);
 (() => {
   const f = $("monAl"); if (!f) return;
   const grp = (g, t) => `<div class="mon-g"><b>${t}</b>${MON_AL.filter(x => x[4] === g).map(([id, , , l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div>`;
-  f.insertAdjacentHTML("beforeend", `<div class="mon-g mon-epi"><b>EPIs obrigatórios nesta área</b><span class="hint" style="margin:0">Marque os exigidos no local; a IA confere cada pessoa. Sem nenhum marcado, ela avalia pela atividade.</span><div class="mon-epis">${EPI_REQ.map(([id, l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div></div>`);
+  f.insertAdjacentHTML("beforeend", `<div class="mon-g mon-epi"><b>EPIs obrigatórios nesta área</b><span class="hint" style="margin:0">Marque os exigidos no local; o sistema confere cada pessoa. Sem nenhum marcado, ela avalia pela atividade.</span><div class="mon-epis">${EPI_REQ.map(([id, l]) => `<label><input type="checkbox" id="${id}"> ${l}</label>`).join("")}</div></div>`);
   f.insertAdjacentHTML("beforeend", grp("p", "Pessoas (atos inseguros)") + grp("a", "Ambiente (condições inseguras)") + `<div class="mon-all"><button type="button" id="alAll">Marcar todas</button><button type="button" id="alNone">Desmarcar todas</button></div>`);
   $("alAll").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount(); };
   $("alNone").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = false; store("sst_" + id, null); }); alCount(); };
@@ -2796,6 +2806,7 @@ const MXC = {crit: "#d32f2f", high: "#f57c00", warn: "#fbc02d", ok: "#2e9e5b"}; 
 
 function reportPrompt(meta, ctx, base, n){
   return `Você é engenheiro(a) de segurança do trabalho no Brasil e vai redigir um RELATÓRIO TÉCNICO DE INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO a partir da(s) ${n} imagem(ns) anexada(s). Cite-as como Figura 1, Figura 2 etc., na ordem de envio.
+${soEvid(n)}Fontes disponíveis nesta inspeção: ${n} imagem(ns); ${meta.audios?.length || 0} relato(s) em áudio; ${meta.docs?.length || 0} documento(s) anexado(s); contexto digitado: ${ctx ? "sim" : "não"}.${!(meta.audios?.length || meta.docs?.length || ctx) ? " Como não há relatos, documentos nem contexto, deixe vazios os riscos psicossociais e a análise documental." : ""}
 Dados da inspeção: empresa/unidade: ${meta.emp || "não informado"}; setor/área: ${meta.setor || "não informado"}; data: ${meta.data}; responsável técnico: ${meta.resp || "não informado"}.
 ${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}${base ? "Análise preliminar feita por IA (ponto de partida; corrija o que a imagem contrariar): " + JSON.stringify(base).slice(0, 12000) + "\n" : ""}${base?.nrs_desconsideradas?.length ? `IMPORTANTE: o responsável técnico decidiu NÃO abordar estas NRs neste relatório: ${base.nrs_desconsideradas.join(", ")}. Não as cite em riscos, parecer, fundamentação, checklist, referências nem plano de ação.\n` : ""}
 Regras:
@@ -3025,7 +3036,15 @@ function gutAll(R, riscos){
   });
   return gut.map(g => ({...g, s: g.G * g.U * g.T})).sort((a, b) => b.s - a.s);
 }
+// o relatório não menciona inteligência artificial: troca qualquer menção vinda do texto gerado
+function scrubAI(x){
+  if (typeof x === "string") return x.replace(/(?:com\s+(?:o\s+)?apoio\s+de\s+|assistid[ao]s?\s+por\s+|por\s+meio\s+de\s+)?intelig[êe]ncia\s+artificial/gi, "conforme a Metodologia de Análise SST").replace(/\b(?:pela|por|com|da)\s+IA\b/g, "pela análise").replace(/\bIA\b/g, "análise");
+  if (Array.isArray(x)) return x.map(scrubAI);
+  if (x && typeof x === "object"){ const o = {}; for (const k in x) o[k] = scrubAI(x[k]); return o; }
+  return x;
+}
 function reportHTML(R, photos, meta){
+  R = scrubAI(R);
   const para = t => String(t || "").split(/\n+/).filter(x => x.trim()).map(x => `<p>${esc(x)}</p>`).join("") || "<p>—</p>";
   const riscos = asList(R.riscos).filter(r => r && !nrOff()[nrNum(r.nr)]).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const counts = {crit:0, high:0, warn:0, ok:0}; riscos.forEach(r => counts[level(r.severidade, r.probabilidade).k]++);
@@ -3041,10 +3060,11 @@ function reportHTML(R, photos, meta){
   const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
   const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
-  const PP = pessoasOf(R.pessoas ? R : (lastData || {}));
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {}), photos.length);
   const RS = residuosOf(R.residuos ? R : (lastData || {}));
   const AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {}));
-  const PS = nrOff()[1] ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
+  const temFonte = !!(meta.audios?.length || meta.docs?.length || meta.ctx); // psicossociais só a partir de relatos, documentos ou contexto
+  const PS = nrOff()[1] || !temFonte ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
   const NRA = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : R.checklist_nrs ? R : {...(lastData || {}), riscos: R.riscos}, true)).filter(m => m.aplic && m.itens.length && !nrOff()[m.n]).sort((a, b) => a.n - b.n);
   const NRrej = Object.values(nrChecks(lastData?.checklist_nrs ? lastData : {}, true)).reduce((t, m) => t + m.rejN, 0);
   const DR = docRegOf(R.documentos_registros ? R : (lastData || {}));
@@ -3089,7 +3109,7 @@ function reportHTML(R, photos, meta){
         <div><dt>Data da inspeção</dt><dd>${esc(meta.data)}</dd></div>
         <div><dt>Código</dt><dd>${code} · Rev. 00</dd></div>
       </dl>
-      <div class="cv-foot"><b>${esc(meta.emp || "Empresa / unidade")}</b><span>${[meta.elab ? "Elaboração: " + esc(meta.elab) : "", meta.rev ? "Revisão: " + esc(meta.rev) : ""].filter(Boolean).join(" · ")}</span><div class="cv-tag">Identificar <i>•</i> Avaliar <i>•</i> Controlar</div></div>
+      <div class="cv-foot"><b>${esc(meta.emp || "Empresa / unidade")}</b><span>${[meta.elab ? "Elaboração: " + esc(meta.elab) : "", meta.rev ? "Revisão: " + esc(meta.rev) : ""].filter(Boolean).join(" · ")}</span><div class="cv-tag">Planejar <i>•</i> Desenvolver <i>•</i> Checar <i>•</i> Agir</div></div>
     </div>
     <div class="cv-art">${coverArtSVG(photos[0] || "")}</div>
   </section>
@@ -3114,7 +3134,7 @@ function reportHTML(R, photos, meta){
   </section>
   ${H("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.")}
   <div class="tw"><table class="idt"><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody>
-  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens com análise assistida por inteligência artificial"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
+  ${[["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área inspecionada", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código", code], ["Revisão", "00"], ["Emissão", emis], ["Método", "Inspeção por imagens – Metodologia de Análise SST"], ["Classificação", "Uso interno"]].map(([a, b]) => `<tr><td>${a}</td><td>${esc(b)}</td></tr>`).join("")}
   </tbody></table></div>
   ${call("info", "Uso do relatório", "Leia as seções na ordem apresentada: o diagnóstico fundamenta o parecer, e o parecer fundamenta o plano de ação.")}
   ${call("warn", "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.")}
@@ -3124,19 +3144,19 @@ function reportHTML(R, photos, meta){
   ${H("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.")}
   <div class="fig flow">${flowSVG(["Registro das imagens", "Reconhecimento ambiental", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"])}</div>%%F:Fluxo da inspeção apresentado neste relatório%%
   ${para(R.metodologia)}
-  <ul><li>Inspeção visual por registro fotográfico e análise assistida por inteligência artificial.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Proteção de imagem: os rostos das pessoas nas fotos foram cobertos para impedir a identificação.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados por inteligência artificial.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
+  <ul><li>Inspeção visual por registro fotográfico, conforme a Metodologia de Análise SST.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Proteção de imagem: os rostos das pessoas nas fotos foram cobertos para impedir a identificação.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados conforme a Metodologia de Análise SST.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
   <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
     const AD = R.analise_documental || {}, dl = asList(AD.documentos), cv = asList(AD.convergencias), dv = asList(AD.divergencias), pd = asList(AD.pendencias_documentais);
     const names = meta.docs || [];
-    if (!names.length && !dl.length) return "";
+    if (!names.length) return ""; // sem documento anexado não há análise documental
     const rows = dl.length ? dl.map(d => `<tr><td>${esc(d.nome)}</td><td>${esc(d.tipo)}</td><td>${esc(d.contribuicao)}</td></tr>`).join("") : names.map(n => `<tr><td>${esc(n)}</td><td>—</td><td>—</td></tr>`).join("");
     const lst = (t, a) => a.length ? `<h3>${t}</h3><ul>${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
     return `${H("Análise documental", "Documentos do setor analisados e confrontados com as imagens.")}%%T:Documentos analisados%%<div class="tw"><table><thead><tr><th>Documento</th><th>Tipo</th><th>Contribuição para o diagnóstico</th></tr></thead><tbody>${rows}</tbody></table></div>${lst("Convergências (documentado e confirmado)", cv)}${lst("Divergências", dv)}${lst("Pendências documentais", pd)}`;
   })()}
   ${meta.audios?.length ? `${H("Relatos em áudio", "Informações de SST obtidas nos relatos gravados.")}
-  <p>Foram considerados ${meta.audios.length} relato(s) em áudio, transcritos por inteligência artificial e usados como evidência complementar às imagens e aos documentos. As transcrições completas constam no anexo.</p>
+  <p>Foram considerados ${meta.audios.length} relato(s) em áudio, transcritos e usados como evidência complementar às imagens e aos documentos. As transcrições completas constam no anexo.</p>
   %%T:Relatos em áudio e informações de SST extraídas%%<div class="tw"><table><thead><tr><th style="width:20%">Relato</th><th>Resumo</th><th>Informações de SST</th></tr></thead><tbody>${meta.audios.map(a => `<tr><td><b>${esc(a.nome)}</b><div class="cap" style="margin:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · ${fmtDur(a.dur)}</div></td><td>${esc(a.resumo || "—")}</td><td>${asList(a.informacoes_sst).length ? `<ul class="lst">${asList(a.informacoes_sst).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "—"}</td></tr>`).join("")}</tbody></table></div>` : ""}
   ${H("Identificação e avaliação dos riscos", "Perigos classificados pela matriz severidade × probabilidade da NR-01.")}
   %%T:Inventário de perigos e riscos identificados%%<div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
@@ -3241,7 +3261,7 @@ function reportHTML(R, photos, meta){
   ${SG.map((x, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(x.titulo || "")}</b>${x.descricao ? `<div class="cap" style="margin:2px 0 0">${esc(x.descricao)}</div>` : ""}</td><td>${esc(x.fundamentacao_legal || "—")}</td><td>${esc(x.beneficio || "—")}</td><td>${x.prioridade ? `<span class="lv" style="background:${prC(x.prioridade)}">${esc(x.prioridade)}</span>` : "—"}</td><td>${esc([x.custo, x.prazo].filter(Boolean).join(" · ") || "—")}</td></tr>`).join("")}
   </tbody></table></div>` : ""}
   ${H("Plano de ação (5W2H)", "Ações, responsáveis e prazos para tratar os desvios encontrados.")}
-  %%T:Plano de ação 5W2H%%<div class="tw"><table class="w2h"><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê<small>What</small></th><th>Por quê<small>Why</small></th><th>Onde<small>Where</small></th><th>Quem<small>Who</small></th><th>Quando<small>When</small></th><th>Como<small>How</small></th><th>Quanto<small>How much</small></th></tr></thead><tbody>
+  %%T:Plano de ação 5W2H%%<div class="tw"><table class="w2h"><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê<small>What</small></th><th>Por quê<small>Why</small></th><th>Onde<small>Where</small></th><th>Quem<small>Who</small></th><th>Quando<small>When</small></th><th>Como<small>How</small></th><th>Quanto<small>How much<small>(Estimativa)</small></th></tr></thead><tbody>
   ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
   </tbody></table></div>
   ${H("Considerações finais", "Síntese e encaminhamentos.")}${para(R.consideracoes_finais)}
@@ -3252,15 +3272,15 @@ function reportHTML(R, photos, meta){
   <ul class="chk">${plano.slice(0, 8).map(a => `<li>${esc(a.acao)}${a.quem || a.quando ? ` <span class="cap">(${esc([a.quem, a.quando].filter(Boolean).join(" · "))})</span>` : ""}</li>`).join("")}${DR.filter(x => x.k === "crit" || x.k === "high").slice(0, 6).map(x => `<li>${x.k === "crit" ? "Implantar" : "Atualizar"}: ${esc(x.doc)}${x.nr ? ` <span class="cap">(${esc(x.nr)})</span>` : ""}</li>`).join("")}<li>Nova inspeção após a implantação para confirmar as notas projetadas.</li></ul>
   ${call("info", "Resultado esperado", "Riscos controlados conforme a hierarquia de controles, trabalhadores com EPI adequado e sem adornos em situação de risco, e documentação de SST registrada como evidência.")}
   <div class="h2u">Controle de elaboração e revisão</div>
-  <div class="tw"><table><thead><tr><th>Etapa</th><th>Responsável | Data</th></tr></thead><tbody><tr><td>Elaboração</td><td>${esc(elabOf(meta))} | ${emis}</td></tr><tr><td>Revisão</td><td>${esc(revOf(meta))}${meta.rev ? " | " + emis : ""}</td></tr><tr><td>Aprovação</td><td>A confirmar</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th>Etapa</th><th>Responsável | Data</th></tr></thead><tbody><tr><td>Elaboração</td><td>${esc(elabOf(meta))} | ${emis}</td></tr><tr><td>Revisão</td><td>${esc(revOf(meta))}${meta.rev ? " | " + emis : ""}</td></tr><tr><td>Aprovação</td><td>${meta.resp ? esc(meta.resp) + " | " + emis : "A confirmar"}</td></tr></tbody></table></div>
   <h4 class="hx">Histórico de revisões</h4>
-  <div class="tw"><table><thead><tr><th>Versão | Data</th><th>Descrição</th></tr></thead><tbody><tr><td>00 | ${emis}</td><td>Emissão inicial, a partir de inspeção por imagens com apoio de inteligência artificial.</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th>Versão | Data</th><th>Descrição</th></tr></thead><tbody><tr><td>00 | ${emis}</td><td>Emissão inicial, a partir de inspeção por imagens conforme a Metodologia de Análise SST.</td></tr></tbody></table></div>
   <p class="local">${esc(meta.emp || "Local")}, ${esc(meta.data)}.</p>
   <div class="signs">
     <div class="sign"><div class="ln"></div><div><b>${esc(meta.resp || "Responsável técnico")}</b></div><small>Responsável técnico · assinatura e registro profissional</small></div>
     <div class="sign"><div class="ln"></div><div><b>Responsável pela área</b></div><small>Ciência do relatório e do plano de ação</small></div>
   </div>
-  ${call("info", "Observação", "Relatório elaborado com apoio de inteligência artificial a partir de imagens do ambiente. Confirme as constatações em campo e a redação vigente e a numeração dos itens das NRs no portal do MTE.")}
+  ${call("info", "Observação", "Relatório elaborado conforme a Metodologia de Análise SST a partir de imagens do ambiente. Confirme as constatações em campo e a redação vigente e a numeração dos itens das NRs no portal do MTE.")}
   ${call("warn", "Situação do documento", "Emitido para revisão e assinatura do responsável técnico. Substitui versões anteriores deste relatório, quando existentes.")}
 </article>`;
   // sumário automático e numeração das subseções (6.1, 6.2…)
@@ -3572,7 +3592,7 @@ async function buildDocx(R, photos, meta){
     const ft = c.querySelector(".cv-foot");
     L.push(new Paragraph({spacing: {before: 900}, children: [new TextRun({text: clean(ft?.querySelector("b")?.textContent || ""), bold: true, size: 21, font: "Arial"})]}));
     L.push(new Paragraph({children: [new TextRun({text: clean(ft?.querySelector("span")?.textContent || ""), size: 20, color: "444444", font: "Arial"})]}));
-    L.push(new Paragraph({spacing: {before: 200}, children: [new TextRun({text: "IDENTIFICAR", bold: true, size: 24, color: NAVY, font: "Arial"}), new TextRun({text: "  •  ", bold: true, size: 24, color: ORG2}), new TextRun({text: "AVALIAR", bold: true, size: 24, color: NAVY, font: "Arial"}), new TextRun({text: "  •  ", bold: true, size: 24, color: ORG2}), new TextRun({text: "CONTROLAR", bold: true, size: 24, color: NAVY, font: "Arial"})]}));
+    L.push(new Paragraph({spacing: {before: 200}, children: [...["PLANEJAR", "DESENVOLVER", "CHECAR", "AGIR"].flatMap((w, k) => [...(k ? [new TextRun({text: "  •  ", bold: true, size: 24, color: ORG2})] : []), new TextRun({text: w, bold: true, size: 24, color: NAVY, font: "Arial"})])]}));
     const R_ = [];
     try{ const art = await dxSvg(c.querySelector(".cv-art svg")); R_.push(new Paragraph({alignment: AlignmentType.RIGHT, children: [img(art.data, "png", art.w, art.h, 250)]})); }catch(e){ R_.push(new Paragraph("")); }
     out.push(new Table({width: {size: DX_W, type: WidthType.DXA}, columnWidths: [LW, RW], borders: NB, rows: [new TableRow({children: [
@@ -3635,7 +3655,7 @@ async function buildPptx(R, photos, meta){
   const logo = load("sst_logo");
   const riscos = asList(R.riscos).filter(r => r && typeof r === "object" && !nrOff()[nrNum(r.nr)]).slice().sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r);
   const S5 = prep5S(R), SC = scores(riscos, S5);
-  const PP = pessoasOf(R.pessoas ? R : (lastData || {})), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {})), PS = nrOff()[1] ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
+  const PP = pessoasOf(R.pessoas ? R : (lastData || {}), (report.blobs || []).length), DR = docRegOf(R.documentos_registros ? R : (lastData || {})), RS = residuosOf(R.residuos ? R : (lastData || {})), AR = armOf(R.armazenamento ? R : (lastData || {})), LY = layoutOf(R.layout ? R : (lastData || {})), ED = edifOf(R.edificacao ? R : (lastData || {})), PS = nrOff()[1] || !(meta.audios?.length || meta.docs?.length || meta.ctx) ? [] : psiOf(R.psicossociais ? R : (lastData || {}));
   const SG = asList(R.sugestoes_melhoria).filter(x => x && typeof x === "object" && (x.titulo || x.descricao));
   const gut = gutAll(R, riscos);
   const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
@@ -3701,11 +3721,11 @@ async function buildPptx(R, photos, meta){
   s.addText(tiles.flatMap(([t, a, b], i) => [{text: (i ? "     " : "") + t + "  ", options: {fontSize: 11, bold: true, color: MUT}}, {text: String(a), options: {fontSize: 18, bold: true, color: hexOf(classe(a)[1])}}, {text: " → ", options: {fontSize: 13, color: MUT}}, {text: String(b), options: {fontSize: 18, bold: true, color: hexOf(classe(b)[1])}}]), {x: 1.8, y: 5.52, w: 5.1, h: 0.45, fontFace: F, valign: "middle"});
   s.addText("1º número = nota de hoje · 2º = prevista após o plano de ação (0 a 100: 75+ Ótimo · 60–74 Regular · abaixo de 60 Ruim)", {x: 1.8, y: 5.95, w: 5.15, h: 0.28, fontFace: F, fontSize: 8.5, color: MUT, valign: "top", fit: "shrink"});
   s.addText([{text: meta.emp || "Empresa / unidade", options: {bold: true, breakLine: true}}, {text: [meta.elab ? "Elaboração: " + meta.elab : "", meta.rev ? "Revisão: " + meta.rev : "", meta.data].filter(Boolean).join(" · ")}], {x: 0.7, y: 6.35, w: 6.6, h: 0.55, fontFace: F, fontSize: 12, color: "444444"});
-  s.addText([{text: "IDENTIFICAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "AVALIAR", options: {color: NV}}, {text: "  •  ", options: {color: OR2}}, {text: "CONTROLAR", options: {color: NV}}], {x: 0.7, y: 6.9, w: 6.6, h: 0.4, fontFace: F, fontSize: 14, bold: true});
+  s.addText(["PLANEJAR", "DESENVOLVER", "CHECAR", "AGIR"].flatMap((w, k) => [...(k ? [{text: "  •  ", options: {color: OR2}}] : []), {text: w, options: {color: NV}}]), {x: 0.7, y: 6.9, w: 6.6, h: 0.4, fontFace: F, fontSize: 14, bold: true});
 
   // identificação
   s = slide("Identificação e controle do documento", "Dados de referência para controle, uso e atualização deste relatório.");
-  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens com análise assistida por inteligência artificial"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
+  table(s, [[H("Campo"), H("Descrição")]].concat([["Documento", R.titulo || "Relatório Técnico de Inspeção de SST"], ["Empresa / unidade", meta.emp || "Não informado"], ["Setor / área", meta.setor || "Não informado"], ["Data da inspeção", meta.data], ["Elaborado por", elabOf(meta)], ["Revisado por", revOf(meta)], ["Responsável técnico", meta.resp || "Não informado"], ["Código · revisão", `${code} · Rev. 00 · emitido em ${emis}`], ["Método", "Inspeção por imagens – Metodologia de Análise SST"]].map(([a, b]) => [C(a), C(b)])), [3.6, 8.73], {fs: 13});
   callout(s, "Validade", "Este documento só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 5.95, true, 0.8);
 
   // resumo executivo
@@ -3733,7 +3753,7 @@ async function buildPptx(R, photos, meta){
   s = slide("Metodologia", "Etapas, ferramentas e critérios usados na avaliação.");
   s.addShape(pp.ShapeType.rect, {x: 0.5, y: TOP, w: 12.33, h: 2.1, fill: {color: "FFFFFF"}, line: {color: LINE, width: 0.75}});
   await imgBox(s, flowSVG(["Registro das imagens", "Reconhecimento ambiental", "Riscos pela NR-01", "Ferramentas da qualidade", "Plano de ação", "Relatório e parecer"]), 0.7, TOP + 0.1, 11.9, 1.9);
-  bul(s, ["Matriz de risco severidade × probabilidade (NR-01, GRO/PGR)", "Ishikawa (6M), matriz GUT, matriz REI e avaliação 5S", "Verificação das pessoas visíveis: EPI (NR-06) e adornos (NR-10, NR-12, NR-32)", "Documentos e registros de evidências exigidos pelas NRs", meta.docs?.length ? `Análise de ${meta.docs.length} documento(s) do setor` : "", meta.audios?.length ? `${meta.audios.length} relato(s) em áudio transcritos pela IA` : "", "Plano de ação 5W2H com prioridade, responsável e prazo"], {x: 0.5, y: 4.2, w: 12.33, h: 2.7, fontSize: 15});
+  bul(s, ["Matriz de risco severidade × probabilidade (NR-01, GRO/PGR)", "Ishikawa (6M), matriz GUT, matriz REI e avaliação 5S", "Verificação das pessoas visíveis: EPI (NR-06) e adornos (NR-10, NR-12, NR-32)", "Documentos e registros de evidências exigidos pelas NRs", meta.docs?.length ? `Análise de ${meta.docs.length} documento(s) do setor` : "", meta.audios?.length ? `${meta.audios.length} relato(s) em áudio transcritos` : "", "Plano de ação 5W2H com prioridade, responsável e prazo"], {x: 0.5, y: 4.2, w: 12.33, h: 2.7, fontSize: 15});
 
   // registro fotográfico
   const fotos = asList(R.fotos);
@@ -3867,7 +3887,7 @@ async function buildPptx(R, photos, meta){
 
   // plano de ação
   s = slide("Plano de ação (5W2H)", "Ações, responsáveis e prazos para tratar os desvios encontrados.");
-  table(s, [[H("Prior."), H("O quê"), H("Por quê"), H("Onde"), H("Quem"), H("Quando"), H("Como"), H("Quanto")]].concat(plano.map(a => [a.prioridade ? badge(a.prioridade, prCol(a.prioridade)) : C("—"), C(a.acao, {bold: true}), C(a.por_que), C(a.onde), C(a.quem), C(a.quando), C(a.como), C(a.quanto)])), [0.9, 2.3, 2.0, 1.25, 1.35, 1.0, 2.35, 1.18], {fs: 11});
+  table(s, [[H("Prior."), H("O quê"), H("Por quê"), H("Onde"), H("Quem"), H("Quando"), H("Como"), H("Quanto (Estimativa)")]].concat(plano.map(a => [a.prioridade ? badge(a.prioridade, prCol(a.prioridade)) : C("—"), C(a.acao, {bold: true}), C(a.por_que), C(a.onde), C(a.quem), C(a.quando), C(a.como), C(a.quanto)])), [0.9, 2.3, 2.0, 1.25, 1.35, 1.0, 2.35, 1.18], {fs: 11});
 
   // notas
   s = slide("Notas: situação atual × após o plano de ação", "Pontuação atual e projeção com as medidas implantadas.");
@@ -3885,14 +3905,14 @@ async function buildPptx(R, photos, meta){
   // checklist final e controle
   s = slide("Checklist final e controle do documento", "Pendências para encerrar a inspeção e responsáveis pela revisão.");
   s.addText(plano.slice(0, 6).map(a => `${a.acao}${a.quem ? " – " + a.quem : ""}${a.quando ? " · " + a.quando : ""}`).concat(DR.filter(x => x.k === "crit").slice(0, 3).map(x => `Implantar: ${x.doc}`), ["Nova inspeção após a implantação para confirmar as notas"]).map(t => ({text: "☐  " + t, options: {breakLine: true}})), {x: 0.5, y: TOP, w: 7.2, h: 4.15, fontFace: FS, fontSize: 14, color: INK, valign: "top", paraSpaceAfter: 6, fit: "shrink"});
-  table(s, [[H("Etapa"), H("Responsável | Data")], [C("Elaboração"), C(`${elabOf(meta)} | ${emis}`)], [C("Revisão"), C(meta.rev ? `${meta.rev} | ${emis}` : "A confirmar")], [C("Aprovação"), C("A confirmar")]], [1.6, 3.3], {x: 7.93, fs: 12});
+  table(s, [[H("Etapa"), H("Responsável | Data")], [C("Elaboração"), C(`${elabOf(meta)} | ${emis}`)], [C("Revisão"), C(meta.rev ? `${meta.rev} | ${emis}` : "A confirmar")], [C("Aprovação"), C(meta.resp ? `${meta.resp} | ${emis}` : "A confirmar")]], [1.6, 3.3], {x: 7.93, fs: 12});
   [[meta.resp || "Responsável técnico", "Responsável técnico · assinatura e registro"], ["Responsável pela área", "Ciência do relatório e do plano de ação"]].forEach(([nm, d], i) => {
     const x = 7.93 + i * 2.5;
     s.addShape(pp.ShapeType.line, {x, y: 4.85, w: 2.3, h: 0, line: {color: INK, width: 1}});
     s.addText(nm, {x, y: 4.9, w: 2.3, h: 0.3, fontFace: FS, fontSize: 11, bold: true, color: INK, align: "center", fit: "shrink"});
     s.addText(d, {x, y: 5.2, w: 2.3, h: 0.4, fontFace: FS, fontSize: 9, color: MUT, align: "center", fit: "shrink"});
   });
-  callout(s, "Situação do documento", "Relatório elaborado com apoio de inteligência artificial. Só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 6.1, true, 0.8);
+  callout(s, "Situação do documento", "Relatório elaborado conforme a Metodologia de Análise SST. Só tem validade técnica após revisão em campo e assinatura de profissional legalmente habilitado.", 6.1, true, 0.8);
   return pp;
 }
 async function downloadPptx(toCanva){
@@ -4010,7 +4030,7 @@ async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
   const iso = $("rData").value || new Date().toISOString().slice(0, 10);
-  const meta = {emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), elab: $("rElab").value.trim(), rev: $("rRev").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
+  const meta = {ctx: !!$("ctx").value.trim(), emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), elab: $("rElab").value.trim(), rev: $("rRev").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   let done = 0;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Redigindo relatório técnico… ${Math.round((Date.now()-t0)/1000)} s${done ? ` · ${done} de ${REP_PARTS.length} partes prontas` : ""}${busyNote}`), 1000);
@@ -4498,7 +4518,7 @@ function phoneMode(id, k){
   }
   function fileReply(d){
     const q = queue.find(x => x.fid === d.fid);
-    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. A IA vai transcrever." : `Foto recebida pelo computador (${d.n} na lista).`); }
+    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. Ele será transcrito." : `Foto recebida pelo computador (${d.n} na lista).`); }
     else if (d.type === "file_bad"){ if (q){ q.state = "bad"; q.wait?.rej(new Error("defeito")); } msg("Um arquivo chegou com defeito. Envie de novo.", true); }
   }
   // gravação de áudio no celular
@@ -4776,7 +4796,7 @@ function drawDocInfo(){
 async function extractDocs(){
   const ok = docs.filter(d => !d.err);
   if (!ok.length || ctl) return;
-  if (!(sample || (!inViewer && $("apiKey").value.trim()))){ setStatus("Informe a chave da API para a IA ler os documentos.", true); return; }
+  if (!(sample || (!inViewer && $("apiKey").value.trim()))){ setStatus("Informe a chave da API para ler os documentos.", true); return; }
   let budget = sample ? 150000 : 120000;
   const parts = ok.map(d => { const t = d.text.slice(0, Math.max(0, budget)); budget -= t.length; return `### Documento: ${d.name} (${d.kind})\n${t || "(conteúdo enviado como imagem)"}`; }).join("\n\n");
   const imgs = ok.flatMap(d => d.images).slice(0, Math.min(8, maxImages));
@@ -4794,8 +4814,8 @@ Responda SOMENTE com um objeto JSON neste formato:
 "pendencias_prazos":["ações vencidas, documentos vencidos ou prazos"],
 "verificar_na_inspecao":["o que conferir em campo ou nas fotos"]}`;
   ctl = new AbortController(); updateGo(); drawDocs(); $("stopRow").hidden = false;
-  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Lendo ${ok.length} documento(s) com IA… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
-  setStatus(`Lendo ${ok.length} documento(s) com IA…`);
+  const t0 = Date.now(); const tick = setInterval(() => setStatus(`Lendo ${ok.length} documento(s)… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
+  setStatus(`Lendo ${ok.length} documento(s)…`);
   try{
     docInfo = await callAI(prompt, imgs, ctl.signal);
     drawDocInfo(); saveSoon();
