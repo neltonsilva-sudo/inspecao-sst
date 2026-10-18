@@ -43,7 +43,7 @@
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 ::selection{background:var(--signal);color:var(--signal-ink)}
-.wrap{max-width:1320px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:none;width:95%;box-sizing:border-box;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 /* Cabeçalho: barra de comando escura com faixa de sinalização */
 header.top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;padding:18px 22px 23px;margin-bottom:20px;background:var(--bar);color:var(--bar-ink);border:1px solid var(--bar-line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 /* foto do cabeçalho inteira (sem recorte), encostada à direita e esmaecida para dentro da barra */
@@ -89,6 +89,7 @@ header.top .mode{display:none!important} /* selo de modo oculto a pedido; o elem
 @media (max-width:560px){header.top{padding:14px 16px 19px}header.top h1{font-size:24px}header.top .tri{width:36px;height:33px}header.top .sub{font-size:12.5px}}
 .grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr);gap:16px}}
+@media (max-width:700px){.wrap{width:auto}}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
 @media (max-width:560px){.panel{padding:16px}}
 .label{font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
@@ -97,6 +98,13 @@ header.top .mode{display:none!important} /* selo de modo oculto a pedido; o elem
 .phead .label,.grid>.stack>.panel>.label:first-child{font:700 17px/1.2 var(--f-display);letter-spacing:.04em;color:var(--ink);margin:0}
 .phead .label{flex:1;min-width:0}
 .step{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--signal);color:var(--signal-ink);font:700 14px/1 var(--f-mono)}
+.panel.fold>.phead{cursor:pointer;user-select:none;border-radius:8px;outline-offset:3px}
+.panel.fold>.phead:hover .label{color:var(--signal-ink)}
+.panel.fold>.phead .chev{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:7px;border:1px solid var(--line);color:var(--ink);transition:transform .2s}
+.panel.fold.closed>.phead .chev{transform:rotate(-90deg)}
+.panel.fold.closed>:not(.phead){display:none!important}
+.panel.fold>.phead .psum{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 12px var(--f-mono);color:var(--muted)}
+.panel.fold:not(.closed)>.phead .psum{display:none}
 .step.alt{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
 .step svg{width:16px;height:16px}
 .pico{flex:none;width:20px;height:20px;color:var(--muted)}
@@ -226,7 +234,7 @@ button.danger{color:var(--crit);border-color:var(--crit)}
 button.watch{width:100%;min-height:48px;font-weight:700;font-size:15px;background:var(--crit);border-color:var(--crit);color:#fff}
 button.watch:hover{filter:brightness(1.08)}
 button.watch.on{background:var(--panel);color:var(--crit)}
-.al-save{flex-wrap:wrap}.al-save button{flex:1 1 200px}
+.al-save{flex-wrap:wrap}.mon .al-save button{flex:1 1 100%;white-space:normal;min-width:0;max-width:100%;text-align:center}
 .hist .hmsg{display:block;font-size:11px;font-weight:600;color:var(--crit);line-height:1.25;margin-top:2px}
 .lamp-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .lamp{width:62px;height:62px;border-radius:50%;padding:5px;background:linear-gradient(#cfd5da,#9aa4ab);box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
@@ -799,6 +807,8 @@ button.sm{padding:6px 12px;font-size:13px}
 #qrBox{--qr-tint:#fff7d1;--qr-okb-ink:#fff;--qr-shadow:0 1px 2px rgba(16,24,32,.06),0 8px 24px rgba(16,24,32,.09);--qr-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #qrBox{--qr-tint:#2b2611;--qr-okb-ink:#0b1a11;--qr-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);--qr-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b1a11' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}}
 :root[data-theme="dark"] #qrBox{--qr-tint:#2b2611;--qr-okb-ink:#0b1a11;--qr-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);--qr-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b1a11' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+.qr-sub{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.qr-sub .qr-chip{margin-top:0}
 .qr-head{display:flex;gap:12px;align-items:flex-start}
 .qr-head>div{flex:1;min-width:0}
 .qr-head .label{margin:0 0 2px}
@@ -1030,7 +1040,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v144</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v145</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1041,7 +1051,7 @@ button.sm{padding:6px 12px;font-size:13px}
   <div class="grid">
     <section class="stack" aria-label="Captura">
       <div class="panel stack">
-        <div class="phead"><span class="step" aria-hidden="true">1</span><p class="label">Câmera ao vivo</p><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3.5l1.6-2.5h7.8L17.5 8H21v11H3z"/><circle cx="12" cy="13.5" r="3.4"/></svg></div>
+        <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h3.5l1.6-2.5h7.8L17.5 8H21v11H3z"/><circle cx="12" cy="13.5" r="3.4"/></svg></span><p class="label">Câmera ao vivo</p><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3.5l1.6-2.5h7.8L17.5 8H21v11H3z"/><circle cx="12" cy="13.5" r="3.4"/></svg></div>
         <div class="video-box">
           <video id="video" playsinline muted hidden></video>
           <div class="msg" id="videoMsg">Conecte a webcam (ex.: Logitech Brio 500) e clique em <b>Ligar câmera</b>.</div>
@@ -1120,14 +1130,8 @@ api:
       </div>
 
       <div class="panel stack" id="qrBox" hidden>
-        <div class="qr-head">
-          <span class="qr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 5.5h3"/><circle cx="12" cy="12.5" r="2.8"/></svg></span>
-          <div>
-            <p class="label">Celular como câmera (QR code)</p>
-            <p class="hint">Use a câmera de um celular na inspeção, sem instalar nada.</p>
-            <span class="qr-chip">Sessão ativa</span>
-          </div>
-        </div>
+        <div class="phead"><span class="step" aria-hidden="true">1</span><p class="label">Gerar QR-code</p><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 5.5h3"/><circle cx="12" cy="12.5" r="2.8"/></svg></div>
+        <div class="qr-sub"><p class="hint" style="margin:0">Use a câmera de um celular na inspeção, sem instalar nada.</p><span class="qr-chip">Sessão ativa</span></div>
         <ol class="qr-steps">
           <li><span>Gere o QR code e leia com a câmera do celular.</span></li>
           <li><span>No celular, toque em <b>Permitir e conectar</b>.</span></li>
@@ -1277,7 +1281,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v144</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v145</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1705,9 +1709,42 @@ function level(sev, prob){
   if (r >= 5)  return {k:"warn", t:"Moderado", r};
   return {k:"ok", t:"Baixo", r};
 }
-function setStatus(msg, err){ const s=$("status"); s.textContent = msg || ""; s.classList.toggle("err", !!err); }
+let semAbrir = false; // aviso do quadro 5 já aparece lá: não abre o quadro 3
+function setStatus(msg, err){ if (err && msg && !semAbrir) abrirPainel($("status")); const s=$("status"); s.textContent = msg || ""; s.classList.toggle("err", !!err); }
 function store(k, v){ try{ v==null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} }
 function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+/* ---------- quadros 2 a 5 em cascata ---------- */
+let foldSt = {}; try{ foldSt = JSON.parse(load("sst_fold") || "{}") || {}; }catch(e){}
+const FOLD = [...document.querySelectorAll(".panel>.phead")].map(h => [h.parentElement, (h.querySelector(".step")?.textContent || "").trim()]).filter(([, n]) => /^[2-5]$/.test(n));
+function setFold(pn, aberto){
+  pn.classList.toggle("closed", !aberto); const h = pn.querySelector(".phead"); h.setAttribute("aria-expanded", aberto);
+  foldSt["p" + pn.dataset.fold] = aberto ? 1 : 0; store("sst_fold", JSON.stringify(foldSt));
+}
+function abrirPainel(el){ const pn = el?.closest?.(".panel.fold.closed"); if (pn) setFold(pn, true); }
+FOLD.forEach(([pn, n]) => {
+  pn.classList.add("fold"); pn.dataset.fold = n;
+  const h = pn.querySelector(".phead"); h.setAttribute("role", "button"); h.tabIndex = 0; h.title = "Clique para abrir ou fechar";
+  h.insertAdjacentHTML("beforeend", `<span class="psum"></span><span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>`);
+  const tg = () => setFold(pn, pn.classList.contains("closed"));
+  h.addEventListener("click", e => { if (!e.target.closest("button, a, input, label")) tg(); });
+  h.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); tg(); } });
+  setFold(pn, foldSt["p" + n] === 1);
+});
+// algo dentro de um quadro fechado precisa aparecer (campo da chave, aviso, áudio novo): abre o quadro
+{ const siv = Element.prototype.scrollIntoView, foc = HTMLElement.prototype.focus;
+  Element.prototype.scrollIntoView = function(...a){ abrirPainel(this); return siv.apply(this, a); };
+  HTMLElement.prototype.focus = function(...a){ abrirPainel(this); return foc.apply(this, a); }; }
+// resumo no título do quadro fechado
+function updPsum(){
+  const put = (n, t) => { const el = document.querySelector(`.panel.fold[data-fold="${n}"] .psum`); if (el){ el.textContent = t || ""; el.title = t || ""; } };
+  const nf = +($("cnt")?.textContent || 0);
+  put(2, nf ? `${nf} foto(s)` : "");
+  put(3, ($("status")?.textContent || "").trim() || (docs.length || audios.length ? [docs.length ? docs.length + " doc." : "", audios.length ? audios.length + " áudio(s)" : ""].filter(Boolean).join(" · ") : ""));
+  put(4, report ? "relatório gerado ✓" : "");
+  put(5, mapGerado ? "mapa gerado ✓" : "");
+}
+["cnt", "status", "docList", "audList"].forEach(id => { const el = $(id); if (el) new MutationObserver(() => updPsum()).observe(el, {childList: true, characterData: true, subtree: true}); });
 
 /* ---------- render do relatório ---------- */
 // painel sem análise: nada da inspeção anterior aparece; o exemplo só abre se o usuário pedir
@@ -1723,6 +1760,7 @@ function renderEmpty(){
 }
 // botões "Exibir" do que já foi gerado: só o relatório, só o mapa, ou os dois (relatório primeiro, mapa abaixo)
 function drawExibir(){
+  updPsum();
   if (!curRender && !!$("report").querySelector(".empty-st .exibir") !== !!(report || mapGerado)) return renderEmpty();
   const box = $("report").querySelector(".exibir"); if (!box) return;
   const rel = !!report, mapa = mapGerado;
@@ -4075,7 +4113,7 @@ function drawMapPrev(){
   el.innerHTML = `<b>${mapData ? "Riscos do mapa (fotos, áudios e documentos do setor; ✍ = digitado por você)" : "Riscos do mapa (da análise geral; clique em Analisar para o mapa para a análise própria)"}</b>` + vistas + cs.map(c => `<div class="mc"><i style="width:${SZp[c.nv]}px;height:${SZp[c.nv]}px;background:${c.cor}"></i><div><b>${c.nome} · risco ${NVT[c.nv]}</b><small>${c.rs.map(r => esc(r.t) + (r.manual ? " ✍" : "")).join(" · ")}</small></div></div>`).join("");
 }
 // mensagem no próprio quadro 5 (e na barra de status)
-function mapMsg(t, err){ const el = $("mapStatus"); if (el){ el.textContent = t || ""; el.classList.toggle("err", !!err); } setStatus(t, err); }
+function mapMsg(t, err){ const el = $("mapStatus"); if (el){ el.textContent = t || ""; el.classList.toggle("err", !!err); } semAbrir = true; setStatus(t, err); semAbrir = false; }
 async function mapAnalyze(){
   if (mapBusy) return false;
   if (!mapF().length){ mapMsg(frames.length ? "Nenhuma foto marcada para o mapa (M ou R+M). No quadro 2, toque na etiqueta das fotos para incluí-las." : "Adicione as fotos do setor no quadro 2.", true); return false; }
