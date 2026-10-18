@@ -953,6 +953,10 @@ button.sm{padding:6px 12px;font-size:13px}
 /* transmitindo */
 .ph-cam:has(.ph-shutter:not(:disabled)) .rec{background:rgba(198,40,40,.92);border-color:transparent;animation:ph-live 2s ease-in-out infinite}
 .ph-badge{position:absolute;z-index:2;top:12px;right:12px;min-width:56px;height:32px;padding:0 12px 0 32px;border-radius:999px;color:#fff;font:700 13px var(--f-mono);display:grid;place-items:center;border:1px solid var(--ph-glass-line);background:var(--ph-glass) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M4 8h3l2-3h6l2 3h3v11H4z'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3C/svg%3E") 11px center/16px no-repeat;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ph-zoom{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:132px;display:flex;gap:6px;padding:4px;border-radius:999px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px)}
+.phone .ph-zoom button{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;border:0;background:transparent;color:#fff;font:700 13px var(--f-mono)}
+.phone .ph-zoom button.on{background:rgba(245,196,0,.95);color:#1c2328}
+.ph-cam video{transition:transform .15s ease-out}
 .ph-bar{position:absolute;z-index:2;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;justify-items:center;align-items:center;padding:36px 12px 30px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .phone .ph-shutter{width:80px;height:80px;min-height:0;padding:5px;border-radius:50%;border:4px solid #fff;background:var(--signal);background-clip:content-box;box-shadow:0 2px 14px rgba(0,0,0,.4);transition:transform .1s ease,background-color .2s}
 .phone .ph-shutter:hover{border-color:#fff}
@@ -1079,7 +1083,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v157</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v158</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1325,7 +1329,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v157</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v158</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1364,6 +1368,7 @@ api:
       <video id="phVideo" playsinline muted autoplay></video>
       <span class="rec" id="phRec">● AGUARDANDO</span>
       <span class="ph-badge" id="phBadge" aria-label="Fotos capturadas">0</span>
+      <div class="ph-zoom" id="phZoom" role="group" aria-label="Zoom da câmera"><button type="button" data-z="1" class="on">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="3">3×</button><button type="button" data-z="5">5×</button></div>
       <div class="ph-bar">
         <button id="phFlip" class="ph-ic" type="button" aria-label="Trocar câmera" data-l="Trocar"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 13.5a2.6 2.6 0 0 1 4.6-1.7M14.5 12.5a2.6 2.6 0 0 1-4.6 1.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M14.4 10.3v1.8h-1.8M9.6 15.7v-1.8h1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button id="phShot" class="ph-shutter" type="button" aria-label="Capturar foto" disabled></button>
@@ -2397,7 +2402,7 @@ $("ipUrl").addEventListener("input", () => { if (ip) $("ipBtn").textContent = $(
 
 function stopCam(){
   ipCleanup(); $("rec").textContent = "● AO VIVO";
-  const eraCel = remoteOn; remoteOn = false;
+  const eraCel = remoteOn; remoteOn = false; aplicaRemZoom();
   if (stream){ if (!eraCel) stream.getTracks().forEach(t => t.stop()); stream = null; } // vídeo do celular continua disponível para escolher de novo
   const v = $("video"); v.srcObject = null; v.hidden = true;
   $("videoMsg").hidden = false; $("rec").hidden = true; $("snapBtn").disabled = true; $("camBtn").textContent = "Ligar câmera";
@@ -2417,9 +2422,10 @@ $("camSel").onchange = e => pickCam(e.target.value);
 function grabFrame(){
   return new Promise(res => {
     const v = $("video"); if (!stream || !v.videoWidth) return res(null);
-    const s = Math.min(1, 1280 / v.videoWidth);
-    const c = document.createElement("canvas"); c.width = Math.round(v.videoWidth*s); c.height = Math.round(v.videoHeight*s);
-    c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+    const z = remoteOn ? remZoom : 1, sw = v.videoWidth / z, sh = v.videoHeight / z; // zoom digital do celular: só a área ampliada
+    const s = Math.min(1, 1280 / sw);
+    const c = document.createElement("canvas"); c.width = Math.round(sw * s); c.height = Math.round(sh * s);
+    c.getContext("2d").drawImage(v, (v.videoWidth - sw) / 2, (v.videoHeight - sh) / 2, sw, sh, 0, 0, c.width, c.height);
     c.toBlob(res, "image/jpeg", 0.82);
   });
 }
@@ -5541,7 +5547,8 @@ function relayConn(peer, dst, keyP){
   const dog = setInterval(() => { if (seen && Date.now() - seen > 20000) c.close(); }, 3000);
   return c;
 }
-let qr = null, remoteOn = false;
+let qr = null, remoteOn = false, remZoom = 1;
+function aplicaRemZoom(){ const v = $("video"); if (v) v.style.transform = remoteOn && remZoom > 1 ? `scale(${remZoom})` : ""; }
 function loadScript(src){
   return new Promise((res, rej) => {
     if (document.querySelector(`script[src="${src}"]`) && (window.Peer || src !== PEER_JS) && (window.qrcode || src !== QR_JS)) return res();
@@ -5582,7 +5589,7 @@ const blobHash = async b => { try{ const h = await crypto.subtle.digest("SHA-256
 function useRemote(s){
   if (remoteOn && stream && stream !== s){ stream.getTracks().forEach(t => t.stop()); } // troca o vídeo sem parar o monitoramento
   else if (!remoteOn) stopCam();
-  stream = s; remoteOn = true; phoneStream = s;
+  stream = s; remoteOn = true; phoneStream = s; aplicaRemZoom();
   const v = $("video"); v.srcObject = s; v.play().catch(() => {}); vidFrameT = performance.now(); watchFrames(v);
   v.hidden = false; $("videoMsg").hidden = true; $("rec").hidden = false; $("rec").textContent = "● CELULAR";
   $("snapBtn").disabled = false; $("camBtn").textContent = "Desligar câmera"; updateGo();
@@ -5644,6 +5651,8 @@ function onPhoneConn(peer, conn){
       return;
     } else if (d.type === "ping"){
       conn.send({type: "pong"});
+    } else if (d.type === "zoom"){
+      remZoom = d.hw ? 1 : Math.max(1, Math.min(8, Number(d.z) || 1)); aplicaRemZoom(); // zoom da câmera do celular já vem na imagem; o digital é recortado aqui
     } else if (d.type === "snap"){
       // o celular pede a foto; o computador captura do vídeo ao vivo que já está recebendo
       if (Date.now() - (qr.lastSnap || 0) < 200) return; qr.lastSnap = Date.now();
@@ -5803,6 +5812,18 @@ function phoneMode(id, k){
     try{ wake?.release(); }catch(e){}
     $("phDoneT").textContent = title; $("phDoneP").textContent = text + (why ? " (motivo técnico: " + why + ")" : ""); show("phDone");
   }
+  // zoom: usa o zoom da própria câmera quando o aparelho permite (Android); senão, zoom digital (recorte do centro)
+  // e avisa o computador, que mostra e captura a mesma área ampliada
+  let zoom = 1, zoomHw = null;
+  function zoomCaps(){ try{ const c = st?.getVideoTracks()[0]?.getCapabilities?.(); zoomHw = c && c.zoom && c.zoom.max > c.zoom.min ? c.zoom : null; }catch(e){ zoomHw = null; } }
+  async function setZoom(z, avisa = true){
+    zoom = Math.max(1, Math.min(z, zoomHw ? Math.max(1, zoomHw.max) : 5));
+    let hw = false;
+    if (zoomHw){ try{ await st.getVideoTracks()[0].applyConstraints({advanced: [{zoom: Math.max(zoomHw.min, Math.min(zoomHw.max, zoom))}]}); hw = true; }catch(e){ hw = false; } }
+    $("phVideo").style.transform = hw || zoom <= 1 ? "" : `scale(${zoom})`;
+    document.querySelectorAll("#phZoom button").forEach(b => { const on = Math.abs(+b.dataset.z - zoom) < .05; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.hidden = zoomHw ? +b.dataset.z > zoomHw.max + .01 : false; });
+    if (avisa) try{ if (live()) conn.send({type: "zoom", z: hw ? 1 : zoom, hw}); }catch(e){}
+  }
   async function cam(){
     const old = st;
     st = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: facing}, width: {ideal: 1920}}}); // sem impor formato: não corta a imagem
@@ -5812,6 +5833,7 @@ function phoneMode(id, k){
     // o iOS pode encerrar a câmera (ligação, outro app): reabre sozinho quando a página estiver visível
     tr0.addEventListener("ended", () => { if (!ended && document.visibilityState === "visible") reviveCam(); });
     $("phVideo").srcObject = st; await $("phVideo").play().catch(() => {});
+    zoomCaps(); setZoom(zoom, false);
   }
   async function reviveCam(){
     try{
@@ -5882,7 +5904,7 @@ function phoneMode(id, k){
         tries = 0;
         msg(!st ? "Conectado. Enviando os arquivos escolhidos…" : c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
         $("phRec").textContent = c.relay ? "● CONECTADO" : "● TRANSMITINDO"; $("phShot").disabled = false;
-        if (!c.relay) startCall(); keepAwake();
+        if (!c.relay) startCall(); keepAwake(); setZoom(zoom);
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
           document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
           queue.forEach(x => { if (x.state === "sent") x.state = "wait"; });
@@ -5984,8 +6006,9 @@ function phoneMode(id, k){
   // foto tirada no próprio celular e enviada como arquivo (quando não há vídeo ao vivo no computador)
   function snapLocal(mon){
     const v = $("phVideo"); if (!st || !v.videoWidth){ msg(st ? "A câmera ainda não está pronta. Tente de novo." : (mon ? "Monitoramento: ligue a câmera do celular (Fotos › Ligar a câmera) para o computador analisar." : "Para fotografar, toque em Ligar a câmera."), true); return; }
-    const cv = document.createElement("canvas"); cv.width = v.videoWidth; cv.height = v.videoHeight;
-    cv.getContext("2d").drawImage(v, 0, 0);
+    const dz = zoomHw ? 1 : zoom, sw = v.videoWidth / dz, sh = v.videoHeight / dz; // zoom digital: recorta o centro
+    const cv = document.createElement("canvas"); cv.width = Math.round(sw); cv.height = Math.round(sh);
+    cv.getContext("2d").drawImage(v, (v.videoWidth - sw) / 2, (v.videoHeight - sh) / 2, sw, sh, 0, 0, cv.width, cv.height);
     cv.toBlob(b => { if (b){ enqueue(b, "photo", (mon ? "mon-" : "camera-") + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".jpg"); if (!mon) msg("Enviando foto…"); } }, "image/jpeg", mon ? 0.8 : 0.9);
   }
   function shot(){
@@ -6034,6 +6057,12 @@ function phoneMode(id, k){
   $("phRecBtn").onclick = toggleRec;
   $("phVideo").addEventListener("click", shot);
   $("phAuto").onclick = () => setAuto(!auto);
+  document.querySelectorAll("#phZoom button").forEach(b => b.onclick = e => { e.stopPropagation(); setZoom(+b.dataset.z); try{ navigator.vibrate?.(15); }catch(x){} });
+  // pinça com dois dedos no vídeo: zoom contínuo
+  { let d0 = 0, z0 = 1; const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), v = $("phVideo");
+    v.addEventListener("touchstart", e => { if (e.touches.length === 2){ d0 = dist(e.touches); z0 = zoom; } }, {passive: true});
+    v.addEventListener("touchmove", e => { if (e.touches.length === 2 && d0){ e.preventDefault(); setZoom(Math.round(z0 * dist(e.touches) / d0 * 10) / 10, false); } }, {passive: false});
+    v.addEventListener("touchend", e => { if (d0 && e.touches.length < 2){ d0 = 0; setZoom(zoom); } }); }
   $("phFlip").onclick = async () => {
     facing = facing === "environment" ? "user" : "environment";
     try{
