@@ -392,6 +392,28 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .nrd-off.on button{border-color:#c62828;color:#c62828}
 @media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
 #lvDlg{width:min(960px,calc(100vw - 24px))}
+#tech .rep [data-fig]:not(.editing [data-fig]){cursor:zoom-in}
+#tech .rep [data-fig]:not(.editing [data-fig]):hover{background:#fff4cc!important;box-shadow:inset 3px 0 0 #f5a623}
+#tech .rep li[data-fig]:not(.editing li)::after,#tech .rep tr[data-fig]:not(.editing tr)>td:nth-child(2)::after{content:" 🔍";font-size:.85em;opacity:.7}
+.figdlg{width:min(980px,calc(100vw - 24px))}
+.pickdlg{width:min(1100px,calc(100vw - 24px))}
+.pickdlg .fd-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}.pickdlg .fd-h h2{margin:0;flex:1;font:700 19px var(--f-display);text-transform:uppercase}
+.pickdlg .fd-p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.pickgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;max-height:calc(100vh - 190px);overflow:auto;padding:2px}
+.pickgrid button{position:relative;padding:0;border:3px solid transparent;border-radius:12px;overflow:hidden;background:#0e1215;aspect-ratio:4/3;cursor:pointer;display:block;width:100%}
+.pickgrid button img{width:100%;height:100%;object-fit:cover;display:block}
+.pickgrid button:hover{border-color:#f5c518}
+.pickgrid button.on{border-color:var(--signal);box-shadow:0 0 0 3px rgba(245,197,24,.35)}
+.pickgrid button span{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.65);color:#fff;font:600 12px var(--f-body);padding:3px 8px;border-radius:999px}
+.pickgrid button.on span{background:var(--signal);color:var(--signal-ink)}
+.capasel{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.capasel button{width:auto}
+.figdlg .fd-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.figdlg .fd-h h2{margin:0;flex:1;font:700 19px var(--f-display);text-transform:uppercase}
+.figdlg .fd-p{margin:0 0 10px;color:var(--muted);font-size:14px;line-height:1.45}
+.figdlg .fd-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.figdlg .fd-nav button.on{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+.figdlg img{display:block;width:100%;max-height:calc(100vh - 230px);object-fit:contain;background:#0e1215;border-radius:10px}
 .nrdlg{border:0;border-radius:14px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .facedlg{width:min(980px,calc(100vw - 24px))}
 .facegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
@@ -1042,7 +1064,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v150</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v151</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1170,6 +1192,7 @@ api:
           <label><input type="radio" name="fotoUso" value="rel"> Só relatório técnico</label>
           <label><input type="radio" name="fotoUso" value="mapa"> Só mapa de risco</label>
         </div>
+        <div class="capasel"><button type="button" id="capaBtn" class="sm">🖼 Escolher foto da capa</button><span class="hint" id="capaInfo"></span></div>
         <div class="dropz" id="dropz">
           <div class="thumbs" id="thumbs"></div>
           <div class="dropmsg" aria-hidden="true">Solte as fotos aqui</div>
@@ -1255,7 +1278,7 @@ api:
           <p class="hint" style="margin:0">PGR, inventário de riscos, APR, laudos (LTCAT, ruído, iluminação), checklists, mapa de risco anterior (PDF, Word, Excel, texto ou foto). O conteúdo ajuda a identificar os riscos do setor junto com as fotos e os áudios.</p></div>
         <label for="mExtra">Riscos para incluir no mapa (opcional)<textarea id="mExtra" rows="4" placeholder="Um risco por linha: risco; grupo; intensidade&#10;Ex.: Ruído; físico; médio&#10;Queda de mesmo nível; acidentes; alto&#10;Postura inadequada; ergonômico; baixo"></textarea></label>
         <p class="hint" style="margin:-4px 0 0">Grupos: físico, químico, biológico, ergonômico ou acidentes. Intensidade: alto, médio ou baixo (sem informar, fica médio; sem o grupo, ele é deduzido pelo nome do risco).</p>
-        <div class="mapsel"><p class="label" style="margin:0">Foto que vai compor o mapa</p><div class="mapthumbs" id="mapThumbs"></div><p class="hint" id="mapThumbHint" style="margin:0">Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.</p></div>
+        <div class="mapsel"><p class="label" style="margin:0">Foto que vai compor o mapa</p><div class="capasel"><button type="button" id="mapPickBtn" class="sm">🖼 Escolher foto do Mapa de Risco</button></div><div class="mapthumbs" id="mapThumbs"></div><p class="hint" id="mapThumbHint" style="margin:0">Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.</p></div>
         <button id="mapRun" type="button">Analisar fotos, áudios e documentos para o mapa</button>
         <div class="mapclr"><span>Limpar o que foi anexado para o mapa:</span>
           <button type="button" class="sm" id="mClrFotos">Fotos do mapa</button><button type="button" class="sm" id="mClrDocs">Documentos</button><button type="button" class="sm" id="mClrAud">Áudios</button><button type="button" class="sm newrep" id="mClrTudo">Limpar tudo do mapa</button></div>
@@ -1275,6 +1298,8 @@ api:
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="exDlg" class="nrdlg exdlg" aria-labelledby="exDlgT"><div class="nrd-in"><h2 id="exDlgT" style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">O que deseja exibir?</h2><p style="margin:0 0 14px;color:var(--muted)">O relatório técnico e o mapa de risco desta inspeção estão prontos.</p>
     <div class="exopts"><button type="button" class="primary" data-ex="ver-ambos">Relatório técnico e mapa de risco</button><button type="button" data-ex="ver-rel">Só o relatório técnico</button><button type="button" data-ex="ver-mapa">Só o mapa de risco</button></div></div></dialog>
+  <dialog id="pickDlg" class="nrdlg pickdlg" aria-labelledby="pickDlgT"><div class="nrd-in"><div class="fd-h"><h2 id="pickDlgT">Escolher foto</h2><button type="button" id="pickDlgX">Fechar ✕</button></div><p class="fd-p" id="pickDlgP"></p><div class="pickgrid" id="pickGrid"></div></div></dialog>
+  <dialog id="figDlg" class="nrdlg figdlg" aria-labelledby="figDlgT"><div class="nrd-in"><div class="fd-h"><h2 id="figDlgT">Figura</h2><button type="button" id="figDlgX">Fechar ✕</button></div><p class="fd-p" id="figDlgP"></p><div class="fd-nav" id="figDlgNav"></div><img id="figDlgImg" alt=""></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
   <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkFix" class="accent">Corrigir inconsistências</button><button type="button" id="chkPhotos">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
@@ -1283,7 +1308,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v150</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v151</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1572,7 +1597,7 @@ function psiOf(d){
 const soEvid = n => `REGRA PRINCIPAL – SOMENTE EVIDÊNCIAS: registre apenas riscos, problemas, pessoas e constatações que aparecem nas ${n} imagem(ns) (Figura 1 a Figura ${n}), nas transcrições de áudio, nos documentos anexados ou no contexto digitado pelo usuário que estiverem nesta mensagem. Não faça suposições e não complete com o que é "comum" nesse tipo de setor; se não há evidência, não inclua o item (deixe a lista vazia). IMPORTANTE: todo problema que você registrar em qualquer seção (pessoa sem EPI ou com adorno, armazenamento, resíduos, edificação, layout, item não conforme de NR) É evidência e DEVE aparecer também em "riscos", com severidade e probabilidade; a lista de riscos só pode ficar vazia se nenhuma seção tiver não conformidade. Pessoas: registre SOMENTE se estiverem claramente visíveis nas imagens; se nenhuma pessoa aparece, use "total":0 e lista vazia. Nunca cite figura inexistente (o maior número é Figura ${n}). Riscos psicossociais e análise documental: somente se houver relatos em áudio, documentos ou contexto digitado com essa informação. Não mencione inteligência artificial, IA, Gemini nem Claude no texto.
 `;
 // rigor técnico: cada constatação comparada com as NRs e com os critérios do 5S
-const RIGOR = `RIGOR TÉCNICO (obrigatório): atue como auditor de SST rigoroso e detalhista. Varra cada imagem área por área (piso, paredes, teto, máquinas, bancadas, quadros elétricos, cabos, extintores, saídas, sinalização, armazenamento, resíduos, pessoas e EPIs, postos de trabalho) e compare CADA situação vista com a NR correspondente, citando a NR e o item (quando tiver certeza do item; senão "confirmar item na redação vigente"). Não releve desvios pequenos: proteção de máquina incompleta, fiação exposta, extensão improvisada, quadro sem identificação ou obstruído, extintor sem sinalização ou obstruído, piso escorregadio ou danificado, demarcação apagada, material empilhado sem estabilidade, produto sem rótulo, EPI ausente ou inadequado, adorno, postura inadequada, iluminação deficiente e falta de sinalização são não conformidades e devem ser registradas. 5S com rigor: avalie cada senso por critérios objetivos — Seiri (só o necessário no posto, sem sucata, sobras ou itens sem uso), Seiton (local definido e identificado para cada item, demarcação de piso, quadro de sombras, corredores livres), Seiso (piso, máquinas e bancadas limpos, sem óleo, poeira, cavacos ou lixo), Seiketsu (padrão visual, etiquetas, cores e sinalização uniformes, procedimento visível) e Shitsuke (indícios de disciplina e manutenção do padrão). Nota 5 só quando não houver nenhum desvio visível naquele senso; cada desvio visível reduz a nota; cite na observação a figura e o local de cada desvio. Rigor não é suposição: registre somente o que estiver visível ou relatado.
+const RIGOR = `RIGOR TÉCNICO (obrigatório): atue como auditor de SST rigoroso e detalhista. Varra cada imagem área por área (piso, paredes, teto, máquinas, bancadas, quadros elétricos, cabos, extintores, saídas, sinalização, armazenamento, resíduos, pessoas e EPIs, postos de trabalho) e compare CADA situação vista com a NR correspondente, citando a NR e o item (quando tiver certeza do item; senão "confirmar item na redação vigente"). Não releve desvios pequenos: proteção de máquina incompleta, fiação exposta, extensão improvisada, quadro sem identificação ou obstruído, extintor sem sinalização ou obstruído, piso escorregadio ou danificado, demarcação apagada, material empilhado sem estabilidade, produto sem rótulo, EPI ausente ou inadequado, adorno, postura inadequada, iluminação deficiente e falta de sinalização são não conformidades e devem ser registradas. 5S com rigor: avalie cada senso por critérios objetivos — Seiri (só o necessário no posto, sem sucata, sobras ou itens sem uso), Seiton (local definido e identificado para cada item, demarcação de piso, quadro de sombras, corredores livres), Seiso (piso, máquinas e bancadas limpos, sem óleo, poeira, cavacos ou lixo), Seiketsu (padrão visual, etiquetas, cores e sinalização uniformes, procedimento visível) e Shitsuke (indícios de disciplina e manutenção do padrão). Nota 5 só quando não houver nenhum desvio visível naquele senso; cada desvio visível reduz a nota; cite na observação a figura e o local de cada desvio. Não deixe passar nada: examine também o fundo das imagens, cantos, prateleiras, cilindros de gases, botijões, recipientes abertos, cabos no chão, tomadas e extensões, condição de ferramentas e de cada EPI em uso (rasgado, danificado, mal ajustado). Toda não conformidade registrada em qualquer parte da resposta (armazenamento, resíduos, layout, edificação, pessoas, checklist das NRs, 5S) DEVE constar também na lista de riscos, com severidade e probabilidade coerentes — cilindro de gás sem fixação, junto de sucata ou de outro gás incompatível, por exemplo, é risco crítico de explosão. Rigor não é suposição: registre somente o que estiver visível ou relatado.
 `;
 function buildPrompt(ctx, n = 1){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
@@ -2052,6 +2077,7 @@ function render(d, isExample){
 
 /* ---------- imagens ---------- */
 function refreshThumbs(){
+  setTimeout(() => { try{ drawCapaInfo(); }catch(e){} });
   const box = $("thumbs"); box.innerHTML = "";
   const slots = Math.min(maxImages, Math.max(4, Math.ceil((frames.length + 1) / 4) * 4));
   for (let i = 0; i < slots; i++){
@@ -3434,7 +3460,13 @@ function planoSeg(plano, riscos){
   });
   return pl;
 }
-const riscosOf = R => asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], asList(lastData?.riscos).filter(a => !asList(R.__semEvid).some(t => chkSame(a?.perigo, t))));
+// riscos do relatório: a lista redigida (ou a da análise) + toda não conformidade das tabelas do próprio relatório (armazenamento, resíduos, layout, edificação, pessoas, checklist)
+const riscosOf = R => {
+  const semEv = r => !asList(R.__semEvid).some(t => chkSame(r?.perigo, t));
+  const base = asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], asList(lastData?.riscos).filter(semEv));
+  let der = []; try{ der = riscosDerivados(R, report?.blobs?.length || relF().length).filter(semEv); }catch(e){}
+  return der.length ? mergeRiscos(base, der) : base;
+};
 function gutAll(R, riscos){
   const gut = asList(R.gut).filter(g => g && g.problema).map(g => ({...g, G: clamp(g.g,1,5), U: clamp(g.u,1,5), T: clamp(g.t,1,5)}));
   const words = t => normTxt(t).split(/[^a-z0-9]+/).filter(w => w.length > 3);
@@ -3498,7 +3530,7 @@ function reportHTML(R, photos, meta){
   const code = "RT-SST-" + String(meta.iso || "").replace(/-/g, "") + "-" + ((meta.setor || "SETOR").normalize("NFD").replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase() || "SETOR");
   const emis = new Date().toLocaleDateString("pt-BR");
   const cssq = t => String(t || "").replace(/["\\]/g, "").slice(0, 70);
-  const top3 = riscos.slice(0, 3), top5 = plano.slice(0, 5);
+  const top3 = [...riscos].sort((a, b) => level(b.severidade, b.probabilidade).r - level(a.severidade, a.probabilidade).r).slice(0, 10), top5 = plano.slice(0, 5); // resumo: os 10 riscos mais graves (críticos primeiro)
   const firstPar = String(P.texto || "").split(/\n+/).find(x => x.trim()) || "";
   const body = `<article class="rep" data-code="${code}" data-emis="${emis}">
   <style>@page{size:A4;margin:20mm 15mm 18mm 15mm;@top-left{content:"${cssq(meta.emp || "Relatório Técnico de SST")}";font:italic 700 9.5pt "Times New Roman",serif;color:#0d3b72}@top-right{content:"${cssq(meta.setor || "Inspeção de SST")}";font:italic 9pt "Times New Roman",serif;color:#8a8a8a}@bottom-left{content:"Relatório Técnico de SST  |  ${code}  |  Rev. 00  |  Emitido em ${emis}";font:8.5pt "Times New Roman",serif;color:#8a8a8a}@bottom-right{content:"Página " counter(page) " de " counter(pages);font:8.5pt "Times New Roman",serif;color:#8a8a8a}}@page:first{margin:0;@top-left{content:none}@top-right{content:none}@bottom-right{content:none}@bottom-left{content:none}}</style>
@@ -3524,7 +3556,7 @@ function reportHTML(R, photos, meta){
       </dl>
       <div class="cv-foot"><b>${esc(meta.emp || "Empresa / unidade")}</b><span>${[meta.elab ? "Elaboração: " + esc(meta.elab) : "", meta.rev ? "Revisão: " + esc(meta.rev) : ""].filter(Boolean).join(" · ")}</span><div class="cv-tag">Planejar <i>•</i> Desenvolver <i>•</i> Checar <i>•</i> Agir</div></div>
     </div>
-    <div class="cv-art">${coverArtSVG(photos[0] || "")}</div>
+    <div class="cv-art">${coverArtSVG(photos[Math.min(capaI(), photos.length - 1)] || photos[0] || "")}</div>
   </section>
   <section class="toc"><div class="h2u">Sumário</div><ol>%%TOC%%</ol></section>
   <section class="ctrl">
@@ -3538,7 +3570,7 @@ function reportHTML(R, photos, meta){
     <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
     ${firstPar ? `<p>${esc(firstPar)}</p>` : ""}
     <div class="two">
-      <div><h4>Principais riscos</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
+      <div><h4>Principais riscos${top3.length > 3 ? ` (${top3.length} mais graves)` : ""}</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
     ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
@@ -4078,7 +4110,43 @@ function showReport(){
   $("dlPptx").onclick = () => downloadPptx(false);
   $("toCanva").onclick = () => downloadPptx(true);
   $("closeRep").onclick = () => { t.hidden = true; };
+  marcaFiguras(t.querySelector(".rep"));
 }
+// relatório na tela: linhas e itens que citam uma figura abrem a foto numa janela (sem sair do relatório)
+function figsDe(txt){
+  const out = [];
+  for (const m of String(txt || "").matchAll(/figuras?\s*((?:\d+\s*(?:,|e|a|-|–)?\s*)+)/gi)){
+    const nums = m[1].match(/\d+/g) || [];
+    if (/\d+\s*(?:a|-|–)\s*\d+/.test(m[1]) && nums.length === 2) for (let k = +nums[0]; k <= +nums[1] && k - nums[0] < 20; k++) out.push(k);
+    else nums.forEach(n => out.push(+n));
+  }
+  return [...new Set(out)].filter(n => n >= 1 && n <= (report?.photos?.length || 0));
+}
+function marcaFiguras(art){
+  if (!art) return;
+  art.querySelectorAll("tbody tr, li, .call, p").forEach(el => {
+    if (el.closest("figure, .figs, .toc, nav, [data-fig] ") && !el.matches("tbody tr")) return;
+    if (el.matches("li, p, .call") && el.closest("tbody tr")) return;
+    const f = figsDe(el.textContent); if (f.length) el.dataset.fig = f.join(",");
+  });
+}
+function abreFigura(lista, txt, i = 0){
+  const d = $("figDlg"), n = lista[i];
+  $("figDlgT").textContent = lista.length > 1 ? `Figura ${n} (${i + 1} de ${lista.length})` : `Figura ${n}`;
+  $("figDlgP").textContent = String(txt || "").replace(/\s+/g, " ").trim().slice(0, 320);
+  $("figDlgImg").src = report.photos[n - 1]; $("figDlgImg").alt = "Figura " + n;
+  $("figDlgNav").innerHTML = lista.length > 1 ? lista.map((x, k) => `<button type="button" class="sm${k === i ? " on" : ""}" data-k="${k}">Figura ${x}</button>`).join("") : "";
+  $("figDlgNav").querySelectorAll("button").forEach(b => b.onclick = () => abreFigura(lista, txt, +b.dataset.k));
+  if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
+}
+$("tech").addEventListener("click", e => {
+  const el = e.target.closest(".rep [data-fig]"); if (!el || el.closest(".editing") || e.target.closest("a, button, input")) return;
+  // texto do problema: na tabela, a célula que cita a figura (ou a 2ª coluna)
+  const cel = el.matches("tr") ? [...el.cells].map(c => c.textContent.trim()) : null;
+  abreFigura(el.dataset.fig.split(",").map(Number), cel ? (cel.find(x => /figura/i.test(x)) || cel[1] || cel[0]) : el.textContent);
+});
+$("figDlgX").onclick = () => $("figDlg").close();
+$("figDlg").addEventListener("click", e => { if (e.target === $("figDlg")) $("figDlg").close(); });
 async function downloadReport(){
   const html = exportDoc(), name = "relatorio-tecnico-sst-" + (report.meta.iso || "inspecao") + ".html";
   if (inViewer){
@@ -4102,6 +4170,31 @@ function drawMapThumbs(){
   if (mapData && mapData.sig !== mapSig()) { mapData = null; drawMapPrev(); }
 }
 let mapFotoMan = false;
+// foto da capa do relatório técnico (escolhida no quadro 2; sem escolha, a primeira foto do relatório)
+const capaI = () => Math.max(0, relF().findIndex(f => f.capa));
+function drawCapaInfo(){ const R = relF(), el = $("capaInfo"); if (!el) return; $("capaBtn").disabled = !R.length; el.textContent = R.length ? `Capa: foto ${capaI() + 1} de ${R.length}${relF().some(f => f.capa) ? "" : " (a primeira, até você escolher)"}.` : ""; }
+// janela com todas as fotos para escolher a da capa ou a do mapa
+function abrirEscolha(tipo){
+  const L = tipo === "capa" ? relF() : mapF(), atual = tipo === "capa" ? capaI() : mapFoto;
+  if (!L.length){ setStatus(tipo === "capa" ? "Nenhuma foto marcada para o relatório técnico (R ou R+M)." : "Nenhuma foto marcada para o mapa de risco (M ou R+M).", true); return; }
+  $("pickDlgT").textContent = tipo === "capa" ? "Escolher foto da capa" : "Escolher foto do Mapa de Risco";
+  $("pickDlgP").textContent = tipo === "capa" ? `Clique na foto que vai na capa do relatório técnico (${L.length} foto(s) do relatório).` : `Clique na foto que vai compor o mapa de risco (${L.length} foto(s) do mapa). Os rostos são cobertos automaticamente.`;
+  const g = $("pickGrid"); g.innerHTML = "";
+  L.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === atual ? "on" : ""; b.setAttribute("aria-pressed", i === atual); b.innerHTML = `<img src="${f.url}" alt="Foto ${i + 1}" loading="lazy"><span>${i === atual ? "✓ " : ""}Foto ${i + 1}</span>`;
+    b.onclick = () => { $("pickDlg").close(); if (tipo === "capa") escolheCapa(f); else { mapFoto = i; mapFotoMan = true; drawMapThumbs(); drawMapPrev(); refreshMapView(); mapMsg(`Foto ${i + 1} escolhida para o mapa de risco.`); } };
+    g.append(b); });
+  const d = $("pickDlg"); if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
+}
+function escolheCapa(f){
+  frames.forEach(x => { x.capa = x === f; }); drawCapaInfo(); saveSoon();
+  const i = capaI(); setStatus(`Foto ${i + 1} escolhida para a capa do relatório técnico.`);
+  if (report && !$("tech").hidden){ if (report.edited) report.edited = trocaCapaEditado(report.edited, report.photos[i]); showReport(); }
+}
+function trocaCapaEditado(html, foto){ const d = document.createElement("div"); d.innerHTML = html; const cv = d.querySelector(".cv-art image"); if (cv && foto){ cv.setAttribute("href", foto); cv.setAttribute("xlink:href", foto); } return d.innerHTML; }
+$("capaBtn").onclick = () => abrirEscolha("capa");
+$("mapPickBtn").onclick = () => abrirEscolha("mapa");
+$("pickDlgX").onclick = () => $("pickDlg").close();
+$("pickDlg").addEventListener("click", e => { if (e.target === $("pickDlg")) $("pickDlg").close(); });
 // círculos do mapa: um por grupo de risco e intensidade (cor = grupo, tamanho = alto, médio ou baixo)
 function mapCircles(){
   let lista;
@@ -4213,13 +4306,33 @@ const ML = {logo: [3.2, 2.4, 37, 12.6], band: [44.4, .6, 252.6, 16.1], titleY: 9
   legT: [9.8, 113.7], legC: [[13.5, 123.7, "Risco alto"], [10.6, 137.4, "Risco médio"], [6.8, 149.5, "Risco baixo"]], legCx: 15.1, legLx: 24.5, cores: [65.3, 113.7, 11.9, 4.8, 8.43], corLx: 79.6, cipa: [279.8, 140.1, 15], orange2: 156.7, rodY: 163, rodX: [3.5, 68.9, 145], gestao: [245.9, 157.5, 51.1, 9.5]};
 const MAPA_LARANJA = "#ed7230", MAPA_AZUL = "#004aac", MAPA_AZUL2 = "#004aac", MAPA_SETOR = "#36200a", MAPA_CINZA = "#7a7a7a", MAPA_CS = {1: 6.8, 2: 10.6, 3: 13.5}; // círculos do quadro com os mesmos tamanhos da legenda do modelo
 const MAPA_CIPA = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#2e9e47" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="#2e9e47"/><path d="M43 33h14v10h10v14H57v10H43V57H33V43h10z" fill="#fff"/><path id="ca" d="M10 50a40 40 0 0 1 80 0" fill="none"/><path id="cb" d="M8 50a42 42 0 0 0 84 0" fill="none"/><text font-family="Arial" font-weight="700" font-size="10" fill="#2e9e47" letter-spacing="1"><textPath href="#ca" startOffset="50%" text-anchor="middle">CIPA</textPath></text><text font-family="Arial" font-weight="700" font-size="8" fill="#2e9e47" letter-spacing=".5"><textPath href="#cb" startOffset="50%" text-anchor="middle">SEGURANÇA</textPath></text></svg>`;
+// quadro dos círculos com altura automática: cada grupo ganha a altura do seu círculo ou do seu texto (o que for maior),
+// o quadro cresce para baixo até a linha laranja do rodapé e, se ainda faltar espaço, a letra diminui um pouco
+const MAPA_BOX_MAX = 154 - ML.box[1];
+const mapaTxt = r => r.manual ? r.perigo : tr(String(r.perigo).replace(/\s*\(.*?\)\s*/g, " ").trim(), 60);
+let mapaCv = null;
+function mapaLayout(grupos){
+  const [bx, by, bw, bh0] = ML.box, larg = bx + bw - ML.bulletX - 3 - 4.6; // largura útil do texto (mm)
+  mapaCv = mapaCv || document.createElement("canvas"); const g = mapaCv.getContext("2d");
+  const itens = grupos.map(gr => gr.rs.slice(0, 5).map(mapaTxt).concat(gr.rs.length > 5 ? [`e mais ${gr.rs.length - 5}.`] : []));
+  const linhas = (t, fs) => { g.font = `${fs * 10}px Arial`; let n = 1, cur = ""; String(t).split(/\s+/).forEach(w => { const x = cur ? cur + " " + w : w; if (g.measureText(x).width > larg * 10 && cur){ n++; cur = w; } else cur = x; }); return n; };
+  const calc = (fs, kc = 1) => itens.map((it, k) => Math.max(MAPA_CS[grupos[k].nv] * kc + 2.4 * kc, it.reduce((t, x) => t + linhas(x, fs), 0) * fs * 1.3 + 2));
+  const soma = a => a.reduce((x, y) => x + y, 0);
+  let fs = ML.fs, kc = 1, hs = calc(fs);
+  while (soma(hs) > MAPA_BOX_MAX && fs > 2.3){ fs = Math.round((fs - .1) * 10) / 10; hs = calc(fs); }
+  // muitos grupos (até 15): os círculos encolhem na mesma proporção, mantendo a diferença entre alto, médio e baixo
+  while (soma(hs) > MAPA_BOX_MAX && kc > .4){ kc = Math.round((kc - .05) * 100) / 100; hs = calc(fs, kc); }
+  const tot = hs.reduce((a, b) => a + b, 0), bh = Math.min(MAPA_BOX_MAX, Math.max(bh0, tot)), extra = Math.max(0, bh - tot) / Math.max(1, hs.length);
+  let y = by; const rows = hs.map((h, k) => { const H = tot <= bh ? h + extra : h * bh / tot; const r = {y, h: H, cy: y + H / 2, itens: itens[k], d: MAPA_CS[grupos[k].nv] * kc}; y += H; return r; });
+  return {bh, fs, rows};
+}
 async function mapaHTML(opts = {}){
   const D = await mapaDados();
   const grupos = D.grupos;
   const foto = D.foto, logo = D.logo, emp = D.emp, setor = D.setor, data = new Date(($("rData").value || hojeISO()) + "T12:00:00").toLocaleDateString("pt-BR");
   const curto = t => tr(String(t).replace(/\s*\(.*?\)\s*/g, " ").trim(), 60);
   const vig = D.vig, L = ML, mm = v => v + "mm", box = a => `left:${mm(a[0])};top:${mm(a[1])};width:${mm(a[2])};height:${mm(a[3])}`;
-  const n = Math.max(1, grupos.length), rowH = L.box[3] / n, CS = MAPA_CS;
+  const LY = mapaLayout(grupos), CS = MAPA_CS;
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Mapa de risco – ${esc(setor || "setor")}</title>${opts.print === false ? "" : `<script>(() => { let ok = 0; const go = () => { if (ok++) return; Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]).then(() => setTimeout(() => print(), 300)); }; addEventListener("load", go); setTimeout(go, 3000); })();<\/script>`}<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap"><style>
 @page{size:297mm 167mm;margin:0}*{box-sizing:border-box}html,body{margin:0;background:#fff}
 body{font-family:Arial,Helvetica,sans-serif;color:#222}
@@ -4232,7 +4345,7 @@ body{font-family:Arial,Helvetica,sans-serif;color:#222}
 .ft{border-radius:${mm(L.foto[4])};overflow:hidden;background:#eef1f4;display:flex;align-items:center;justify-content:center}.ft img{width:100%;height:100%;object-fit:cover}.ft span{font-size:3mm;color:#666}
 .bx{border:.3mm solid #9aa3ab;background:#fff}
 .ci{border-radius:50%;border:.3mm solid #333}
-.bl{margin:0;padding-left:4.2mm;font-size:${mm(L.fs)};line-height:1.3;display:flex;flex-direction:column;justify-content:center}
+.bl{margin:0;padding-left:4.2mm;font-size:${mm(LY.fs)};line-height:1.3;display:flex;flex-direction:column;justify-content:center}
 .lt{font:700 2.7mm Arial}.lc{border-radius:50%;border:.3mm solid #222;background:#fff}.ll{font-size:2.8mm}
 .cr{border:.3mm solid #333}.cl{font-size:3.2mm}
 .rd{font:700 3.2mm Arial;color:${MAPA_CINZA};white-space:nowrap}
@@ -4246,8 +4359,8 @@ ${logo ? `<div class="lg" style="${box(L.logo)}"><img src="${logo}" alt="Logo"><
 <div class="or" style="top:${mm(L.orange1)}"></div>
 <div class="st" style="left:${mm(L.setor[0])};top:${mm(L.setor[1] - 3.4)}">SETOR: ${esc(setor || "não informado")}</div>
 <div class="ft" style="${box(L.foto)}">${foto ? `<img src="${foto}" alt="Foto do setor">` : "<span>Sem foto do setor</span>"}</div>
-<div class="bx" style="${box(L.box)}"></div>
-${grupos.map((g, k) => { const cy = L.box[1] + (k + .5) * rowH, d = CS[g.nv]; return `<div class="ci" style="left:${mm(L.cx - d / 2)};top:${mm(cy - d / 2)};width:${mm(d)};height:${mm(d)};background:${g.cor}"></div><ul class="bl" style="left:${mm(L.bulletX - 1)};top:${mm(cy - rowH / 2 + 1)};width:${mm(L.box[0] + L.box[2] - L.bulletX - 3)};height:${mm(rowH - 2)}">${g.rs.slice(0, 5).map(r => `<li>${esc(r.manual ? r.perigo : curto(r.perigo))}</li>`).join("")}${g.rs.length > 5 ? `<li>e mais ${g.rs.length - 5}.</li>` : ""}</ul>`; }).join("")}
+<div class="bx" style="${box([L.box[0], L.box[1], L.box[2], LY.bh])}"></div>
+${grupos.map((g, k) => { const R = LY.rows[k], d = R.d; return `<div class="ci" style="left:${mm(L.cx - d / 2)};top:${mm(R.cy - d / 2)};width:${mm(d)};height:${mm(d)};background:${g.cor}"></div><ul class="bl" style="left:${mm(L.bulletX - 1)};top:${mm(R.y + .5)};width:${mm(L.box[0] + L.box[2] - L.bulletX - 3)};height:${mm(R.h - 1)}">${R.itens.map(t => `<li>${esc(t)}</li>`).join("")}</ul>`; }).join("")}
 ${grupos.length ? "" : `<div style="left:${mm(L.box[0] + 6)};top:${mm(L.box[1] + 6)};font-size:3mm">Nenhum risco identificado nas fotos.</div>`}
 <div class="lt" style="left:${mm(L.legT[0])};top:${mm(L.legT[1] - 2.3)}">LEGENDA:</div>
 ${L.legC.map(([d, cy, t]) => `<div class="lc" style="left:${mm(L.legCx - d / 2)};top:${mm(cy - d / 2)};width:${mm(d)};height:${mm(d)}"></div><div class="ll" style="left:${mm(L.legLx)};top:${mm(cy - 1.7)}">${t}</div>`).join("")}
@@ -4255,7 +4368,7 @@ ${MAPA_GR.map(([, t, c], k) => { const y = L.cores[1] + k * L.cores[4]; return `
 <div style="${box([L.cipa[0], L.cipa[1], L.cipa[2], L.cipa[2]])}"><img src="${MAPA_CIPA_IMG}" alt="CIPA" style="width:100%;height:100%;object-fit:contain"></div>
 <div class="or" style="top:${mm(L.orange2)}"></div>
 ${[["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].map(([a, b], k) => `<div class="rd" style="left:${mm(L.rodX[k])};top:${mm(L.rodY - 2.9)}">${a}${esc(b)}</div>`).join("")}
-${vig ? `<div class="gs" style="${box(L.gestao)}">GESTÃO CIPA | ${esc(vig)}</div>` : ""}
+<div class="gs" style="${box(L.gestao)}">GESTÃO CIPA${vig ? " | " + esc(vig) : ""}</div>
 </main></body></html>`;
 }
 
@@ -4276,13 +4389,12 @@ async function mapaPNG(D){
   txt(("SETOR: " + (D.setor || "não informado")).toUpperCase(), m(L.setor[0]), m(L.setor[1]), 3.9, {b: 1, c: MAPA_SETOR});
   const [fx, fy, fw, fh, fr] = L.foto; g.save(); rr(m(fx), m(fy), m(fw), m(fh), m(fr)); g.clip(); g.fillStyle = "#eef1f4"; g.fillRect(m(fx), m(fy), m(fw), m(fh));
   const ft = await img(D.foto); if (ft){ const k = Math.max(m(fw) / ft.width, m(fh) / ft.height), w = ft.width * k, h = ft.height * k; g.drawImage(ft, m(fx) + (m(fw) - w) / 2, m(fy) + (m(fh) - h) / 2, w, h); } g.restore();
-  const [bx, by, bw, bh] = L.box; g.fillStyle = "#fff"; g.fillRect(m(bx), m(by), m(bw), m(bh)); g.strokeStyle = "#9aa3ab"; g.lineWidth = m(.3); g.strokeRect(m(bx), m(by), m(bw), m(bh));
-  const n = Math.max(1, D.grupos.length), rowH = bh / n;
+  const LY = mapaLayout(D.grupos), [bx, by, bw] = L.box, bh = LY.bh; g.fillStyle = "#fff"; g.fillRect(m(bx), m(by), m(bw), m(bh)); g.strokeStyle = "#9aa3ab"; g.lineWidth = m(.3); g.strokeRect(m(bx), m(by), m(bw), m(bh));
   D.grupos.forEach((gr, i) => {
-    const cy = by + (i + .5) * rowH; circ(L.cx, cy, MAPA_CS[gr.nv], gr.cor);
-    const linhas = []; gr.rs.slice(0, 5).forEach(r => wrap(r.perigo, m(bx + bw - L.bulletX - 8), L.fs).forEach((l, j) => linhas.push([l, j === 0]))); if (gr.rs.length > 5) linhas.push([`e mais ${gr.rs.length - 5}.`, true]);
-    const lh = L.fs * 1.3, y0 = cy - (linhas.length * lh) / 2 + lh * .78;
-    linhas.forEach(([l, bul], k) => { if (bul) txt("•", m(L.bulletX), m(y0 + k * lh), L.fs); txt(l, m(L.bulletX + 3), m(y0 + k * lh), L.fs); });
+    const R = LY.rows[i], cy = R.cy; circ(L.cx, cy, R.d, gr.cor);
+    const linhas = []; R.itens.forEach(t => wrap(t, m(bx + bw - L.bulletX - 8), LY.fs).forEach((l, j) => linhas.push([l, j === 0])));
+    const lh = LY.fs * 1.3, y0 = cy - (linhas.length * lh) / 2 + lh * .78;
+    linhas.forEach(([l, bul], k) => { if (bul) txt("•", m(L.bulletX), m(y0 + k * lh), LY.fs); txt(l, m(L.bulletX + 3), m(y0 + k * lh), LY.fs); });
   });
   txt("LEGENDA:", m(L.legT[0]), m(L.legT[1]), 2.7, {b: 1});
   L.legC.forEach(([d, cy, t]) => { circ(L.legCx, cy, d, "#fff"); txt(t, m(L.legLx), m(cy + 1), 2.8); });
@@ -4290,7 +4402,7 @@ async function mapaPNG(D){
   const cp = await img(MAPA_CIPA_IMG); if (cp) g.drawImage(cp, m(L.cipa[0]), m(L.cipa[1]), m(L.cipa[2]), m(L.cipa[2]));
   g.fillStyle = MAPA_LARANJA; g.fillRect(0, m(L.orange2), W, m(.6));
   [["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].forEach(([a, b], k) => txt(a + b, m(L.rodX[k]), m(L.rodY), 3.2, {b: 1, c: MAPA_CINZA}));
-  if (D.vig){ const [gx, gy, gw, gh] = L.gestao; g.fillStyle = MAPA_AZUL2; g.fillRect(m(gx), m(gy), m(gw), m(gh)); g.letterSpacing = m(.45) + "px"; txt("GESTÃO CIPA | " + D.vig, m(gx + gw / 2), m(gy + gh / 2 + 1), 2.7, {b: 1, c: "#fff", a: "center"}); g.letterSpacing = "0px"; }
+  { const [gx, gy, gw, gh] = L.gestao; g.fillStyle = MAPA_AZUL2; g.fillRect(m(gx), m(gy), m(gw), m(gh)); g.letterSpacing = m(.45) + "px"; txt("GESTÃO CIPA" + (D.vig ? " | " + D.vig : ""), m(gx + gw / 2), m(gy + gh / 2 + 1), 2.7, {b: 1, c: "#fff", a: "center"}); g.letterSpacing = "0px"; }
   return c.toDataURL("image/png");
 }
 async function baixarMapa(blob, name){
@@ -4315,7 +4427,7 @@ $("mapDocx").onclick = async () => {
     const par = (kids, o = {}) => new X.Paragraph({alignment: o.al || X.AlignmentType.LEFT, spacing: {before: o.bf || 0, after: o.af || 0}, children: kids, bullet: o.bul ? {level: 0} : undefined});
     const pngCirc = (d, fill, dash) => { const k = 8, c = document.createElement("canvas"), r = d * k / 2; c.width = c.height = Math.ceil(d * k + 4); const g = c.getContext("2d"); g.beginPath(); g.arc(c.width / 2, c.height / 2, r, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); g.strokeStyle = "#222"; g.lineWidth = 2.4; g.setLineDash(dash ? [6, 5] : []); g.stroke(); return c.toDataURL("image/png"); };
     const img = (url, wmm, hmm) => new X.ImageRun({type: "png", data: dxBytes(url), transformation: {width: px(wmm), height: px(hmm)}});
-    const cell = (kids, w, o = {}) => new X.TableCell({children: kids, width: {size: w, type: X.WidthType.DXA}, borders: o.bd || nb, shading: o.bg ? {fill: o.bg, type: X.ShadingType.CLEAR, color: "auto"} : undefined, verticalAlign: o.va || X.VerticalAlign.CENTER, margins: o.m || {top: 0, bottom: 0, left: 60, right: 60}});
+    const cell = (kids, w, o = {}) => new X.TableCell({children: kids, width: {size: w, type: X.WidthType.DXA}, borders: o.bd || nb, shading: o.bg ? {fill: o.bg, type: X.ShadingType.CLEAR, color: "auto"} : undefined, verticalAlign: o.va || X.VerticalAlign.CENTER, margins: o.m || {top: 0, bottom: 0, left: 60, right: 60}, rowSpan: o.rs, columnSpan: o.cs});
     const tab = (rows, ws, o = {}) => new X.Table({width: {size: ws.reduce((a, b) => a + b, 0), type: X.WidthType.DXA}, columnWidths: ws, borders: o.bd || nb, layout: X.TableLayoutType.FIXED, rows: rows.map(r => new X.TableRow({children: r, height: o.h ? {value: o.h, rule: X.HeightRule.ATLEAST} : undefined}))});
     const OR = {style: X.BorderStyle.SINGLE, size: 18, color: hx(MAPA_LARANJA)};
     const toPng = async u => { const im = new Image(); im.src = u; await im.decode(); const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); return {url: c.toDataURL("image/png"), w: im.naturalWidth, h: im.naturalHeight}; };
@@ -4329,19 +4441,27 @@ $("mapDocx").onclick = async () => {
     let fotoK = [run("Sem foto do setor", {c: "666666"})];
     if (D.foto){ const c = document.createElement("canvas"), im = new Image(); im.src = D.foto; await im.decode(); const CW = 1127, CH = 674, r = 80; c.width = CW; c.height = CH; const g = c.getContext("2d"); g.beginPath(); g.moveTo(r, 0); g.arcTo(CW, 0, CW, CH, r); g.arcTo(CW, CH, 0, CH, r); g.arcTo(0, CH, 0, 0, r); g.arcTo(0, 0, CW, 0, r); g.closePath(); g.clip(); const kk = Math.max(CW / im.naturalWidth, CH / im.naturalHeight); g.drawImage(im, (CW - im.naturalWidth * kk) / 2, (CH - im.naturalHeight * kk) / 2, im.naturalWidth * kk, im.naturalHeight * kk); fotoK = [img(c.toDataURL("image/png"), 112.7, 67.4)]; }
     const GB = {style: X.BorderStyle.SINGLE, size: 6, color: "9AA3AB"};
-    const linhas = D.grupos.length ? D.grupos.map(gr => [cell([par([img(pngCirc(MAPA_CS[gr.nv], gr.cor), MAPA_CS[gr.nv], MAPA_CS[gr.nv])], {al: X.AlignmentType.CENTER})], 1500), cell(gr.rs.slice(0, 5).map(r => par([run(r.perigo, {sz: ML.fs})], {bul: 1})).concat(gr.rs.length > 5 ? [par([run(`e mais ${gr.rs.length - 5}.`)], {bul: 1})] : []), 5300)]) : [[cell([par([run("Nenhum risco identificado nas fotos.")])], 1500), cell([par([])], 5300)]];
-    const quadro = tab(linhas, [1500, 5300], {h: Math.round(69 / Math.max(1, linhas.length) * MM)});
-    const meio = tab([[cell([par(fotoK)], 6500), cell([par([])], 2300), cell([quadro], 7000, {bd: {top: GB, bottom: GB, left: GB, right: GB}, m: {top: 80, bottom: 80, left: 120, right: 120}})]], [6500, 2300, 7000]);
+    const LY = mapaLayout(D.grupos);
+    // borda cinza só no contorno do quadro
+    const bdQ = (k, n, esq) => ({top: k === 0 ? GB : NB, bottom: k === n - 1 ? GB : NB, left: esq ? GB : NB, right: esq ? NB : GB});
+    const nG = Math.max(1, D.grupos.length);
+    const linhas = D.grupos.length ? D.grupos.map((gr, k) => { const R = LY.rows[k]; return [cell([par([img(pngCirc(R.d, gr.cor), R.d, R.d)], {al: X.AlignmentType.CENTER})], 1500, {bd: bdQ(k, nG, 1)}), cell(R.itens.map(t => par([run(t, {sz: LY.fs})], {bul: 1})), 5300, {bd: bdQ(k, nG, 0)})]; }) : [[cell([par([run("Nenhum risco identificado nas fotos.")])], 1500, {bd: bdQ(0, 1, 1)}), cell([par([])], 5300, {bd: bdQ(0, 1, 0)})]];
+    // altura de cada linha do quadro igual à do PDF (o quadro cresce conforme o número de grupos)
+    const quadro = new X.Table({width: {size: 6800, type: X.WidthType.DXA}, columnWidths: [1500, 5300], borders: {top: GB, bottom: GB, left: GB, right: GB, insideHorizontal: NB, insideVertical: NB}, layout: X.TableLayoutType.FIXED, rows: linhas.map((r, k) => new X.TableRow({children: r, height: {value: Math.round((LY.rows[k]?.h || 69) * MM), rule: X.HeightRule.ATLEAST}}))});
     // legenda (tamanhos e cores) e emblema da CIPA
     const legC = tab(ML.legC.map(([d, , t]) => [cell([par([img(pngCirc(d, "#ffffff"), d, d)], {al: X.AlignmentType.CENTER})], 900), cell([par([run(t, {sz: 2.8})])], 1700)]), [900, 1700], {h: 760});
     const B1 = {style: X.BorderStyle.SINGLE, size: 6, color: "333333"};
     const legR = tab(MAPA_GR.flatMap(([, t, cor], k) => [...(k ? [[cell([new X.Paragraph({spacing: {before: 0, after: 0, line: 80, lineRule: X.LineRuleType.EXACT}, children: [run(" ", {sz: 1})]})], 700), cell([new X.Paragraph({spacing: {before: 0, after: 0, line: 80, lineRule: X.LineRuleType.EXACT}, children: [run(" ", {sz: 1})]})], 2600)]] : []), [cell([par([run(" ", {sz: 2.6})])], 700, {bg: hx(cor), bd: {top: B1, bottom: B1, left: B1, right: B1}}), cell([par([run(t, {sz: 3.2})])], 2600)]]), [700, 2600]);
     const cp = {data: dxBytes(MAPA_CIPA_IMG)};
-    const leg = tab([[cell([par([run("LEGENDA:", {sz: 2.7, b: 1})], {af: 60}), legC], 3100, {va: X.VerticalAlign.TOP}), cell([par([]), legR], 4100, {va: X.VerticalAlign.TOP}), cell([par([])], 7238), cell([par([new X.ImageRun({type: "png", data: cp.data, transformation: {width: px(15), height: px(15)}})], {al: X.AlignmentType.RIGHT})], 1600, {va: X.VerticalAlign.BOTTOM})]], [3100, 4100, 7238, 1600]);
+    const legenda = tab([[cell([par([run("LEGENDA:", {sz: 2.7, b: 1})], {af: 60}), legC], 3100, {va: X.VerticalAlign.TOP}), cell([par([]), legR], 4100, {va: X.VerticalAlign.TOP})]], [3100, 4100]);
+    // foto | quadro (o quadro ocupa as duas linhas e cresce para baixo, ao lado da legenda, como no PDF) | emblema
+    const meio = new X.Table({width: {size: 16038, type: X.WidthType.DXA}, columnWidths: [6500, 1300, 7000, 1238], borders: nb, layout: X.TableLayoutType.FIXED, rows: [
+      new X.TableRow({children: [cell([par(fotoK)], 6500), cell([par([])], 1300), cell([quadro], 7000, {rs: 2, va: X.VerticalAlign.TOP, m: {top: 0, bottom: 0, left: 100, right: 100}}), cell([par([])], 1238)]}),
+      new X.TableRow({children: [cell([par([run(" ", {sz: 1})], {af: 80}), legenda], 7800, {cs: 2, va: X.VerticalAlign.TOP}), cell([par([new X.ImageRun({type: "png", data: cp.data, transformation: {width: px(15), height: px(15)}})], {al: X.AlignmentType.RIGHT})], 1238, {va: X.VerticalAlign.BOTTOM})]})]});
     // rodapé: linha laranja em cima; elaboração, revisão, aprovação e GESTÃO CIPA
-    const rod = tab([[cell([par([run("ELABORAÇÃO: " + D.elab, {b: 1, c: cinza})])], 3800, {bd: ctOR}), cell([par([run("REVISÃO: " + D.rev, {b: 1, c: cinza})])], 4300, {bd: ctOR}), cell([par([run("APROVAÇÃO: " + D.aprov, {b: 1, c: cinza})])], 5000, {bd: ctOR}), cell(D.vig ? [par([run("GESTÃO CIPA | " + D.vig, {sz: 2.7, b: 1, c: "FFFFFF", sp: 40})], {al: X.AlignmentType.CENTER})] : [par([])], 2938, {bg: D.vig ? hx(MAPA_AZUL2) : undefined, bd: ctOR, m: {top: 80, bottom: 80, left: 60, right: 60}})]], [3800, 4300, 5000, 2938]);
+    const rod = tab([[cell([par([run("ELABORAÇÃO: " + D.elab, {b: 1, c: cinza})])], 3800, {bd: ctOR}), cell([par([run("REVISÃO: " + D.rev, {b: 1, c: cinza})])], 4300, {bd: ctOR}), cell([par([run("APROVAÇÃO: " + D.aprov, {b: 1, c: cinza})])], 5000, {bd: ctOR}), cell([par([run("GESTÃO CIPA" + (D.vig ? " | " + D.vig : ""), {sz: 2.7, b: 1, c: "FFFFFF", sp: 40})], {al: X.AlignmentType.CENTER})], 2938, {bg: hx(MAPA_AZUL2), bd: ctOR, m: {top: 80, bottom: 80, left: 60, right: 60}})]], [3800, 4300, 5000, 2938]);
     const doc = new X.Document({styles: {default: {document: {run: {font: "Arial"}}}}, sections: [{properties: {page: {size: {width: 9468, height: 16838, orientation: X.PageOrientation.LANDSCAPE}, margin: {top: 170, bottom: 120, left: 400, right: 400}}},
-      children: [head, setor, meio, par([run(" ", {sz: 1})], {af: 60}), leg, rod]}]});
+      children: [head, setor, meio, rod]}]});
     await baixarMapa(await X.Packer.toBlob(doc), mapaNome("docx"));
     mapMsg("Mapa de risco baixado em Word (.docx), em paisagem e editável. Veja na pasta Downloads.");
   }catch(e){ console.error(e); mapMsg("Não foi possível gerar o mapa em Word. Tente de novo.", true); }
@@ -4364,18 +4484,17 @@ $("mapCanva").onclick = async () => {
       g.beginPath(); g.moveTo(r, 0); g.arcTo(CW, 0, CW, CH, r); g.arcTo(CW, CH, 0, CH, r); g.arcTo(0, CH, 0, 0, r); g.arcTo(0, 0, CW, 0, r); g.closePath(); g.clip();
       const kk = Math.max(CW / im.naturalWidth, CH / im.naturalHeight), w = im.naturalWidth * kk, h = im.naturalHeight * kk; g.drawImage(im, (CW - w) / 2, (CH - h) / 2, w, h);
       s.addImage({data: c.toDataURL("image/png"), x: i(fx), y: i(fy), w: i(fw), h: i(fh)}); }
-    const [bx, by, bw, bh] = L.box; s.addShape(pp.ShapeType.rect, {x: i(bx), y: i(by), w: i(bw), h: i(bh), fill: {color: "FFFFFF"}, line: {color: "9AA3AB", width: .75}});
-    const n = Math.max(1, D.grupos.length), rowH = bh / n;
-    D.grupos.forEach((gr, j) => { const cy = by + (j + .5) * rowH, d = MAPA_CS[gr.nv];
+    const LY = mapaLayout(D.grupos), [bx, by, bw] = L.box, bh = LY.bh; s.addShape(pp.ShapeType.rect, {x: i(bx), y: i(by), w: i(bw), h: i(bh), fill: {color: "FFFFFF"}, line: {color: "9AA3AB", width: .75}});
+    D.grupos.forEach((gr, j) => { const R = LY.rows[j], cy = R.cy, rowH = R.h, d = R.d;
       s.addShape(pp.ShapeType.ellipse, {x: i(L.cx - d / 2), y: i(cy - d / 2), w: i(d), h: i(d), fill: {color: hx(gr.cor)}, line: {color: "222222", width: .75}});
-      s.addText(gr.rs.slice(0, 5).map(r => ({text: r.perigo, options: {bullet: true, breakLine: true}})).concat(gr.rs.length > 5 ? [{text: `e mais ${gr.rs.length - 5}.`, options: {bullet: true}}] : []), {x: i(L.bulletX - 1), y: i(cy - rowH / 2), w: i(bx + bw - L.bulletX - 3), h: i(rowH), fontFace: F, fontSize: pt(L.fs), color: "222222", valign: "middle", margin: 0}); });
+      s.addText(R.itens.map((t, k) => ({text: t, options: {bullet: true, breakLine: k < R.itens.length - 1}})), {x: i(L.bulletX - 1), y: i(cy - rowH / 2), w: i(bx + bw - L.bulletX - 3), h: i(rowH), fontFace: F, fontSize: pt(LY.fs), color: "222222", valign: "middle", margin: 0}); });
     s.addText("LEGENDA:", {x: i(L.legT[0]), y: i(L.legT[1] - 3), w: i(30), h: i(4), fontFace: F, fontSize: pt(2.7), bold: true, margin: 0});
     L.legC.forEach(([d, cy, t]) => { s.addShape(pp.ShapeType.ellipse, {x: i(L.legCx - d / 2), y: i(cy - d / 2), w: i(d), h: i(d), fill: {color: "FFFFFF"}, line: {color: "222222", width: .75}}); s.addText(t, {x: i(L.legLx), y: i(cy - 2.5), w: i(30), h: i(5), fontFace: F, fontSize: pt(2.8), margin: 0}); });
     MAPA_GR.forEach(([, t, cor], j) => { const y = L.cores[1] + j * L.cores[4]; s.addShape(pp.ShapeType.rect, {x: i(L.cores[0]), y: i(y), w: i(L.cores[2]), h: i(L.cores[3]), fill: {color: hx(cor)}, line: {color: "333333", width: .75}}); s.addText(t, {x: i(L.corLx), y: i(y - .3), w: i(50), h: i(5.4), fontFace: F, fontSize: pt(3.2), margin: 0}); });
     s.addImage({data: MAPA_CIPA_IMG, x: i(L.cipa[0]), y: i(L.cipa[1]), w: i(L.cipa[2]), h: i(L.cipa[2])});
     s.addShape(pp.ShapeType.rect, {x: 0, y: i(L.orange2), w: 13.333, h: i(.6), fill: {color: hx(MAPA_LARANJA)}, line: {color: hx(MAPA_LARANJA), width: 0}});
     [["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].forEach(([a, b], j) => s.addText(a + b, {x: i(L.rodX[j]), y: i(L.rodY - 4), w: i(j === 2 ? 98 : 72), h: i(5.5), fontFace: F, fontSize: pt(3.2), bold: true, color: hx(MAPA_CINZA), margin: 0}));
-    if (D.vig){ const [gx, gy, gw, gh] = L.gestao; s.addText("GESTÃO CIPA | " + D.vig, {x: i(gx), y: i(gy), w: i(gw), h: i(gh), fontFace: F, fontSize: pt(2.7), bold: true, color: "FFFFFF", fill: {color: hx(MAPA_AZUL2)}, align: "center", valign: "middle", charSpacing: 1.5, margin: 0}); }
+    { const [gx, gy, gw, gh] = L.gestao; s.addText("GESTÃO CIPA" + (D.vig ? " | " + D.vig : ""), {x: i(gx), y: i(gy), w: i(gw), h: i(gh), fontFace: F, fontSize: pt(2.7), bold: true, color: "FFFFFF", fill: {color: hx(MAPA_AZUL2)}, align: "center", valign: "middle", charSpacing: 1.5, margin: 0}); }
     const blob = await pp.write({outputType: "blob"}), name = mapaNome("pptx");
     await baixarMapa(blob, name);
     if (win){ try{ win.location.href = "https://www.canva.com/upload"; }catch(e){} }
@@ -4782,7 +4901,7 @@ async function buildPptx(R, photos, meta){
   // capa
   let s = pp.addSlide();
   s.background = {color: "FFFFFF"};
-  try{ const art = await svgURL(coverArtSVG(photos[0] || "")); const h = 7.5, w = h * art.w / art.h; s.addImage({data: art.url, x: 13.333 - w, y: 0, w, h}); }catch(e){}
+  try{ const art = await svgURL(coverArtSVG(photos[Math.min(capaI(), photos.length - 1)] || photos[0] || "")); const h = 7.5, w = h * art.w / art.h; s.addImage({data: art.url, x: 13.333 - w, y: 0, w, h}); }catch(e){}
   if (logo) s.addImage({data: logo, x: 0.7, y: 0.55, w: Math.min(2.6, 0.7 * lw / lh), h: 0.7});
   else s.addText(meta.emp || "Inspeção SST", {x: 0.7, y: 0.5, w: 7, h: 0.75, fontFace: F, fontSize: 30, bold: true, italic: true, color: NV});
   const rule = (x, y, w) => { s.addShape(pp.ShapeType.rect, {x, y, w: w * 0.55, h: 0.06, fill: {color: OR2}, line: {width: 0}}); s.addShape(pp.ShapeType.rect, {x: x + w * 0.55, y, w: w * 0.45, h: 0.06, fill: {color: OR}, line: {width: 0}}); };
@@ -5046,7 +5165,7 @@ async function maskPhoto(blob, faces){
 function swapPhotosInEdited(html, photos){
   const d = document.createElement("div"); d.innerHTML = html;
   d.querySelectorAll(".figs figure img").forEach((im, i) => { if (photos[i]) im.setAttribute("src", photos[i]); });
-  const cv = d.querySelector(".cv-art image"); if (cv && photos[0]){ cv.setAttribute("href", photos[0]); cv.setAttribute("xlink:href", photos[0]); }
+  const pc = photos[Math.min(capaI(), photos.length - 1)] || photos[0]; const cv = d.querySelector(".cv-art image"); if (cv && pc){ cv.setAttribute("href", pc); cv.setAttribute("xlink:href", pc); }
   return d.innerHTML;
 }
 async function applyFaces(){
@@ -6079,11 +6198,11 @@ function saveSoon(delay = 800){
       if (!has){ await idbDel(); return; }
       // guarda os bytes (e não o Blob): o Safari pode perder o conteúdo de Blobs guardados no IndexedDB após recarregar
       const B = async b => { if (!b) return b; try{ return {buf: await b.arrayBuffer(), type: b.type || ""}; }catch(e){ return null; } };
-      const fr = []; for (const f of frames){ const x = await B(f.blob); if (x) fr.push([x, f.uso || "ambos"]); }
+      const fr = []; for (const f of frames){ const x = await B(f.blob); if (x) fr.push([x, f.uso || "ambos", !!f.capa]); }
       const au = []; for (const a of audios.filter(a => a.info || a.err)) au.push({name: a.name, from: a.from, dur: a.dur, blob: await B(a.blob), info: a.info, err: a.err, status: a.status});
       const dc = []; for (const d of docs.filter(d => !d.err)){ const im = []; for (const b of d.images || []){ const x = await B(b); if (x) im.push(x); } dc.push({name: d.name, kind: d.kind, note: d.note, text: d.text, images: im}); }
       const al = []; for (const h of history){ const x = await B(h.blob); if (x) al.push({t: h.t.getTime(), blob: x, data: h.data, msgs: h.msgs || []}); }
-      await idbPut({t: Date.now(), ctx: $("ctx").value, frames: fr.map(x => x[0]), usos: fr.map(x => x[1]), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
+      await idbPut({t: Date.now(), ctx: $("ctx").value, frames: fr.map(x => x[0]), usos: fr.map(x => x[1]), capas: fr.map(x => x[2]), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
         audios: au, docs: dc, docInfo, alerts: al, mapGerado, mapData: mapData ? {riscos: mapData.riscos, foto: mapData.foto, fotos: mapData.fotos} : null, mapFoto});
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
   }, delay);
@@ -6095,7 +6214,7 @@ async function restoreSession(){
   let s = null; try{ s = await idbGet(); }catch(e){ return; }
   let perdidos = 0;
   if (s){
-    const fr = [], us = []; for (let i = 0; i < (s.frames || []).length; i++){ const b = fromStore(s.frames[i]); if (await legivel(b)){ fr.push(b); us.push((s.usos || [])[i] || "ambos"); } else perdidos++; } s.frames = fr; s.usos = us;
+    const fr = [], us = [], cp = []; for (let i = 0; i < (s.frames || []).length; i++){ const b = fromStore(s.frames[i]); if (await legivel(b)){ fr.push(b); us.push((s.usos || [])[i] || "ambos"); cp.push(!!(s.capas || [])[i]); } else perdidos++; } s.frames = fr; s.usos = us; s.capas = cp;
     for (const a of s.audios || []){ const b = fromStore(a.blob); if (a.blob && !(await legivel(b))){ perdidos++; a.blob = null; } else a.blob = b; }
     for (const d of s.docs || []){ const im = []; for (const x of d.images || []){ const b = fromStore(x); if (await legivel(b)) im.push(b); } d.images = im; }
     const al = []; for (const a of s.alerts || []){ const b = fromStore(a.blob); if (await legivel(b)) al.push({...a, blob: b}); else perdidos++; } s.alerts = al;
@@ -6105,7 +6224,7 @@ async function restoreSession(){
   restoring = true;
   try{
     if (s.ctx) $("ctx").value = s.ctx;
-    (s.frames || []).forEach((b, i) => frames.push({blob: b, url: URL.createObjectURL(b), uso: (s.usos || [])[i] || "ambos"})); refreshThumbs();
+    (s.frames || []).forEach((b, i) => frames.push({blob: b, url: URL.createObjectURL(b), uso: (s.usos || [])[i] || "ambos", capa: !!(s.capas || [])[i]})); refreshThumbs();
     (s.audios || []).forEach(a => audios.push({id: rnd(8), name: a.name, from: a.from, dur: a.dur, blob: a.blob, url: a.blob ? URL.createObjectURL(a.blob) : "", info: a.info, err: a.err, status: a.status || (a.info ? "transcrito" : "")})); drawAudios();
     (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; docInfoSig = docInfo ? docSig() : ""; drawDocs(); drawDocInfo();
     if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
