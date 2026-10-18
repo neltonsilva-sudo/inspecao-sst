@@ -440,6 +440,8 @@ button.sm{padding:6px 12px;font-size:13px}
 .report .rtools .exibir{margin-right:auto;justify-content:flex-start}
 .report .exibir .lbl{font-weight:700;color:var(--ink)}
 .report .exibir button{width:auto;flex:0 0 auto;margin:0}
+.exdlg .exopts{display:grid;gap:8px}
+.exdlg .exopts button{width:100%;margin:0}
 .report .rtools .exibir{flex:1 1 auto}
 .report .empty-st .exibir{margin-top:6px}
 .report .empty-st{display:grid;justify-items:center;text-align:center;gap:8px;padding:48px 20px;color:var(--muted)}
@@ -1028,7 +1030,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v143</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v144</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1265,6 +1267,8 @@ api:
   <section class="tech" id="tech" hidden></section>
   <section class="tech mapview" id="mapView" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
+  <dialog id="exDlg" class="nrdlg exdlg" aria-labelledby="exDlgT"><div class="nrd-in"><h2 id="exDlgT" style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">O que deseja exibir?</h2><p style="margin:0 0 14px;color:var(--muted)">O relatório técnico e o mapa de risco desta inspeção estão prontos.</p>
+    <div class="exopts"><button type="button" class="primary" data-ex="ver-ambos">Relatório técnico e mapa de risco</button><button type="button" data-ex="ver-rel">Só o relatório técnico</button><button type="button" data-ex="ver-mapa">Só o mapa de risco</button></div></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
   <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkFix" class="accent">Corrigir inconsistências</button><button type="button" id="chkPhotos">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
@@ -1273,7 +1277,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v143</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v144</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1733,6 +1737,12 @@ async function exibir(a){
   else if (a === "ver-rel") $("mapView").hidden = true;
   $(rel ? "tech" : "mapView").scrollIntoView({behavior: "smooth", block: "start"});
 }
+// só um gerado: abre sozinho; os dois: pergunta o que exibir
+function autoExibir(){
+  if (report && mapGerado){ const d = $("exDlg"); if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } } }
+  else if (report || mapGerado) exibir(report ? "ver-rel" : "ver-mapa");
+}
+$("exDlg").addEventListener("click", e => { const b = e.target.closest("[data-ex]"), d = $("exDlg"); if (b){ d.close(); exibir(b.dataset.ex); } else if (e.target === d) d.close(); });
 $("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "noex") renderEmpty(); else if (/^ver-/.test(a)) exibir(a); });
 function render(d, isExample){
   d = d && typeof d === "object" ? d : {};
@@ -4092,7 +4102,7 @@ Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonom
     lst.forEach(x => { if (!/fisic|quimic|biolog|ergon|acident|psicoss/i.test(normTxt(x.grupo))) x.grupo = {fis: "fisico", qui: "quimico", bio: "biologico", erg: "ergonomico", aci: "acidentes"}[grupoPorNome(x.risco)]; });
     mapData = {sig: mapSig(), riscos: lst, foto: Math.round(Number(r.foto_setor)) - 1, fotos: asList(r.fotos).filter(x => x && x.descricao)};
     if (!mapFotoMan && mapData.foto >= 0 && mapData.foto < mapF().length) mapFoto = mapData.foto;
-    drawMapThumbs(); drawMapPrev(); refreshMapView();
+    drawMapThumbs(); drawMapPrev(); refreshMapView(); saveSoon();
     mapMsg((lst.length ? `Análise concluída: ${lst.length} risco(s) identificado(s). Analisado: ${F.entra}. Confira abaixo e gere o mapa.` : `Análise concluída (${F.entra}), mas nenhum risco ocupacional foi identificado. Veja abaixo o que foi visto em cada foto; se faltou algo, escreva no campo "Riscos para incluir no mapa".`) + F.fora, !lst.length || !!F.fora);
     return true;
   }catch(e){ handleErr(e); mapMsg("Não foi possível analisar as fotos para o mapa: " + ($("status").textContent || e?.message || "erro"), true); return false; }
@@ -4352,7 +4362,7 @@ $("mapBtn").onclick = async () => {
   $("mapOpts").hidden = false; $("mapBtn").setAttribute("aria-expanded", true);
   if (!(await prepMapa())) return;
   $("mapBtn").disabled = true; mapMsg("Montando a visualização do mapa de risco…");
-  try{ showMapView(await mapaHTML({print: false})); mapMsg("Mapa de risco gerado: veja a visualização abaixo e escolha o formato (PDF, Word ou Canva)."); }
+  try{ const tinha = mapGerado; showMapView(await mapaHTML({print: false})); mapMsg("Mapa de risco gerado: veja a visualização abaixo e escolha o formato (PDF, Word ou Canva)."); if (!tinha) saveSoon(); if (report) autoExibir(); }
   catch(e){ console.error(e); mapMsg("Não foi possível montar o mapa de risco. Tente de novo.", true); }
   finally{ $("mapBtn").disabled = false; }
 };
@@ -5071,6 +5081,7 @@ async function generateReport(){
     const nF = report.faces.reduce((t, x) => t + x.length, 0);
     setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível detectar os rostos automaticamente: use Rostos nas fotos para cobri-los antes de compartilhar." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
     $("tech").scrollIntoView({behavior: "smooth", block: "start"});
+    if (mapGerado) autoExibir();
   }catch(e){ handleErr(e); }
   finally{ clearInterval(tick); ctl = null; $("stopRow").hidden = true; updateGo(); }
 }
@@ -6024,7 +6035,7 @@ function saveSoon(delay = 800){
       const dc = []; for (const d of docs.filter(d => !d.err)){ const im = []; for (const b of d.images || []){ const x = await B(b); if (x) im.push(x); } dc.push({name: d.name, kind: d.kind, note: d.note, text: d.text, images: im}); }
       const al = []; for (const h of history){ const x = await B(h.blob); if (x) al.push({t: h.t.getTime(), blob: x, data: h.data, msgs: h.msgs || []}); }
       await idbPut({t: Date.now(), ctx: $("ctx").value, frames: fr.map(x => x[0]), usos: fr.map(x => x[1]), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
-        audios: au, docs: dc, docInfo, alerts: al});
+        audios: au, docs: dc, docInfo, alerts: al, mapGerado, mapData: mapData ? {riscos: mapData.riscos, foto: mapData.foto, fotos: mapData.fotos} : null, mapFoto});
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
   }, delay);
 }
@@ -6049,7 +6060,11 @@ async function restoreSession(){
     (s.audios || []).forEach(a => audios.push({id: rnd(8), name: a.name, from: a.from, dur: a.dur, blob: a.blob, url: a.blob ? URL.createObjectURL(a.blob) : "", info: a.info, err: a.err, status: a.status || (a.info ? "transcrito" : "")})); drawAudios();
     (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; docInfoSig = docInfo ? docSig() : ""; drawDocs(); drawDocInfo();
     if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
-    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
+    if (s.mapData){ mapData = {...s.mapData, sig: mapSig()}; mapFoto = Math.min(Math.max(0, s.mapFoto || 0), Math.max(0, mapF().length - 1)); drawMapThumbs(); drawMapPrev(); }
+    mapGerado = !!s.mapGerado && mapF().length > 0;
+    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; }
+    if (!curRender) renderEmpty(); else drawExibir();
+    setTimeout(autoExibir, 300);
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}).${perdidos ? ` ${perdidos} foto(s)/áudio(s) guardado(s) não puderam ser lidos pelo navegador e foram retirados: anexe-os de novo.` : ""} Para começar do zero, clique em Limpar tudo.`, !!perdidos);
     if (perdidos) saveSoon(0);
   }catch(e){ console.warn(e); }
