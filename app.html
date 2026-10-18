@@ -1042,7 +1042,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v149</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v150</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1283,7 +1283,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v149</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v150</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2892,7 +2892,7 @@ async function cycle(){
   if (ctl) return; // ainda analisando o quadro anterior
   const blob = await monFrame();
   if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); lampSaw("Monitoramento parado: a câmera ficou sem imagem. Ligue a câmera e clique em Monitorar de novo.", true); return; }
-  const sel = MON_AL.filter(([id]) => $(id).checked);
+  const sel = monSel();
   const data = await monCheck(blob, sel);
   if (!data) return;
   monCount++;
@@ -3018,6 +3018,12 @@ const epiReq = () => EPI_REQ.filter(([id]) => $(id)?.checked).map(([, l]) => l);
   $("alNone").onclick = () => { MON_AL.forEach(([id]) => { $(id).checked = false; store("sst_" + id, null); }); alCount(); };
   f.addEventListener("change", alCount);
 })();
+// situações marcadas; EPIs obrigatórios marcados já ligam a conferência de "Pessoa sem EPI"
+function monSel(){
+  const sel = MON_AL.filter(([id]) => $(id).checked);
+  if (epiReq().length && !sel.some(x => x[1] === "sem_epi")) sel.unshift(MON_AL.find(x => x[1] === "sem_epi"));
+  return sel;
+}
 function monHits(d, sel){
   const al = d && typeof d.alertas === "object" ? d.alertas : {}, obs = asList(d?.pessoas?.observacoes);
   return sel.map(([id, k, , t]) => {
@@ -3032,10 +3038,11 @@ function monHits(d, sel){
 }
 MON_AL.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => store("sst_" + id, el.checked ? "1" : null); });
 // contagem no título da lista recolhível
-function alCount(){ const n = MON_AL.filter(([id]) => $(id)?.checked).length; if ($("monAlN")) $("monAlN").textContent = `(${n} de ${MON_AL.length} marcadas)`; }
+function alCount(){ const n = monSel().length; if ($("monAlN")) $("monAlN").textContent = `(${n} de ${MON_AL.length} marcadas)`; }
 alCount();
 { const q = $("monQuick"); if (q){ q.checked = load("sst_monQuick") !== "0"; q.onchange = () => store("sst_monQuick", q.checked ? null : "0"); } }
-EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => store("sst_" + id, el.checked ? "1" : null); });
+EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => { store("sst_" + id, el.checked ? "1" : null); alCount(); }; });
+alCount();
 function tickMon(){
   if (!mon) return;
   const left = Math.round((mon.next - Date.now()) / 1000);
@@ -3072,10 +3079,12 @@ $("watchBtn").onclick = async () => {
     if (!stream && !phoneRelay()){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
   }
   if (!stream && phoneRelay()) setStatus("Monitorando pela câmera do celular (sem vídeo ao vivo): a cada verificação o celular fotografa e envia o quadro. Deixe a câmera do celular ligada.");
-  MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount();
+  // respeita as situações escolhidas; sem nenhuma marcada, monitora todas
+  if (!MON_AL.some(([id]) => $(id).checked)){ MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount(); }
   $("monInt").value = "30";
   startMon();
-  setStatus(`Monitorando a cada 30 segundos: risco crítico e ${MON_AL.length} situações de atos e condições inseguras.`);
+  const n = monSel().length, epis = epiReq();
+  setStatus(`Monitorando a cada 30 segundos: risco crítico e ${n} situação(ões) marcada(s)${epis.length ? ` (EPIs obrigatórios: ${epis.join(", ")})` : ""}.`);
 };
 $("stopBtn").onclick = () => ctl?.abort();
 
