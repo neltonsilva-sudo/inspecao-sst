@@ -1086,7 +1086,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v170</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v171</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1332,7 +1332,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v170</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v171</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5891,7 +5891,10 @@ function phoneMode(id, k){
     const w = b.clientWidth; if (!w) return;
     const ideal = w * v.videoHeight / v.videoWidth, tela = window.visualViewport?.height || innerHeight;
     const cap = Math.max(330, tela - 110), h = Math.round(Math.min(ideal, cap));
-    b.style.height = h + "px"; v.style.objectFit = ideal > cap + 2 ? "cover" : "contain";
+    b.style.height = h + "px";
+    // tamanho do vídeo definido em pixels (o Safari do iPhone às vezes desenha o vídeo menor que o quadro):
+    // largura toda; se o vídeo for mais alto que o quadro, sobra só em cima e embaixo, centralizado
+    Object.assign(v.style, {inset: "auto", left: "0px", top: Math.round((h - ideal) / 2) + "px", width: w + "px", height: Math.round(ideal) + "px", maxWidth: "none", maxHeight: "none", objectFit: "fill"});
   }
   async function reviveCam(){
     try{
