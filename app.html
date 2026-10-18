@@ -414,7 +414,8 @@ button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
 button.sm{padding:6px 12px;font-size:13px}
 .keyrow{display:flex;gap:6px;align-items:stretch}.keyrow input{flex:1;min-width:0}.keyrow button{white-space:nowrap}
-.mapsel{display:grid;gap:6px}.mapkey{display:grid;gap:4px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}.mapkey[open]{gap:6px}.mapkey summary{cursor:pointer;font-size:13px;font-weight:700}.mapkey summary em{font-style:normal;font-weight:500;color:var(--muted);font-size:12px}#mKeySum.ok,#keySum.ok{color:var(--ok)}#mKeySum.no,#keySum.no{color:var(--crit)}#keyDet{display:grid;gap:6px}.mapkey label{font-size:13px;font-weight:600}#mKeySt{font-size:12.5px;color:var(--muted)}#mKeySt.ok{color:var(--ok)}
+.mapsel{display:grid;gap:6px}
+.mapopts{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}.mapopts span{font-size:12.5px;font-weight:700;color:var(--muted)}.mapopts button{width:100%}.mapkey{display:grid;gap:4px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}.mapkey[open]{gap:6px}.mapkey summary{cursor:pointer;font-size:13px;font-weight:700}.mapkey summary em{font-style:normal;font-weight:500;color:var(--muted);font-size:12px}#mKeySum.ok,#keySum.ok{color:var(--ok)}#mKeySum.no,#keySum.no{color:var(--crit)}#keyDet{display:grid;gap:6px}.mapkey label{font-size:13px;font-weight:600}#mKeySt{font-size:12.5px;color:var(--muted)}#mKeySt.ok{color:var(--ok)}
 .mapclr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mapclr span{width:100%;font-size:12.5px;font-weight:700;color:var(--muted)}
 .usosel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .usosel span{font-weight:700;width:100%}.usosel label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
@@ -576,6 +577,8 @@ button.sm{padding:6px 12px;font-size:13px}
 @media (max-width:560px){select,input[type=password],input[type=text],input[type=date],textarea,.fields input{font-size:16px}}
 .tech{margin-top:24px}
 .techbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.mapview .mvw{background:#e9ecef;border-radius:12px;padding:12px;overflow:hidden}.mapview .mvf{position:relative;overflow:hidden;margin:auto;box-shadow:0 2px 12px rgba(0,0,0,.15);background:#fff}
+.mapview iframe{position:absolute;left:0;top:0;width:1123px;height:631px;border:0;transform-origin:0 0;background:#fff}.mapview .hint{margin-top:8px}
 .edit-tip{margin:-4px 0 12px;padding:9px 12px;border-radius:8px;border:1px dashed var(--signal);background:color-mix(in srgb,var(--signal) 10%,var(--panel))}
 .rep.editing{outline:3px dashed var(--signal);outline-offset:4px;cursor:text}
 .rep.editing :is(p,li,td,h1,h2,h3,div):hover{background:color-mix(in srgb,#f5a623 10%,transparent)}
@@ -1019,7 +1022,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v138</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v140</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1244,14 +1247,16 @@ api:
           <button type="button" class="sm" id="mClrFotos">Fotos do mapa</button><button type="button" class="sm" id="mClrDocs">Documentos</button><button type="button" class="sm" id="mClrAud">Áudios</button><button type="button" class="sm newrep" id="mClrTudo">Limpar tudo do mapa</button></div>
         <div class="status" id="mapStatus" role="status"></div>
         <div class="mapprev" id="mapPrev" hidden></div>
-        <button class="primary" id="mapBtn" type="button">Gerar mapa de risco (PDF)</button>
-        <div class="row"><button id="mapDocx" type="button">Baixar Word (.docx)</button><button id="mapCanva" type="button" class="accent">Abrir no Canva</button></div>
+        <button class="primary" id="mapBtn" type="button" aria-expanded="false" aria-controls="mapOpts">Gerar mapa de risco</button>
+        <div class="mapopts" id="mapOpts" hidden><span>Escolha o formato do mapa de risco:</span>
+          <button id="mapPdf" type="button">📄 Baixar em PDF</button><button id="mapDocx" type="button">📝 Baixar em Word (.docx)</button><button id="mapCanva" type="button" class="accent">🎨 Baixar para o Canva</button></div>
         <p class="hint">O mapa segue o modelo da CIPA, sempre em paisagem: logo à esquerda, faixa "MAPA DE RISCO" com a empresa, setor, a foto escolhida (rostos cobertos), quadro com um círculo por grupo e intensidade (cor = grupo, tamanho = alto, médio ou baixo) e os riscos ao lado, legenda, emblema da CIPA e rodapé com elaboração, revisão, aprovação e "GESTÃO CIPA | ano de vigência". O Word e o Canva saem editáveis.</p>
       </div>
     </section>
 
     <section class="panel report" id="report" aria-live="polite"></section>
   </div>
+  <section class="tech mapview" id="mapView" hidden></section>
   <section class="tech" id="tech" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
@@ -1262,7 +1267,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v138</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v140</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4100,14 +4105,14 @@ const ML = {logo: [3.2, 2.4, 37, 12.6], band: [44.4, .6, 252.6, 16.1], titleY: 9
   legT: [9.8, 113.7], legC: [[13.5, 123.7, "Risco alto"], [10.6, 137.4, "Risco médio"], [6.8, 149.5, "Risco baixo"]], legCx: 15.1, legLx: 24.5, cores: [65.3, 113.7, 11.9, 4.8, 8.43], corLx: 79.6, cipa: [279.8, 140.1, 15], orange2: 156.7, rodY: 163, rodX: [3.5, 68.9, 145], gestao: [245.9, 157.5, 51.1, 9.5]};
 const MAPA_LARANJA = "#ed7230", MAPA_AZUL = "#004aac", MAPA_AZUL2 = "#004aac", MAPA_SETOR = "#36200a", MAPA_CINZA = "#7a7a7a", MAPA_CS = {1: 6.8, 2: 10.6, 3: 13.5}; // círculos do quadro com os mesmos tamanhos da legenda do modelo
 const MAPA_CIPA = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#2e9e47" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="#2e9e47"/><path d="M43 33h14v10h10v14H57v10H43V57H33V43h10z" fill="#fff"/><path id="ca" d="M10 50a40 40 0 0 1 80 0" fill="none"/><path id="cb" d="M8 50a42 42 0 0 0 84 0" fill="none"/><text font-family="Arial" font-weight="700" font-size="10" fill="#2e9e47" letter-spacing="1"><textPath href="#ca" startOffset="50%" text-anchor="middle">CIPA</textPath></text><text font-family="Arial" font-weight="700" font-size="8" fill="#2e9e47" letter-spacing=".5"><textPath href="#cb" startOffset="50%" text-anchor="middle">SEGURANÇA</textPath></text></svg>`;
-async function mapaHTML(){
+async function mapaHTML(opts = {}){
   const D = await mapaDados();
   const grupos = D.grupos;
   const foto = D.foto, logo = D.logo, emp = D.emp, setor = D.setor, data = new Date(($("rData").value || hojeISO()) + "T12:00:00").toLocaleDateString("pt-BR");
   const curto = t => tr(String(t).replace(/\s*\(.*?\)\s*/g, " ").trim(), 60);
   const vig = D.vig, L = ML, mm = v => v + "mm", box = a => `left:${mm(a[0])};top:${mm(a[1])};width:${mm(a[2])};height:${mm(a[3])}`;
   const n = Math.max(1, grupos.length), rowH = L.box[3] / n, CS = MAPA_CS;
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Mapa de risco – ${esc(setor || "setor")}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap"><style>
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Mapa de risco – ${esc(setor || "setor")}</title>${opts.print === false ? "" : `<script>(() => { let ok = 0; const go = () => { if (ok++) return; Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]).then(() => setTimeout(() => print(), 300)); }; addEventListener("load", go); setTimeout(go, 3000); })();<\/script>`}<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap"><style>
 @page{size:297mm 167mm;margin:0}*{box-sizing:border-box}html,body{margin:0;background:#fff}
 body{font-family:Arial,Helvetica,sans-serif;color:#222}
 .pg{position:relative;width:297mm;height:167mm;overflow:hidden;background:#fff}.pg>*{position:absolute}
@@ -4125,6 +4130,7 @@ body{font-family:Arial,Helvetica,sans-serif;color:#222}
 .rd{font:700 3.2mm Arial;color:${MAPA_CINZA};white-space:nowrap}
 .gs{background:${MAPA_AZUL2};color:#fff;display:flex;align-items:center;justify-content:center;font:700 2.7mm Arial;letter-spacing:.45mm}
 @media screen{body{background:#e9ecef;padding:12px}.pg{margin:auto;box-shadow:0 2px 12px rgba(0,0,0,.15)}}
+${opts.print === false ? "html,body{padding:0!important;background:#fff!important;overflow:hidden}.pg{margin:0!important;box-shadow:none!important}" : ""}
 </style></head><body><main class="pg">
 ${logo ? `<div class="lg" style="${box(L.logo)}"><img src="${logo}" alt="Logo"></div>` : ""}
 <div class="band" style="${box(L.band)}"></div>
@@ -4142,7 +4148,7 @@ ${MAPA_GR.map(([, t, c], k) => { const y = L.cores[1] + k * L.cores[4]; return `
 <div class="or" style="top:${mm(L.orange2)}"></div>
 ${[["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].map(([a, b], k) => `<div class="rd" style="left:${mm(L.rodX[k])};top:${mm(L.rodY - 2.9)}">${a}${esc(b)}</div>`).join("")}
 ${vig ? `<div class="gs" style="${box(L.gestao)}">GESTÃO CIPA | ${esc(vig)}</div>` : ""}
-</main><script>addEventListener("load", () => (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(() => print(), 300)));<\/script></body></html>`;
+</main></body></html>`;
 }
 
 // desenho do mapa em imagem (para o Word): mesmo leiaute do PDF, em paisagem
@@ -4192,7 +4198,7 @@ async function prepMapa(){
 // Word editável: textos, tabelas e cores nativos do Word, em paisagem (297 × 167 mm), no leiaute do modelo
 $("mapDocx").onclick = async () => {
   if (!(await prepMapa())) return;
-  setStatus("Montando o mapa de risco em Word…");
+  mapMsg("Montando o mapa de risco em Word…");
   try{
     const D = await mapaDados(); await loadScript(DOCX_JS); const X = window.docx;
     const MM = 56.7, px = v => Math.round(v * 3.7795), hx = c => c.slice(1).toUpperCase(), cinza = hx(MAPA_CINZA);
@@ -4229,14 +4235,14 @@ $("mapDocx").onclick = async () => {
     const doc = new X.Document({styles: {default: {document: {run: {font: "Arial"}}}}, sections: [{properties: {page: {size: {width: 9468, height: 16838, orientation: X.PageOrientation.LANDSCAPE}, margin: {top: 170, bottom: 120, left: 400, right: 400}}},
       children: [head, setor, meio, par([run(" ", {sz: 1})], {af: 60}), leg, rod]}]});
     await baixarMapa(await X.Packer.toBlob(doc), mapaNome("docx"));
-    setStatus("Mapa de risco baixado em Word (.docx), em paisagem e editável.");
-  }catch(e){ console.error(e); setStatus("Não foi possível gerar o mapa em Word. Tente de novo.", true); }
+    mapMsg("Mapa de risco baixado em Word (.docx), em paisagem e editável. Veja na pasta Downloads.");
+  }catch(e){ console.error(e); mapMsg("Não foi possível gerar o mapa em Word. Tente de novo.", true); }
 };
 // Canva: apresentação editável (16:9, paisagem) com os mesmos elementos do mapa
 $("mapCanva").onclick = async () => {
   const win = !inViewer ? window.open("about:blank", "_blank") : null;
   if (!(await prepMapa())){ try{ win?.close(); }catch(e){} return; }
-  setStatus("Montando o mapa de risco para o Canva…");
+  mapMsg("Montando o mapa de risco para o Canva…");
   try{
     const D = await mapaDados(); await loadScript(PPTX_JS); const L = ML;
     const pp = new PptxGenJS(); pp.layout = "LAYOUT_WIDE"; const s = pp.addSlide(), k = 13.333 / 297, i = v => v * k, F = "Arial", pt = v => v * 2.835 * (338.67 / 297), hx = c => c.slice(1).toUpperCase();
@@ -4265,18 +4271,43 @@ $("mapCanva").onclick = async () => {
     const blob = await pp.write({outputType: "blob"}), name = mapaNome("pptx");
     await baixarMapa(blob, name);
     if (win){ try{ win.location.href = "https://www.canva.com/upload"; }catch(e){} }
-    setStatus(`Mapa "${name}" baixado (paisagem, editável). Na aba do Canva, clique em Enviar (Upload) e escolha esse arquivo.`);
-  }catch(e){ console.error(e); try{ win?.close(); }catch(x){} setStatus("Não foi possível gerar o mapa para o Canva. Tente de novo.", true); }
+    mapMsg(`Mapa "${name}" baixado (paisagem, editável). Na aba do Canva que abriu, clique em Enviar (Upload) e escolha esse arquivo da pasta Downloads.`);
+  }catch(e){ console.error(e); try{ win?.close(); }catch(x){} mapMsg("Não foi possível gerar o mapa para o Canva. Tente de novo.", true); }
 };
+// visualização do mapa na tela (como o relatório técnico), com os botões de formato
+function fitMapView(){ const w = $("mapView").querySelector(".mvw"), f = $("mapView").querySelector(".mvf"), ifr = $("mapView").querySelector("iframe"); if (!w || !ifr) return; const k = Math.min(1, (w.clientWidth - 24) / 1123); ifr.style.transform = `scale(${k})`; f.style.width = 1123 * k + "px"; f.style.height = 631 * k + "px"; }
+addEventListener("resize", () => { if (!$("mapView").hidden) fitMapView(); });
+function showMapView(html){
+  const v = $("mapView"); v.hidden = false;
+  v.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Mapa de risco</h2><button type="button" data-mv="pdf">📄 Baixar em PDF</button><button type="button" data-mv="docx">📝 Baixar em Word (.docx)</button><button type="button" data-mv="canva" class="accent">🎨 Baixar para o Canva</button><button type="button" data-mv="x">Fechar</button></div><div class="mvw"><div class="mvf"><iframe title="Visualização do mapa de risco" sandbox="allow-same-origin"></iframe></div></div><p class="hint">Visualização do mapa (paisagem). Para alterar, mude os campos, a foto ou os riscos no quadro 5 e clique em Gerar mapa de risco de novo.</p>`;
+  v.querySelector("iframe").srcdoc = html;
+  v.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => { const a = b.dataset.mv; if (a === "x"){ v.hidden = true; return; } $({pdf: "mapPdf", docx: "mapDocx", canva: "mapCanva"}[a]).click(); });
+  requestAnimationFrame(fitMapView);
+  v.scrollIntoView({behavior: "smooth", block: "start"});
+}
+// "Gerar mapa de risco": monta o mapa, mostra na tela e abre as opções de formato logo abaixo do botão
 $("mapBtn").onclick = async () => {
+  $("mapOpts").hidden = false; $("mapBtn").setAttribute("aria-expanded", true);
   if (!(await prepMapa())) return;
-  setStatus("Montando o mapa de risco…");
-  const html = await mapaHTML();
-  const url = URL.createObjectURL(new Blob([html], {type: "text/html"}));
-  const w = window.open(url, "_blank");
-  if (!w){ URL.revokeObjectURL(url); setStatus("Permita janelas pop-up para abrir o mapa de risco.", true); return; }
-  setTimeout(() => URL.revokeObjectURL(url), 120000);
-  setStatus("Mapa de risco aberto: escolha \"Salvar como PDF\" na janela de impressão.");
+  $("mapBtn").disabled = true; mapMsg("Montando a visualização do mapa de risco…");
+  try{ showMapView(await mapaHTML({print: false})); mapMsg("Mapa de risco gerado: veja a visualização abaixo e escolha o formato (PDF, Word ou Canva)."); }
+  catch(e){ console.error(e); mapMsg("Não foi possível montar o mapa de risco. Tente de novo.", true); }
+  finally{ $("mapBtn").disabled = false; }
+};
+// PDF: a janela é aberta já no clique (o Safari bloqueia janelas abertas depois de alguns segundos) e recebe o mapa quando fica pronto
+$("mapPdf").onclick = async () => {
+  const w = inViewer ? null : window.open("", "_blank");
+  if (w){ try{ w.document.write('<!doctype html><meta charset="utf-8"><title>Mapa de risco</title><p style="font:16px system-ui,sans-serif;color:#444;text-align:center;padding:80px 20px">Montando o mapa de risco…</p>'); }catch(e){} }
+  if (!(await prepMapa())){ try{ w?.close(); }catch(e){} return; }
+  mapMsg("Montando o mapa de risco em PDF…");
+  try{
+    const html = await mapaHTML();
+    if (w && !w.closed){ w.document.open(); w.document.write(html); w.document.close(); mapMsg("Mapa de risco aberto em outra aba: na janela de impressão, escolha \"Salvar como PDF\" (orientação paisagem)."); return; }
+    const url = URL.createObjectURL(new Blob([html], {type: "text/html"})), w2 = window.open(url, "_blank");
+    if (!w2){ URL.revokeObjectURL(url); mapMsg("O navegador bloqueou a janela do mapa. Permita janelas pop-up para este site e clique de novo em Baixar em PDF.", true); return; }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+    mapMsg("Mapa de risco aberto: escolha \"Salvar como PDF\" na janela de impressão.");
+  }catch(e){ console.error(e); try{ w?.close(); }catch(x){} mapMsg("Não foi possível montar o mapa em PDF. Tente de novo.", true); }
 };
 
 /* ---------- relatório em Word (.docx): converte o relatório pronto em documento nativo do Word ---------- */
@@ -5970,7 +6001,7 @@ async function newInspection(){
   history.forEach(h => URL.revokeObjectURL(h.url)); history.length = 0; monCount = 0; drawHistory(-1);
   lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
-  $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
+  $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = ""; $("mapView").hidden = true; $("mapView").innerHTML = ""; $("mapOpts").hidden = true;
   ["rEmp", "rSetor", "rResp", "rRev", "rAprov", "mSetor", "mElab", "mRev", "mAprov", "mVig", "mExtra"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
   mapData = null; mapFoto = 0; mapFotoMan = false; drawMapPrev();
   $("rElab").value = ""; store("sst_rElab", null);
