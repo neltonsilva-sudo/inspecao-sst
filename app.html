@@ -957,7 +957,7 @@ button.sm{padding:6px 12px;font-size:13px}
 .phone .ph-zoom button{width:30px;height:30px;min-height:0;padding:0;border-radius:50%;border:0;background:transparent;color:#fff;font:700 10.5px var(--f-mono)}
 .phone .ph-zoom button.on{background:rgba(245,196,0,.95);color:#1c2328}
 .ph-cam video{transition:transform .15s ease-out}
-.ph-cam.fit{height:auto;min-height:330px;max-height:min(84dvh,1040px);margin-inline:-10px;border-radius:14px} /* quadro no formato do vídeo: sem faixas pretas em volta */
+.ph-cam.fit{min-height:330px;max-height:none;margin-inline:-10px;border-radius:14px} /* largura toda; altura no formato do vídeo (ajuste automático) */
 .ph-bar{position:absolute;z-index:2;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;justify-items:center;align-items:center;padding:36px 12px 30px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .phone .ph-shutter{width:80px;height:80px;min-height:0;padding:5px;border-radius:50%;border:4px solid #fff;background:var(--signal);background-clip:content-box;box-shadow:0 2px 14px rgba(0,0,0,.4);transition:transform .1s ease,background-color .2s}
 .phone .ph-shutter:hover{border-color:#fff}
@@ -1084,7 +1084,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v166</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v167</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1330,7 +1330,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v166</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v167</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5881,7 +5881,16 @@ function phoneMode(id, k){
     zoomCaps(); setZoom(zoom, false); ajustaQuadro();
   }
   // o quadro assume a proporção do vídeo (retrato ou paisagem), para a imagem ocupar todo o espaço
-  function ajustaQuadro(){ const v = $("phVideo"), b = $("phBox"); if (!v.videoWidth) return; b.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`; b.classList.add("fit"); }
+  // ajuste automático: o quadro ocupa a largura toda e a altura do vídeo, até caber na tela (descontada a barra do navegador);
+  // se o vídeo for mais alto que isso, a imagem preenche o quadro (corta só um pouco em cima e embaixo na prévia; a foto sai inteira)
+  function ajustaQuadro(){
+    const v = $("phVideo"), b = $("phBox"); if (!v.videoWidth || b.hidden) return;
+    b.classList.add("fit");
+    const w = b.clientWidth; if (!w) return;
+    const ideal = w * v.videoHeight / v.videoWidth, tela = window.visualViewport?.height || innerHeight;
+    const cap = Math.max(330, tela - 110), h = Math.round(Math.min(ideal, cap));
+    b.style.height = h + "px"; v.style.objectFit = ideal > cap + 2 ? "cover" : "contain";
+  }
   async function reviveCam(){
     try{
       await cam();
@@ -6049,7 +6058,7 @@ function phoneMode(id, k){
       msg("Gravando… toque de novo para parar e enviar.");
     }catch(e){ msg("Não foi possível usar o microfone. Permita o acesso nas configurações do navegador.", true); }
   }
-  function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); }
+  function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); if (w === "phPhotos") requestAnimationFrame(ajustaQuadro); }
   // foto tirada no próprio celular e enviada como arquivo (quando não há vídeo ao vivo no computador)
   function snapLocal(mon){
     const v = $("phVideo"); if (!st || !v.videoWidth){ msg(st ? "A câmera ainda não está pronta. Tente de novo." : (mon ? "Monitoramento: ligue a câmera do celular (Fotos › Ligar a câmera) para o computador analisar." : "Para fotografar, toque em Ligar a câmera."), true); return; }
@@ -6105,6 +6114,7 @@ function phoneMode(id, k){
   $("phVideo").addEventListener("click", shot);
   $("phAuto").onclick = () => setAuto(!auto);
   ["loadedmetadata", "resize"].forEach(ev => $("phVideo").addEventListener(ev, ajustaQuadro));
+  addEventListener("resize", ajustaQuadro); window.visualViewport?.addEventListener("resize", ajustaQuadro); addEventListener("orientationchange", () => setTimeout(ajustaQuadro, 300));
   document.querySelectorAll("#phZoom button").forEach(b => b.onclick = e => { e.stopPropagation(); setZoom(+b.dataset.z); try{ navigator.vibrate?.(15); }catch(x){} });
   // pinça com dois dedos no vídeo: zoom contínuo
   { let d0 = 0, z0 = 1; const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), v = $("phVideo");
