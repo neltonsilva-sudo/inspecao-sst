@@ -998,7 +998,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v115</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v116</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1204,7 +1204,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v115</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v116</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4537,7 +4537,7 @@ async function callPart(prompt, blobs, signal){
 async function generateReport(){
   const blobs = frames.length ? frames.map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   if (!blobs.length || ctl) return;
-  const iso = $("rData").value || new Date().toISOString().slice(0, 10);
+  syncData(); const iso = $("rData").value || hojeISO();
   const meta = {ctx: !!$("ctx").value.trim(), emp: $("rEmp").value.trim(), setor: $("rSetor").value.trim(), resp: $("rResp").value.trim(), elab: $("rElab").value.trim(), rev: $("rRev").value.trim(), aprov: $("rAprov").value.trim(), iso, data: new Date(iso + "T12:00:00").toLocaleDateString("pt-BR"), docs: docInfo ? docs.filter(d => !d.err).map(d => d.name) : [], audios: audios.filter(a => a.info).map(a => anonInfo({nome: relNome(a), origem: a.from, dur: a.dur, resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, transcricao: a.info.transcricao}))};
   ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
   let done = 0;
@@ -4587,7 +4587,15 @@ function metaSync(){
 }
 ["rEmp","rSetor","rResp","rElab","rRev","rAprov","rData"].forEach(id => $(id).addEventListener("input", metaSync));
 ["rEmp","rSetor","rResp","rElab","rRev","rAprov"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
-$("rData").value = new Date().toISOString().slice(0, 10);
+// data de hoje no fuso do computador (toISOString usa UTC e, no Brasil, mostra o dia seguinte depois das 21 h)
+const hojeISO = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; };
+// a data acompanha o dia atual (página aberta de um dia para o outro) até a pessoa escolher outra data
+let dataManual = false;
+$("rData").value = hojeISO();
+$("rData").addEventListener("input", () => { dataManual = $("rData").value !== hojeISO(); });
+const syncData = () => { if (!dataManual && $("rData").value !== hojeISO()){ $("rData").value = hojeISO(); metaSync(); } };
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") syncData(); });
+addEventListener("focus", syncData); setInterval(syncData, 60000);
 // logo da empresa: reduzida e guardada só neste navegador; vai na capa e no cabeçalho do relatório
 function drawLogo(){ const u = load("sst_logo"); $("rLogoPrev").hidden = !u; $("rLogoClr").hidden = !u; if (u) $("rLogoPrev").src = u; }
 $("rLogo").onchange = async e => {
@@ -5481,7 +5489,7 @@ async function newInspection(){
   ["rEmp", "rSetor", "rResp", "rRev", "rAprov"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
   $("rElab").value = ""; store("sst_rElab", null);
   store("sst_logo", null); drawLogo();
-  $("rData").value = new Date().toISOString().slice(0, 10);
+  $("rData").value = hojeISO(); dataManual = false;
   ["lvDlg", "nrDlg", "faceDlg"].forEach(id => { try{ $(id)?.open && $(id).close(); }catch(e){} });
   refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); renderEmpty(); updateGo();
   try{ await idbDel(); }catch(e){}
