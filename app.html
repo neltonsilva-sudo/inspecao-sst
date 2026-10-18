@@ -1022,7 +1022,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v140</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v141</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1267,7 +1267,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v140</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v141</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3985,13 +3985,13 @@ async function downloadReport(){
   document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
 }
 /* ---------- mapa de risco (NR-05 / CIPA) ---------- */
-let mapFoto = 0, mapData = null, mapBusy = false; // foto escolhida para o mapa; riscos do mapa (análise própria de todas as fotos)
+let mapFoto = 0, mapData = null, mapBusy = false, mapFotoCache = {url: "", foto: ""}; // foto escolhida para o mapa; riscos do mapa (análise própria de todas as fotos)
 const mapSig = () => [mapF().map(f => f.url).join("|"), audios.filter(a => a.info).map(a => a.id).join(","), docInfo ? JSON.stringify(docInfo).length : 0, $("ctx").value.trim()].join("#"); // muda com foto, áudio, documento ou contexto novos
 const MAPA_NV = {alto: 3, medio: 2, médio: 2, baixo: 1};
 function drawMapThumbs(){
   const box = $("mapThumbs"); if (!box) return; box.innerHTML = "";
   const MF = mapF(); if (mapFoto >= MF.length) mapFoto = 0;
-  MF.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === mapFoto ? "on" : ""; b.title = `Usar a imagem ${i + 1} no mapa de risco`; b.setAttribute("aria-pressed", i === mapFoto); b.innerHTML = `<img src="${f.url}" alt="Imagem ${i + 1}">`; b.onclick = () => { mapFoto = i; mapFotoMan = true; drawMapThumbs(); drawMapPrev(); }; box.append(b); });
+  MF.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === mapFoto ? "on" : ""; b.title = `Usar a imagem ${i + 1} no mapa de risco`; b.setAttribute("aria-pressed", i === mapFoto); b.innerHTML = `<img src="${f.url}" alt="Imagem ${i + 1}">`; b.onclick = () => { mapFoto = i; mapFotoMan = true; drawMapThumbs(); drawMapPrev(); refreshMapView(); }; box.append(b); });
   $("mapThumbHint").textContent = MF.length ? `Imagem ${mapFoto + 1} de ${MF.length} selecionada para o mapa. Clique em outra para trocar.` : frames.length ? "Nenhuma foto marcada para o mapa (M ou R+M). No quadro 2, toque na etiqueta das fotos para incluí-las." : "Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.";
   if (mapData && mapData.sig !== mapSig()) { mapData = null; drawMapPrev(); }
 }
@@ -4044,7 +4044,7 @@ Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonom
     lst.forEach(x => { if (!/fisic|quimic|biolog|ergon|acident|psicoss/i.test(normTxt(x.grupo))) x.grupo = {fis: "fisico", qui: "quimico", bio: "biologico", erg: "ergonomico", aci: "acidentes"}[grupoPorNome(x.risco)]; });
     mapData = {sig: mapSig(), riscos: lst, foto: Math.round(Number(r.foto_setor)) - 1, fotos: asList(r.fotos).filter(x => x && x.descricao)};
     if (!mapFotoMan && mapData.foto >= 0 && mapData.foto < mapF().length) mapFoto = mapData.foto;
-    drawMapThumbs(); drawMapPrev();
+    drawMapThumbs(); drawMapPrev(); refreshMapView();
     mapMsg(lst.length ? `Análise concluída: ${lst.length} risco(s) identificado(s) em ${n} foto(s)${audios.some(a => a.info) ? ", nos áudios" : ""}${docInfo ? " e nos documentos" : ""}. Confira abaixo e gere o mapa.` : `Análise concluída em ${n} foto(s), mas nenhum risco ocupacional foi identificado. Veja abaixo o que foi visto em cada foto; se faltou algo, escreva no campo "Riscos para incluir no mapa".`, !lst.length);
     return true;
   }catch(e){ handleErr(e); mapMsg("Não foi possível analisar as fotos para o mapa: " + ($("status").textContent || e?.message || "erro"), true); return false; }
@@ -4065,14 +4065,15 @@ setTimeout(() => { syncMapKey(); if (inViewer) document.querySelector(".mapkey")
 // mostrar / esconder a chave da API
 $("keyEye").onclick = () => { const k = $("apiKey"), ver = k.type === "password"; k.type = ver ? "text" : "password"; $("keyEye").textContent = ver ? "🙈 Esconder" : "👁 Mostrar"; $("keyEye").setAttribute("aria-pressed", ver); $("keyEye").title = ver ? "Esconder a chave" : "Mostrar a chave"; if (ver) setTimeout(() => { if (k.type === "text"){ k.type = "password"; $("keyEye").textContent = "👁 Mostrar"; $("keyEye").setAttribute("aria-pressed", false); } }, 30000); };
 // limpeza do que foi anexado para o mapa: fotos só do mapa saem; fotos de relatório e mapa passam a ser só do relatório
-function limparFotosMapa(){ for (let i = frames.length - 1; i >= 0; i--){ const f = frames[i]; if (f.uso === "mapa"){ URL.revokeObjectURL(f.url); frames.splice(i, 1); } else if ((f.uso || "ambos") === "ambos") f.uso = "rel"; } mapFoto = 0; mapFotoMan = false; mapData = null; refreshThumbs(); drawMapPrev(); }
-function limparDocs(){ docs.length = 0; docInfo = null; mapData = null; drawDocs(); drawDocInfo(); drawMapPrev(); }
-function limparAudios(){ audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0; mapData = null; drawAudios(); drawMapPrev(); saveSoon(); }
+function limparFotosMapa(){ for (let i = frames.length - 1; i >= 0; i--){ const f = frames[i]; if (f.uso === "mapa"){ URL.revokeObjectURL(f.url); frames.splice(i, 1); } else if ((f.uso || "ambos") === "ambos") f.uso = "rel"; } mapFoto = 0; mapFotoMan = false; mapData = null; refreshThumbs(); drawMapPrev(); refreshMapView(); }
+function limparDocs(){ docs.length = 0; docInfo = null; mapData = null; drawDocs(); drawDocInfo(); drawMapPrev(); refreshMapView(); }
+function limparAudios(){ audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0; mapData = null; drawAudios(); drawMapPrev(); refreshMapView(); saveSoon(); }
 $("mClrFotos").onclick = () => { if (!mapF().length) return mapMsg("Não há fotos marcadas para o mapa."); if (!confirm(`Tirar as ${mapF().length} foto(s) do mapa de risco?\n\nFotos só do mapa (M) serão apagadas; fotos do relatório e do mapa (R+M) continuam no relatório técnico.`)) return; limparFotosMapa(); mapMsg("Fotos retiradas do mapa de risco."); };
 $("mClrDocs").onclick = () => { if (!docs.length) return mapMsg("Não há documentos anexados."); if (!confirm(`Remover os ${docs.length} documento(s) anexado(s)?\n\nEles também deixam de ser usados na análise e no relatório técnico.`)) return; limparDocs(); mapMsg("Documentos removidos."); };
 $("mClrAud").onclick = () => { if (!audios.length) return mapMsg("Não há áudios anexados."); if (!confirm(`Remover os ${audios.length} áudio(s) e as transcrições?\n\nEles também deixam de ser usados na análise e no relatório técnico.`)) return; limparAudios(); mapMsg("Áudios removidos."); };
 $("mClrTudo").onclick = () => { if (!confirm("Limpar tudo do mapa de risco?\n\nRemove as fotos do mapa (as de relatório e mapa ficam só no relatório), os documentos, os áudios com as transcrições, os riscos digitados e o resultado da análise do mapa. Os campos Setor, Elaboração, Revisão, Aprovação, Ano de vigência e a logo são mantidos.")) return; limparFotosMapa(); limparDocs(); limparAudios(); $("mExtra").value = ""; store("sst_mExtra", null); mapData = null; drawMapPrev(); mapMsg("Mapa de risco limpo: fotos, documentos, áudios e riscos digitados removidos."); };
 $("mExtra").addEventListener("input", () => drawMapPrev());
+// (o mapa na tela também se atualiza ao digitar; ver refreshMapView)
 
 const MAPA_GR = [["fis", "Risco físico", "#7dd956"], ["qui", "Risco químico", "#ff3130"], ["erg", "Risco ergonômico", "#ffde59"], ["bio", "Risco biológico", "#984808"], ["aci", "Risco de acidentes", "#3399ff"]]; // cores tiradas do modelo de mapa de risco
 const grupoDe = c => { const t = normTxt(c); return /fisic/.test(t) ? "fis" : /quimic/.test(t) ? "qui" : /biolog/.test(t) ? "bio" : /ergon|psicoss/.test(t) ? "erg" : "aci"; };
@@ -4094,7 +4095,7 @@ async function mapaDados(){
   const grupos = mapCircles().map(c => ({cor: c.cor, nv: c.nv, rs: c.rs.map((r, k, a) => r.manual ? {perigo: r.t, manual: true} : {perigo: r.t.replace(/[;.]\s*$/, "") + (a.length > 1 && k === a.length - 1 ? "" : ";")})}));
   const MF = mapF(), fi = Math.min(mapFoto, Math.max(0, MF.length - 1));
   let foto = "";
-  if (MF[fi]){ try{ const fc = await detectFaces([MF[fi].blob]); foto = fc ? await maskPhoto(MF[fi].blob, fc[0]) : ""; }catch(e){ foto = ""; } }
+  if (MF[fi]){ if (mapFotoCache.url === MF[fi].url) foto = mapFotoCache.foto; else { try{ const fc = await detectFaces([MF[fi].blob]); foto = fc ? await maskPhoto(MF[fi].blob, fc[0]) : ""; }catch(e){ foto = ""; } if (foto) mapFotoCache = {url: MF[fi].url, foto}; } }
   return {grupos, foto, logo: load("sst_mlogo") || MAPA_LOGO_SENAI, emp: $("rEmp").value.trim(), setor: $("mSetor").value.trim() || $("rSetor").value.trim(), vig: $("mVig").value.trim(), elab: $("mElab").value.trim() || "—", rev: $("mRev").value.trim() || "—", aprov: $("mAprov").value.trim() || "—"};
 }
 // logo do SENAI e emblema da CIPA recortados do modelo de mapa de risco enviado (logo padrão do cabeçalho; pode ser trocada no quadro 5)
@@ -4279,12 +4280,25 @@ function fitMapView(){ const w = $("mapView").querySelector(".mvw"), f = $("mapV
 addEventListener("resize", () => { if (!$("mapView").hidden) fitMapView(); });
 function showMapView(html){
   const v = $("mapView"); v.hidden = false;
-  v.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Mapa de risco</h2><button type="button" data-mv="pdf">📄 Baixar em PDF</button><button type="button" data-mv="docx">📝 Baixar em Word (.docx)</button><button type="button" data-mv="canva" class="accent">🎨 Baixar para o Canva</button><button type="button" data-mv="x">Fechar</button></div><div class="mvw"><div class="mvf"><iframe title="Visualização do mapa de risco" sandbox="allow-same-origin"></iframe></div></div><p class="hint">Visualização do mapa (paisagem). Para alterar, mude os campos, a foto ou os riscos no quadro 5 e clique em Gerar mapa de risco de novo.</p>`;
+  v.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Mapa de risco</h2><button type="button" data-mv="pdf">📄 Baixar em PDF</button><button type="button" data-mv="docx">📝 Baixar em Word (.docx)</button><button type="button" data-mv="canva" class="accent">🎨 Baixar para o Canva</button><button type="button" data-mv="x">Fechar</button></div><div class="mvw"><div class="mvf"><iframe title="Visualização do mapa de risco" sandbox="allow-same-origin"></iframe></div></div><p class="hint">Visualização do mapa (paisagem). Ela se atualiza sozinha quando você muda os campos, a logo, a foto ou os riscos no quadro 5.</p>`;
   v.querySelector("iframe").srcdoc = html;
   v.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => { const a = b.dataset.mv; if (a === "x"){ v.hidden = true; return; } $({pdf: "mapPdf", docx: "mapDocx", canva: "mapCanva"}[a]).click(); });
   requestAnimationFrame(fitMapView);
   v.scrollIntoView({behavior: "smooth", block: "start"});
 }
+// mapa na tela acompanha as mudanças do quadro 5 (campos, logo, foto escolhida e riscos digitados)
+let mapRefT = null;
+function refreshMapView(){
+  if ($("mapView").hidden) return;
+  clearTimeout(mapRefT);
+  mapRefT = setTimeout(async () => {
+    try{ const ifr = $("mapView").querySelector("iframe"); if (!ifr) return; ifr.srcdoc = await mapaHTML({print: false});
+      const novo = mapF().length && (!mapData || mapData.sig !== mapSig()); const h = $("mapView").querySelector(".hint");
+      if (h) h.textContent = novo ? "Há fotos, áudios ou documentos novos que ainda não foram analisados: clique em \"Analisar fotos, áudios e documentos para o mapa\" para incluir os riscos deles." : "Visualização do mapa (paisagem). Ela se atualiza sozinha quando você muda os campos, a logo, a foto ou os riscos no quadro 5.";
+    }catch(e){ console.warn(e); }
+  }, 700);
+}
+["mSetor", "mElab", "mRev", "mAprov", "mVig", "mExtra", "rEmp"].forEach(id => $(id).addEventListener("input", refreshMapView));
 // "Gerar mapa de risco": monta o mapa, mostra na tela e abre as opções de formato logo abaixo do botão
 $("mapBtn").onclick = async () => {
   $("mapOpts").hidden = false; $("mapBtn").setAttribute("aria-expanded", true);
@@ -5056,10 +5070,10 @@ $("mLogo").onchange = async e => {
     const k = Math.min(1, 800 / Math.max(im.naturalWidth || 800, im.naturalHeight || 800)), c = document.createElement("canvas");
     c.width = Math.max(1, Math.round((im.naturalWidth || 800) * k)); c.height = Math.max(1, Math.round((im.naturalHeight || 300) * k));
     c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-    store("sst_mlogo", c.toDataURL("image/png")); drawMapLogo(); setStatus("Logo do cabeçalho do mapa de risco salva.");
+    store("sst_mlogo", c.toDataURL("image/png")); drawMapLogo(); setStatus("Logo do cabeçalho do mapa de risco salva."); if (typeof refreshMapView === "function") refreshMapView();
   }catch(x){ setStatus("Não foi possível ler a imagem da logo.", true); }
 };
-$("mLogoClr").onclick = () => { store("sst_mlogo", null); drawMapLogo(); };
+$("mLogoClr").onclick = () => { store("sst_mlogo", null); drawMapLogo(); if (typeof refreshMapView === "function") refreshMapView(); };
 drawMapLogo();
 function drawLogo(){ const u = load("sst_logo"); $("rLogoPrev").hidden = !u; $("rLogoClr").hidden = !u; if (u) $("rLogoPrev").src = u; }
 $("rLogo").onchange = async e => {
