@@ -1761,7 +1761,7 @@ function render(d, isExample){
       <p>${counts.crit} risco(s) crítico(s): ${esc(txt(top.perigo))}${txt(top.nr) ? ` (${esc(txt(top.nr))})` : ""}</p>
       ${txt(top.medida) ? `<small><strong>Ação imediata:</strong> ${esc(txt(top.medida))}</small>` : ""}
     </div>` : ""}
-    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><button type="button" class="sm" data-act="noex" style="margin-left:auto">Fechar exemplo</button></div>' : '<div class="rtools"><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar tudo (novo relatório)</button></div>'}
+    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="sm" data-act="noex">Fechar exemplo</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></span></div>' : '<div class="rtools"><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></div>'}
 
     <header class="head">
       <p class="eyebrow">Diagnóstico do ambiente</p>
