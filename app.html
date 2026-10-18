@@ -414,7 +414,7 @@ button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
 button.sm{padding:6px 12px;font-size:13px}
 .keyrow{display:flex;gap:6px;align-items:stretch}.keyrow input{flex:1;min-width:0}.keyrow button{white-space:nowrap}
-.mapsel{display:grid;gap:6px}
+.mapsel{display:grid;gap:6px}.mapkey{display:grid;gap:4px}.mapkey label{font-size:13px;font-weight:600}#mKeySt{font-size:12.5px;color:var(--muted)}#mKeySt.ok{color:var(--ok)}
 .mapclr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mapclr span{width:100%;font-size:12.5px;font-weight:700;color:var(--muted)}
 .usosel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .usosel span{font-weight:700;width:100%}.usosel label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
@@ -1019,7 +1019,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v134</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v135</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1228,6 +1228,9 @@ api:
           <label for="mVig">Ano de vigência<input id="mVig" type="text" inputmode="numeric" placeholder="Ex.: 2026/2027"></label>
           <div class="logo-f"><span>Logo do cabeçalho (esquerda) – padrão: SENAI do modelo; troque se precisar</span><div class="row"><label class="btn">Escolher logo<input id="mLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><img id="mLogoPrev" alt="Logo do mapa" hidden><button id="mLogoClr" type="button" hidden>Remover</button></div></div>
         </div>
+        <div class="mapkey"><label for="mKey">Chave da API (a mesma do quadro 3)</label>
+          <div class="keyrow"><input id="mKey" type="password" autocomplete="off" placeholder="AIza... (Gemini) – cole aqui ou no quadro 3"><button type="button" id="mKeyEye" class="sm" aria-pressed="false">👁 Mostrar</button></div>
+          <small id="mKeySt"></small></div>
         <div class="mapdocs"><p class="label" style="margin:0">Documentos do setor para a análise (opcional)</p>
           <div class="row"><label class="btn">Anexar documentos do setor<input id="mDocPick" type="file" multiple></label></div>
           <ul class="doclist" id="mDocList"></ul>
@@ -1258,7 +1261,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v134</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v135</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4012,7 +4015,7 @@ function mapMsg(t, err){ const el = $("mapStatus"); if (el){ el.textContent = t 
 async function mapAnalyze(){
   if (mapBusy) return false;
   if (!mapF().length){ mapMsg(frames.length ? "Nenhuma foto marcada para o mapa (M ou R+M). No quadro 2, toque na etiqueta das fotos para incluí-las." : "Adicione as fotos do setor no quadro 2.", true); return false; }
-  if (!sample && !$("apiKey").value.trim()){ mapMsg("Informe a chave da API: é a mesma chave usada na análise do ambiente, no campo \"Chave da API\" do quadro 3 (Contexto). Levando você até o campo…", true); $("apiKey").scrollIntoView({behavior: "smooth", block: "center"}); setTimeout(() => $("apiKey").focus(), 400); return false; }
+  if (!sample && !$("apiKey").value.trim()){ mapMsg("Informe a chave da API no campo \"Chave da API\" acima (é a mesma do quadro 3).", true); $("mKey").scrollIntoView({behavior: "smooth", block: "center"}); setTimeout(() => $("mKey").focus(), 400); return false; }
   mapBusy = true; $("mapRun").disabled = true; $("mapRun").textContent = "Analisando…";
   try{ await prepFontes(); }catch(e){}
   const t0 = Date.now();
@@ -4041,6 +4044,12 @@ Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonom
   finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; $("mapRun").textContent = "Analisar fotos, áudios e documentos para o mapa"; }
 }
 $("mapRun").onclick = mapAnalyze;
+// quadro 5: campo de chave ligado ao do quadro 3 (a mesma chave para tudo)
+function syncMapKey(){ const v = $("apiKey").value.trim(); if ($("mKey").value !== $("apiKey").value) $("mKey").value = $("apiKey").value; const st = $("mKeySt"); st.textContent = v ? (/^AIza/.test(v) ? "✓ Chave do Gemini configurada: analisa fotos, documentos e transcreve os áudios." : "✓ Chave configurada (Claude): analisa fotos e documentos; a transcrição de áudios precisa de chave do Gemini.") : "Sem chave: cole a chave aqui ou no quadro 3."; st.classList.toggle("ok", !!v); }
+$("mKey").addEventListener("input", () => { $("apiKey").value = $("mKey").value; $("apiKey").dispatchEvent(new Event("input")); syncMapKey(); });
+$("apiKey").addEventListener("input", syncMapKey);
+$("mKeyEye").onclick = () => { const k = $("mKey"), ver = k.type === "password"; k.type = ver ? "text" : "password"; $("mKeyEye").textContent = ver ? "🙈 Esconder" : "👁 Mostrar"; $("mKeyEye").setAttribute("aria-pressed", ver); if (ver) setTimeout(() => { if (k.type === "text"){ k.type = "password"; $("mKeyEye").textContent = "👁 Mostrar"; } }, 30000); };
+setTimeout(() => { syncMapKey(); if (inViewer) document.querySelector(".mapkey").hidden = true; }, 0);
 // mostrar / esconder a chave da API
 $("keyEye").onclick = () => { const k = $("apiKey"), ver = k.type === "password"; k.type = ver ? "text" : "password"; $("keyEye").textContent = ver ? "🙈 Esconder" : "👁 Mostrar"; $("keyEye").setAttribute("aria-pressed", ver); $("keyEye").title = ver ? "Esconder a chave" : "Mostrar a chave"; if (ver) setTimeout(() => { if (k.type === "text"){ k.type = "password"; $("keyEye").textContent = "👁 Mostrar"; $("keyEye").setAttribute("aria-pressed", false); } }, 30000); };
 // limpeza do que foi anexado para o mapa: fotos só do mapa saem; fotos de relatório e mapa passam a ser só do relatório
@@ -5982,7 +5991,7 @@ async function init(){
     } else { setMode("análise indisponível"); setStatus("A análise não está disponível nesta visualização.", true); }
   } else {
     watchUpdates(); listCams(false);
-    $("keyBox").hidden = false; $("qrBox").hidden = false; const k = loadKey(); if (k) $("apiKey").value = k;
+    $("keyBox").hidden = false; $("qrBox").hidden = false; const k = loadKey(); if (k) $("apiKey").value = k; syncMapKey();
     showProvider(); updateGo();
     await restoreSession();
   }
