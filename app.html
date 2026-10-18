@@ -998,7 +998,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v116</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v117</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1204,7 +1204,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v116</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v117</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1487,15 +1487,18 @@ function psiOf(d){
 // regra principal: só o que há nas fontes da inspeção (sem suposições)
 const soEvid = n => `REGRA PRINCIPAL – SOMENTE EVIDÊNCIAS: registre apenas riscos, problemas, pessoas e constatações que aparecem nas ${n} imagem(ns) (Figura 1 a Figura ${n}), nas transcrições de áudio, nos documentos anexados ou no contexto digitado pelo usuário que estiverem nesta mensagem. Não faça suposições e não complete com o que é "comum" nesse tipo de setor; se não há evidência, não inclua o item (deixe a lista vazia). IMPORTANTE: todo problema que você registrar em qualquer seção (pessoa sem EPI ou com adorno, armazenamento, resíduos, edificação, layout, item não conforme de NR) É evidência e DEVE aparecer também em "riscos", com severidade e probabilidade; a lista de riscos só pode ficar vazia se nenhuma seção tiver não conformidade. Pessoas: registre SOMENTE se estiverem claramente visíveis nas imagens; se nenhuma pessoa aparece, use "total":0 e lista vazia. Nunca cite figura inexistente (o maior número é Figura ${n}). Riscos psicossociais e análise documental: somente se houver relatos em áudio, documentos ou contexto digitado com essa informação. Não mencione inteligência artificial, IA, Gemini nem Claude no texto.
 `;
+// rigor técnico: cada constatação comparada com as NRs e com os critérios do 5S
+const RIGOR = `RIGOR TÉCNICO (obrigatório): atue como auditor de SST rigoroso e detalhista. Varra cada imagem área por área (piso, paredes, teto, máquinas, bancadas, quadros elétricos, cabos, extintores, saídas, sinalização, armazenamento, resíduos, pessoas e EPIs, postos de trabalho) e compare CADA situação vista com a NR correspondente, citando a NR e o item (quando tiver certeza do item; senão "confirmar item na redação vigente"). Não releve desvios pequenos: proteção de máquina incompleta, fiação exposta, extensão improvisada, quadro sem identificação ou obstruído, extintor sem sinalização ou obstruído, piso escorregadio ou danificado, demarcação apagada, material empilhado sem estabilidade, produto sem rótulo, EPI ausente ou inadequado, adorno, postura inadequada, iluminação deficiente e falta de sinalização são não conformidades e devem ser registradas. 5S com rigor: avalie cada senso por critérios objetivos — Seiri (só o necessário no posto, sem sucata, sobras ou itens sem uso), Seiton (local definido e identificado para cada item, demarcação de piso, quadro de sombras, corredores livres), Seiso (piso, máquinas e bancadas limpos, sem óleo, poeira, cavacos ou lixo), Seiketsu (padrão visual, etiquetas, cores e sinalização uniformes, procedimento visível) e Shitsuke (indícios de disciplina e manutenção do padrão). Nota 5 só quando não houver nenhum desvio visível naquele senso; cada desvio visível reduz a nota; cite na observação a figura e o local de cada desvio. Rigor não é suposição: registre somente o que estiver visível ou relatado.
+`;
 function buildPrompt(ctx, n = 1){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
 Analise a(s) imagem(ns) anexada(s) de um ambiente de trabalho. Cada imagem é um quadro de câmera ou foto do mesmo setor.
-${soEvid(n)}${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}
+${soEvid(n)}${RIGOR}${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}
 Tarefas:
 1. Identifique o tipo de ambiente e as atividades visíveis.
 2. Liste os perigos e riscos visíveis citando a Norma Regulamentadora aplicável (NR-01 GRO/PGR, NR-06 EPI, NR-10, NR-11, NR-12, NR-15, NR-16, NR-17, NR-18, NR-20, NR-22 mineração, NR-23, NR-24, NR-26 sinalização, NR-33, NR-35 etc.) e, quando tiver segurança, o item. Classifique pela matriz da NR-01: severidade 1-5 e probabilidade 1-5. Categoria: Físico, Químico, Biológico, Ergonômico ou Acidente.
    Para CADA risco informe em "figura" o número da imagem em que ele aparece com mais clareza (1 = primeira imagem enviada; 0 se vier só de relato, documento ou contexto) e em "area" a região dessa imagem que mostra a situação de risco, como [ymin,xmin,ymax,xmax] em inteiros de 0 a 1000 (deixe [] se não for possível delimitar).
-3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 e observação curta.
+3. Avalie os 5 sensos (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) com nota 0-5 pelos critérios do RIGOR TÉCNICO, com observação citando a figura e o local de cada desvio.
 4. Proponha melhorias citando a metodologia (Kaizen, Lean, Poka-Yoke, Gestão visual, Hierarquia de controles, TPM, etc.) e a fundamentação legal de cada uma (NR e item só com certeza; CLT arts. 157, 158, 166, 167 ou 184 quando couber).
 5. Monte um plano 5W2H com as ações mais importantes e um ciclo PDCA COERENTE com ele: em "plan", o planejamento de CADA ação que será executada (o que fazer, responsável, prazo e recursos), além das metas; em "do", a execução exatamente das ações planejadas, na mesma ordem; em "check", para CADA ação executada, como verificar se ela foi realmente implementada e se está gerando efeito positivo, isto é, resolvendo o problema ou a situação (indicador, inspeção ou auditoria, critério de sucesso e frequência); em "act", para cada verificação, o que fazer se a ação NÃO resolveu (ação corretiva: rever a causa, reforçar ou trocar a medida) e, se resolveu, como padronizar (procedimento, treinamento, check-list). Nenhuma ação pode aparecer em "do" sem o planejamento em "plan" e sem a verificação em "check".
 6. ${PESSOAS_REGRAS}
@@ -2037,8 +2040,12 @@ async function listCams(announce){
     const devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === "videoinput");
     const sel = $("camSel"); const cur = sel.value; sel.innerHTML = "";
     devs.forEach((d,i) => { const o = document.createElement("option"); o.value = d.deviceId; const nm = d.label || ("Câmera " + (i+1)); o.textContent = d.label ? `${nm} · ${camType(nm)}` : nm; sel.append(o); });
-    if (cur && devs.some(d => d.deviceId === cur)) sel.value = cur;
-    sel.hidden = devs.length < 1;
+    // celular conectado pelo QR code: a câmera dele aparece na lista
+    const phOk = !!(qr && qr.ok);
+    if (phOk){ const o = document.createElement("option"); o.value = "__phone"; o.textContent = `📱 Câmera do celular · ${qr.device || "conectado pelo QR code"}${qr.conn?.relay ? " (sem vídeo ao vivo)" : ""}`; sel.append(o); }
+    if (remoteOn && phOk) sel.value = "__phone";
+    else if (cur && (devs.some(d => d.deviceId === cur) || (cur === "__phone" && phOk))) sel.value = cur;
+    sel.hidden = devs.length + (phOk ? 1 : 0) < 1;
     const named = devs.some(d => d.label);
     if (announce || (camCount >= 0 && devs.length !== camCount)){
       const novo = camCount >= 0 && devs.length > camCount, saiu = camCount >= 0 && devs.length < camCount;
@@ -2193,14 +2200,23 @@ $("ipUrl").addEventListener("input", () => { if (ip) $("ipBtn").textContent = $(
 
 function stopCam(){
   ipCleanup(); $("rec").textContent = "● AO VIVO";
-  remoteOn = false;
-  if (stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
+  const eraCel = remoteOn; remoteOn = false;
+  if (stream){ if (!eraCel) stream.getTracks().forEach(t => t.stop()); stream = null; } // vídeo do celular continua disponível para escolher de novo
   const v = $("video"); v.srcObject = null; v.hidden = true;
   $("videoMsg").hidden = false; $("rec").hidden = true; $("snapBtn").disabled = true; $("camBtn").textContent = "Ligar câmera";
   if (mon) stopMon(); updateGo();
 }
-$("camBtn").onclick = () => stream ? stopCam() : startCam($("camSel").value || undefined);
-$("camSel").onchange = e => startCam(e.target.value);
+// câmera do celular escolhida na lista: usa o vídeo que o celular já transmite
+let phoneStream = null;
+function usePhoneCam(){
+  const live = phoneStream && phoneStream.getVideoTracks().some(t => t.readyState === "live");
+  if (live){ useRemote(phoneStream); $("camStatus").textContent = "Usando a câmera do celular conectado."; return; }
+  $("camStatus").textContent = qr?.conn?.relay ? "O celular está conectado por retransmissão (esta rede bloqueia o vídeo ao vivo). Use Capturar quadro: o celular fotografa e envia a foto." : "O vídeo do celular ainda não chegou. No celular, toque em Fotos e ligue a câmera.";
+  if (qr?.conn?.relay) $("snapBtn").disabled = false;
+}
+const pickCam = v => v === "__phone" ? usePhoneCam() : startCam(v || undefined);
+$("camBtn").onclick = () => stream ? stopCam() : pickCam($("camSel").value);
+$("camSel").onchange = e => pickCam(e.target.value);
 function grabFrame(){
   return new Promise(res => {
     const v = $("video"); if (!stream || !v.videoWidth) return res(null);
@@ -2878,7 +2894,7 @@ const MXL = {crit: "#ec9a9a", high: "#f6b98c", warn: "#f7d977", ok: "#9fd3b1"}; 
 
 function reportPrompt(meta, ctx, base, n){
   return `Você é engenheiro(a) de segurança do trabalho no Brasil e vai redigir um RELATÓRIO TÉCNICO DE INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO a partir da(s) ${n} imagem(ns) anexada(s). Cite-as como Figura 1, Figura 2 etc., na ordem de envio.
-${soEvid(n)}Fontes disponíveis nesta inspeção: ${n} imagem(ns); ${meta.audios?.length || 0} relato(s) em áudio; ${meta.docs?.length || 0} documento(s) anexado(s); contexto digitado: ${ctx ? "sim" : "não"}.${!(meta.audios?.length || meta.docs?.length || ctx) ? " Como não há relatos, documentos nem contexto, deixe vazios os riscos psicossociais e a análise documental." : ""}
+${soEvid(n)}${RIGOR}Fontes disponíveis nesta inspeção: ${n} imagem(ns); ${meta.audios?.length || 0} relato(s) em áudio; ${meta.docs?.length || 0} documento(s) anexado(s); contexto digitado: ${ctx ? "sim" : "não"}.${!(meta.audios?.length || meta.docs?.length || ctx) ? " Como não há relatos, documentos nem contexto, deixe vazios os riscos psicossociais e a análise documental." : ""}
 Dados da inspeção: empresa/unidade: ${meta.emp || "não informado"}; setor/área: ${meta.setor || "não informado"}; data: ${meta.data}; responsável técnico: ${meta.resp || "não informado"}.
 ${ctx ? "Contexto informado pelo usuário: " + ctx + "\n" : ""}${docBlock()}${base ? "Análise preliminar feita por IA (ponto de partida; corrija o que a imagem contrariar): " + JSON.stringify(base).slice(0, 12000) + "\n" : ""}${base?.nrs_desconsideradas?.length ? `IMPORTANTE: o responsável técnico decidiu NÃO abordar estas NRs neste relatório: ${base.nrs_desconsideradas.join(", ")}. Não as cite em riscos, parecer, fundamentação, checklist, referências nem plano de ação.\n` : ""}
 Regras:
@@ -4727,10 +4743,11 @@ const blobHash = async b => { try{ const h = await crypto.subtle.digest("SHA-256
 function useRemote(s){
   if (remoteOn && stream && stream !== s){ stream.getTracks().forEach(t => t.stop()); } // troca o vídeo sem parar o monitoramento
   else if (!remoteOn) stopCam();
-  stream = s; remoteOn = true;
+  stream = s; remoteOn = true; phoneStream = s;
   const v = $("video"); v.srcObject = s; v.play().catch(() => {}); vidFrameT = performance.now(); watchFrames(v);
   v.hidden = false; $("videoMsg").hidden = true; $("rec").hidden = false; $("rec").textContent = "● CELULAR";
   $("snapBtn").disabled = false; $("camBtn").textContent = "Desligar câmera"; updateGo();
+  listCams();
 }
 async function qrStart(){
   qrMsg("Preparando conexão…");
@@ -4863,13 +4880,14 @@ function qrStop(){
   setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
   $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
   if (remoteOn) stopCam();
+  try{ phoneStream?.getTracks().forEach(t => t.stop()); }catch(e){} phoneStream = null; listCams();
   if (!stream) $("snapBtn").disabled = true;
 }
 $("qrBtn").onclick = qrStart;
 $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi desconectado e o QR code anterior não vale mais."); };
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
-  qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true;
+  qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true; listCams();
   $("snapBtn").disabled = false; // sem vídeo ao vivo (retransmissão), o botão pede a foto ao celular
   qrMsg(qr.conn.relay ? `Conectado: ${qr.device} (por retransmissão, porque esta rede bloqueia a conexão direta). Não há vídeo ao vivo: use Capturar quadro (o celular fotografa) ou o botão do celular; as fotos da galeria e os áudios também entram nas listas.` : `Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
 };
@@ -5255,10 +5273,10 @@ async function processAudios(){
           a.status = parts.length > 1 ? `transcrevendo parte ${i + 1} de ${parts.length}…` : "transcrevendo…"; drawAudios();
           const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. O áudio anexado é ${parts.length > 1 ? `a parte ${i + 1} de ${parts.length} de ` : ""}um relato gravado durante uma inspeção de SST (entrevista com trabalhador, supervisor ou observação falada do inspetor).
 1. Transcreva fielmente em português do Brasil (sem inventar trechos; marque [inaudível] quando não entender). PRIVACIDADE: NUNCA escreva nomes, sobrenomes ou apelidos de pessoas; substitua cada um pela função citada (ex.: [operador], [supervisor], [colega]) ou por [nome omitido]. Omita também CPF, matrícula, telefone, endereço e placa. Vale para a transcrição e para todos os outros campos.
-2. Extraia as informações úteis para o diagnóstico do setor.
+2. Extraia as informações úteis para o diagnóstico do setor e compare CADA situação relatada com as Normas Regulamentadoras: em "riscos_relatados", informe a NR e o item aplicáveis (item só com certeza; senão "confirmar item") e se o relato indica não conformidade. Seja rigoroso e detalhista, sem inventar o que não foi dito.
 3. Identifique fatores de riscos psicossociais relatados (sobrecarga ou ritmo excessivo, pressão por metas, jornada longa ou sem pausas, assédio moral ou sexual, conflitos, falta de autonomia ou de apoio, isolamento, violência, falta de reconhecimento, insegurança no emprego, metas incompatíveis), com um trecho curto do relato que comprove, sem nomes.
 Responda SOMENTE com um objeto JSON:
-{"transcricao":"texto completo","resumo":"1-2 frases","informacoes_sst":["fatos relevantes para SST"],"riscos_relatados":[{"perigo":"","detalhe":""}],"riscos_psicossociais":[{"fator":"","trecho":"frase curta do relato"}],"sugestoes":["melhorias sugeridas no relato"],"pessoas_funcoes":["funções ou cargos citados, sem nomes completos"]}`;
+{"transcricao":"texto completo","resumo":"1-2 frases","informacoes_sst":["fatos relevantes para SST"],"riscos_relatados":[{"perigo":"","detalhe":"","nr":"NR-12","item":"","situacao":"Não conforme|Verificar em campo"}],"riscos_psicossociais":[{"fator":"","trecho":"frase curta do relato"}],"sugestoes":["melhorias sugeridas no relato"],"pessoas_funcoes":["funções ou cargos citados, sem nomes completos"]}`;
           res.push(await viaGemini(prompt, [parts[i]], undefined));
         }
         a.info = anonInfo({
