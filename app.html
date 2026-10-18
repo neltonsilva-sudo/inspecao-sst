@@ -998,7 +998,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v112</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v113</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1204,7 +1204,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v112</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v113</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4696,11 +4696,31 @@ async function miniThumb(b){
     const u = c.toDataURL("image/jpeg", 0.6); return u.length < 12000 ? u : "";
   }catch(e){ return ""; }
 }
+// vídeo do celular: momento do último quadro novo (para não fotografar uma imagem travada)
+let vidFrameT = 0;
+function watchFrames(v){
+  if (!v.requestVideoFrameCallback) return;
+  const tick = () => { vidFrameT = performance.now(); if (remoteOn) v.requestVideoFrameCallback(tick); };
+  v.requestVideoFrameCallback(tick);
+}
+// impressão digital pequena (24×24 em tons de cinza) para reconhecer imagens iguais
+function fpOf(src){
+  try{
+    const w = src.videoWidth || src.width, h = src.videoHeight || src.height; if (!w || !h) return null;
+    const c = document.createElement("canvas"); c.width = 24; c.height = 24;
+    const g = c.getContext("2d", {willReadFrequently: true}); g.drawImage(src, 0, 0, 24, 24);
+    const d = g.getImageData(0, 0, 24, 24).data, out = new Uint8Array(576);
+    for (let i = 0; i < 576; i++) out[i] = (d[i * 4] * 3 + d[i * 4 + 1] * 6 + d[i * 4 + 2]) / 10;
+    return out;
+  }catch(e){ return null; }
+}
+const fpSame = (a, b) => { if (!a || !b) return false; let t = 0; for (let i = 0; i < a.length; i++) t += Math.abs(a[i] - b[i]); return t / a.length < 1.2; };
+const blobHash = async b => { try{ const h = await crypto.subtle.digest("SHA-256", await b.arrayBuffer()); return [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, "0")).join(""); }catch(e){ return ""; } };
 function useRemote(s){
   if (remoteOn && stream && stream !== s){ stream.getTracks().forEach(t => t.stop()); } // troca o vídeo sem parar o monitoramento
   else if (!remoteOn) stopCam();
   stream = s; remoteOn = true;
-  const v = $("video"); v.srcObject = s; v.play().catch(() => {});
+  const v = $("video"); v.srcObject = s; v.play().catch(() => {}); vidFrameT = performance.now(); watchFrames(v);
   v.hidden = false; $("videoMsg").hidden = true; $("rec").hidden = false; $("rec").textContent = "● CELULAR";
   $("snapBtn").disabled = false; $("camBtn").textContent = "Desligar câmera"; updateGo();
 }
@@ -4765,6 +4785,10 @@ function onPhoneConn(peer, conn){
       if (Date.now() - (qr.lastSnap || 0) < 200) return; qr.lastSnap = Date.now();
       if (!remoteOn){ conn.send({type: "bad", local: 1}); return; } // sem vídeo ao vivo: o celular fotografa e envia o arquivo
       if (frames.length >= maxImages){ conn.send({type: "full"}); setStatus(`Limite de ${maxImages} imagens atingido.`, true); return; }
+      // vídeo travado (sem quadro novo) ou imagem igual à da foto anterior: o celular fotografa com a própria câmera e envia o arquivo
+      const vv = $("video"), fp = fpOf(vv), parado = vv.requestVideoFrameCallback && performance.now() - vidFrameT > 1200;
+      if (parado || fpSame(fp, qr.lastFp)){ conn.send({type: "bad", local: 1}); setStatus("Vídeo do celular parado ou sem mudança: a foto será tirada pela câmera do celular e enviada."); return; }
+      qr.lastFp = fp;
       grabFrame().then(b => {
         if (!b){ conn.send({type: "bad", local: 1}); return; }
         addBlob(b);
@@ -4796,7 +4820,16 @@ function onPhoneConn(peer, conn){
         const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
         if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
         else if (frames.length >= maxImages){ conn.send({type: "full"}); }
-        else { normalize(blob, F.pre).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } addBlob(b); conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto do celular recebida (${frames.length} de ${maxImages}).`); }); }
+        else { (async () => {
+          const h = await blobHash(blob);
+          if (h && frames.some(f => f.h === h)){ conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length, dup: 1}); setStatus("Foto repetida do celular ignorada (já estava na lista)."); return; }
+          if (/^camera-/i.test(F.name)){
+            let fpc = null; try{ const bm = await createImageBitmap(blob); fpc = fpOf(bm); }catch(e){}
+            if (fpSame(fpc, qr.lastCamFp)){ conn.send({type: "file_bad", fid: d.fid, why: "Foto igual à anterior: a câmera do celular parece travada. Toque em Ligar a câmera de novo ou mude o ângulo."}); setStatus("Foto do celular igual à anterior: não foi adicionada.", true); return; }
+            qr.lastCamFp = fpc;
+          }
+          normalize(blob, F.pre).then(b => { if (!b){ conn.send({type: "file_bad", fid: d.fid, why: "Formato de imagem não reconhecido"}); return; } const n0 = frames.length; addBlob(b); if (frames.length > n0) frames[frames.length - 1].h = h; conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length}); setStatus(`Foto do celular recebida (${frames.length} de ${maxImages}).`); });
+        })(); }
       }catch(e){ conn.send({type: "file_bad", fid: d.fid}); }
     } else if (d.type === "bye"){
       phoneGone("O celular se desconectou.");
@@ -5047,8 +5080,8 @@ function phoneMode(id, k){
   }
   function fileReply(d){
     const q = queue.find(x => x.fid === d.fid);
-    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. Ele será transcrito." : `Foto recebida pelo computador (${d.n} na lista).`); }
-    else if (d.type === "file_bad"){ if (q){ q.state = "bad"; q.wait?.rej(new Error("defeito")); } msg("Um arquivo chegou com defeito. Envie de novo.", true); }
+    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. Ele será transcrito." : d.dup ? "Esta foto já estava no computador; não foi repetida." : `Foto recebida pelo computador (${d.n} na lista).`); }
+    else if (d.type === "file_bad"){ if (q){ q.state = "bad"; q.wait?.rej(new Error("defeito")); } msg(d.why || "Um arquivo chegou com defeito. Envie de novo.", true); }
   }
   // gravação de áudio no celular
   let rec = null, recT0 = 0, recTick = null;
