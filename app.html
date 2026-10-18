@@ -998,7 +998,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v117</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v119</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1204,7 +1204,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v117</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v119</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2389,7 +2389,7 @@ $("nrDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.
 function updateGo(){
   const ready = frames.length > 0 && (sample || (!inViewer && $("apiKey").value.trim()));
   $("goBtn").disabled = !ready || !!ctl;
-  $("monBtn").disabled = !mon && !(stream && !inViewer && $("apiKey").value.trim());
+  $("monBtn").disabled = !mon && !((stream || (typeof phoneRelay === "function" && phoneRelay())) && !inViewer && $("apiKey").value.trim());
   if ($("docRun")) $("docRun").disabled = !!ctl || !(sample || (!inViewer && $("apiKey").value.trim()));
   $("repBtn").disabled = !!ctl || !(frames.length || history.length) || !(sample || (!inViewer && $("apiKey").value.trim()));
 }
@@ -2685,9 +2685,24 @@ function delAlert(h){
   if (!mon) $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
   setStatus("Alerta excluído.");
 }
+// quadro para o monitoramento: vídeo ao vivo; com o celular sem vídeo (retransmissão) ou com o vídeo parado, pede a foto ao celular
+const phoneRelay = () => !!(qr && qr.ok && qr.conn?.open && qr.conn.relay);
+function phoneShot(ms = 25000){
+  return new Promise(res => {
+    if (!qr?.ok || !qr.conn?.open) return res(null);
+    const t = setTimeout(() => { if (qr) qr.monWait = null; res(null); }, ms);
+    qr.monWait = b => { clearTimeout(t); res(b); };
+    try{ qr.conn.send({type: "monsnap"}); }catch(e){ clearTimeout(t); res(null); }
+  });
+}
+async function monFrame(){
+  const parado = remoteOn && $("video").requestVideoFrameCallback && performance.now() - vidFrameT > 3000;
+  if ((!stream && phoneRelay()) || (parado && qr?.ok)) return await phoneShot();
+  return await grabFrame();
+}
 async function cycle(){
   if (ctl) return; // ainda analisando o quadro anterior
-  const blob = await grabFrame();
+  const blob = await monFrame();
   if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); lampSaw("Monitoramento parado: a câmera ficou sem imagem. Ligue a câmera e clique em Monitorar de novo.", true); return; }
   const sel = MON_AL.filter(([id]) => $(id).checked);
   const data = await monCheck(blob, sel);
@@ -2862,12 +2877,13 @@ $("monBtn").onclick = () => mon ? stopMon() : startMon();
 $("watchBtn").onclick = async () => {
   if (mon){ stopMon(); return; }
   if (!sample && !$("apiKey").value.trim()){ setStatus("Informe a chave da API (Gemini ou Claude) para monitorar.", true); $("apiKey").focus(); return; }
-  if (!stream){
+  if (!stream && !phoneRelay()){
     setStatus("Ligando a câmera…");
-    await startCam($("camSel").value || undefined);
+    if (qr?.ok && phoneStream) usePhoneCam(); else await pickCam($("camSel").value);
     for (let i = 0; i < 40 && !($("video").videoWidth > 0); i++) await new Promise(r => setTimeout(r, 150));
-    if (!stream){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
+    if (!stream && !phoneRelay()){ setStatus("Não foi possível ligar a câmera. Conecte a webcam ou o celular pelo QR code e tente de novo.", true); return; }
   }
+  if (!stream && phoneRelay()) setStatus("Monitorando pela câmera do celular (sem vídeo ao vivo): a cada verificação o celular fotografa e envia o quadro. Deixe a câmera do celular ligada.");
   MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount();
   $("monInt").value = "30";
   startMon();
@@ -4844,6 +4860,7 @@ function onPhoneConn(peer, conn){
         for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
         const blob = new Blob([u], {type: F.mime || (F.kind === "audio" ? "audio/mp4" : "image/jpeg")});
         if (F.kind === "audio"){ addAudio(blob, F.name, "celular"); conn.send({type: "file_done", fid: d.fid, kind: "audio", n: audios.length}); setStatus(`Áudio recebido do celular: ${F.name}.`); }
+        else if (/^mon-/i.test(F.name)){ conn.send({type: "file_done", fid: d.fid, kind: "photo", n: frames.length, mon: 1}); const w = qr.monWait; qr.monWait = null; w?.(blob); }
         else if (frames.length >= maxImages){ conn.send({type: "full"}); }
         else { (async () => {
           const h = await blobHash(blob);
@@ -4866,7 +4883,9 @@ function onPhoneConn(peer, conn){
     if (!qr.ok){ qr.conn = null; $("qrAsk").hidden = true; $("qrArea").hidden = false; qrMsg("A conexão com o celular caiu antes da autorização. Aguardando o celular reconectar sozinho (ou leia o QR code de novo)…"); return; }
     // queda inesperada: espera o celular reconectar sozinho antes de encerrar a sessão
     qr.conn = null;
-    qrMsg("A conexão com o celular oscilou. Aguardando reconexão automática…");
+    qr.drops = (qr.drops || []).filter(t => Date.now() - t < 180000); qr.drops.push(Date.now());
+    const chrome = /Chrome\//.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
+    qrMsg(qr.drops.length >= 2 && chrome ? "A conexão com o celular está instável neste Chrome. O celular vai reconectar por retransmissão (estável, sem vídeo ao vivo). Para o vídeo ao vivo estável: no Chrome, clique no ícone ao lado do endereço › Configurações do site › permita \"Rede local\" (dispositivos na rede local) e desative a Economia de memória para este site; ou abra a plataforma no Safari." : "A conexão com o celular oscilou. Aguardando reconexão automática…");
     clearTimeout(qr.grace);
     qr.grace = setTimeout(() => { if (qr && !qr.conn) phoneGone("O celular não reconectou."); }, 90000);
   });
@@ -4875,7 +4894,7 @@ function phoneGone(text){ qrStop(); qrMsg(text + " Para conectar de novo, gere e
 function qrStop(){
   if (!qr) return;
   const q = qr; qr = null;
-  clearTimeout(q.grace);
+  clearTimeout(q.grace); try{ q.unlock?.(); }catch(e){}
   try{ q.conn?.open && q.conn.send({type: "bye"}); }catch(e){}
   setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
   $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
@@ -4888,6 +4907,8 @@ $("qrEnd").onclick = () => { qrStop(); qrMsg("Conexão encerrada. O celular foi 
 $("qrAllow").onclick = () => {
   if (!qr?.conn) return;
   qr.ok = true; qr.resume = rnd(16); qr.conn.send({type: "ok", r: qr.resume}); $("qrAsk").hidden = true; listCams();
+  // mantém a aba ativa enquanto o celular estiver conectado (o Chrome não congela abas que seguram um bloqueio)
+  try{ const q = qr; navigator.locks?.request("sst-celular", () => new Promise(res => { q.unlock = res; })); }catch(e){}
   $("snapBtn").disabled = false; // sem vídeo ao vivo (retransmissão), o botão pede a foto ao celular
   qrMsg(qr.conn.relay ? `Conectado: ${qr.device} (por retransmissão, porque esta rede bloqueia a conexão direta). Não há vídeo ao vivo: use Capturar quadro (o celular fotografa) ou o botão do celular; as fotos da galeria e os áudios também entram nas listas.` : `Conectado: ${qr.device}. A câmera do celular aparece no quadro "Câmera ao vivo"; as fotos e os áudios enviados pelo celular entram nas listas.`);
 };
@@ -4909,7 +4930,7 @@ function phoneMode(id, k){
   document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
   let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
-  let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null, relay = false, asked = false;
+  let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null, relay = false, asked = false, drops = [];
   const MAX_TRIES = 8;
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
@@ -4983,8 +5004,8 @@ function phoneMode(id, k){
     c.on("error", e => { why = "vídeo: " + ((e && (e.type || e.message)) || "erro"); });
     // se só o vídeo cair, refaz o vídeo sem derrubar a sessão
     c.on("close", () => { if (c === mcall && live() && !ended) setTimeout(() => { if (c === mcall && live()) startCall(); }, 1000); });
-    // vídeo até 2,5 Mbps, ajustando-se à rede
-    setTimeout(() => { try{ const snd = c.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 2500000; prm.degradationPreference = "balanced"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
+    // vídeo até 1,5 Mbps (mais estável em redes oscilantes e no Chrome), ajustando-se à rede
+    setTimeout(() => { try{ const snd = c.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 1500000; prm.degradationPreference = "balanced"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
   }
   // queda inesperada: reconecta na mesma sessão (o computador continua aberto e já autorizou)
   function lost(reason){
@@ -4993,7 +5014,9 @@ function phoneMode(id, k){
     if (tries >= MAX_TRIES){ done("Desconectado", "A rede oscilou e não foi possível reconectar. Leia o QR code na tela do computador de novo."); return; }
     tries++;
     // a rede bloqueou a conexão direta (negotiation-failed, ICE) ou ela já caiu antes: reconecta pela retransmissão do servidor, que funciona em qualquer rede
-    if (!relay && (/negotiation|ice|failed|connection|webrtc/i.test(String(reason || "")) || tries >= 2)){ relay = true; try{ mcall?.close(); }catch(e){} }
+    drops = drops.filter(t => Date.now() - t < 180000); drops.push(Date.now());
+    // conexão direta instável (caiu 3 vezes em 3 min, comum com o computador no Chrome): fica na retransmissão até o fim da sessão
+    if (!relay && (/negotiation|ice/i.test(String(reason || "")) || tries >= 3 || drops.length >= 3)){ relay = true; try{ mcall?.close(); }catch(e){} }
     $("phShot").disabled = true; $("phRec").textContent = "● RECONECTANDO";
     msg(`A rede oscilou${reason ? " (" + reason + ")" : ""}. Reconectando… ${tries}/${MAX_TRIES}`, true);
     closeLinks();
@@ -5054,6 +5077,7 @@ function phoneMode(id, k){
       }
       else if (d.type === "full"){ msg("O computador atingiu o limite de fotos.", true); setAuto(false); }
       else if (d.type === "take") snapLocal();
+      else if (d.type === "monsnap") snapLocal(true); // monitoramento sem vídeo ao vivo: o computador pede um quadro
       else if (d.type === "bad"){ if (d.local) snapLocal(); else msg(d.why || "A foto não foi capturada. Tente de novo.", true); }
         else if (d.type === "file_done" || d.type === "file_bad") fileReply(d);
     });
@@ -5086,7 +5110,7 @@ function phoneMode(id, k){
       for (let i = 0; i < n; i++){
         if (c !== conn || !c.open) throw new Error("conexão");
         const dc = c.dataChannel;
-        while (dc && dc.bufferedAmount > 256 * 1024 && c.open) await new Promise(r => setTimeout(r, 20));
+        while (dc && dc.bufferedAmount > 128 * 1024 && c.open) await new Promise(r => setTimeout(r, 20));
         c.send({type: "file_chunk", fid, i, d: b64.slice(i * CH, (i + 1) * CH)});
         if (i % 4 === 0){ q.pct = (i + 1) / n * 100; drawQueue(); }
       }
@@ -5109,7 +5133,7 @@ function phoneMode(id, k){
   }
   function fileReply(d){
     const q = queue.find(x => x.fid === d.fid);
-    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. Ele será transcrito." : d.dup ? "Esta foto já estava no computador; não foi repetida." : `Foto recebida pelo computador (${d.n} na lista).`); }
+    if (d.type === "file_done"){ if (q?.wait) q.wait.res(); msg(d.kind === "audio" ? "Áudio recebido pelo computador. Ele será transcrito." : d.dup ? "Esta foto já estava no computador; não foi repetida." : d.mon ? "Monitoramento: quadro enviado para análise." : `Foto recebida pelo computador (${d.n} na lista).`); }
     else if (d.type === "file_bad"){ if (q){ q.state = "bad"; q.wait?.rej(new Error("defeito")); } msg(d.why || "Um arquivo chegou com defeito. Envie de novo.", true); }
   }
   // gravação de áudio no celular
@@ -5135,11 +5159,11 @@ function phoneMode(id, k){
   }
   function showScreen(w){ ["phMenu","phPhotos","phAudio"].forEach(x => { const el = $(x); if (el) el.hidden = x !== w; }); }
   // foto tirada no próprio celular e enviada como arquivo (quando não há vídeo ao vivo no computador)
-  function snapLocal(){
-    const v = $("phVideo"); if (!st || !v.videoWidth){ msg(st ? "A câmera ainda não está pronta. Tente de novo." : "Para fotografar, toque em Ligar a câmera.", true); return; }
+  function snapLocal(mon){
+    const v = $("phVideo"); if (!st || !v.videoWidth){ msg(st ? "A câmera ainda não está pronta. Tente de novo." : (mon ? "Monitoramento: ligue a câmera do celular (Fotos › Ligar a câmera) para o computador analisar." : "Para fotografar, toque em Ligar a câmera."), true); return; }
     const cv = document.createElement("canvas"); cv.width = v.videoWidth; cv.height = v.videoHeight;
     cv.getContext("2d").drawImage(v, 0, 0);
-    cv.toBlob(b => { if (b){ enqueue(b, "photo", "camera-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".jpg"); msg("Enviando foto…"); } }, "image/jpeg", 0.9);
+    cv.toBlob(b => { if (b){ enqueue(b, "photo", (mon ? "mon-" : "camera-") + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".jpg"); if (!mon) msg("Enviando foto…"); } }, "image/jpeg", mon ? 0.8 : 0.9);
   }
   function shot(){
     if (!live() || Date.now() - lastShot < 350) return; lastShot = Date.now();
@@ -5206,7 +5230,7 @@ function phoneMode(id, k){
   // conexão caiu enquanto aguardava a autorização (ex.: a página ficou em segundo plano): reconecta ao voltar
   document.addEventListener("visibilitychange", () => { if (!ended && !resumeKey && asked && document.visibilityState === "visible" && !conn?.open && !retryT){ tries = Math.min(tries, MAX_TRIES - 3); connect(); } });
   addEventListener("pagehide", e => { if (e.persisted) return; try{ conn?.open && conn.send({type: "bye"}); }catch(x){} try{ peer?.destroy(); }catch(x){} });
-  if (PEER_OPTS.host) window.__sstTest = {drop: () => conn?.peerConnection?.close(), dropVideo: () => mcall?.peerConnection?.close()}; // só no modo de teste local
+  if (PEER_OPTS.host) window.__sstTest = {drop: () => conn?.peerConnection?.close(), dropVideo: () => mcall?.peerConnection?.close(), relay: () => { why = "negotiation-failed"; conn?.peerConnection?.close(); }}; // só no modo de teste local
 }
 
 /* ---------- relatos em áudio: conversão, transcrição e extração pela IA ---------- */
