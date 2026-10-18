@@ -959,7 +959,8 @@ button.sm{padding:6px 12px;font-size:13px}
 .phone .ph-zoom button{width:30px;height:30px;min-height:0;padding:0;border-radius:50%;border:0;background:transparent;color:#fff;font:700 10.5px var(--f-mono)}
 .phone .ph-zoom button.on{background:rgba(245,196,0,.95);color:#1c2328}
 .ph-cam video{transition:transform .15s ease-out}
-.ph-cam.fit{min-height:330px;max-height:none;margin-inline:-10px;border-radius:14px} /* largura toda; altura no formato do vídeo (ajuste automático) */
+.ph-cam.fit{height:auto!important;min-height:330px;max-height:none;margin-inline:-10px;border-radius:14px;display:flex;align-items:center;justify-content:center} /* largura toda; altura no formato do vídeo (ajuste automático) */
+.ph-cam.fit video{position:relative;inset:auto;display:block;width:100%;height:auto;max-height:var(--capH,80vh);object-fit:cover}
 .ph-bar{position:absolute;z-index:2;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;justify-items:center;align-items:center;padding:36px 12px 30px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .phone .ph-shutter{width:80px;height:80px;min-height:0;padding:5px;border-radius:50%;border:4px solid #fff;background:var(--signal);background-clip:content-box;box-shadow:0 2px 14px rgba(0,0,0,.4);transition:transform .1s ease,background-color .2s}
 .phone .ph-shutter:hover{border-color:#fff}
@@ -1086,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v172</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v173</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1332,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v172</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v173</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5889,15 +5890,12 @@ function phoneMode(id, k){
   // o iPhone pode informar o formato do vídeo antes de girar a imagem: confere de novo a cada segundo
   setInterval(() => { const v = $("phVideo"); if (st && v.videoWidth && v.videoWidth + "x" + v.videoHeight !== quadroDim) ajustaQuadro(); }, 1000);
   function ajustaQuadro(){
-    const v = $("phVideo"), b = $("phBox"); if (!v.videoWidth || b.hidden) return;
-    b.classList.add("fit");
-    const w = b.clientWidth; if (!w) return;
-    const ideal = w * v.videoHeight / v.videoWidth, tela = window.visualViewport?.height || innerHeight;
-    const cap = Math.max(330, tela - 110), h = Math.round(Math.min(ideal, cap));
-    b.style.height = h + "px";
-    // vídeo do tamanho exato do quadro, em pixels, preenchendo sem nunca distorcer (proporção sempre preservada;
-    // se o formato informado pelo celular não bater, corta um pouco das bordas em vez de esticar)
-    Object.assign(v.style, {inset: "auto", left: "0px", top: "0px", width: w + "px", height: h + "px", maxWidth: "none", maxHeight: "none", objectFit: ideal < h - 2 ? "contain" : "cover"}); // celular deitado (vídeo mais baixo que o quadro mínimo): faixas em cima e embaixo, sem cortar
+    // o próprio navegador define a altura pelo vídeo que ele desenha (largura toda, altura automática, sem
+    // esticar): no iPhone as medidas informadas pelo vídeo podem não bater com a imagem mostrada
+    const v = $("phVideo"), b = $("phBox"); if (b.hidden) return;
+    const tela = window.visualViewport?.height || innerHeight;
+    b.classList.add("fit"); b.style.height = ""; b.style.setProperty("--capH", Math.max(330, tela - 110) + "px");
+    ["inset", "left", "top", "width", "height", "maxWidth", "maxHeight", "objectFit"].forEach(k => { v.style[k] = ""; });
     quadroDim = v.videoWidth + "x" + v.videoHeight;
   }
   async function reviveCam(){
