@@ -941,7 +941,7 @@ button.sm{padding:6px 12px;font-size:13px}
 .ph-note svg{flex:none;margin-top:1px;color:var(--ok)}
 .ph-actions{display:grid;gap:10px;margin-top:auto;padding-top:4px}
 #phLive{gap:14px}
-.ph-cam{position:relative;isolation:isolate;background:#000;border-radius:20px;overflow:hidden;height:56vh;height:min(56dvh,640px);min-height:300px;display:grid;place-items:center;box-shadow:var(--ph-shadow)}
+.ph-cam{position:relative;isolation:isolate;background:#000;border-radius:20px;overflow:hidden;height:76vh;height:min(76dvh,980px);min-height:360px;display:grid;place-items:center;box-shadow:var(--ph-shadow)}
 .ph-cam::before{content:"";position:absolute;inset:0 0 auto 0;height:84px;background:linear-gradient(rgba(0,0,0,.5),transparent);pointer-events:none;z-index:1}
 .ph-cam::after{content:"";position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
 .ph-cam.flash::after{animation:ph-fl .32s ease-out}
@@ -953,8 +953,8 @@ button.sm{padding:6px 12px;font-size:13px}
 /* transmitindo */
 .ph-cam:has(.ph-shutter:not(:disabled)) .rec{background:rgba(198,40,40,.92);border-color:transparent;animation:ph-live 2s ease-in-out infinite}
 .ph-badge{position:absolute;z-index:2;top:12px;right:12px;min-width:56px;height:32px;padding:0 12px 0 32px;border-radius:999px;color:#fff;font:700 13px var(--f-mono);display:grid;place-items:center;border:1px solid var(--ph-glass-line);background:var(--ph-glass) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M4 8h3l2-3h6l2 3h3v11H4z'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3C/svg%3E") 11px center/16px no-repeat;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.ph-zoom{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:132px;display:flex;gap:6px;padding:4px;border-radius:999px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px)}
-.phone .ph-zoom button{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;border:0;background:transparent;color:#fff;font:700 13px var(--f-mono)}
+.ph-zoom{position:absolute;z-index:2;right:12px;top:56px;display:flex;flex-direction:column;gap:2px;padding:2px;border-radius:999px;background:rgba(0,0,0,.32);backdrop-filter:blur(4px)}
+.phone .ph-zoom button{width:30px;height:30px;min-height:0;padding:0;border-radius:50%;border:0;background:transparent;color:#fff;font:700 10.5px var(--f-mono)}
 .phone .ph-zoom button.on{background:rgba(245,196,0,.95);color:#1c2328}
 .ph-cam video{transition:transform .15s ease-out}
 .ph-bar{position:absolute;z-index:2;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;justify-items:center;align-items:center;padding:36px 12px 30px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
@@ -1083,7 +1083,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v164</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v165</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1329,7 +1329,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v164</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v165</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
