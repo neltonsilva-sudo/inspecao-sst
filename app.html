@@ -307,6 +307,7 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .report .matrix .c em{position:absolute;right:4px;bottom:2px;font:600 10px var(--f-mono);font-style:normal;color:#fff;opacity:.85}
 .report .matrix .c.has{box-shadow:inset 0 0 0 2px rgba(0,0,0,.45)}
 /* cores fortes e intensas, iguais no tema claro e escuro */
+.report .matrix .c.crit{background:#ec9a9a}.report .matrix .c.high{background:#f6b98c}.report .matrix .c.warn{background:#f7d977}.report .matrix .c.ok{background:#9fd3b1}
 .report .matrix .c.has.crit{background:#d32f2f}.report .matrix .c.has.high{background:#f57c00}.report .matrix .c.has.warn{background:#fbc02d}.report .matrix .c.has.ok{background:#2e9e5b}
 .report .mxh{margin:10px auto 0;max-width:560px;font-size:12px;line-height:1.5;color:var(--muted)}
 .report .mxh .dot{display:inline-grid;width:17px;height:17px;font-size:10px;vertical-align:-3px;background:#fff;color:#111;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
@@ -381,6 +382,16 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .facegrid figure{margin:0}
 .facegrid canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair;border:1px solid var(--line)}
 .facegrid figcaption{font-size:12.5px;color:var(--muted);margin-top:4px}
+.chk-h{display:flex;align-items:center;gap:12px;margin-bottom:8px}.chk-h h2{margin:0;font:700 21px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.chk-sum{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.chk-sum span{padding:4px 10px;border-radius:999px;font:600 12.5px var(--f-body)}
+.chk-sum .crit{background:var(--cell-crit)}.chk-sum .warn{background:var(--cell-warn)}.chk-sum .ok{background:var(--cell-ok)}
+.chk-g{margin:12px 0 4px;font:700 13px var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.chk-l{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.chk-l li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;padding:9px 12px;border-radius:8px;border:1px solid var(--line);border-left:5px solid var(--ok);background:var(--panel);font-size:14px;line-height:1.4}
+.chk-l li.crit{border-left-color:var(--crit)}.chk-l li.warn{border-left-color:var(--warn)}
+.chk-l .ic{font:700 12px var(--f-mono);padding:2px 7px;border-radius:5px;background:var(--cell-ok);white-space:nowrap}
+.chk-l li.crit .ic{background:var(--cell-crit)}.chk-l li.warn .ic{background:var(--cell-warn)}
+.chk-l small{grid-column:2;color:var(--muted);font-size:12.5px}
 .nrdlg::backdrop{background:rgba(10,14,18,.55)}
 #lvDlg .crit{--lc:var(--crit)}#lvDlg .high{--lc:var(--high)}#lvDlg .warn{--lc:var(--warn)}#lvDlg .ok{--lc:var(--ok)}
 .lvd-h{display:flex;align-items:center;gap:12px;margin-bottom:6px}.lvd-h h2{margin:0;font:700 22px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
@@ -976,7 +987,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v107</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v108</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1175,13 +1186,14 @@ api:
   <section class="tech" id="tech" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
+  <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkPhotos" class="accent">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
 </div>
 
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v107</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v108</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2814,7 +2826,7 @@ function wrapWords(t, n, max){
 const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsDataURL(b); });
 const LV = {crit:["Crítico","#c62828","#f6c9c9"], high:["Alto","#e0661b","#fbd9c2"], warn:["Moderado","#d9a400","#fbefc2"], ok:["Baixo","#2e8b57","#d7eedf"]};
 const MXC = {crit: "#d32f2f", high: "#f57c00", warn: "#fbc02d", ok: "#2e9e5b"}; // cores fortes da matriz de risco
-const MXL = {crit: "#f6c9c9", high: "#fbd9c2", warn: "#fbefc2", ok: "#d7eedf"}; // tons claros: quadrados sem risco
+const MXL = {crit: "#ec9a9a", high: "#f6b98c", warn: "#f7d977", ok: "#9fd3b1"}; // tons claros: quadrados sem risco
 
 function reportPrompt(meta, ctx, base, n){
   return `Você é engenheiro(a) de segurança do trabalho no Brasil e vai redigir um RELATÓRIO TÉCNICO DE INSPEÇÃO DE SEGURANÇA E SAÚDE NO TRABALHO a partir da(s) ${n} imagem(ns) anexada(s). Cite-as como Figura 1, Figura 2 etc., na ordem de envio.
@@ -3509,9 +3521,143 @@ function printSynth(){
   setTimeout(() => URL.revokeObjectURL(url), 120000);
   setStatus("Abrindo o relatório sintético para salvar em PDF (escolha \"Salvar como PDF\" na janela de impressão).");
 }
+/* ---------- conferência de coerência: relatório × análise das fotos × anexos ---------- */
+let chkState = null; // {local: [...], fotos: null | {itens, faltou, resumo} | {erro}, busy}
+const chkWords = t => normTxt(t).split(/[^a-z0-9]+/).filter(w => w.length > 3);
+const chkSame = (a, b) => { const wa = chkWords(a), wb = chkWords(b); return wa.filter(w => wb.includes(w)).length >= Math.min(2, wa.length, wb.length) && wa.length > 0; };
+function checkLocal(){
+  const R = report.R || {}, meta = report.meta || {}, an = lastData || {}, out = [];
+  const add = (k, area, msg, det) => out.push({k, area, msg, det});
+  const nFotos = (report.photos || []).length;
+  const art = document.querySelector("#tech .rep"), texto = art ? art.innerText : "";
+  const rjson = JSON.stringify({...R, fotos: undefined}); // texto redigido (sem as legendas das fotos)
+  // 1. riscos: relatório × análise das fotos
+  const repR = riscosOf(R).filter(r => r && typeof r === "object" && r.perigo && !nrOff()[nrNum(r.nr)]);
+  const anR = asList(an.riscos).filter(r => r && typeof r === "object" && r.perigo && !nrOff()[nrNum(r.nr)]);
+  let okR = 0;
+  anR.forEach(a => {
+    const m = repR.find(r => chkSame(a.perigo, r.perigo));
+    if (!m) return add("crit", "Riscos", `Risco da análise das fotos ausente no relatório: "${txtOf(a.perigo)}".`, "Gere o relatório de novo ou inclua o risco.");
+    const La = level(a.severidade, a.probabilidade), Lr = level(m.severidade, m.probabilidade);
+    if (La.r !== Lr.r) add("warn", "Riscos", `Classificação diferente para "${txtOf(a.perigo)}": análise ${La.r} (${La.t}), relatório ${Lr.r} (${Lr.t}).`, "Confirme a severidade e a probabilidade.");
+    else okR++;
+  });
+  repR.filter(r => !anR.some(a => chkSame(a.perigo, r.perigo))).forEach(r => add("warn", "Riscos", `Risco no relatório sem correspondência na análise das fotos: "${txtOf(r.perigo)}".`, "Confira se há evidência na foto; se não houver, retire."));
+  if (anR.length && /nenhum risco (visível )?identificado/i.test(texto)) add("crit", "Riscos", 'O texto diz "nenhum risco identificado", mas a análise das fotos encontrou ' + anR.length + " risco(s).");
+  if (okR && okR === anR.length) add("ok", "Riscos", `${okR} risco(s) do relatório coerentes com a análise das fotos (mesmo perigo e classificação).`);
+  // 2. figuras citadas que não existem
+  const figs = [...new Set([...rjson.matchAll(/figura\s*(\d+)/gi)].map(m => Number(m[1])))].filter(n => n > nFotos);
+  if (figs.length) add("crit", "Fotos", `O texto cita ${figs.map(n => "Figura " + n).join(", ")}, mas a inspeção tem ${nFotos} foto(s).`, "Corrija a referência ou retire a constatação.");
+  else if (nFotos) add("ok", "Fotos", `As figuras citadas no texto existem entre as ${nFotos} foto(s) da inspeção.`);
+  // 3. documentos e relatos citados sem anexo
+  const temDoc = (meta.docs || []).length, temAud = (meta.audios || []).length;
+  const anDoc = R.analise_documental && (typeof R.analise_documental === "string" ? R.analise_documental.trim() : asList(R.analise_documental).length || Object.keys(R.analise_documental).length);
+  if (!temDoc && (anDoc || /documentos?\s+(anexad|analisad|fornecid|apresentad|do setor (anexad|analisad))/i.test(rjson))) add("crit", "Anexos", "O relatório fala em documentos analisados, mas nenhum documento foi anexado.", "Retire a análise documental ou anexe os documentos.");
+  if (!temAud && /relatos?\s+(em\s+)?[áa]udio|relato\s+\d|transcri[çc]/i.test(rjson)) add("crit", "Anexos", "O relatório cita relatos em áudio ou transcrições, mas nenhum áudio foi anexado.");
+  if (!temDoc && !temAud && !out.some(x => x.area === "Anexos")) add("ok", "Anexos", "Sem documentos e áudios anexados: o relatório deve se basear só nas fotos.");
+  // 4. pessoas
+  const PPa = pessoasOf(an, nFotos);
+  if (!PPa.total && /\b(trabalhador(es)?|operador(es)?|colaborador(es)?)\s+(sem|com|utiliz|usando|exposto|realiza|operando)/i.test(rjson)) add("warn", "Pessoas", "O texto descreve trabalhadores, mas a análise não encontrou pessoas nas fotos.", "Confira se há pessoas nas fotos; se não houver, retire.");
+  const nRostos = (report.faces || []).reduce((t, x) => t + x.length, 0);
+  if (PPa.total && !nRostos) add("crit", "Pessoas", `A análise viu ${PPa.total} pessoa(s), mas nenhum rosto está coberto nas fotos do relatório.`, "Use o botão Rostos nas fotos antes de compartilhar.");
+  else if (PPa.total) add("ok", "Pessoas", `${nRostos} rosto(s) coberto(s) nas fotos.`);
+  // 5. parecer coerente com os riscos
+  const P = R.parecer || {}, sit = String(P.situacao || ""), graves = repR.filter(r => ["crit", "high"].includes(level(r.severidade, r.probabilidade).k)).length;
+  if (/^\s*conforme/i.test(sit) && graves) add("crit", "Parecer", `Parecer "Conforme", mas há ${graves} risco(s) alto(s) ou crítico(s).`, "Revise o parecer.");
+  else if (/n[ãa]o\s*conforme/i.test(sit) && !repR.length) add("warn", "Parecer", 'Parecer "Não conforme" sem nenhum risco listado.', "Confira a fundamentação do parecer.");
+  else if (sit) add("ok", "Parecer", `Parecer "${sit}" coerente com os riscos (${graves} alto(s) ou crítico(s)).`);
+  // 6. cada risco alto ou crítico com ação no plano
+  const S5 = prep5S(R), plano = (S5 ? S5.plano : asList(R.plano_acao)).filter(a => a && a.acao);
+  const semAcao = repR.filter(r => ["crit", "high"].includes(level(r.severidade, r.probabilidade).k)).filter(r => !plano.some(a => chkSame(r.perigo, [a.acao, a.por_que, a.como].join(" ")) || (r.medida && chkSame(r.medida, [a.acao, a.como].join(" ")))));
+  semAcao.forEach(r => add("warn", "Plano de ação", `Risco ${level(r.severidade, r.probabilidade).t.toLowerCase()} sem ação clara no plano 5W2H: "${txtOf(r.perigo)}".`, "Inclua uma ação para este risco."));
+  if (graves && !semAcao.length) add("ok", "Plano de ação", "Todos os riscos altos e críticos têm ação no plano 5W2H.");
+  // 7. 5S: notas do relatório × análise
+  if (S5){
+    const csA = an.cinco_s || {};
+    S5.rows.filter(r => r.nota !== null).forEach(r => { const v = csA[r.k], na = v && typeof v === "object" ? Number(v.nota) : Number(v); if (isFinite(na) && Math.abs(na - r.nota) >= 2) add("warn", "5S", `${r.jp}: nota ${r.nota}/5 no relatório e ${na}/5 na análise das fotos.`, "Confirme a nota do senso."); });
+    const semAc = S5.rows.filter(r => r.nota !== null && r.nota <= 3 && !r.acoes.length);
+    semAc.forEach(r => add("warn", "5S", `${r.jp} com nota ${r.nota}/5 sem ações de melhoria.`));
+    if (!semAc.length) add("ok", "5S", `Avaliação 5S com ${S5.rows.reduce((t, r) => t + r.acoes.length, 0)} ação(ões) de melhoria para os sensos deficientes.`);
+  }
+  // 8. regras do documento
+  if (/intelig[êe]ncia\s+artificial|\b(IA|I\.A\.)\b|\bGemini\b|\bChatGPT\b|\bClaude\b/.test(texto)) add("crit", "Redação", "O texto menciona inteligência artificial; use \"Metodologia de Análise SST\".");
+  if (/\b(Sr|Sra|Srta)\.?\s+[A-ZÁÉÍÓÚÂÊÔÃÕ][a-zà-ú]+/.test(texto)) add("warn", "Redação", "Possível nome de pessoa no texto (Sr./Sra.). O relatório não deve identificar pessoas.");
+  if (!meta.elab) add("warn", "Controle", "Campo \"Elaborado por\" não preenchido.");
+  if (!meta.resp) add("warn", "Controle", "Campo \"Responsável técnico\" não preenchido.");
+  return out;
+}
+const txtOf = x => String(x == null ? "" : typeof x === "object" ? Object.values(x).join(" ") : x).trim();
+// conferência com as fotos: cada constatação do relatório é verificada nas imagens
+function chkClaims(){
+  const R = report.R || {}, an = lastData || {}, n = (report.photos || []).length, items = [];
+  const push = (tipo, t, fig) => { t = txtOf(t); if (t) items.push({id: tipo[0] + (items.length + 1), tipo, texto: t.slice(0, 220), figura: fig ? txtOf(fig) : ""}); };
+  riscosOf(R).filter(r => r && r.perigo).forEach(r => push("Risco", r.perigo + (r.nr ? ` (${txtOf(r.nr)})` : ""), r.figura));
+  pessoasOf(R.pessoas ? R : an, n).lista.forEach(o => { if (o.epiF.length) push("Pessoa", `${o.pessoa}: sem ${o.epiF.map(e => e.epi).join(", ")}`, o.figura); if (o.ad.length) push("Pessoa", `${o.pessoa}: usando ${o.ad.map(a => a.adorno).join(", ")}`, o.figura); });
+  residuosOf(R.residuos ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Resíduo", `${o.mat}: ${o.prob || o.onde}`, o.fig));
+  armOf(R.armazenamento ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Armazenamento", `${o.mat}: ${o.prob || o.local}`, o.fig));
+  edifOf(R.edificacao ? R : an).filter(x => !x.nv && x.k !== "ok").forEach(x => x.cons.forEach(c => push("Edificação", `${x.el}: ${c}`)));
+  (layoutOf(R.layout ? R : an)?.probs || []).forEach(x => push("Layout", x.p + (x.local ? ` (${x.local})` : "")));
+  const S5 = prep5S(R); if (S5) S5.rows.filter(r => r.nota !== null && r.constatacao).forEach(r => push("5S", `${r.jp} (nota ${r.nota}/5): ${r.constatacao}`));
+  return items.slice(0, 60);
+}
+async function checkPhotos(){
+  if (!chkState || chkState.busy) return;
+  const blobs = report.blobs || frames.map(f => f.blob);
+  if (!blobs.length){ chkState.fotos = {erro: "As fotos da inspeção não estão mais carregadas."}; return renderCheck(); }
+  if (!$("apiKey").value.trim() && !sample){ chkState.fotos = {erro: "Informe a chave da API para conferir com as fotos."}; return renderCheck(); }
+  const items = chkClaims();
+  chkState.busy = true; chkState.fotos = null; renderCheck();
+  const prompt = `Você é auditor de Segurança e Saúde no Trabalho. Confira, olhando SOMENTE as ${blobs.length} imagem(ns) anexadas (Figura 1 = primeira imagem, na ordem), se cada constatação do relatório abaixo tem evidência visível.
+Para cada item, responda status: "confirmado" (visível na imagem), "sem_evidencia" (não aparece em nenhuma imagem — possível suposição) ou "divergente" (aparece, mas diferente do descrito, ou exagerado/atenuado). Informe a figura onde verificou e um comentário curto e objetivo (até 25 palavras).
+Depois liste em "faltou" os problemas de SST claramente visíveis nas imagens que NÃO estão nos itens (no máximo 8), com figura e NR. Não invente: se não tiver certeza, não liste.
+Nunca escreva nomes de pessoas nem traços físicos que identifiquem alguém (rosto, cabelo, barba, cor de pele, tatuagem); diga "trabalhador".
+Itens do relatório:
+${items.map(i => `${i.id} [${i.tipo}]${i.figura ? ` (Figura ${i.figura})` : ""}: ${i.texto}`).join("\n")}
+Responda SOMENTE com JSON: {"itens":[{"id":"R1","status":"confirmado|sem_evidencia|divergente","figura":1,"comentario":""}],"faltou":[{"descricao":"","figura":1,"nr":""}],"resumo":"1-2 frases sobre a coerência geral do relatório com as fotos"}`;
+  try{
+    const r = await callAI(prompt, blobs, undefined, {fast: true}) || {};
+    const byId = Object.fromEntries(asList(r.itens).filter(x => x && x.id).map(x => [String(x.id), x]));
+    chkState.fotos = {itens: items.map(i => ({...i, ...(byId[i.id] || {status: "nao_avaliado"})})), faltou: asList(r.faltou).filter(x => x && x.descricao), resumo: txtOf(r.resumo)};
+  }catch(e){ chkState.fotos = {erro: e?.status === 401 ? "Chave da API inválida." : "Não foi possível conferir com as fotos agora (" + (e?.message || "erro") + "). Tente de novo."}; }
+  chkState.busy = false; renderCheck();
+}
+function renderCheck(){
+  const L = chkState.local, F = chkState.fotos;
+  const fI = F && F.itens ? F.itens : [];
+  const nC = L.filter(x => x.k === "crit").length + fI.filter(x => x.status === "sem_evidencia").length;
+  const nW = L.filter(x => x.k === "warn").length + fI.filter(x => x.status === "divergente").length + (F?.faltou?.length || 0);
+  const nO = L.filter(x => x.k === "ok").length + fI.filter(x => x.status === "confirmado").length;
+  const li = (k, ic, msg, det) => `<li class="${k}"><span class="ic">${ic}</span><span>${esc(msg)}</span>${det ? `<small>${esc(det)}</small>` : ""}</li>`;
+  const IC = {crit: "Corrigir", warn: "Atenção", ok: "OK"};
+  let h = `<div class="chk-h"><div><h2 id="chkDlgT">Conferência de coerência</h2><div class="hint" style="margin:0">Relatório comparado com a análise das fotos, os anexos e as regras do documento.</div></div></div>
+    <div class="chk-sum"><span class="crit">${nC} a corrigir</span><span class="warn">${nW} de atenção</span><span class="ok">${nO} coerente(s)</span></div>
+    <div class="chk-g">1. Checagem automática</div><ul class="chk-l">${[...L].sort((a, b) => ({crit: 0, warn: 1, ok: 2}[a.k] - {crit: 0, warn: 1, ok: 2}[b.k])).map(x => li(x.k, IC[x.k], `${x.area}: ${x.msg}`, x.det)).join("")}</ul>
+    <div class="chk-g">2. Conferência com as fotos</div>`;
+  if (chkState.busy) h += `<p class="hint">Conferindo cada constatação do relatório nas fotos… isso leva alguns segundos.</p>`;
+  else if (!F) h += `<p class="hint">Clique em <b>Conferir com as fotos</b> para verificar, item por item, se cada constatação do relatório aparece nas imagens e se faltou algo visível.</p>`;
+  else if (F.erro) h += `<p class="hint err">${esc(F.erro)}</p>`;
+  else {
+    const ST = {sem_evidencia: ["crit", "Sem evidência"], divergente: ["warn", "Divergente"], confirmado: ["ok", "Confirmado"], nao_avaliado: ["warn", "Não avaliado"]};
+    if (F.resumo) h += `<p>${esc(F.resumo)}</p>`;
+    h += `<ul class="chk-l">${fI.slice().sort((a, b) => ["sem_evidencia", "divergente", "nao_avaliado", "confirmado"].indexOf(a.status) - ["sem_evidencia", "divergente", "nao_avaliado", "confirmado"].indexOf(b.status)).map(i => { const [k, t] = ST[i.status] || ST.nao_avaliado; return li(k, t, `${i.tipo}: ${i.texto}`, [i.figura ? "Figura " + txtOf(i.figura) : "", txtOf(i.comentario)].filter(Boolean).join(" · ")); }).join("")}</ul>`;
+    if (F.faltou.length) h += `<div class="chk-g">Visível nas fotos, mas fora do relatório</div><ul class="chk-l">${F.faltou.map(x => li("warn", "Faltou", txtOf(x.descricao), [x.figura ? "Figura " + txtOf(x.figura) : "", txtOf(x.nr)].filter(Boolean).join(" · "))).join("")}</ul>`;
+  }
+  $("chkBody").innerHTML = h;
+  $("chkPhotos").disabled = !!chkState.busy;
+  $("chkPhotos").textContent = F && !F.erro ? "Conferir de novo com as fotos" : "Conferir com as fotos";
+}
+function openCheck(){
+  if (!report) return;
+  chkState = {local: checkLocal(), fotos: null, busy: false};
+  renderCheck();
+  const dlg = $("chkDlg"); if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+  dlg.querySelector(".nrd-in").scrollTop = 0;
+}
+$("chkPhotos").onclick = checkPhotos;
+$("chkX").onclick = () => $("chkDlg").close();
 function showReport(){
   const t = $("tech"); t.hidden = false;
-  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + x.length, 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button><button type="button" id="synBtn" title="Resumo com a situação, os riscos e as principais ações do relatório técnico">Relatório sintético (PDF)</button>'}<button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + x.length, 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button><button type="button" id="synBtn" title="Resumo com a situação, os riscos e as principais ações do relatório técnico">Relatório sintético (PDF)</button>'}<button type="button" id="chkBtn" title="Compara o relatório com a análise das fotos e os anexos e aponta divergências">Conferir coerência</button><button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
   $("editRep").onclick = () => {
     const art = t.querySelector(".rep"), on = art.isContentEditable;
     if (!on){ art.contentEditable = "true"; art.classList.add("editing"); $("editRep").textContent = "Concluir edição"; $("editRep").classList.add("accent"); $("editTip").hidden = false; art.focus(); return; }
@@ -3523,6 +3669,7 @@ function showReport(){
   $("undoEdit").onclick = () => { if (!confirm("Desfazer todas as edições feitas no texto do relatório?")) return; report.edited = null; saveSoon(); showReport(); setStatus("Edições desfeitas."); };
   if ($("prtBtn")) $("prtBtn").onclick = printReport;
   if ($("synBtn")) $("synBtn").onclick = printSynth;
+  $("chkBtn").onclick = openCheck;
   $("dlRep").onclick = downloadReport;
   $("dlDocx").onclick = downloadDocx;
   $("dlPptx").onclick = () => downloadPptx(false);
