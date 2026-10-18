@@ -1022,7 +1022,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v141</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v142</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1267,7 +1267,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v141</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v142</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1369,7 +1369,9 @@ const DOC_LIBS = {
 // formatos aceitos nos campos de documentos (texto, Office, OpenDocument, PDF, e-mail, páginas web, imagens e arquivos legados)
 const DOC_ACCEPT = ".pdf,.doc,.docx,.docm,.dot,.dotx,.rtf,.odt,.ott,.txt,.md,.csv,.tsv,.log,.json,.xml,.html,.htm,.xls,.xlsx,.xlsm,.xlsb,.xlt,.xltx,.ods,.ots,.numbers,.ppt,.pptx,.pptm,.pps,.ppsx,.odp,.key,.pages,.eml,.msg,.epub,image/*,.heic,.heif,.tif,.tiff";
 const docs = []; // {name, kind, text, images:[Blob], note, err}
-let docInfo = null;
+let docInfo = null, docInfoSig = "";
+// assinatura dos documentos lidos: se mudar (novo anexo), a extração é refeita antes da análise
+const docSig = () => docs.filter(d => !d.err && d.kind !== "…").map(d => d.name + ":" + (d.text || "").length + ":" + (d.images || []).length).join("|");
 const audios = []; // {id, name, blob, from, dur, status, info, err}
 // privacidade: retira nomes que tenham escapado nos relatos (após expressões como "meu nome é", "seu", "dona", "o colega")
 const NOME_RX = /\b(meu nome é|me chamo|eu sou o|eu sou a|sou o|sou a|o senhor|a senhora|seu|sr\.?|sra\.?|dona|o colega|a colega|colega|o chefe|a chefe|o encarregado|a encarregada|o supervisor|a supervisora|o gerente|a gerente|o técnico|a técnica|o operador|a operadora|o mecânico|o eletricista|chamado|chamada)\s+([\wÀ-ÿ]+(?:\s+[\wÀ-ÿ]+){0,3})/gi;
@@ -1390,13 +1392,13 @@ const relNome = a => "Relato " + (audios.filter(x => x.info).indexOf(a) + 1);
 function relatosBlock(){
   const ok = audios.filter(a => a.info);
   if (!ok.length) return "";
-  const data = ok.map(a => anonInfo({nome: relNome(a), origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, riscos_psicossociais: a.info.riscos_psicossociais, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 2500)}));
-  return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 15000) +
+  const data = ok.map(a => anonInfo({nome: relNome(a), origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, riscos_psicossociais: a.info.riscos_psicossociais, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 5000)}));
+  return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 40000) +
     "\nUse os relatos como evidência complementar: confirme ou confronte com as imagens e os documentos e cite quando um risco ou pendência vier de relato.\n";
 }
 function docBlock(){
   if (!docInfo) return relatosBlock();
-  return relatosBlock() + "Informações extraídas dos documentos do setor (PGR, laudos, checklists etc.): " + JSON.stringify(docInfo).slice(0, 15000) +
+  return relatosBlock() + "Informações extraídas dos documentos do setor (PGR, laudos, checklists etc.): " + JSON.stringify(docInfo).slice(0, 40000) +
     "\nConfronte os documentos com as imagens: aponte riscos documentados sem controle visível, riscos visíveis que não constam nos documentos e pendências documentais.\n";
 }
 // verificação de pessoas: EPI e adornos (descrição genérica, sem identificar ninguém)
@@ -2654,21 +2656,39 @@ async function analyze(blobs, label, extra = "", opts = {}){
   }
 }
 // antes de analisar: lê os documentos anexados e espera as transcrições dos áudios (usado por Analisar e pelo mapa de risco)
-async function prepFontes(){
+async function prepFontes(say = setStatus){
   const temChave = sample || (!inViewer && $("apiKey").value.trim());
-  if (temChave && docs.some(d => !d.err && d.kind !== "…") && !docInfo){ setStatus("Lendo os documentos anexados antes da análise…"); await extractDocs(); }
+  for (let i = 0; i < 240 && docs.some(d => d.kind === "…"); i++){ say("Aguardando terminar de abrir os documentos anexados…"); await new Promise(r => setTimeout(r, 500)); }
+  if (temChave && docs.some(d => !d.err) && (!docInfo || docInfoSig !== docSig())){
+    for (let i = 0; i < 360 && ctl; i++){ say("Aguardando terminar a leitura ou a análise em andamento…"); await new Promise(r => setTimeout(r, 500)); }
+    if (!docInfo || docInfoSig !== docSig()){ say(`Lendo os ${docs.filter(d => !d.err).length} documento(s) anexado(s) antes da análise…`); await extractDocs(); }
+  }
+  if (audioReady()) audios.filter(a => a.err && a.blob && !a.retry).forEach(a => { a.err = false; a.retry = true; a.status = "tentando de novo…"; }); // falha passageira: uma nova tentativa
   const pend = () => audios.some(a => !a.info && !a.err);
   if (audioReady() && pend()){ // a transcrição precisa da chave do Gemini; sem ela, os áudios ficam de fora
     processAudios();
-    for (let i = 0; i < 360 && pend(); i++){ setStatus(`Aguardando a transcrição dos áudios antes da análise… ${audios.filter(a => a.info).length} de ${audios.length} pronto(s)`); await new Promise(r => setTimeout(r, 500)); }
+    for (let i = 0; i < 360 && pend(); i++){ say(`Aguardando a transcrição dos áudios antes da análise… ${audios.filter(a => a.info).length} de ${audios.length} pronto(s)`); await new Promise(r => setTimeout(r, 500)); }
   }
+}
+// o que entra na análise e o que ficou de fora (e por quê)
+function fontesInfo(fotos, outras){
+  const dOk = docs.filter(d => !d.err), nDoc = docInfo && docInfoSig === docSig() ? dOk.length : 0, nAud = audios.filter(a => a.info).length;
+  const entra = `${fotos} foto(s)${nDoc ? ` + ${nDoc} documento(s)` : ""}${nAud ? ` + ${nAud} áudio(s)` : ""}`;
+  const fora = [];
+  if (outras) fora.push(outras);
+  if (dOk.length && !nDoc) fora.push(`${dOk.length} documento(s) não puderam ser lidos agora (confira a chave da API e clique em Analisar de novo)`);
+  if (docs.some(d => d.err)) fora.push(`${docs.filter(d => d.err).length} arquivo(s) que não puderam ser abertos`);
+  const aFora = audios.filter(a => !a.info);
+  if (aFora.length) fora.push(`${aFora.length} áudio(s) sem transcrição (${!audioReady() ? "a transcrição precisa da chave do Gemini" : aFora.map(a => a.status).filter(Boolean)[0] || "falha na transcrição"})`);
+  return {entra, fora: fora.length ? " Ficou de fora: " + fora.join("; ") + "." : ""};
 }
 // Analisar: usa as fotos, os documentos e os relatos em áudio
 $("goBtn").onclick = async () => {
   if (!relF().length || ctl){ if (frames.length && !relF().length) setStatus("Nenhuma foto marcada para o relatório técnico (R ou R+M). Toque na etiqueta das fotos para incluí-las.", true); return; }
   await prepFontes();
-  const nDoc = docInfo ? docs.filter(d => !d.err).length : 0, nAud = audios.filter(a => a.info).length;
-  analyze(relF().map(f => f.blob), `Analisando ${relF().length} imagem(ns)${nDoc ? ` + ${nDoc} documento(s)` : ""}${nAud ? ` + ${nAud} relato(s) em áudio` : ""}`);
+  const so = frames.length - relF().length, F = fontesInfo(relF().length, so ? `${so} foto(s) marcada(s) só para o mapa (M)` : "");
+  const d = await analyze(relF().map(f => f.blob), `Analisando ${F.entra}`);
+  if (d) setStatus(`${$("status").textContent} Analisado: ${F.entra}.${F.fora}`, !!F.fora);
 };
 
 /* ---------- monitoramento ---------- */
@@ -4024,12 +4044,13 @@ async function mapAnalyze(){
   if (!mapF().length){ mapMsg(frames.length ? "Nenhuma foto marcada para o mapa (M ou R+M). No quadro 2, toque na etiqueta das fotos para incluí-las." : "Adicione as fotos do setor no quadro 2.", true); return false; }
   if (!sample && !$("apiKey").value.trim()){ mapMsg("Informe a chave da API no campo \"Chave da API\" acima (é a mesma do quadro 3).", true); $("mKeyBox").open = true; $("mKey").scrollIntoView({behavior: "smooth", block: "center"}); setTimeout(() => $("mKey").focus(), 400); return false; }
   mapBusy = true; $("mapRun").disabled = true; $("mapRun").textContent = "Analisando…";
-  try{ await prepFontes(); }catch(e){}
+  try{ await prepFontes(t => mapMsg(t)); }catch(e){}
+  const soR = frames.length - mapF().length, F = fontesInfo(mapF().length, soR ? `${soR} foto(s) marcada(s) só para o relatório (R)` : "");
   const t0 = Date.now();
-  const tick = setInterval(() => mapMsg(`Analisando ${mapF().length} foto(s)${audios.some(a => a.info) ? ", áudios" : ""}${docInfo ? " e documentos" : ""} para o mapa de risco… ${Math.round((Date.now() - t0) / 1000)} s${busyNote}`), 1000);
+  const tick = setInterval(() => mapMsg(`Analisando ${F.entra} para o mapa de risco… ${Math.round((Date.now() - t0) / 1000)} s${busyNote}`), 1000);
   const n = mapF().length;
   const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil e vai elaborar o MAPA DE RISCO do setor (NR-05, CIPA; grupos de risco da Portaria 25/1994) a partir das ${n} imagem(ns) anexada(s) do mesmo setor (Figura 1 a Figura ${n}).
-${soEvid(n)}${RIGOR}${$("ctx").value.trim() ? "Contexto informado pelo usuário: " + $("ctx").value.trim() + "\n" : ""}${docBlock()}${mapExtras().length ? "Riscos já informados pelo usuário (entram no mapa exatamente como escritos; NÃO os repita): " + mapExtras().map(e => e.t).join("; ") + "\n" : ""}Para o mapa: examine TODAS as imagens e também os relatos em áudio transcritos e os documentos acima (quando houver) e identifique cada risco ocupacional presente — nas imagens ou relatado —, classificando-o em um dos 5 grupos:
+${soEvid(n)}${RIGOR}${$("ctx").value.trim() ? "Contexto informado pelo usuário: " + $("ctx").value.trim() + "\n" : ""}${docBlock()}${mapExtras().length ? "Riscos já informados pelo usuário (entram no mapa exatamente como escritos; NÃO os repita): " + mapExtras().map(e => e.t).join("; ") + "\n" : ""}Para o mapa: examine TODAS as ${n} imagens, uma a uma, e também TODOS os relatos em áudio transcritos e os documentos acima (quando houver) e identifique cada risco ocupacional presente — nas imagens ou relatado —, classificando-o em um dos 5 grupos:
 - fisico (verde): ruído, vibração, calor, frio, umidade, radiações, pressões anormais;
 - quimico (vermelho): poeiras, fumos, névoas, neblinas, gases, vapores, produtos químicos em geral;
 - biologico (marrom): vírus, bactérias, fungos, parasitas, contato com esgoto, lixo, animais;
@@ -4045,7 +4066,7 @@ Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonom
     mapData = {sig: mapSig(), riscos: lst, foto: Math.round(Number(r.foto_setor)) - 1, fotos: asList(r.fotos).filter(x => x && x.descricao)};
     if (!mapFotoMan && mapData.foto >= 0 && mapData.foto < mapF().length) mapFoto = mapData.foto;
     drawMapThumbs(); drawMapPrev(); refreshMapView();
-    mapMsg(lst.length ? `Análise concluída: ${lst.length} risco(s) identificado(s) em ${n} foto(s)${audios.some(a => a.info) ? ", nos áudios" : ""}${docInfo ? " e nos documentos" : ""}. Confira abaixo e gere o mapa.` : `Análise concluída em ${n} foto(s), mas nenhum risco ocupacional foi identificado. Veja abaixo o que foi visto em cada foto; se faltou algo, escreva no campo "Riscos para incluir no mapa".`, !lst.length);
+    mapMsg((lst.length ? `Análise concluída: ${lst.length} risco(s) identificado(s). Analisado: ${F.entra}. Confira abaixo e gere o mapa.` : `Análise concluída (${F.entra}), mas nenhum risco ocupacional foi identificado. Veja abaixo o que foi visto em cada foto; se faltou algo, escreva no campo "Riscos para incluir no mapa".`) + F.fora, !lst.length || !!F.fora);
     return true;
   }catch(e){ handleErr(e); mapMsg("Não foi possível analisar as fotos para o mapa: " + ($("status").textContent || e?.message || "erro"), true); return false; }
   finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; $("mapRun").textContent = "Analisar fotos, áudios e documentos para o mapa"; }
@@ -5884,10 +5905,13 @@ async function extractDocs(){
   const ok = docs.filter(d => !d.err);
   if (!ok.length || ctl) return;
   if (!(sample || (!inViewer && $("apiKey").value.trim()))){ setStatus("Informe a chave da API para ler os documentos.", true); return; }
-  let budget = sample ? 150000 : 120000;
-  const parts = ok.map(d => { const t = d.text.slice(0, Math.max(0, budget)); budget -= t.length; return `### Documento: ${d.name} (${d.kind})\n${t || "(conteúdo enviado como imagem)"}`; }).join("\n\n");
-  const imgs = ok.flatMap(d => d.images).slice(0, Math.min(8, maxImages));
-  const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. Leia os documentos do setor abaixo${imgs.length ? " e as imagens anexadas (páginas ou fotos de documentos)" : ""} e extraia as informações úteis para uma inspeção de SST e para o relatório técnico (diagnóstico do setor, riscos, controles, conformidade com as NRs).
+  let budget = sample ? 150000 : 120000, rest = ok.length;
+  const quota = [...ok].map((d, i) => [i, d.text.length]).sort((a, b) => a[1] - b[1]).reduce((q, [i, n]) => { const t = Math.min(n, Math.floor(budget / rest)); q[i] = t; budget -= t; rest--; return q; }, {});
+  const parts = ok.map((d, i) => { const t = d.text.slice(0, quota[i]); return `### Documento ${i + 1} de ${ok.length}: ${d.name} (${d.kind})${t.length < d.text.length ? " – trecho inicial" : ""}\n${t || "(conteúdo enviado como imagem)"}`; }).join("\n\n");
+  // páginas em imagem: ao menos uma de cada documento, depois as demais
+  const pg = ok.map(d => d.images || []), imgs = [];
+  for (let k = 0; imgs.length < Math.min(12, maxImages) && pg.some(x => x[k]); k++) pg.forEach(x => { if (x[k] && imgs.length < Math.min(12, maxImages)) imgs.push(x[k]); });
+  const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil. Leia TODOS os ${ok.length} documento(s) do setor abaixo${imgs.length ? " e as imagens anexadas (páginas ou fotos de documentos)" : ""} e extraia as informações úteis para uma inspeção de SST e para o relatório técnico (diagnóstico do setor, riscos, controles, conformidade com as NRs).
 Não invente nada que não esteja nos documentos. Português do Brasil, frases curtas.
 
 ${parts}
@@ -5903,8 +5927,9 @@ Responda SOMENTE com um objeto JSON neste formato:
   ctl = new AbortController(); updateGo(); drawDocs(); $("stopRow").hidden = false;
   const t0 = Date.now(); const tick = setInterval(() => setStatus(`Lendo ${ok.length} documento(s)… ${Math.round((Date.now()-t0)/1000)} s${busyNote}`), 1000);
   setStatus(`Lendo ${ok.length} documento(s)…`);
+  const sig = docSig();
   try{
-    docInfo = await callAI(prompt, imgs, ctl.signal);
+    docInfo = await callAI(prompt, imgs, ctl.signal); docInfoSig = sig;
     drawDocInfo(); saveSoon();
     setStatus(`Documentos analisados em ${Math.round((Date.now()-t0)/1000)} s. As informações serão usadas na análise e no relatório.`);
   }catch(e){ handleErr(e); }
@@ -5914,7 +5939,7 @@ async function anexarDocs(e){
   const files = Array.from(e.target.files || []); e.target.value = "";
   if (!files.length) return;
   setStatus(`Lendo ${files.length} arquivo(s)…`);
-  for (const f of files.slice(0, 12)){ docs.push({name: f.name, kind: "…", note: "lendo…", text: "", images: []}); drawDocs(); docs[docs.length - 1] = await readDoc(f); drawDocs(); }
+  for (const f of files.slice(0, 30)){ docs.push({name: f.name, kind: "…", note: "lendo…", text: "", images: []}); drawDocs(); docs[docs.length - 1] = await readDoc(f); drawDocs(); }
   setStatus(docs.some(d => d.err) ? "Alguns arquivos não puderam ser lidos (veja a lista)." : "");
   extractDocs();
 }
@@ -5995,7 +6020,7 @@ async function restoreSession(){
     if (s.ctx) $("ctx").value = s.ctx;
     (s.frames || []).forEach((b, i) => frames.push({blob: b, url: URL.createObjectURL(b), uso: (s.usos || [])[i] || "ambos"})); refreshThumbs();
     (s.audios || []).forEach(a => audios.push({id: rnd(8), name: a.name, from: a.from, dur: a.dur, blob: a.blob, url: a.blob ? URL.createObjectURL(a.blob) : "", info: a.info, err: a.err, status: a.status || (a.info ? "transcrito" : "")})); drawAudios();
-    (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; drawDocs(); drawDocInfo();
+    (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; docInfoSig = docInfo ? docSig() : ""; drawDocs(); drawDocInfo();
     if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
     if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}).${perdidos ? ` ${perdidos} foto(s)/áudio(s) guardado(s) não puderam ser lidos pelo navegador e foram retirados: anexe-os de novo.` : ""} Para começar do zero, clique em Limpar tudo.`, !!perdidos);
