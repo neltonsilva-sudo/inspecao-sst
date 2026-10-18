@@ -180,6 +180,10 @@ td.num{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;white-space
 .hist img{width:56px;height:42px;object-fit:contain;background:#0b0f12;border-radius:5px;display:block}
 .hist .t{font:500 12px var(--f-mono);color:var(--muted)}
 .hist .sc{font:700 20px var(--f-display)}
+.hist li{display:flex;gap:6px;align-items:stretch}.hist li > button:first-child{flex:1;min-width:0}
+.hist .hdel{flex:none;width:40px;padding:0;display:grid;place-items:center;color:var(--muted)}.hist .hdel:hover{color:var(--crit);border-color:var(--crit)}
+#histClr{margin-left:auto;padding:5px 12px;font-size:13px}
+button.danger{color:var(--crit);border-color:var(--crit)}
 /* Painel de diagnóstico (dashboard). Tudo escopado em .report; responde à largura do próprio painel (container query) */
 .report{display:flex;flex-direction:column;gap:24px;min-width:0;container:rep / inline-size}
 @media (min-width:901px){.report.panel{padding:20px 22px}}
@@ -989,7 +993,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v110</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v111</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1159,7 +1163,7 @@ api:
       </div>
 
       <div class="panel stack" id="histBox" hidden>
-        <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p class="label">Alertas do monitoramento</p></div>
+        <div class="phead"><span class="step alt" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p class="label">Alertas do monitoramento</p><button type="button" id="histClr" class="sm" title="Apaga da plataforma todas as fotos de alerta guardadas">Limpar</button></div>
         <p class="hint" style="margin:0">Só ficam guardadas as fotos em que o monitoramento notificou risco; as demais são descartadas após a análise. Clique numa foto para ver a análise daquele momento.</p>
         <ol class="hist" id="hist"></ol>
       </div>
@@ -1195,7 +1199,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v110</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v111</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2309,7 +2313,7 @@ function openLevel(k, cell){
       <div class="lvd-tags">${r.categoria ? `<span>${esc(r.categoria)}</span>` : ""}${r.nr ? (n && NR_LIST.some(x => x[0] === n) ? `<button type="button" data-nr="${n}" title="Abrir o checklist desta NR">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""} ›</button>` : `<span>${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</span>`) : ""}<span>S ${S} × P ${P} = <b>${S * P}</b></span></div>
       ${r.medida ? `<p class="lvd-m"><em>Medida de controle</em>${esc(r.medida)}</p>` : ""}
       ${R2 ? `<div class="lvd-res">Após o controle: <span class="lc ${R2.k}"><i></i>${R2.t} ${R2.r}</span></div>` : ""}</div>${foto}</li>`; }).join("")}</ol>`;
-  $("lvDlgBody").innerHTML = h;
+  $("lvDlgBody").innerHTML = h; delete $("lvDlgBody").dataset.alert;
   $("lvDlgBody").querySelectorAll("[data-nr]").forEach(b => b.onclick = () => { $("lvDlg").close(); openNR(Number(b.dataset.nr)); });
   if ($("lvLoc")) $("lvLoc").onclick = () => locateRisks(k);
   // análise antiga sem as fotos: busca sozinha uma vez (o botão fica para tentar de novo se falhar)
@@ -2616,9 +2620,18 @@ function addHistory(blob, data, msgs = [], t = new Date()){
 function openAlert(h){
   $("lvDlgBody").innerHTML = `<div class="lvd-h crit"><span class="lvd-n">!</span><div><h2 id="lvDlgT">Alerta do monitoramento</h2><div class="hint" style="margin:0">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</div></div></div>
     <img src="${h.url}" alt="Quadro da câmera no momento do alerta" style="width:100%;border-radius:10px;margin:10px 0">
-    <ul class="lvd-m">${(h.msgs || []).map(m => `<li>${esc(m)}</li>`).join("")}</ul>`;
+    <ul class="lvd-m">${(h.msgs || []).map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+    <div class="row" style="justify-content:flex-start;margin-top:10px"><button type="button" id="alDel" class="danger">Excluir este alerta</button></div>`;
+  $("lvDlgBody").dataset.alert = "1"; $("alDel").onclick = () => delAlert(h);
   if (!$("lvDlg").open) $("lvDlg").showModal();
 }
+$("histClr").onclick = () => {
+  if (!history.length) return;
+  if (!confirm(`Apagar as ${history.length} foto(s) de alerta guardadas na plataforma?\n\nAs cópias já salvas na pasta Downloads › Fotos Inspeção SST não são apagadas.`)) return;
+  history.forEach(h => URL.revokeObjectURL(h.url)); history.length = 0; drawHistory(-1); saveSoon(0);
+  if (!mon) $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · 0 foto(s) com alerta guardada(s).`;
+  setStatus("Alertas do monitoramento apagados.");
+};
 function drawHistory(cur){
   const ol = $("hist"); ol.innerHTML = ""; $("histBox").hidden = !history.length;
   history.forEach((h, i) => {
@@ -2626,10 +2639,22 @@ function drawHistory(cur){
     const li = document.createElement("li"); const b = document.createElement("button"); b.type = "button";
     if (i === cur) b.className = "cur";
     b.title = (h.msgs || []).join("\n");
-    b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span><span class="sc">${clamp(h.data.nota_geral,0,100)}</span>`;
+    b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span>${h.data?.riscos && h.data.nota_geral != null ? `<span class="sc">${clamp(h.data.nota_geral,0,100)}</span>` : ""}`;
     b.onclick = () => { if (h.data?.riscos) { render(h.data, false); drawHistory(i); } else openAlert(h); };
-    li.append(b); ol.append(li);
+    const del = document.createElement("button"); del.type = "button"; del.className = "hdel"; del.title = "Excluir este alerta"; del.setAttribute("aria-label", `Excluir o alerta de ${h.t.toLocaleString("pt-BR")}`);
+    del.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+    del.onclick = () => delAlert(h);
+    li.append(b, del); ol.append(li);
   });
+}
+// exclui um alerta (foto e análise daquele momento) da plataforma
+function delAlert(h){
+  const i = history.indexOf(h); if (i < 0) return;
+  if (!confirm(`Excluir o alerta de ${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}?`)) return;
+  URL.revokeObjectURL(h.url); history.splice(i, 1); drawHistory(-1); saveSoon(0);
+  if ($("lvDlg").open && $("lvDlgBody").dataset.alert) $("lvDlg").close();
+  if (!mon) $("monInfo").textContent = `Monitoramento parado · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
+  setStatus("Alerta excluído.");
 }
 async function cycle(){
   if (ctl) return; // ainda analisando o quadro anterior
@@ -5359,7 +5384,7 @@ async function idbPut(v){ const db = await idb(); return new Promise((res, rej) 
 async function idbGet(){ const db = await idb(); return new Promise((res, rej) => { const q = db.transaction("sessao").objectStore("sessao").get("atual"); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
 async function idbDel(){ const db = await idb(); return new Promise(res => { const tx = db.transaction("sessao", "readwrite"); tx.objectStore("sessao").delete("atual"); tx.oncomplete = res; tx.onerror = res; }); }
 let saveT = null, restoring = false;
-function saveSoon(){
+function saveSoon(delay = 800){
   if (inViewer || restoring || !$("phone").hidden) return;
   clearTimeout(saveT);
   saveT = setTimeout(async () => {
@@ -5371,7 +5396,7 @@ function saveSoon(){
         docs: docs.filter(d => !d.err).map(d => ({name: d.name, kind: d.kind, note: d.note, text: d.text, images: d.images || []})), docInfo,
         alerts: history.map(h => ({t: h.t.getTime(), blob: h.blob, data: h.data, msgs: h.msgs || []}))});
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
-  }, 800);
+  }, delay);
 }
 async function restoreSession(){
   let s = null; try{ s = await idbGet(); }catch(e){ return; }
@@ -5420,7 +5445,7 @@ async function init(){
   if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
   render(EXAMPLE, true); refreshThumbs();
   $("newInsp").onclick = newInspection; $("newRep").onclick = newInspection;
-  $("ctx").addEventListener("input", saveSoon);
+  $("ctx").addEventListener("input", () => saveSoon());
   if (inViewer){
     $("camHint").textContent = "Dentro do Claude, a análise usa a sua conta, sem chave. A câmera ao vivo e o monitoramento funcionam na versão para navegador (botão abaixo).";
     $("monBox").hidden = true;
