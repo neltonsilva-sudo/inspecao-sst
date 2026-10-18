@@ -435,7 +435,13 @@ button.sm{padding:6px 12px;font-size:13px}
 .mapvis summary{cursor:pointer;font-weight:700;font-size:12.5px;color:var(--muted)}.mapvis ol{margin:6px 0 2px;padding-left:18px;display:grid;gap:3px}.mapprev .mc small{color:var(--muted)}
 .audlist li.novo{animation:audNovo 1.2s ease-in-out 4;border-color:var(--signal)}
 @keyframes audNovo{50%{box-shadow:0 0 0 4px var(--signal);background:var(--cell-warn)}}
-.report .rtools{display:flex;justify-content:flex-end;margin:-4px 0 8px}
+.report .rtools{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;margin:-4px 0 8px}
+.report .exibir{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.report .rtools .exibir{margin-right:auto;justify-content:flex-start}
+.report .exibir .lbl{font-weight:700;color:var(--ink)}
+.report .exibir button{width:auto;flex:0 0 auto;margin:0}
+.report .rtools .exibir{flex:1 1 auto}
+.report .empty-st .exibir{margin-top:6px}
 .report .empty-st{display:grid;justify-items:center;text-align:center;gap:8px;padding:48px 20px;color:var(--muted)}
 .report .empty-st h2{margin:4px 0 0;font:700 20px var(--f-display);text-transform:uppercase;letter-spacing:.03em;color:var(--ink)}
 .report .empty-st p{margin:0;max-width:440px;line-height:1.5}
@@ -1022,7 +1028,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v142</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v143</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1256,8 +1262,8 @@ api:
 
     <section class="panel report" id="report" aria-live="polite"></section>
   </div>
-  <section class="tech mapview" id="mapView" hidden></section>
   <section class="tech" id="tech" hidden></section>
+  <section class="tech mapview" id="mapView" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
   <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkFix" class="accent">Corrigir inconsistências</button><button type="button" id="chkPhotos">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
@@ -1267,7 +1273,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v142</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v143</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1701,13 +1707,33 @@ function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; }
 
 /* ---------- render do relatório ---------- */
 // painel sem análise: nada da inspeção anterior aparece; o exemplo só abre se o usuário pedir
+let mapGerado = false; // "Gerar mapa de risco" já foi usado nesta inspeção
 function renderEmpty(){
   curRender = null; curRiscos = []; curNR = {};
-  $("report").innerHTML = `<div class="empty-st"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-    <h2>Nenhuma análise nesta inspeção</h2><p>Adicione as fotos do setor (câmera, galeria ou celular) e clique em <b>Analisar ambiente</b>. O diagnóstico, a matriz de risco e o relatório aparecem aqui.</p>
-    <button type="button" class="sm" data-act="example">Ver um relatório de exemplo</button></div>`;
+  const rel = !!report, mapa = mapGerado;
+  $("report").innerHTML = rel || mapa ? `<div class="empty-st"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>
+    <h2>${rel && mapa ? "Relatório técnico e mapa de risco gerados" : rel ? "Relatório técnico gerado" : "Mapa de risco gerado"}</h2><p>${rel && mapa ? "O relatório técnico aparece primeiro e o mapa de risco logo abaixo." : "Clique para ver na tela, com as opções de download."}</p>
+    <div class="exibir"></div></div>` : `<div class="empty-st"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    <h2>Nenhuma análise nesta inspeção</h2><p>Adicione as fotos do setor (câmera, galeria ou celular) e clique em <b>Analisar ambiente</b>. O diagnóstico, a matriz de risco e o relatório aparecem aqui.</p></div>`;
+  drawExibir();
 }
-$("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "example") render(EXAMPLE, true); else if (a === "noex") renderEmpty(); });
+// botões "Exibir" do que já foi gerado: só o relatório, só o mapa, ou os dois (relatório primeiro, mapa abaixo)
+function drawExibir(){
+  if (!curRender && !!$("report").querySelector(".empty-st .exibir") !== !!(report || mapGerado)) return renderEmpty();
+  const box = $("report").querySelector(".exibir"); if (!box) return;
+  const rel = !!report, mapa = mapGerado;
+  box.innerHTML = rel && mapa ? `<span class="lbl">Exibir:</span><button type="button" class="sm primary" data-act="ver-ambos">Relatório técnico e mapa de risco</button><button type="button" class="sm" data-act="ver-rel">Só o relatório técnico</button><button type="button" class="sm" data-act="ver-mapa">Só o mapa de risco</button>`
+    : rel ? `<button type="button" class="sm primary" data-act="ver-rel">Exibir relatório técnico</button>` : mapa ? `<button type="button" class="sm primary" data-act="ver-mapa">Exibir mapa de risco</button>` : "";
+  box.hidden = !box.innerHTML;
+}
+async function exibir(a){
+  const rel = a !== "ver-mapa" && report, mapa = a !== "ver-rel" && mapGerado;
+  if (rel) showReport(); else if (a === "ver-mapa") $("tech").hidden = true;
+  if (mapa){ const v = $("mapView"); if (v.querySelector("iframe")){ v.hidden = false; fitMapView(); refreshMapView(); } else showMapView(await mapaHTML({print: false}), false); }
+  else if (a === "ver-rel") $("mapView").hidden = true;
+  $(rel ? "tech" : "mapView").scrollIntoView({behavior: "smooth", block: "start"});
+}
+$("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "noex") renderEmpty(); else if (/^ver-/.test(a)) exibir(a); });
 function render(d, isExample){
   d = d && typeof d === "object" ? d : {};
   curRender = {d, isExample};
@@ -1832,7 +1858,7 @@ function render(d, isExample){
       <p>${counts.crit} risco(s) crítico(s): ${esc(txt(top.perigo))}${txt(top.nr) ? ` (${esc(txt(top.nr))})` : ""}</p>
       ${txt(top.medida) ? `<small><strong>Ação imediata:</strong> ${esc(txt(top.medida))}</small>` : ""}
     </div>` : ""}
-    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="sm" data-act="noex">Fechar exemplo</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></span></div>' : '<div class="rtools"><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></div>'}
+    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="sm" data-act="noex">Fechar exemplo</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></span></div>' : '<div class="rtools"><div class="exibir" hidden></div><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></div>'}
 
     <header class="head">
       <p class="eyebrow">Diagnóstico do ambiente</p>
@@ -1971,6 +1997,7 @@ function render(d, isExample){
     </section>
 
     <p class="limit"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4.5M8 4.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span><b>Limitações:</b> ${esc(txt(d.limitacoes))} Análise por imagem apoia, mas não substitui, a inspeção de campo e a avaliação do profissional de SST.</span></p>`;
+  drawExibir();
 }
 
 /* ---------- imagens ---------- */
@@ -3973,7 +4000,7 @@ $("chkFix").onclick = fixReport;
 $("chkPhotos").onclick = checkPhotos;
 $("chkX").onclick = () => $("chkDlg").close();
 function showReport(){
-  const t = $("tech"); t.hidden = false;
+  const t = $("tech"); t.hidden = false; setTimeout(drawExibir);
   t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + x.length, 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button><button type="button" id="synBtn" title="Resumo com a situação, os riscos e as principais ações do relatório técnico">Relatório sintético (PDF)</button>'}<button type="button" id="chkBtn" title="Compara o relatório com a análise das fotos e os anexos e aponta divergências">Conferir coerência</button><button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
   $("editRep").onclick = () => {
     const art = t.querySelector(".rep"), on = art.isContentEditable;
@@ -4299,13 +4326,13 @@ $("mapCanva").onclick = async () => {
 // visualização do mapa na tela (como o relatório técnico), com os botões de formato
 function fitMapView(){ const w = $("mapView").querySelector(".mvw"), f = $("mapView").querySelector(".mvf"), ifr = $("mapView").querySelector("iframe"); if (!w || !ifr) return; const k = Math.min(1, (w.clientWidth - 24) / 1123); ifr.style.transform = `scale(${k})`; f.style.width = 1123 * k + "px"; f.style.height = 631 * k + "px"; }
 addEventListener("resize", () => { if (!$("mapView").hidden) fitMapView(); });
-function showMapView(html){
-  const v = $("mapView"); v.hidden = false;
+function showMapView(html, rolar = true){
+  const v = $("mapView"); v.hidden = false; mapGerado = true; drawExibir();
   v.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Mapa de risco</h2><button type="button" data-mv="pdf">📄 Baixar em PDF</button><button type="button" data-mv="docx">📝 Baixar em Word (.docx)</button><button type="button" data-mv="canva" class="accent">🎨 Baixar para o Canva</button><button type="button" data-mv="x">Fechar</button></div><div class="mvw"><div class="mvf"><iframe title="Visualização do mapa de risco" sandbox="allow-same-origin"></iframe></div></div><p class="hint">Visualização do mapa (paisagem). Ela se atualiza sozinha quando você muda os campos, a logo, a foto ou os riscos no quadro 5.</p>`;
   v.querySelector("iframe").srcdoc = html;
   v.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => { const a = b.dataset.mv; if (a === "x"){ v.hidden = true; return; } $({pdf: "mapPdf", docx: "mapDocx", canva: "mapCanva"}[a]).click(); });
   requestAnimationFrame(fitMapView);
-  v.scrollIntoView({behavior: "smooth", block: "start"});
+  if (rolar) v.scrollIntoView({behavior: "smooth", block: "start"});
 }
 // mapa na tela acompanha as mudanças do quadro 5 (campos, logo, foto escolhida e riscos digitados)
 let mapRefT = null;
@@ -6042,7 +6069,7 @@ async function newInspection(){
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = ""; $("mapView").hidden = true; $("mapView").innerHTML = ""; $("mapOpts").hidden = true;
   ["rEmp", "rSetor", "rResp", "rRev", "rAprov", "mSetor", "mElab", "mRev", "mAprov", "mVig", "mExtra"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
-  mapData = null; mapFoto = 0; mapFotoMan = false; drawMapPrev();
+  mapData = null; mapFoto = 0; mapFotoMan = false; mapGerado = false; drawMapPrev();
   $("rElab").value = ""; store("sst_rElab", null);
   store("sst_logo", null); drawLogo();
   $("rData").value = hojeISO(); dataManual = false;
