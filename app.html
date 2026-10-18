@@ -236,7 +236,7 @@ button.danger{color:var(--crit);border-color:var(--crit)}
 button.watch{width:100%;min-height:48px;font-weight:700;font-size:15px;background:var(--crit);border-color:var(--crit);color:#fff}
 button.watch:hover{filter:brightness(1.08)}
 button.watch.on{background:var(--panel);color:var(--crit)}
-.al-save{flex-wrap:wrap}.mon .al-save button{flex:1 1 100%;white-space:normal;min-width:0;max-width:100%;text-align:center}
+.al-save{flex-wrap:wrap}.al-rep{display:flex;gap:6px;width:100%}.mon .al-rep button{flex:1 1 0;min-width:0;white-space:normal;font-size:12.5px;padding:7px 8px;line-height:1.2}.mon .al-save button{flex:1 1 100%;white-space:normal;min-width:0;max-width:100%;text-align:center}
 .hist .hmsg{display:block;font-size:11px;font-weight:600;color:var(--crit);line-height:1.25;margin-top:2px}
 .lamp-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .lamp{width:62px;height:62px;border-radius:50%;padding:5px;background:linear-gradient(#cfd5da,#9aa4ab);box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
@@ -1083,7 +1083,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v159</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v160</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1163,7 +1163,7 @@ api:
           <details class="mon-dd"><summary><span>Situações monitoradas</span> <b id="monAlN"></b></summary>
             <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
           </details>
-          <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button><button type="button" id="alRep">📋 Ver relatório de alertas</button></div>
+          <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button><div class="al-rep"><button type="button" id="alRep" class="sm">📋 Ver relatório de alertas</button><button type="button" id="alRepClr" class="sm danger">🗑 Apagar relatório de alertas</button></div></div>
           <p class="hint" id="alDirInfo" style="margin:0">As fotos com alerta podem ser gravadas automaticamente na pasta "Fotos Inspeção SST" dentro de Downloads (foto .jpg + .txt com data, hora e situações).</p>
           <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico (e as situações marcadas acima) toca um alerta sonoro. As pessoas não são identificadas.</p>
         </div>
@@ -1329,7 +1329,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v159</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v160</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2905,6 +2905,17 @@ async function pdfAlRep(){
   w.document.open(); w.document.write(html); w.document.close();
 }
 $("alRep").onclick = abrirAlRep;
+// apaga todo o registro do monitoramento: alertas (fotos, data, hora e situações), contagem de verificações, último alerta e o que o sistema viu
+$("alRepClr").onclick = () => {
+  if (!history.length && !monCount){ setStatus("Não há registro do monitoramento para apagar."); return; }
+  if (!confirm(`Apagar todo o registro do monitoramento?\n\nApaga ${history.length} alerta(s) com fotos, data, hora e situações, a contagem de ${monCount} verificação(ões) e o último alerta exibido. O relatório de alertas fica vazio.\n\nAs cópias já salvas na pasta Downloads › Fotos Inspeção SST não são apagadas.`)) return;
+  history.forEach(h => URL.revokeObjectURL(h.url)); history.length = 0; monCount = 0; drawHistory(-1); saveSoon(0);
+  $("monAlert").hidden = true; $("monAlert").innerHTML = ""; lampSaw("");
+  if (mon) lamp("ok", "Monitorando – nenhuma situação de risco", "Registro apagado. O monitoramento continua."); else lamp("off", "Monitoramento desligado", "Registro do monitoramento apagado.");
+  $("monInfo").textContent = mon ? "Monitorando · registro apagado." : "Monitoramento parado · registro apagado.";
+  if ($("alRepDlg").open) $("alRepDlg").close();
+  setStatus("Registro do monitoramento apagado.");
+};
 $("alRepPdf").onclick = pdfAlRep;
 $("alRepX").onclick = () => $("alRepDlg").close();
 $("alRepDlg").addEventListener("click", e => { if (e.target === $("alRepDlg")) $("alRepDlg").close(); });
