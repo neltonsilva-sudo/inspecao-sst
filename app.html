@@ -1067,7 +1067,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v154</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v155</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1136,7 +1136,7 @@ api:
           <button id="watchBtn" type="button" class="watch">🛡️ Monitorar situações de risco</button>
           <div class="row">
             <select id="monInt" aria-label="Intervalo entre análises">
-              <option value="5">A cada 5 s</option><option value="10" selected>A cada 10 s</option><option value="15">A cada 15 s</option><option value="20">A cada 20 s</option><option value="30">A cada 30 s</option><option value="60">A cada 1 min</option><option value="120">A cada 2 min</option>
+              <option value="2">A cada 2 s</option><option value="3">A cada 3 s</option><option value="5">A cada 5 s</option><option value="10" selected>A cada 10 s</option><option value="15">A cada 15 s</option><option value="20">A cada 20 s</option><option value="30">A cada 30 s</option><option value="60">A cada 1 min</option><option value="120">A cada 2 min</option>
               <option value="300">A cada 5 min</option><option value="600">A cada 10 min</option>
               <option value="900">A cada 15 min</option><option value="1800">A cada 30 min</option>
             </select>
@@ -1312,7 +1312,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v154</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v155</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3095,8 +3095,8 @@ EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load
 alCount();
 function tickMon(){
   if (!mon) return;
-  // alerta imediato: a cena mudou desde a última verificação → verifica já (no mínimo 4 s entre verificações)
-  if ($("monMov")?.checked && !ctl && mon.base && Date.now() - (mon.lastT || 0) >= 4000 && Date.now() > (mon.cool || 0)){
+  // alerta imediato: a cena mudou desde a última verificação → verifica já (no mínimo 4 s entre verificações, ou o intervalo escolhido, se for menor)
+  if ($("monMov")?.checked && !ctl && mon.base && Date.now() - (mon.lastT || 0) >= Math.min(4, mon.sec) * 1000 && Date.now() > (mon.cool || 0)){
     const dif = cenaDif(cenaMini(), mon.base);
     if (dif > 6){ mon.next = Date.now() + mon.sec * 1000; cycle("cena"); return; }
   }
@@ -3136,10 +3136,11 @@ $("watchBtn").onclick = async () => {
   if (!stream && phoneRelay()) setStatus("Monitorando pela câmera do celular (sem vídeo ao vivo): a cada verificação o celular fotografa e envia o quadro. Deixe a câmera do celular ligada.");
   // respeita as situações escolhidas; sem nenhuma marcada, monitora todas
   if (!MON_AL.some(([id]) => $(id).checked)){ MON_AL.forEach(([id]) => { $(id).checked = true; store("sst_" + id, "1"); }); alCount(); }
-  $("monInt").value = "10"; $("monMov").checked = true;
+  if (Number($("monInt").value) > 30) $("monInt").value = "10"; // respeita o intervalo curto escolhido (2 a 30 s)
+  $("monMov").checked = true;
   startMon();
   const n = monSel().length, epis = epiReq();
-  setStatus(`Monitorando a cada 10 segundos e na hora em que a cena mudar: risco crítico e ${n} situação(ões) marcada(s)${epis.length ? ` (EPIs obrigatórios: ${epis.join(", ")})` : ""}.`);
+  setStatus(`Monitorando a cada ${$("monInt").value} segundos e na hora em que a cena mudar: risco crítico e ${n} situação(ões) marcada(s)${epis.length ? ` (EPIs obrigatórios: ${epis.join(", ")})` : ""}.`);
 };
 $("stopBtn").onclick = () => ctl?.abort();
 
