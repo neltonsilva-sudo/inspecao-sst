@@ -1067,7 +1067,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v155</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v156</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1312,7 +1312,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v155</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v156</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2934,17 +2934,20 @@ function cenaMini(){
 // quanto a cena mudou (0–255): média das diferenças, desconsiderando o ruído leve da câmera
 function cenaDif(a, b){ if (!a || !b) return 0; let t = 0; for (let i = 0; i < a.length; i++){ const x = Math.abs(a[i] - b[i]); if (x > 10) t += x; } return t / a.length; }
 async function cycle(motivo){
-  if (ctl) return; // ainda analisando o quadro anterior
-  if (mon){ mon.lastT = Date.now(); mon.base = cenaMini(); }
+  if (!mon || monVoo.size + monPend >= monMax()) return; // ainda analisando o(s) quadro(s) anterior(es)
+  mon.lastT = Date.now(); mon.base = cenaMini(); const seq = ++monSeq; monPend++;
   if (motivo) lampSaw(`Mudança na cena às ${new Date().toLocaleTimeString("pt-BR")}: verificando agora…`);
   const blob = await monFrame();
-  if (!blob){ setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); lampSaw("Monitoramento parado: a câmera ficou sem imagem. Ligue a câmera e clique em Monitorar de novo.", true); return; }
+  if (!blob){ monPend--; setStatus("Câmera sem imagem. Monitoramento pausado.", true); stopMon(); lampSaw("Monitoramento parado: a câmera ficou sem imagem. Ligue a câmera e clique em Monitorar de novo.", true); return; }
   const sel = monSel();
-  const data = await monCheck(blob, sel);
-  if (!data) return;
+  const pr = monCheck(blob, sel); monPend--; // a vaga passa a contar em monVoo
+  const data = await pr;
+  if (!data || !mon) return;
   monCount++;
+  const novo = seq > monVisto; if (novo) monVisto = seq; // resposta de um quadro mais antigo que o já mostrado: só conta se tiver alerta
   const crit = data.critico, hits = monHits(data, sel);
   const msgs = [...crit.map(c => `Risco grave e iminente: ${c}`), ...hits.map(h => h.onde ? `${h.t}: ${h.onde}` : h.t)];
+  if (!msgs.length && !novo) return;
   if (!msgs.length && $("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", `Última verificação: ${data.hora}.`);
   const enq = /parcialmente|cortad|fora do quadro|de costas|muito longe|ao fundo|canto|borda/i.test(data.cena) ? " ⚠ Pessoa só em parte do quadro: aproxime ou centralize a câmera para o sistema ver mãos, pulsos e rosto." : "";
   lampSaw(data.cena ? `O sistema viu (${data.hora}, em ${data.secs} s): ${data.cena}${enq}` : `Verificação das ${data.hora} concluída em ${data.secs} s.`);
@@ -2967,7 +2970,7 @@ function lamp(st, t, d){
 }
 // o que a IA enxergou no último quadro (ou o motivo da falha)
 function lampSaw(t, err){ const el = $("lampSaw"); if (!el) return; el.textContent = t; el.hidden = !t; el.classList.toggle("err", !!err); }
-$("monNow").onclick = () => { if (!mon) return; if (ctl){ setStatus("Aguarde: ainda verificando o quadro anterior."); return; } mon.next = Date.now() + mon.sec * 1000; cycle(); };
+$("monNow").onclick = () => { if (!mon) return; if (monVoo.size >= monMax()){ setStatus("Aguarde: ainda verificando o quadro anterior."); return; } mon.next = Date.now() + mon.sec * 1000; cycle(); };
 $("lampAck").onclick = () => mon ? lamp("ok", "Monitorando – nenhuma situação de risco", "Alerta reconhecido. As fotos do alerta ficam guardadas em Alertas do monitoramento.") : lamp("off", "Monitoramento desligado", "Alerta reconhecido.");
 // termos que, citados na descrição da cena (sem "sem"/"nenhum"/"não" antes), confirmam a situação
 const CENA_RX = [
@@ -2997,8 +3000,10 @@ async function shrinkTo(b, max){
 }
 // verificação dedicada de cada quadro do monitoramento: pergunta curta e direta só sobre as situações de alerta
 // (bem mais rápida e confiável do que a análise completa); na dúvida, alerta
+const monVoo = new Set(); let monSeq = 0, monVisto = 0, monPend = 0; // verificações em andamento; ordem das respostas
+const monMax = () => mon && mon.sec <= 3 ? 2 : 1; // intervalos de 2–3 s: duas verificações em paralelo, defasadas
 async function monCheck(blob, sel){
-  ctl = new AbortController(); updateGo(); $("stopRow").hidden = false;
+  const ac = new AbortController(); monVoo.add(ac); $("stopRow").hidden = false;
   const hora = new Date().toLocaleTimeString("pt-BR"); setStatus(`Monitoramento: verificando o quadro das ${hora}…`);
   const prompt = `Você é técnico(a) de segurança do trabalho monitorando uma câmera ao vivo de um ambiente de trabalho. Examine com atenção a imagem anexada (um quadro da câmera) e diga se ocorre cada situação abaixo.
 Situações:
@@ -3006,13 +3011,13 @@ ${sel.map(([, k, d]) => `- "${k}": ${d}`).join("\n")}
 - "critico": qualquer outra situação de risco grave e iminente à vida ou à integridade (NR-03), como incêndio, choque elétrico, queda iminente, prensamento ou atropelamento.
 ${sel.some(x => x[1] === "sem_epi") && epiReq().length ? `EPIs OBRIGATÓRIOS nesta área: ${epiReq().join(", ")}. Em "sem_epi", confira CADA pessoa visível contra essa lista e marque "ocorre": true se faltar qualquer um deles; em "onde", diga qual EPI falta e em qual pessoa.\n` : ""}Regras: na dúvida, marque "ocorre": true com "certeza": "baixa" — para segurança, um alarme falso é melhor que um alerta perdido. Olhos fechados, cabeça baixa ou caída, pessoa debruçada, deitada ou imóvel em posição de descanso contam como "dormindo_caido". Descreva onde está a situação e a pessoa só de forma genérica (posição na imagem, cor da roupa), sem nome e sem traços que a identifiquem.
 Para adornos, examine com atenção as mãos e dedos, os pulsos, o pescoço e as orelhas de cada pessoa. Se a pessoa estiver cortada, de costas, muito longe ou com mãos/rosto fora do quadro, diga isso em "cena" (ex.: "mãos fora do quadro").
-Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição na imagem e roupa; olhos abertos ou fechados; postura: costas apoiadas ou não, coluna reta ou curvada, pescoço e cabeça retos ou inclinados; EPIs em uso; adornos visíveis) e o ambiente, em uma frase curta. NUNCA descreva cabelo, calvície, barba, tatuagem, cor da pele, idade ou outro traço físico que identifique a pessoa.
-Seja rápido e direto. Responda SOMENTE com JSON: {"cena":"até 30 palavras","alertas":{"chave":{"certeza":"alta|média|baixa","onde":"onde e quem, curto"}}}. Em "alertas" inclua APENAS as situações que ocorrem na imagem, usando as chaves da lista (${[...sel.map(x => x[1]), "critico"].join(", ")}); se nenhuma ocorrer, "alertas":{}.`;
+Antes de decidir, descreva em "cena" o que você vê: cada pessoa (posição na imagem e roupa; olhos abertos ou fechados; postura: costas apoiadas ou não, coluna reta ou curvada, pescoço e cabeça retos ou inclinados; EPIs em uso; adornos visíveis) e o ambiente, numa frase de até 20 palavras. NUNCA descreva cabelo, calvície, barba, tatuagem, cor da pele, idade ou outro traço físico que identifique a pessoa.
+Seja rápido e direto. Responda SOMENTE com JSON: {"cena":"até 20 palavras","alertas":{"chave":{"certeza":"alta|média|baixa","onde":"onde e quem, curto"}}}. Em "alertas" inclua APENAS as situações que ocorrem na imagem, usando as chaves da lista (${[...sel.map(x => x[1]), "critico"].join(", ")}); se nenhuma ocorrer, "alertas":{}.`;
   const t0 = Date.now();
   try{
     const quick = $("monQuick")?.checked !== false;
-    const small = await shrinkTo(blob, 1024); // resolução para enxergar objetos pequenos (anel, relógio) sem perder a rapidez
-    const r = await callAI(prompt, [small], ctl.signal, quick ? {fast: true, lite: true, budget: 0} : {fast: true, budget: 384});
+    const small = await shrinkTo(blob, 1024); // 1024 px: resolução para enxergar objetos pequenos (anel, brinco) e olhos fechados
+    const r = await callAI(prompt, [small], ac.signal, quick ? {fast: true, lite: true, budget: 0} : {fast: true, budget: 384});
     const al = r && typeof r.alertas === "object" ? r.alertas : {};
     const c = al.critico && typeof al.critico === "object" && al.critico.ocorre !== false && al.critico.ocorre !== "false" ? [String(al.critico.onde || "situação grave na imagem")] : [];
     // privacidade: tira da descrição traços físicos que identificam a pessoa, caso a IA tenha citado
@@ -3032,7 +3037,7 @@ Seja rápido e direto. Responda SOMENTE com JSON: {"cena":"até 30 palavras","al
     if (e?.code !== "cancelled" && e?.name !== "AbortError") lampSaw(`Falha na verificação das ${hora}: ${$("status").textContent}`, true);
     return null;
   }
-  finally{ ctl = null; $("stopRow").hidden = true; updateGo(); }
+  finally{ monVoo.delete(ac); if (!monVoo.size && !ctl) $("stopRow").hidden = true; }
 }
 // situações que o monitoramento pode alertar além do risco crítico (id do campo, chave pedida à IA, descrição)
 const MON_AL = [
@@ -3093,29 +3098,31 @@ alCount();
 { const q = $("monMov"); if (q){ q.checked = load("sst_monMov") !== "0"; q.onchange = () => store("sst_monMov", q.checked ? null : "0"); } }
 EPI_REQ.forEach(([id]) => { const el = $(id); if (!el) return; el.checked = load("sst_" + id) === "1"; el.onchange = () => { store("sst_" + id, el.checked ? "1" : null); alCount(); }; });
 alCount();
+// alerta imediato: a cena mudou desde a última verificação → verifica já. Comparação local a cada 250 ms;
+// intervalo mínimo entre verificações: 4 s (ou 1,5 s nos intervalos de 2–3 s, com duas verificações em paralelo)
+function movMon(){
+  if (!mon || !$("monMov")?.checked || !mon.base || monVoo.size >= monMax() || Date.now() <= (mon.cool || 0)) return;
+  if (Date.now() - (mon.lastT || 0) < (mon.sec <= 3 ? 1500 : Math.min(4, mon.sec) * 1000)) return;
+  if (cenaDif(cenaMini(), mon.base) > 6){ mon.next = Date.now() + mon.sec * 1000; cycle("cena"); }
+}
 function tickMon(){
   if (!mon) return;
-  // alerta imediato: a cena mudou desde a última verificação → verifica já (no mínimo 4 s entre verificações, ou o intervalo escolhido, se for menor)
-  if ($("monMov")?.checked && !ctl && mon.base && Date.now() - (mon.lastT || 0) >= Math.min(4, mon.sec) * 1000 && Date.now() > (mon.cool || 0)){
-    const dif = cenaDif(cenaMini(), mon.base);
-    if (dif > 6){ mon.next = Date.now() + mon.sec * 1000; cycle("cena"); return; }
-  }
   const left = Math.round((mon.next - Date.now()) / 1000);
   if (left <= 0){ mon.next = Date.now() + mon.sec * 1000; cycle(); }
-  else if (!ctl) $("monInfo").textContent = `Monitorando. Próxima análise em ${fmt(left)} · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
+  else if (!monVoo.size) $("monInfo").textContent = `Monitorando. Próxima análise em ${fmt(left)} · ${monCount} análise(s) feita(s) · ${history.length} foto(s) com alerta guardada(s).`;
 }
 function startMon(){
   try{ audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); }catch(e){}
   try{ if (window.Notification && Notification.permission === "default") Notification.requestPermission(); }catch(e){}
   mon = {sec: Number($("monInt").value) || 300, next: Date.now()};
-  mon.timer = setInterval(tickMon, 1000); tickMon();
+  monPend = 0; mon.timer = setInterval(tickMon, 1000); mon.mov = setInterval(movMon, 250); tickMon();
   $("watchBtn").textContent = "⏹ Parar monitoramento"; $("watchBtn").classList.add("on");
   if ($("lampRow").dataset.st !== "alert") lamp("ok", "Monitorando – nenhuma situação de risco", "Aguardando a primeira verificação…");
   $("monBtn").textContent = "Parar monitoramento"; $("monInt").disabled = true; $("monBox").classList.add("on"); $("rec").textContent = "● MONITORANDO";
   updateGo();
 }
 function stopMon(){
-  if (mon) clearInterval(mon.timer); mon = null;
+  if (mon){ clearInterval(mon.timer); clearInterval(mon.mov); } mon = null;
   $("watchBtn").textContent = "🛡️ Monitorar situações de risco"; $("watchBtn").classList.remove("on"); $("monNow").hidden = true;
   if ($("lampRow").dataset.st !== "alert") lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   $("monBtn").textContent = "Iniciar monitoramento"; $("monInt").disabled = false; $("monBox").classList.remove("on"); $("rec").textContent = "● AO VIVO";
@@ -3142,7 +3149,7 @@ $("watchBtn").onclick = async () => {
   const n = monSel().length, epis = epiReq();
   setStatus(`Monitorando a cada ${$("monInt").value} segundos e na hora em que a cena mudar: risco crítico e ${n} situação(ões) marcada(s)${epis.length ? ` (EPIs obrigatórios: ${epis.join(", ")})` : ""}.`);
 };
-$("stopBtn").onclick = () => ctl?.abort();
+$("stopBtn").onclick = () => { ctl?.abort(); monVoo.forEach(a => a.abort()); };
 
 /* ---------- relatório técnico ---------- */
 let lastData = null, report = null;
