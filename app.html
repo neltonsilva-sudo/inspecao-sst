@@ -413,6 +413,16 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
 button.sm{padding:6px 12px;font-size:13px}
+.mapsel{display:grid;gap:6px}
+.mapthumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-height:190px;overflow-y:auto}
+.mapthumbs button{padding:0;border:2px solid var(--line);border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:#0b0f12;position:relative}
+.mapthumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.mapthumbs button.on{border-color:var(--signal);box-shadow:0 0 0 3px var(--signal)}
+.mapthumbs button.on::after{content:"✓ no mapa";position:absolute;left:0;right:0;bottom:0;background:var(--signal);color:var(--signal-ink);font:700 10px var(--f-body);padding:2px}
+.mapprev{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px}
+.mapprev .mc{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center}
+.mapprev .mc i{display:block;border-radius:50%;border:1px solid rgba(0,0,0,.4);margin:auto}
+.mapprev .mc b{display:block;font-size:12.5px}.mapprev .mc small{color:var(--muted)}
 .audlist li.novo{animation:audNovo 1.2s ease-in-out 4;border-color:var(--signal)}
 @keyframes audNovo{50%{box-shadow:0 0 0 4px var(--signal);background:var(--cell-warn)}}
 .report .rtools{display:flex;justify-content:flex-end;margin:-4px 0 8px}
@@ -1000,7 +1010,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v123</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v126</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1196,13 +1206,21 @@ api:
       <div class="panel stack" id="mapBox">
         <div class="phead"><span class="step" aria-hidden="true">5</span><p class="label">Mapa de risco</p><svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="11" r="3"/><circle cx="16" cy="14" r="2"/></svg></div>
         <div class="fields">
+          <label for="mSetor">Setor<input id="mSetor" type="text" placeholder="Ex.: Área de vivência e corredores"></label>
           <label for="mElab">Elaboração<input id="mElab" type="text" placeholder="Ex.: CIPA – Gestão 2026/2027"></label>
           <label for="mRev">Revisão<input id="mRev" type="text" placeholder="Nome de quem revisou"></label>
           <label for="mAprov">Aprovação<input id="mAprov" type="text" placeholder="Nome de quem aprova (ex.: representante da CIPA)"></label>
           <label for="mVig">Ano de vigência<input id="mVig" type="text" inputmode="numeric" placeholder="Ex.: 2026/2027"></label>
+          <div class="logo-f"><span>Logo do cabeçalho (esquerda) – ex.: SENAI</span><div class="row"><label class="btn">Escolher logo<input id="mLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><img id="mLogoPrev" alt="Logo do mapa" hidden><button id="mLogoClr" type="button" hidden>Remover</button></div></div>
         </div>
+        <label for="mExtra">Riscos para incluir no mapa (opcional)<textarea id="mExtra" rows="4" placeholder="Um risco por linha: risco; grupo; intensidade&#10;Ex.: Ruído; físico; médio&#10;Queda de mesmo nível; acidentes; alto&#10;Postura inadequada; ergonômico; baixo"></textarea></label>
+        <p class="hint" style="margin:-4px 0 0">Grupos: físico, químico, biológico, ergonômico ou acidentes. Intensidade: alto, médio ou baixo (sem informar, fica médio; sem o grupo, ele é deduzido pelo nome do risco).</p>
+        <div class="mapsel"><p class="label" style="margin:0">Foto que vai compor o mapa</p><div class="mapthumbs" id="mapThumbs"></div><p class="hint" id="mapThumbHint" style="margin:0">Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.</p></div>
+        <button id="mapRun" type="button">Analisar as fotos para o mapa de risco</button>
+        <div class="mapprev" id="mapPrev" hidden></div>
         <button class="primary" id="mapBtn" type="button">Gerar mapa de risco (PDF)</button>
-        <p class="hint">Gera o mapa de risco no padrão do modelo da CIPA: faixa "MAPA DE RISCO" com a empresa, logo da empresa (quadro 4) à esquerda e emblema da CIPA à direita, setor, foto do setor com os rostos cobertos, quadro com os círculos de cada grupo de risco (tamanho conforme a intensidade) e os riscos da análise, legenda e rodapé com elaboração, revisão, aprovação e "GESTÃO CIPA | ano de vigência".</p>
+        <div class="row"><button id="mapDocx" type="button">Baixar Word (.docx)</button><button id="mapCanva" type="button" class="accent">Abrir no Canva</button></div>
+        <p class="hint">O mapa segue o modelo da CIPA, sempre em paisagem: logo à esquerda, faixa "MAPA DE RISCO" com a empresa, setor, a foto escolhida (rostos cobertos), quadro com um círculo por grupo e intensidade (cor = grupo, tamanho = alto, médio ou baixo) e os riscos ao lado, legenda, emblema da CIPA e rodapé com elaboração, revisão, aprovação e "GESTÃO CIPA | ano de vigência". O Word e o Canva saem editáveis.</p>
       </div>
     </section>
 
@@ -1218,7 +1236,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v123</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v126</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1935,7 +1953,7 @@ function refreshThumbs(){
     box.append(d);
   }
   $("cnt").textContent = frames.length; $("clrBtn").hidden = !frames.length;
-  updateGo(); saveSoon();
+  updateGo(); saveSoon(); if (typeof drawMapThumbs === "function") drawMapThumbs();
 }
 $("clrBtn").onclick = () => { frames.forEach(f => URL.revokeObjectURL(f.url)); frames.length = 0; refreshThumbs(); };
 function addBlob(blob){
@@ -3920,56 +3938,259 @@ async function downloadReport(){
   document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
 }
 /* ---------- mapa de risco (NR-05 / CIPA) ---------- */
+let mapFoto = 0, mapData = null, mapBusy = false; // foto escolhida para o mapa; riscos do mapa (análise própria de todas as fotos)
+const mapSig = () => frames.map(f => f.url).join("|");
+const MAPA_NV = {alto: 3, medio: 2, médio: 2, baixo: 1};
+function drawMapThumbs(){
+  const box = $("mapThumbs"); if (!box) return; box.innerHTML = "";
+  if (mapFoto >= frames.length) mapFoto = 0;
+  frames.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === mapFoto ? "on" : ""; b.title = `Usar a imagem ${i + 1} no mapa de risco`; b.setAttribute("aria-pressed", i === mapFoto); b.innerHTML = `<img src="${f.url}" alt="Imagem ${i + 1}">`; b.onclick = () => { mapFoto = i; mapFotoMan = true; drawMapThumbs(); drawMapPrev(); }; box.append(b); });
+  $("mapThumbHint").textContent = frames.length ? `Imagem ${mapFoto + 1} de ${frames.length} selecionada para o mapa. Clique em outra para trocar.` : "Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.";
+  if (mapData && mapData.sig !== mapSig()) { mapData = null; drawMapPrev(); }
+}
+let mapFotoMan = false;
+// círculos do mapa: um por grupo de risco e intensidade (cor = grupo, tamanho = alto, médio ou baixo)
+function mapCircles(){
+  let lista;
+  if (mapData?.riscos?.length) lista = mapData.riscos.map(r => ({g: grupoDe(r.grupo), nv: MAPA_NV[normTxt(r.intensidade)] || 2, t: txtOf(r.risco)}));
+  else lista = (report ? riscosOf(report.R) : asList(lastData?.riscos)).filter(r => r && r.perigo && !nrOff()[nrNum(r.nr)]).map(r => ({g: grupoDe(r.categoria), nv: {ok: 1, warn: 2, high: 3, crit: 3}[level(r.severidade, r.probabilidade).k], t: txtOf(r.perigo)}));
+  lista = lista.concat(mapExtras());
+  const out = [];
+  MAPA_GR.forEach(([k, nome, cor]) => [3, 2, 1].forEach(nv => { const rs = [...new Set(lista.filter(x => x.g === k && x.nv === nv).map(x => x.t))]; if (rs.length) out.push({k, nome, cor, nv, rs}); }));
+  return out;
+}
+function drawMapPrev(){
+  const el = $("mapPrev"); if (!el) return;
+  const cs = mapCircles(), NVT = {3: "alto", 2: "médio", 1: "baixo"}, SZp = {3: 30, 2: 22, 1: 15};
+  if (!cs.length){ el.hidden = true; return; }
+  // (inclui os riscos digitados no campo do quadro 5)
+  el.hidden = false;
+  el.innerHTML = `<b>${mapData ? "Riscos do mapa (análise das fotos do setor)" : "Riscos do mapa (da análise geral; clique em Analisar as fotos para o mapa para a análise própria)"}</b>` + cs.map(c => `<div class="mc"><i style="width:${SZp[c.nv]}px;height:${SZp[c.nv]}px;background:${c.cor}"></i><div><b>${c.nome} · risco ${NVT[c.nv]}</b><small>${c.rs.map(esc).join("; ")}</small></div></div>`).join("");
+}
+async function mapAnalyze(){
+  if (mapBusy || !frames.length) return false;
+  if (!sample && !$("apiKey").value.trim()){ setStatus("Informe a chave da API para analisar as fotos do mapa de risco.", true); return false; }
+  mapBusy = true; $("mapRun").disabled = true; const t0 = Date.now();
+  const tick = setInterval(() => setStatus(`Analisando ${frames.length} foto(s) para o mapa de risco… ${Math.round((Date.now() - t0) / 1000)} s${busyNote}`), 1000);
+  const n = frames.length;
+  const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil e vai elaborar o MAPA DE RISCO do setor (NR-05, CIPA; grupos de risco da Portaria 25/1994) a partir das ${n} imagem(ns) anexada(s) do mesmo setor (Figura 1 a Figura ${n}).
+${soEvid(n)}${RIGOR}Para o mapa: examine TODAS as imagens e identifique cada risco ocupacional presente, classificando-o em um dos 5 grupos:
+- fisico (verde): ruído, vibração, calor, frio, umidade, radiações, pressões anormais;
+- quimico (vermelho): poeiras, fumos, névoas, neblinas, gases, vapores, produtos químicos em geral;
+- biologico (marrom): vírus, bactérias, fungos, parasitas, contato com esgoto, lixo, animais;
+- ergonomico (amarelo): postura inadequada, levantamento e transporte de peso, repetitividade, ritmo excessivo, mobiliário e posto inadequados, iluminação deficiente, jornada e pressão (fatores psicossociais);
+- acidentes (azul): arranjo físico inadequado, máquinas e equipamentos sem proteção, eletricidade, incêndio e explosão, queda de mesmo nível ou de altura, batida contra, ferramentas inadequadas, armazenamento inadequado, animais peçonhentos.
+Intensidade (tamanho do círculo), pela exposição do trabalhador e pelo dano possível à saúde: "alto" (exposição frequente ou contínua e dano grave ou irreversível), "medio" (exposição eventual ou dano moderado e reversível), "baixo" (exposição rara e dano leve). Seja rigoroso: registre cada risco visível, mesmo pequeno, sem inventar o que não aparece. Nome do risco curto, no padrão de mapa de risco (ex.: "Queda de mesmo nível", "Batida contra", "Postura inadequada", "Ruído", "Choque elétrico"). Indique também a imagem que melhor mostra o setor como um todo, para compor o mapa.
+Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonomico|acidentes","risco":"nome curto","fonte":"o que gera o risco e onde (Figura N)","figura":1,"intensidade":"alto|medio|baixo","justificativa":"exposição e dano, em até 15 palavras"}],"foto_setor":1}`;
+  try{
+    const r = await callAI(prompt, frames.map(f => f.blob), undefined, {}) || {};
+    mapData = {sig: mapSig(), riscos: asList(r.riscos).filter(x => x && x.risco), foto: Math.round(Number(r.foto_setor)) - 1};
+    if (!mapFotoMan && mapData.foto >= 0 && mapData.foto < frames.length) mapFoto = mapData.foto;
+    drawMapThumbs(); drawMapPrev();
+    setStatus(`Mapa de risco: ${mapData.riscos.length} risco(s) identificado(s) nas ${n} foto(s) do setor.`);
+    return true;
+  }catch(e){ handleErr(e); return false; }
+  finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; }
+}
+$("mapRun").onclick = mapAnalyze;
+$("mExtra").addEventListener("input", () => drawMapPrev());
+
 const MAPA_GR = [["fis", "Risco físico", "#7ed957"], ["qui", "Risco químico", "#ff3131"], ["erg", "Risco ergonômico", "#ffde59"], ["bio", "Risco biológico", "#a0522d"], ["aci", "Risco de acidentes", "#38b6ff"]]; // cores do modelo de mapa de risco
 const grupoDe = c => { const t = normTxt(c); return /fisic/.test(t) ? "fis" : /quimic/.test(t) ? "qui" : /biolog/.test(t) ? "bio" : /ergon|psicoss/.test(t) ? "erg" : "aci"; };
+// grupo deduzido pelo nome do risco (para os riscos digitados sem grupo)
+const grupoPorNome = t => { t = normTxt(t); return /ruido|vibra|calor|frio|umidade|radia|pressao|temperatura/.test(t) ? "fis" : /poeira|fumo|nevoa|neblina|gas|vapor|quimic|solvente|produto/.test(t) ? "qui" : /virus|bacteria|fungo|parasita|esgoto|lixo|biolog|sangue|animal/.test(t) ? "bio" : /postura|peso|repetit|ritmo|ergon|mobiliario|ilumina|jornada|estresse|psicoss|monoton/.test(t) ? "erg" : "aci"; };
+// riscos digitados no quadro 5: "risco; grupo; intensidade" por linha
+function mapExtras(){
+  return String($("mExtra")?.value || "").split(/\n+/).map(l => l.trim()).filter(Boolean).map(l => {
+    const p = l.split(/\s*[;|]\s*/), t = p[0], resto = normTxt(p.slice(1).join(" "));
+    const g = /fisic/.test(resto) ? "fis" : /quimic/.test(resto) ? "qui" : /biolog/.test(resto) ? "bio" : /ergon|psicoss/.test(resto) ? "erg" : /acident/.test(resto) ? "aci" : grupoPorNome(t);
+    const nv = /alt/.test(resto) ? 3 : /baix/.test(resto) ? 1 : 2;
+    return {g, nv, t};
+  }).filter(x => x.t);
+}
+// dados do mapa (os mesmos para PDF, Word e Canva); o mapa é sempre em paisagem (16:9, 297 × 167 mm)
+async function mapaDados(){
+  const grupos = mapCircles().map(c => ({cor: c.cor, nv: c.nv, rs: c.rs.map(t => ({perigo: t}))}));
+  const fi = Math.min(mapFoto, Math.max(0, frames.length - 1));
+  let foto = report?.photos?.[fi] && report.photos.length === frames.length ? report.photos[fi] : "";
+  if (!foto && frames[fi]){ try{ const fc = await detectFaces([frames[fi].blob]); foto = fc ? await maskPhoto(frames[fi].blob, fc[0]) : ""; }catch(e){ foto = ""; } }
+  return {grupos, foto, logo: load("sst_mlogo") || load("sst_logo"), emp: $("rEmp").value.trim(), setor: $("mSetor").value.trim() || $("rSetor").value.trim(), vig: $("mVig").value.trim(), elab: $("mElab").value.trim() || "—", rev: $("mRev").value.trim() || "—", aprov: $("mAprov").value.trim() || "—"};
+}
+// posições em mm medidas no modelo de mapa de risco (slide 297 × 167 mm, paisagem)
+const ML = {logo: [4, 3.9, 34.3, 9.6], band: [44.4, .6, 252.6, 16.1], titleY: 9.6, subY: 14.6, orange1: 18.3, setor: [8.8, 28], foto: [8.8, 36, 112.7, 67.4, 8], box: [154.8, 35.9, 122.6, 69.2], cx: 171.8, bulletX: 187.4, fs: 3.2,
+  legT: [9.8, 113.7], legC: [[13.5, 123.7, "Risco alto"], [10.6, 137.4, "Risco médio"], [6.8, 149.5, "Risco baixo"]], legCx: 15.1, legLx: 24.5, cores: [65.3, 113.7, 11.9, 4.8, 8.43], corLx: 79.6, cipa: [279.8, 140.1, 15], orange2: 156.7, rodY: 163, rodX: [3.5, 68.9, 145], gestao: [245.9, 157.5, 51.1, 9.5]};
+const MAPA_LARANJA = "#f37021", MAPA_AZUL = "#0b4ea2", MAPA_AZUL2 = "#0b3a7e", MAPA_CS = {1: 8.5, 2: 10.5, 3: 12.5};
+const MAPA_CIPA = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#2e9e47" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="#2e9e47"/><path d="M43 33h14v10h10v14H57v10H43V57H33V43h10z" fill="#fff"/><path id="ca" d="M10 50a40 40 0 0 1 80 0" fill="none"/><path id="cb" d="M8 50a42 42 0 0 0 84 0" fill="none"/><text font-family="Arial" font-weight="700" font-size="10" fill="#2e9e47" letter-spacing="1"><textPath href="#ca" startOffset="50%" text-anchor="middle">CIPA</textPath></text><text font-family="Arial" font-weight="700" font-size="8" fill="#2e9e47" letter-spacing=".5"><textPath href="#cb" startOffset="50%" text-anchor="middle">SEGURANÇA</textPath></text></svg>`;
 async function mapaHTML(){
-  const riscos = (report ? riscosOf(report.R) : asList(lastData?.riscos)).filter(r => r && r.perigo && !nrOff()[nrNum(r.nr)]);
-  const grupos = MAPA_GR.map(([k, t, cor]) => {
-    const rs = riscos.filter(r => grupoDe(r.categoria) === k);
-    const nv = rs.reduce((m, r) => Math.max(m, {ok: 1, warn: 2, high: 3, crit: 3}[level(r.severidade, r.probabilidade).k]), 0);
-    return {k, t, cor, rs, nv};
-  }).filter(g => g.rs.length);
-  // foto do setor com os rostos cobertos
-  let foto = report?.photos?.[0] || "";
-  if (!foto && frames[0]){ try{ const fc = await detectFaces([frames[0].blob]); foto = await maskPhoto(frames[0].blob, fc ? fc[0] : []); if (!fc) foto = ""; }catch(e){ foto = ""; } }
-  const logo = load("sst_logo"), emp = $("rEmp").value.trim(), setor = $("rSetor").value.trim(), data = new Date(($("rData").value || hojeISO()) + "T12:00:00").toLocaleDateString("pt-BR");
-  const SZ = {1: 9, 2: 12, 3: 15}; // diâmetro do círculo em mm: baixo, médio, alto
+  const D = await mapaDados();
+  const grupos = D.grupos;
+  const foto = D.foto, logo = D.logo, emp = D.emp, setor = D.setor, data = new Date(($("rData").value || hojeISO()) + "T12:00:00").toLocaleDateString("pt-BR");
   const curto = t => tr(String(t).replace(/\s*\(.*?\)\s*/g, " ").trim(), 60);
-  const vig = $("mVig").value.trim();
-  const cipa = `<svg viewBox="0 0 100 100" width="100%" height="100%" aria-label="CIPA"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#2e9e47" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="#2e9e47"/><path d="M43 33h14v10h10v14H57v10H43V57H33V43h10z" fill="#fff"/><path id="ca" d="M10 50a40 40 0 0 1 80 0" fill="none"/><text font-family="Arial" font-weight="700" font-size="10" fill="#2e9e47" letter-spacing="1"><textPath href="#ca" startOffset="50%" text-anchor="middle">CIPA</textPath></text></svg>`;
+  const vig = D.vig, L = ML, mm = v => v + "mm", box = a => `left:${mm(a[0])};top:${mm(a[1])};width:${mm(a[2])};height:${mm(a[3])}`;
+  const n = Math.max(1, grupos.length), rowH = L.box[3] / n, CS = MAPA_CS;
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Mapa de risco – ${esc(setor || "setor")}</title><style>
 @page{size:297mm 167mm;margin:0}*{box-sizing:border-box}html,body{margin:0;background:#fff}
 body{font-family:Arial,Helvetica,sans-serif;color:#222}
-.pg{position:relative;width:297mm;height:167mm;overflow:hidden;background:#fff}
-.hd{position:absolute;left:0;right:0;top:3mm;height:16mm;border-bottom:.4mm solid #d9dde1}
-.lg-emp{position:absolute;left:3mm;top:0;width:36mm;height:13mm;display:flex;align-items:center}.lg-emp img{max-width:100%;max-height:100%;object-fit:contain}
-.band{position:absolute;left:43mm;right:30mm;top:0;height:13.5mm;background:#0b4ea2;border-radius:7mm;color:#fff;text-align:center;padding-top:1.2mm}
-.band h1{margin:0;font:700 7mm/1.05 Arial}.band p{margin:.6mm 0 0;font:700 2.7mm Arial}
-.cipa{position:absolute;right:6mm;top:-.5mm;width:15mm;height:15mm}
-.st{position:absolute;left:8mm;top:25mm;font:700 3.6mm Arial;color:#333;text-transform:uppercase}
-.ft{position:absolute;left:8mm;top:33mm;width:112mm;height:63mm;border-radius:9mm;overflow:hidden;background:#eef1f4;display:flex;align-items:center;justify-content:center}
-.ft img{width:100%;height:100%;object-fit:cover}.ft span{font-size:3mm;color:#666;padding:5mm;text-align:center}
-.bx{position:absolute;left:154mm;top:33mm;width:124mm;height:63mm;border:.3mm solid #c9cfd5;background:#fff;padding:4mm 8mm;display:flex;flex-direction:column;justify-content:space-evenly}
-.gr{display:flex;align-items:center;gap:8mm}.gr i{flex:none;border-radius:50%;border:.25mm solid #333;display:block}.gr .cw{width:16mm;display:flex;justify-content:center}
-.gr ul{margin:0;padding-left:4mm;font-size:2.9mm;line-height:1.35}.gr li::marker{font-size:2.6mm}
-.leg{position:absolute;left:8mm;top:103mm;font-size:2.7mm}.leg h4{margin:0 0 2.5mm;font:700 2.7mm Arial}
-.leg .sz{display:grid;grid-template-columns:11mm auto;column-gap:2mm;row-gap:2.2mm;align-items:center}.leg .sz i{display:block;border:.25mm solid #333;border-radius:50%;margin:auto}
-.cor{position:absolute;left:47mm;top:106mm;display:grid;grid-template-columns:13mm auto;row-gap:2.6mm;align-items:center;font-size:2.7mm}.cor i{display:block;width:10mm;height:4.2mm;border:.2mm solid rgba(0,0,0,.25)}
-.rd{position:absolute;left:0;right:0;bottom:0;height:11mm;border-top:.4mm solid #d9dde1;display:flex;align-items:center;gap:14mm;padding-left:3mm;font:700 2.7mm Arial;color:#6b7680}
-.rd .g{position:absolute;right:3mm;top:2mm;bottom:2mm;background:#0b3a7e;color:#fff;display:flex;align-items:center;padding:0 4mm;font:700 2.6mm Arial;letter-spacing:.35mm}
+.pg{position:relative;width:297mm;height:167mm;overflow:hidden;background:#fff}.pg>*{position:absolute}
+.lg img{width:100%;height:100%;object-fit:contain;object-position:left center}
+.band{background:${MAPA_AZUL};border-radius:8mm}
+.t1,.t2{left:0;width:297mm;text-align:center;color:#fff;font-weight:700;white-space:nowrap}.t1{font-size:7.2mm}.t2{font-size:3.7mm}
+.or{left:0;width:297mm;height:.6mm;background:${MAPA_LARANJA}}
+.st{font:700 3.9mm Arial;color:#3d2b1f;text-transform:uppercase;white-space:nowrap}
+.ft{border-radius:${mm(L.foto[4])};overflow:hidden;background:#eef1f4;display:flex;align-items:center;justify-content:center}.ft img{width:100%;height:100%;object-fit:cover}.ft span{font-size:3mm;color:#666}
+.bx{border:.3mm solid #9aa3ab;background:#fff}
+.ci{border-radius:50%;border:.3mm solid #333}
+.bl{margin:0;padding-left:4.2mm;font-size:${mm(L.fs)};line-height:1.3;display:flex;flex-direction:column;justify-content:center}
+.lt{font:700 2.7mm Arial}.lc{border-radius:50%;border:.3mm solid #222;background:#fff}.ll{font-size:2.8mm}
+.cr{border:.3mm solid #333}.cl{font-size:3.2mm}
+.rd{font:700 3.2mm Arial;color:#8a9299;white-space:nowrap}
+.gs{background:${MAPA_AZUL2};color:#fff;display:flex;align-items:center;justify-content:center;font:700 2.7mm Arial;letter-spacing:.45mm}
 @media screen{body{background:#e9ecef;padding:12px}.pg{margin:auto;box-shadow:0 2px 12px rgba(0,0,0,.15)}}
 </style></head><body><main class="pg">
-<header class="hd"><div class="lg-emp">${logo ? `<img src="${logo}" alt="Logo">` : ""}</div><div class="band"><h1>MAPA DE RISCO</h1>${emp ? `<p>${esc(emp)}</p>` : ""}</div><div class="cipa">${cipa}</div></header>
-<div class="st">SETOR: ${esc(setor || "não informado")}</div>
-<div class="ft">${foto ? `<img src="${foto}" alt="Foto do setor">` : "<span>Sem foto do setor</span>"}</div>
-<div class="bx">${grupos.length ? grupos.map(g => `<div class="gr"><span class="cw"><i style="width:${SZ[g.nv]}mm;height:${SZ[g.nv]}mm;background:${g.cor}"></i></span><ul>${g.rs.slice(0, 5).map(r => `<li>${esc(curto(r.perigo))};</li>`).join("")}${g.rs.length > 5 ? `<li>e mais ${g.rs.length - 5}.</li>` : ""}</ul></div>`).join("") : "<p style='font-size:3mm'>Nenhum risco identificado na análise.</p>"}</div>
-<div class="leg"><h4>LEGENDA:</h4><div class="sz"><i style="width:9mm;height:9mm"></i><span>Risco alto</span><i style="width:6.5mm;height:6.5mm"></i><span>Risco médio</span><i style="width:4.5mm;height:4.5mm;border-style:dashed"></i><span>Risco baixo</span></div></div>
-<div class="cor">${MAPA_GR.map(([, t, c]) => `<i style="background:${c}"></i><span>${t}</span>`).join("")}</div>
-<footer class="rd"><span>ELABORAÇÃO: ${esc($("mElab").value.trim() || "—")}</span><span>REVISÃO: ${esc($("mRev").value.trim() || "—")}</span><span>APROVAÇÃO: ${esc($("mAprov").value.trim() || "—")}</span>${vig ? `<span class="g">GESTÃO CIPA | ${esc(vig)}</span>` : ""}</footer>
+${logo ? `<div class="lg" style="${box(L.logo)}"><img src="${logo}" alt="Logo"></div>` : ""}
+<div class="band" style="${box(L.band)}"></div>
+<div class="t1" style="top:${mm(L.titleY - 6.2)}">MAPA DE RISCO</div>${emp ? `<div class="t2" style="top:${mm(L.subY - 3.4)}">${esc(emp)}</div>` : ""}
+<div class="or" style="top:${mm(L.orange1)}"></div>
+<div class="st" style="left:${mm(L.setor[0])};top:${mm(L.setor[1] - 3.4)}">SETOR: ${esc(setor || "não informado")}</div>
+<div class="ft" style="${box(L.foto)}">${foto ? `<img src="${foto}" alt="Foto do setor">` : "<span>Sem foto do setor</span>"}</div>
+<div class="bx" style="${box(L.box)}"></div>
+${grupos.map((g, k) => { const cy = L.box[1] + (k + .5) * rowH, d = CS[g.nv]; return `<div class="ci" style="left:${mm(L.cx - d / 2)};top:${mm(cy - d / 2)};width:${mm(d)};height:${mm(d)};background:${g.cor}"></div><ul class="bl" style="left:${mm(L.bulletX - 1)};top:${mm(cy - rowH / 2 + 1)};width:${mm(L.box[0] + L.box[2] - L.bulletX - 3)};height:${mm(rowH - 2)}">${g.rs.slice(0, 5).map(r => `<li>${esc(curto(r.perigo))};</li>`).join("")}${g.rs.length > 5 ? `<li>e mais ${g.rs.length - 5}.</li>` : ""}</ul>`; }).join("")}
+${grupos.length ? "" : `<div style="left:${mm(L.box[0] + 6)};top:${mm(L.box[1] + 6)};font-size:3mm">Nenhum risco identificado nas fotos.</div>`}
+<div class="lt" style="left:${mm(L.legT[0])};top:${mm(L.legT[1] - 2.3)}">LEGENDA:</div>
+${L.legC.map(([d, cy, t]) => `<div class="lc" style="left:${mm(L.legCx - d / 2)};top:${mm(cy - d / 2)};width:${mm(d)};height:${mm(d)}"></div><div class="ll" style="left:${mm(L.legLx)};top:${mm(cy - 1.7)}">${t}</div>`).join("")}
+${MAPA_GR.map(([, t, c], k) => { const y = L.cores[1] + k * L.cores[4]; return `<div class="cr" style="left:${mm(L.cores[0])};top:${mm(y)};width:${mm(L.cores[2])};height:${mm(L.cores[3])};background:${c}"></div><div class="cl" style="left:${mm(L.corLx)};top:${mm(y + .5)}">${t}</div>`; }).join("")}
+<div style="${box([L.cipa[0], L.cipa[1], L.cipa[2], L.cipa[2]])}">${MAPA_CIPA.replace('width="200" height="200"', 'width="100%" height="100%"')}</div>
+<div class="or" style="top:${mm(L.orange2)}"></div>
+${[["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].map(([a, b], k) => `<div class="rd" style="left:${mm(L.rodX[k])};top:${mm(L.rodY - 2.9)}">${a}${esc(b)}</div>`).join("")}
+${vig ? `<div class="gs" style="${box(L.gestao)}">GESTÃO CIPA | ${esc(vig)}</div>` : ""}
 </main><script>addEventListener("load", () => setTimeout(() => print(), 400));<\/script></body></html>`;
 }
+
+// desenho do mapa em imagem (para o Word): mesmo leiaute do PDF, em paisagem
+async function mapaPNG(D){
+  const L = ML, S = 6, W = 297 * S, H = 167 * S, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d"), m = v => v * S;
+  const img = src => new Promise(res => { if (!src) return res(null); const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const txt = (t, x, y, sz, opt = {}) => { g.font = `${opt.b ? "700 " : ""}${m(sz)}px Arial, Helvetica, sans-serif`; g.fillStyle = opt.c || "#222"; g.textAlign = opt.a || "left"; g.textBaseline = "alphabetic"; g.fillText(t, x, y); return g.measureText(t).width; };
+  const wrap = (t, maxW, sz) => { g.font = `${m(sz)}px Arial`; const out = []; let cur = ""; String(t).split(/\s+/).forEach(w => { const n = cur ? cur + " " + w : w; if (g.measureText(n).width > maxW && cur){ out.push(cur); cur = w; } else cur = n; }); if (cur) out.push(cur); return out; };
+  const circ = (cx, cy, d, fill) => { g.beginPath(); g.arc(m(cx), m(cy), m(d / 2), 0, Math.PI * 2); g.fillStyle = fill; g.fill(); g.strokeStyle = "#222"; g.lineWidth = m(.3); g.stroke(); };
+  g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
+  const lg = await img(D.logo); if (lg){ const k = Math.min(m(L.logo[2]) / lg.width, m(L.logo[3]) / lg.height); g.drawImage(lg, m(L.logo[0]), m(L.logo[1]) + (m(L.logo[3]) - lg.height * k) / 2, lg.width * k, lg.height * k); }
+  g.fillStyle = MAPA_AZUL; rr(m(L.band[0]), m(L.band[1]), m(L.band[2]), m(L.band[3]), m(8)); g.fill();
+  txt("MAPA DE RISCO", W / 2, m(L.titleY + .8), 7.2, {b: 1, c: "#fff", a: "center"}); if (D.emp) txt(D.emp, W / 2, m(L.subY + .6), 3.7, {b: 1, c: "#fff", a: "center"});
+  g.fillStyle = MAPA_LARANJA; g.fillRect(0, m(L.orange1), W, m(.6));
+  txt(("SETOR: " + (D.setor || "não informado")).toUpperCase(), m(L.setor[0]), m(L.setor[1]), 3.9, {b: 1, c: "#3d2b1f"});
+  const [fx, fy, fw, fh, fr] = L.foto; g.save(); rr(m(fx), m(fy), m(fw), m(fh), m(fr)); g.clip(); g.fillStyle = "#eef1f4"; g.fillRect(m(fx), m(fy), m(fw), m(fh));
+  const ft = await img(D.foto); if (ft){ const k = Math.max(m(fw) / ft.width, m(fh) / ft.height), w = ft.width * k, h = ft.height * k; g.drawImage(ft, m(fx) + (m(fw) - w) / 2, m(fy) + (m(fh) - h) / 2, w, h); } g.restore();
+  const [bx, by, bw, bh] = L.box; g.fillStyle = "#fff"; g.fillRect(m(bx), m(by), m(bw), m(bh)); g.strokeStyle = "#9aa3ab"; g.lineWidth = m(.3); g.strokeRect(m(bx), m(by), m(bw), m(bh));
+  const n = Math.max(1, D.grupos.length), rowH = bh / n;
+  D.grupos.forEach((gr, i) => {
+    const cy = by + (i + .5) * rowH; circ(L.cx, cy, MAPA_CS[gr.nv], gr.cor);
+    const linhas = []; gr.rs.slice(0, 5).forEach(r => wrap(r.perigo + ";", m(bx + bw - L.bulletX - 8), L.fs).forEach((l, j) => linhas.push([l, j === 0]))); if (gr.rs.length > 5) linhas.push([`e mais ${gr.rs.length - 5}.`, true]);
+    const lh = L.fs * 1.3, y0 = cy - (linhas.length * lh) / 2 + lh * .78;
+    linhas.forEach(([l, bul], k) => { if (bul) txt("•", m(L.bulletX), m(y0 + k * lh), L.fs); txt(l, m(L.bulletX + 3), m(y0 + k * lh), L.fs); });
+  });
+  txt("LEGENDA:", m(L.legT[0]), m(L.legT[1]), 2.7, {b: 1});
+  L.legC.forEach(([d, cy, t]) => { circ(L.legCx, cy, d, "#fff"); txt(t, m(L.legLx), m(cy + 1), 2.8); });
+  MAPA_GR.forEach(([, t, cor], i) => { const y = L.cores[1] + i * L.cores[4]; g.fillStyle = cor; g.fillRect(m(L.cores[0]), m(y), m(L.cores[2]), m(L.cores[3])); g.strokeStyle = "#333"; g.lineWidth = m(.3); g.strokeRect(m(L.cores[0]), m(y), m(L.cores[2]), m(L.cores[3])); txt(t, m(L.corLx), m(y + 3.5), 3.2); });
+  const cp = await img("data:image/svg+xml;charset=utf-8," + encodeURIComponent(MAPA_CIPA)); if (cp) g.drawImage(cp, m(L.cipa[0]), m(L.cipa[1]), m(L.cipa[2]), m(L.cipa[2]));
+  g.fillStyle = MAPA_LARANJA; g.fillRect(0, m(L.orange2), W, m(.6));
+  [["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].forEach(([a, b], k) => txt(a + b, m(L.rodX[k]), m(L.rodY), 3.2, {b: 1, c: "#8a9299"}));
+  if (D.vig){ const [gx, gy, gw, gh] = L.gestao; g.fillStyle = MAPA_AZUL2; g.fillRect(m(gx), m(gy), m(gw), m(gh)); g.letterSpacing = m(.45) + "px"; txt("GESTÃO CIPA | " + D.vig, m(gx + gw / 2), m(gy + gh / 2 + 1), 2.7, {b: 1, c: "#fff", a: "center"}); g.letterSpacing = "0px"; }
+  return c.toDataURL("image/png");
+}
+async function baixarMapa(blob, name){
+  if (inViewer){ const dl = await claude.use("downloads"); if (dl) try{ await dl.save({filename: name, data: blob}); }catch(e){} return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+const mapaNome = ext => "mapa-de-risco-" + (normTxt($("mSetor").value.trim() || $("rSetor").value.trim() || "setor").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "setor") + "." + ext;
+async function prepMapa(){
+  if (!frames.length && !lastData && !report){ setStatus("Adicione as fotos do setor (quadro 2) antes de gerar o mapa de risco.", true); return false; }
+  if (frames.length && (!mapData || mapData.sig !== mapSig())){ if (!(await mapAnalyze()) && !lastData && !report) return false; }
+  return true;
+}
+// Word editável: textos, tabelas e cores nativos do Word, em paisagem (297 × 167 mm), no leiaute do modelo
+$("mapDocx").onclick = async () => {
+  if (!(await prepMapa())) return;
+  setStatus("Montando o mapa de risco em Word…");
+  try{
+    const D = await mapaDados(); await loadScript(DOCX_JS); const X = window.docx;
+    const MM = 56.7, px = v => Math.round(v * 3.7795), hx = c => c.slice(1).toUpperCase(), cinza = "8A9299";
+    const NB = {style: X.BorderStyle.NONE, size: 0, color: "FFFFFF"}, nb = {top: NB, bottom: NB, left: NB, right: NB, insideHorizontal: NB, insideVertical: NB};
+    const run = (t, o = {}) => new X.TextRun({text: t, font: "Arial", size: Math.round((o.sz || 3.2) * 5.67), bold: !!o.b, color: o.c || "222222", characterSpacing: o.sp});
+    const par = (kids, o = {}) => new X.Paragraph({alignment: o.al || X.AlignmentType.LEFT, spacing: {before: o.bf || 0, after: o.af || 0}, children: kids, bullet: o.bul ? {level: 0} : undefined});
+    const pngCirc = (d, fill, dash) => { const k = 8, c = document.createElement("canvas"), r = d * k / 2; c.width = c.height = Math.ceil(d * k + 4); const g = c.getContext("2d"); g.beginPath(); g.arc(c.width / 2, c.height / 2, r, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); g.strokeStyle = "#222"; g.lineWidth = 2.4; g.setLineDash(dash ? [6, 5] : []); g.stroke(); return c.toDataURL("image/png"); };
+    const img = (url, wmm, hmm) => new X.ImageRun({type: "png", data: dxBytes(url), transformation: {width: px(wmm), height: px(hmm)}});
+    const cell = (kids, w, o = {}) => new X.TableCell({children: kids, width: {size: w, type: X.WidthType.DXA}, borders: o.bd || nb, shading: o.bg ? {fill: o.bg, type: X.ShadingType.CLEAR, color: "auto"} : undefined, verticalAlign: o.va || X.VerticalAlign.CENTER, margins: o.m || {top: 0, bottom: 0, left: 60, right: 60}});
+    const tab = (rows, ws, o = {}) => new X.Table({width: {size: ws.reduce((a, b) => a + b, 0), type: X.WidthType.DXA}, columnWidths: ws, borders: o.bd || nb, layout: X.TableLayoutType.FIXED, rows: rows.map(r => new X.TableRow({children: r, height: o.h ? {value: o.h, rule: X.HeightRule.ATLEAST} : undefined}))});
+    const OR = {style: X.BorderStyle.SINGLE, size: 18, color: hx(MAPA_LARANJA)};
+    const toPng = async u => { const im = new Image(); im.src = u; await im.decode(); const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); return {url: c.toDataURL("image/png"), w: im.naturalWidth, h: im.naturalHeight}; };
+    // cabeçalho: logo | faixa azul com título e empresa; linha laranja embaixo
+    let logoK = [];
+    if (D.logo){ const L0 = await toPng(D.logo), k = Math.min(34 / (L0.w / 3.7795), 9.6 / (L0.h / 3.7795)); logoK = [img(L0.url, L0.w / 3.7795 * k, L0.h / 3.7795 * k)]; }
+    const cbOR = {top: NB, left: NB, right: NB, bottom: OR}, ctOR = {bottom: NB, left: NB, right: NB, top: OR};
+    const head = tab([[cell([par(logoK)], 2300, {bd: cbOR}), cell([par([run("MAPA DE RISCO", {sz: 7.2, b: 1, c: "FFFFFF"})], {al: X.AlignmentType.CENTER}), ...(D.emp ? [par([run(D.emp, {sz: 3.7, b: 1, c: "FFFFFF"})], {al: X.AlignmentType.CENTER})] : [])], 13738, {bg: hx(MAPA_AZUL), bd: cbOR, m: {top: 60, bottom: 60, left: 80, right: 80}})]], [2300, 13738]);
+    const setor = par([run("SETOR: " + (D.setor || "não informado").toUpperCase(), {sz: 3.9, b: 1, c: "3D2B1F"})], {bf: 160, af: 120});
+    // foto (cantos arredondados) | quadro com círculos e riscos
+    let fotoK = [run("Sem foto do setor", {c: "666666"})];
+    if (D.foto){ const c = document.createElement("canvas"), im = new Image(); im.src = D.foto; await im.decode(); const CW = 1127, CH = 674, r = 80; c.width = CW; c.height = CH; const g = c.getContext("2d"); g.beginPath(); g.moveTo(r, 0); g.arcTo(CW, 0, CW, CH, r); g.arcTo(CW, CH, 0, CH, r); g.arcTo(0, CH, 0, 0, r); g.arcTo(0, 0, CW, 0, r); g.closePath(); g.clip(); const kk = Math.max(CW / im.naturalWidth, CH / im.naturalHeight); g.drawImage(im, (CW - im.naturalWidth * kk) / 2, (CH - im.naturalHeight * kk) / 2, im.naturalWidth * kk, im.naturalHeight * kk); fotoK = [img(c.toDataURL("image/png"), 112.7, 67.4)]; }
+    const GB = {style: X.BorderStyle.SINGLE, size: 6, color: "9AA3AB"};
+    const linhas = D.grupos.length ? D.grupos.map(gr => [cell([par([img(pngCirc(MAPA_CS[gr.nv], gr.cor), MAPA_CS[gr.nv], MAPA_CS[gr.nv])], {al: X.AlignmentType.CENTER})], 1500), cell(gr.rs.slice(0, 5).map(r => par([run(r.perigo + ";", {sz: 3.2})], {bul: 1})).concat(gr.rs.length > 5 ? [par([run(`e mais ${gr.rs.length - 5}.`)], {bul: 1})] : []), 5300)]) : [[cell([par([run("Nenhum risco identificado nas fotos.")])], 1500), cell([par([])], 5300)]];
+    const quadro = tab(linhas, [1500, 5300], {h: Math.round(69 / Math.max(1, linhas.length) * MM)});
+    const meio = tab([[cell([par(fotoK)], 6500), cell([par([])], 2300), cell([quadro], 7000, {bd: {top: GB, bottom: GB, left: GB, right: GB}, m: {top: 80, bottom: 80, left: 120, right: 120}})]], [6500, 2300, 7000]);
+    // legenda (tamanhos e cores) e emblema da CIPA
+    const legC = tab(ML.legC.map(([d, , t]) => [cell([par([img(pngCirc(d, "#ffffff"), d, d)], {al: X.AlignmentType.CENTER})], 900), cell([par([run(t, {sz: 2.8})])], 1700)]), [900, 1700], {h: 760});
+    const B1 = {style: X.BorderStyle.SINGLE, size: 6, color: "333333"};
+    const legR = tab(MAPA_GR.flatMap(([, t, cor], k) => [...(k ? [[cell([new X.Paragraph({spacing: {before: 0, after: 0, line: 80, lineRule: X.LineRuleType.EXACT}, children: [run(" ", {sz: 1})]})], 700), cell([new X.Paragraph({spacing: {before: 0, after: 0, line: 80, lineRule: X.LineRuleType.EXACT}, children: [run(" ", {sz: 1})]})], 2600)]] : []), [cell([par([run(" ", {sz: 2.6})])], 700, {bg: hx(cor), bd: {top: B1, bottom: B1, left: B1, right: B1}}), cell([par([run(t, {sz: 3.2})])], 2600)]]), [700, 2600]);
+    const cp = await svgURL(MAPA_CIPA);
+    const leg = tab([[cell([par([run("LEGENDA:", {sz: 2.7, b: 1})], {af: 60}), legC], 3100, {va: X.VerticalAlign.TOP}), cell([par([]), legR], 4100, {va: X.VerticalAlign.TOP}), cell([par([])], 7238), cell([par([new X.ImageRun({type: "png", data: cp.data, transformation: {width: px(15), height: px(15)}})], {al: X.AlignmentType.RIGHT})], 1600, {va: X.VerticalAlign.BOTTOM})]], [3100, 4100, 7238, 1600]);
+    // rodapé: linha laranja em cima; elaboração, revisão, aprovação e GESTÃO CIPA
+    const rod = tab([[cell([par([run("ELABORAÇÃO: " + D.elab, {b: 1, c: cinza})])], 3800, {bd: ctOR}), cell([par([run("REVISÃO: " + D.rev, {b: 1, c: cinza})])], 4300, {bd: ctOR}), cell([par([run("APROVAÇÃO: " + D.aprov, {b: 1, c: cinza})])], 5000, {bd: ctOR}), cell(D.vig ? [par([run("GESTÃO CIPA | " + D.vig, {sz: 2.7, b: 1, c: "FFFFFF", sp: 40})], {al: X.AlignmentType.CENTER})] : [par([])], 2938, {bg: D.vig ? hx(MAPA_AZUL2) : undefined, bd: ctOR, m: {top: 80, bottom: 80, left: 60, right: 60}})]], [3800, 4300, 5000, 2938]);
+    const doc = new X.Document({styles: {default: {document: {run: {font: "Arial"}}}}, sections: [{properties: {page: {size: {width: 9468, height: 16838, orientation: X.PageOrientation.LANDSCAPE}, margin: {top: 170, bottom: 120, left: 400, right: 400}}},
+      children: [head, setor, meio, par([run(" ", {sz: 1})], {af: 60}), leg, rod]}]});
+    await baixarMapa(await X.Packer.toBlob(doc), mapaNome("docx"));
+    setStatus("Mapa de risco baixado em Word (.docx), em paisagem e editável.");
+  }catch(e){ console.error(e); setStatus("Não foi possível gerar o mapa em Word. Tente de novo.", true); }
+};
+// Canva: apresentação editável (16:9, paisagem) com os mesmos elementos do mapa
+$("mapCanva").onclick = async () => {
+  const win = !inViewer ? window.open("about:blank", "_blank") : null;
+  if (!(await prepMapa())){ try{ win?.close(); }catch(e){} return; }
+  setStatus("Montando o mapa de risco para o Canva…");
+  try{
+    const D = await mapaDados(); await loadScript(PPTX_JS); const L = ML;
+    const pp = new PptxGenJS(); pp.layout = "LAYOUT_WIDE"; const s = pp.addSlide(), k = 13.333 / 297, i = v => v * k, F = "Arial", pt = v => v * 2.835 * (338.67 / 297), hx = c => c.slice(1).toUpperCase();
+    if (D.logo) s.addImage({data: D.logo, x: i(L.logo[0]), y: i(L.logo[1]), w: i(L.logo[2]), h: i(L.logo[3]), sizing: {type: "contain", w: i(L.logo[2]), h: i(L.logo[3])}});
+    s.addShape(pp.ShapeType.roundRect, {x: i(L.band[0]), y: i(L.band[1]), w: i(L.band[2]), h: i(L.band[3]), fill: {color: hx(MAPA_AZUL)}, line: {color: hx(MAPA_AZUL)}, rectRadius: .5});
+    s.addText([{text: "MAPA DE RISCO", options: {fontSize: pt(7.2), bold: true, breakLine: true}}, ...(D.emp ? [{text: D.emp, options: {fontSize: pt(3.7), bold: true}}] : [])], {x: 0, y: i(L.band[1]), w: 13.333, h: i(L.band[3]), fontFace: F, color: "FFFFFF", align: "center", valign: "middle", margin: 0});
+    s.addShape(pp.ShapeType.rect, {x: 0, y: i(L.orange1), w: 13.333, h: i(.6), fill: {color: hx(MAPA_LARANJA)}, line: {color: hx(MAPA_LARANJA), width: 0}});
+    s.addText(("SETOR: " + (D.setor || "não informado")).toUpperCase(), {x: i(L.setor[0]), y: i(L.setor[1] - 4.5), w: i(140), h: i(6), fontFace: F, fontSize: pt(3.9), bold: true, color: "3D2B1F", margin: 0});
+    const [fx, fy, fw, fh, fr] = L.foto;
+    if (D.foto){ const c = document.createElement("canvas"), im = new Image(); im.src = D.foto; await im.decode(); const CW = 1127, CH = 674, r = fr * 10; c.width = CW; c.height = CH; const g = c.getContext("2d");
+      g.beginPath(); g.moveTo(r, 0); g.arcTo(CW, 0, CW, CH, r); g.arcTo(CW, CH, 0, CH, r); g.arcTo(0, CH, 0, 0, r); g.arcTo(0, 0, CW, 0, r); g.closePath(); g.clip();
+      const kk = Math.max(CW / im.naturalWidth, CH / im.naturalHeight), w = im.naturalWidth * kk, h = im.naturalHeight * kk; g.drawImage(im, (CW - w) / 2, (CH - h) / 2, w, h);
+      s.addImage({data: c.toDataURL("image/png"), x: i(fx), y: i(fy), w: i(fw), h: i(fh)}); }
+    const [bx, by, bw, bh] = L.box; s.addShape(pp.ShapeType.rect, {x: i(bx), y: i(by), w: i(bw), h: i(bh), fill: {color: "FFFFFF"}, line: {color: "9AA3AB", width: .75}});
+    const n = Math.max(1, D.grupos.length), rowH = bh / n;
+    D.grupos.forEach((gr, j) => { const cy = by + (j + .5) * rowH, d = MAPA_CS[gr.nv];
+      s.addShape(pp.ShapeType.ellipse, {x: i(L.cx - d / 2), y: i(cy - d / 2), w: i(d), h: i(d), fill: {color: hx(gr.cor)}, line: {color: "222222", width: .75}});
+      s.addText(gr.rs.slice(0, 5).map(r => ({text: r.perigo + ";", options: {bullet: true, breakLine: true}})).concat(gr.rs.length > 5 ? [{text: `e mais ${gr.rs.length - 5}.`, options: {bullet: true}}] : []), {x: i(L.bulletX - 1), y: i(cy - rowH / 2), w: i(bx + bw - L.bulletX - 3), h: i(rowH), fontFace: F, fontSize: pt(L.fs), color: "222222", valign: "middle", margin: 0}); });
+    s.addText("LEGENDA:", {x: i(L.legT[0]), y: i(L.legT[1] - 3), w: i(30), h: i(4), fontFace: F, fontSize: pt(2.7), bold: true, margin: 0});
+    L.legC.forEach(([d, cy, t]) => { s.addShape(pp.ShapeType.ellipse, {x: i(L.legCx - d / 2), y: i(cy - d / 2), w: i(d), h: i(d), fill: {color: "FFFFFF"}, line: {color: "222222", width: .75}}); s.addText(t, {x: i(L.legLx), y: i(cy - 2.5), w: i(30), h: i(5), fontFace: F, fontSize: pt(2.8), margin: 0}); });
+    MAPA_GR.forEach(([, t, cor], j) => { const y = L.cores[1] + j * L.cores[4]; s.addShape(pp.ShapeType.rect, {x: i(L.cores[0]), y: i(y), w: i(L.cores[2]), h: i(L.cores[3]), fill: {color: hx(cor)}, line: {color: "333333", width: .75}}); s.addText(t, {x: i(L.corLx), y: i(y - .3), w: i(50), h: i(5.4), fontFace: F, fontSize: pt(3.2), margin: 0}); });
+    const cp = await svgURL(MAPA_CIPA); s.addImage({data: cp.url, x: i(L.cipa[0]), y: i(L.cipa[1]), w: i(L.cipa[2]), h: i(L.cipa[2])});
+    s.addShape(pp.ShapeType.rect, {x: 0, y: i(L.orange2), w: 13.333, h: i(.6), fill: {color: hx(MAPA_LARANJA)}, line: {color: hx(MAPA_LARANJA), width: 0}});
+    [["ELABORAÇÃO: ", D.elab], ["REVISÃO: ", D.rev], ["APROVAÇÃO: ", D.aprov]].forEach(([a, b], j) => s.addText(a + b, {x: i(L.rodX[j]), y: i(L.rodY - 4), w: i(j === 2 ? 98 : 72), h: i(5.5), fontFace: F, fontSize: pt(3.2), bold: true, color: "8A9299", margin: 0}));
+    if (D.vig){ const [gx, gy, gw, gh] = L.gestao; s.addText("GESTÃO CIPA | " + D.vig, {x: i(gx), y: i(gy), w: i(gw), h: i(gh), fontFace: F, fontSize: pt(2.7), bold: true, color: "FFFFFF", fill: {color: hx(MAPA_AZUL2)}, align: "center", valign: "middle", charSpacing: 1.5, margin: 0}); }
+    const blob = await pp.write({outputType: "blob"}), name = mapaNome("pptx");
+    await baixarMapa(blob, name);
+    if (win){ try{ win.location.href = "https://www.canva.com/upload"; }catch(e){} }
+    setStatus(`Mapa "${name}" baixado (paisagem, editável). Na aba do Canva, clique em Enviar (Upload) e escolha esse arquivo.`);
+  }catch(e){ console.error(e); try{ win?.close(); }catch(x){} setStatus("Não foi possível gerar o mapa para o Canva. Tente de novo.", true); }
+};
 $("mapBtn").onclick = async () => {
-  if (!lastData && !report){ setStatus("Faça a análise das fotos (Analisar ambiente) antes de gerar o mapa de risco.", true); return; }
+  if (!(await prepMapa())) return;
   setStatus("Montando o mapa de risco…");
   const html = await mapaHTML();
   const url = URL.createObjectURL(new Blob([html], {type: "text/html"}));
@@ -4704,7 +4925,7 @@ function metaSync(){
   }, 600);
 }
 ["rEmp","rSetor","rResp","rElab","rRev","rAprov","rData"].forEach(id => $(id).addEventListener("input", metaSync));
-["mElab","mRev","mAprov","mVig"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
+["mSetor","mElab","mRev","mAprov","mVig","mExtra"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
 ["rEmp","rSetor","rResp","rElab","rRev","rAprov"].forEach(id => { const v = load("sst_" + id); if (v) $(id).value = v; $(id).addEventListener("input", e => store("sst_" + id, e.target.value || null)); });
 // data de hoje no fuso do computador (toISOString usa UTC e, no Brasil, mostra o dia seguinte depois das 21 h)
 const hojeISO = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; };
@@ -4716,6 +4937,20 @@ const syncData = () => { if (!dataManual && $("rData").value !== hojeISO()){ $("
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") syncData(); });
 addEventListener("focus", syncData); setInterval(syncData, 60000);
 // logo da empresa: reduzida e guardada só neste navegador; vai na capa e no cabeçalho do relatório
+// logo do cabeçalho do mapa de risco (esquerda); sem ela, usa a logo da empresa do quadro 4
+function drawMapLogo(){ const u = load("sst_mlogo"); $("mLogoPrev").hidden = !u; $("mLogoClr").hidden = !u; if (u) $("mLogoPrev").src = u; }
+$("mLogo").onchange = async e => {
+  const f = e.target.files?.[0]; e.target.value = ""; if (!f) return;
+  try{
+    const url = await blobToDataURL(f), im = new Image(); im.src = url; await im.decode();
+    const k = Math.min(1, 800 / Math.max(im.naturalWidth || 800, im.naturalHeight || 800)), c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round((im.naturalWidth || 800) * k)); c.height = Math.max(1, Math.round((im.naturalHeight || 300) * k));
+    c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+    store("sst_mlogo", c.toDataURL("image/png")); drawMapLogo(); setStatus("Logo do cabeçalho do mapa de risco salva.");
+  }catch(x){ setStatus("Não foi possível ler a imagem da logo.", true); }
+};
+$("mLogoClr").onclick = () => { store("sst_mlogo", null); drawMapLogo(); };
+drawMapLogo();
 function drawLogo(){ const u = load("sst_logo"); $("rLogoPrev").hidden = !u; $("rLogoClr").hidden = !u; if (u) $("rLogoPrev").src = u; }
 $("rLogo").onchange = async e => {
   const f = e.target.files?.[0]; e.target.value = ""; if (!f) return;
@@ -5617,7 +5852,8 @@ async function newInspection(){
   lamp("off", "Monitoramento desligado", "Clique em Monitorar situações de risco para começar.");
   docs.length = 0; docInfo = null; lastData = null; report = null; locTried = false;
   $("ctx").value = ""; $("tech").hidden = true; $("tech").innerHTML = "";
-  ["rEmp", "rSetor", "rResp", "rRev", "rAprov", "mElab", "mRev", "mAprov", "mVig"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
+  ["rEmp", "rSetor", "rResp", "rRev", "rAprov", "mSetor", "mElab", "mRev", "mAprov", "mVig", "mExtra"].forEach(id => { $(id).value = ""; store("sst_" + id, null); });
+  mapData = null; mapFoto = 0; mapFotoMan = false; drawMapPrev();
   $("rElab").value = ""; store("sst_rElab", null);
   store("sst_logo", null); drawLogo();
   $("rData").value = hojeISO(); dataManual = false;
