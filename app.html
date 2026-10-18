@@ -392,6 +392,8 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .nrd-off.on button{border-color:#c62828;color:#c62828}
 @media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
 #lvDlg{width:min(960px,calc(100vw - 24px))}
+img.mask-wait{filter:blur(18px) saturate(.6);transition:filter .3s}
+img.mask-fail{filter:blur(18px) saturate(.6)}
 a.lupa{text-decoration:none!important;margin-left:3px;font-size:.9em;cursor:zoom-in;border-radius:4px;padding:0 2px;color:inherit}
 a.lupa:hover{background:#fff1b8}
 .editing a.lupa{pointer-events:none}
@@ -1065,7 +1067,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v152</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v153</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1309,7 +1311,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v152</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v153</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2517,13 +2519,14 @@ function openLevel(k, cell){
     const fi = Math.round(Number(r.figura)) - 1, fr = fi >= 0 ? relF()[fi] : null;
     const ar = asList(r.area).map(Number), okA = fr && ar.length === 4 && ar.every(v => isFinite(v)) && ar[2] > ar[0] && ar[3] > ar[1];
     const [y0, x0, y1, x1] = okA ? ar.map(v => clamp(v, 0, 1000) / 10) : [];
-    const foto = fr ? `<figure class="lvd-f"><span class="lvd-fi"><img src="${fr.url}" alt="Figura ${fi + 1}: ${esc(r.perigo || "situação de risco")}">${okA ? `<i style="top:${y0}%;left:${x0}%;width:${x1 - x0}%;height:${y1 - y0}%"></i>` : ""}</span><figcaption>Figura ${fi + 1}${okA ? " · área do risco destacada" : ""}</figcaption></figure>`
+    const foto = fr ? `<figure class="lvd-f"><span class="lvd-fi"><img src="${fr.url}" data-fr="${fi}" class="mask-wait" alt="Figura ${fi + 1}: ${esc(r.perigo || "situação de risco")}">${okA ? `<i style="top:${y0}%;left:${x0}%;width:${x1 - x0}%;height:${y1 - y0}%"></i>` : ""}</span><figcaption>Figura ${fi + 1}${okA ? " · área do risco destacada" : ""}</figcaption></figure>`
       : `<div class="lvd-f none">${r.figura != null && Number(r.figura) > 0 ? `A Figura ${Math.round(Number(r.figura))} não está mais entre as fotos da inspeção.` : "Sem foto indicada para este risco" + (r.figura === undefined ? " (análise feita antes desta versão: faça uma nova análise para ver as fotos)." : ".")}</div>`;
     return `<li><div class="lvd-c"><div class="p">${esc(r.perigo || "Risco")}</div>
       <div class="lvd-tags">${r.categoria ? `<span>${esc(r.categoria)}</span>` : ""}${r.nr ? (n && NR_LIST.some(x => x[0] === n) ? `<button type="button" data-nr="${n}" title="Abrir o checklist desta NR">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""} ›</button>` : `<span>${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</span>`) : ""}<span>S ${S} × P ${P} = <b>${S * P}</b></span></div>
       ${r.medida ? `<p class="lvd-m"><em>Medida de controle</em>${esc(r.medida)}</p>` : ""}
       ${R2 ? `<div class="lvd-res">Após o controle: <span class="lc ${R2.k}"><i></i>${R2.t} ${R2.r}</span></div>` : ""}</div>${foto}</li>`; }).join("")}</ol>`;
   $("lvDlgBody").innerHTML = h; delete $("lvDlgBody").dataset.alert;
+  $("lvDlgBody").querySelectorAll("img[data-fr]").forEach(im => imgSegura(im, relF()[+im.dataset.fr]?.blob));
   $("lvDlgBody").querySelectorAll("[data-nr]").forEach(b => b.onclick = () => { $("lvDlg").close(); openNR(Number(b.dataset.nr)); });
   if ($("lvLoc")) $("lvLoc").onclick = () => locateRisks(k);
   // análise antiga sem as fotos: busca sozinha uma vez (o botão fica para tentar de novo se falhar)
@@ -2864,10 +2867,10 @@ function addHistory(blob, data, msgs = [], t = new Date()){
 // foto de um alerta do monitoramento, com data, hora e situações
 function openAlert(h){
   $("lvDlgBody").innerHTML = `<div class="lvd-h crit"><span class="lvd-n">!</span><div><h2 id="lvDlgT">Alerta do monitoramento</h2><div class="hint" style="margin:0">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</div></div></div>
-    <img src="${h.url}" alt="Quadro da câmera no momento do alerta" style="width:100%;border-radius:10px;margin:10px 0">
+    <img src="${h.url}" id="alImg" class="mask-wait" alt="Quadro da câmera no momento do alerta" style="width:100%;border-radius:10px;margin:10px 0">
     <ul class="lvd-m">${(h.msgs || []).map(m => `<li>${esc(m)}</li>`).join("")}</ul>
     <div class="row" style="justify-content:flex-start;margin-top:10px"><button type="button" id="alDel" class="danger">Excluir este alerta</button></div>`;
-  $("lvDlgBody").dataset.alert = "1"; $("alDel").onclick = () => delAlert(h);
+  $("lvDlgBody").dataset.alert = "1"; $("alDel").onclick = () => delAlert(h); imgSegura($("alImg"), h.blob);
   if (!$("lvDlg").open) $("lvDlg").showModal();
 }
 $("histClr").onclick = () => {
@@ -2884,8 +2887,9 @@ function drawHistory(cur){
     const li = document.createElement("li"); const b = document.createElement("button"); b.type = "button";
     if (i === cur) b.className = "cur";
     b.title = (h.msgs || []).join("\n");
-    b.innerHTML = `<img src="${h.url}" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span>${h.data?.riscos && h.data.nota_geral != null ? `<span class="sc">${clamp(h.data.nota_geral,0,100)}</span>` : ""}`;
+    b.innerHTML = `<img src="${h.url}" class="mask-wait" alt=""><span><span class="t">${h.t.toLocaleDateString("pt-BR")} às ${h.t.toLocaleTimeString("pt-BR")}</span>${h.msgs?.length ? `<span class="hmsg">${esc(h.msgs.map(m => m.split(":")[0]).join(" · "))}</span>` : ""}<span class="chips" style="margin-top:2px">${counts.crit ? `<span class="chip crit">${counts.crit} crítico</span>` : ""}${counts.high ? `<span class="chip high">${counts.high} alto</span>` : ""}${!counts.crit && !counts.high && !h.msgs?.length ? '<span class="chip ok">sem risco alto</span>' : ""}</span></span>${h.data?.riscos && h.data.nota_geral != null ? `<span class="sc">${clamp(h.data.nota_geral,0,100)}</span>` : ""}`;
     b.onclick = () => { if (h.data?.riscos) { render(h.data, false); drawHistory(i); } else openAlert(h); };
+    imgSegura(b.querySelector("img"), h.blob);
     const del = document.createElement("button"); del.type = "button"; del.className = "hdel"; del.title = "Excluir este alerta"; del.setAttribute("aria-label", `Excluir o alerta de ${h.t.toLocaleString("pt-BR")}`);
     del.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
     del.onclick = () => delAlert(h);
@@ -4112,7 +4116,7 @@ Responda SOMENTE com JSON: {"riscos":[{"perigo":"","categoria":"Físico|Químico
   // rostos: nova detecção quando há pessoas e nenhum rosto coberto
   const PPa = pessoasOf(an, nFotos);
   if (PPa.total && !(report.faces || []).some(x => x.length) && blobs.length){
-    try{ const fc = await detectFaces(blobs); if (fc && fc.some(x => x.length)){ report.faces = fc; report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, fc[i]))); feito.push(`${fc.reduce((t, x) => t + x.length, 0)} rosto(s) coberto(s) nas fotos.`); } else manual.push("Nenhum rosto foi detectado automaticamente: cubra-os pelo botão Rostos nas fotos."); }
+    try{ const fc = await detectFaces(blobs); if (fc && (fc.some(x => x.length) || report.faceWarn)){ report.faces = fc; report.faceWarn = false; report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, fc[i]))); feito.push(fc.some(x => x.length) ? `${fc.reduce((t, x) => t + x.length, 0)} rosto(s) coberto(s) nas fotos.` : "Rostos verificados: nenhum rosto nas fotos; as fotos voltaram ao normal."); } else manual.push(fc ? "Nenhum rosto foi detectado automaticamente: se houver, cubra-os pelo botão Rostos nas fotos." : "Não foi possível localizar os rostos automaticamente: cubra-os pelo botão Rostos nas fotos."); }
     catch(e){ manual.push("Não foi possível detectar os rostos agora: use o botão Rostos nas fotos."); }
   }
   if (!meta.elab) manual.push('Preencha o campo "Elaborado por".');
@@ -4161,7 +4165,7 @@ function abreFigura(lista, txt, i = 0, fotos = report?.photos || []){
   const d = $("figDlg"), n = lista[i];
   $("figDlgT").textContent = lista.length > 1 ? `Figura ${n} (${i + 1} de ${lista.length})` : `Figura ${n}`;
   $("figDlgP").textContent = String(txt || "").replace(/\s+/g, " ").trim().slice(0, 320);
-  $("figDlgImg").src = fotos[n - 1] || ""; $("figDlgImg").alt = "Figura " + n;
+  { const F = fotos[n - 1], im = $("figDlgImg"); if (F && typeof F === "object"){ im.src = F.url; imgSegura(im, F.blob); } else { im.classList.remove("mask-wait", "mask-fail"); im.title = ""; im.src = F || ""; } } $("figDlgImg").alt = "Figura " + n;
   $("figDlgNav").innerHTML = lista.length > 1 ? lista.map((x, k) => `<button type="button" class="sm${k === i ? " on" : ""}" data-k="${k}">Figura ${x}</button>`).join("") : "";
   $("figDlgNav").querySelectorAll("button").forEach(b => b.onclick = () => abreFigura(lista, txt, +b.dataset.k, fotos));
   if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
@@ -4178,7 +4182,7 @@ $("tech").addEventListener("click", e => {
 // diagnóstico do ambiente (painel): 🔍 abre a foto da inspeção
 $("report").addEventListener("click", e => {
   const a = e.target.closest("a.lupa"); if (!a) return; e.preventDefault();
-  abreFigura(a.dataset.fig.split(",").map(Number), lupaTxt(a).replace(/🔍/g, ""), 0, relF().map(f => f.url));
+  abreFigura(a.dataset.fig.split(",").map(Number), lupaTxt(a).replace(/🔍/g, ""), 0, relF());
 });
 $("figDlgX").onclick = () => $("figDlg").close();
 $("figDlg").addEventListener("click", e => { if (e.target === $("figDlg")) $("figDlg").close(); });
@@ -4215,9 +4219,9 @@ function abrirEscolha(tipo){
   $("pickDlgT").textContent = tipo === "capa" ? "Escolher foto da capa" : "Escolher foto do Mapa de Risco";
   $("pickDlgP").textContent = tipo === "capa" ? `Clique na foto que vai na capa do relatório técnico (${L.length} foto(s) do relatório).` : `Clique na foto que vai compor o mapa de risco (${L.length} foto(s) do mapa). Os rostos são cobertos automaticamente.`;
   const g = $("pickGrid"); g.innerHTML = "";
-  L.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === atual ? "on" : ""; b.setAttribute("aria-pressed", i === atual); b.innerHTML = `<img src="${f.url}" alt="Foto ${i + 1}" loading="lazy"><span>${i === atual ? "✓ " : ""}Foto ${i + 1}</span>`;
+  L.forEach((f, i) => { const b = document.createElement("button"); b.type = "button"; b.className = i === atual ? "on" : ""; b.setAttribute("aria-pressed", i === atual); b.innerHTML = `<img src="${f.url}" class="mask-wait" alt="Foto ${i + 1}"><span>${i === atual ? "✓ " : ""}Foto ${i + 1}</span>`;
     b.onclick = () => { $("pickDlg").close(); if (tipo === "capa") escolheCapa(f); else { mapFoto = i; mapFotoMan = true; drawMapThumbs(); drawMapPrev(); refreshMapView(); mapMsg(`Foto ${i + 1} escolhida para o mapa de risco.`); } };
-    g.append(b); });
+    g.append(b); imgSegura(b.querySelector("img"), f.blob); });
   const d = $("pickDlg"); if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
 }
 function escolheCapa(f){
@@ -5168,6 +5172,32 @@ async function downloadPptx(toCanva){
   finally{ btn.disabled = false; btn.textContent = old; }
 }
 /* ---------- rostos nas fotos do relatório: círculo opaco (privacidade) ---------- */
+// fotos mostradas na tela (janelas da lupa, escolha de fotos, riscos da matriz, alertas): rostos cobertos com círculo opaco.
+// Enquanto o sistema localiza os rostos, a foto fica desfocada; se não conseguir (sem chave, sem internet), continua desfocada.
+const mascCache = new Map(); let mascFila = [], mascBusy = false;
+function mascarar(blob){
+  if (!blob) return Promise.resolve(null);
+  const ri = report?.blobs ? report.blobs.indexOf(blob) : -1;
+  if (ri >= 0 && report.photos?.[ri]) return Promise.resolve(report.photos[ri]); // já coberta no relatório
+  if (mascCache.has(blob)) return mascCache.get(blob);
+  let res; const pr = new Promise(r => res = r); mascCache.set(blob, pr); mascFila.push({blob, res});
+  setTimeout(rodaMasc, 50); return pr;
+}
+async function rodaMasc(){
+  if (mascBusy || !mascFila.length) return; mascBusy = true;
+  const lote = mascFila.splice(0, 6);
+  try{
+    const fc = await detectFaces(lote.map(x => x.blob));
+    for (let k = 0; k < lote.length; k++) lote[k].res(fc ? await maskPhoto(lote[k].blob, fc[k]) : null);
+    if (!fc) lote.forEach(x => mascCache.delete(x.blob));
+  }catch(e){ lote.forEach(x => { x.res(null); mascCache.delete(x.blob); }); }
+  mascBusy = false; if (mascFila.length) rodaMasc();
+}
+function imgSegura(im, blob){
+  if (!im || !blob) return;
+  im.classList.remove("mask-fail"); im.classList.add("mask-wait"); im.title = "Cobrindo os rostos…";
+  mascarar(blob).then(u => { if (!im.isConnected && !im.closest) return; if (u){ im.src = u; im.classList.remove("mask-wait"); im.title = ""; } else { im.classList.replace("mask-wait", "mask-fail"); im.title = "Não foi possível cobrir os rostos automaticamente (confira a chave da API). A foto fica desfocada."; } });
+}
 async function detectFaces(blobs, signal){
   const prompt = `Detecte TODOS os rostos humanos visíveis em cada imagem anexada (na ordem de envio: imagem 1, imagem 2, …), inclusive rostos pequenos, distantes, de perfil, de costas com parte do rosto à mostra, parcialmente cobertos por capacete, óculos ou máscara, em fotos, telas ou reflexos. Não marque objetos nem partes do corpo que não sejam o rosto. Responda SOMENTE com JSON: {"imagens":[{"imagem":1,"rostos":[{"box_2d":[ymin,xmin,ymax,xmax]}]}]}, com coordenadas inteiras normalizadas de 0 a 1000 em relação a cada imagem. Inclua todas as imagens, mesmo as sem rosto (lista vazia).`;
   const r = await callAI(prompt, blobs, signal);
@@ -5181,6 +5211,15 @@ async function detectFaces(blobs, signal){
     });
   });
   return out;
+}
+// sem conseguir localizar os rostos: a foto entra pixelada (ninguém é identificado) até os rostos serem marcados em "Rostos nas fotos"
+async function pixelPhoto(blob){
+  const url = await blobToDataURL(blob); const im = new Image(); im.src = url; await im.decode();
+  const W = im.naturalWidth, H = im.naturalHeight, k = 36 / Math.max(W, H), sm = document.createElement("canvas"); sm.width = Math.max(1, Math.round(W * k)); sm.height = Math.max(1, Math.round(H * k));
+  sm.getContext("2d").drawImage(im, 0, 0, sm.width, sm.height);
+  const c = document.createElement("canvas"), sc = Math.min(1, 1600 / Math.max(W, H)); c.width = Math.round(W * sc); c.height = Math.round(H * sc);
+  const g = c.getContext("2d"); g.imageSmoothingEnabled = false; g.drawImage(sm, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.85);
 }
 // desenha a foto com um círculo opaco sobre cada rosto (cobre a cabeça inteira com folga)
 async function maskPhoto(blob, faces){
@@ -5206,6 +5245,7 @@ function swapPhotosInEdited(html, photos){
 async function applyFaces(){
   const blobs = report.blobs || relF().map(f => f.blob);
   report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, (report.faces || [])[i])));
+  report.faceWarn = false; // rostos revisados à mão
   if (report.edited) report.edited = swapPhotosInEdited(report.edited, report.photos);
   showReport(); saveSoon();
 }
@@ -5276,13 +5316,14 @@ async function generateReport(){
     const R = Object.assign({}, ...parts);
     R.riscos = mergeRiscos(R.riscos, validatedData(lastData)?.riscos); // nenhum risco da análise fica fora do relatório
     setStatus("Cobrindo os rostos das pessoas nas fotos…");
-    const faces = await facesP;
-    report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces ? faces[i] : [])))};
+    let faces = await facesP;
+    if (!faces) faces = await detectFaces(blobs, ctl.signal).catch(() => null); // segunda tentativa antes de desistir
+    report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => faces ? maskPhoto(b, faces[i]) : pixelPhoto(b)))};
     report.faceWarn = !faces;
     saveSoon();
     showReport();
     const nF = report.faces.reduce((t, x) => t + x.length, 0);
-    setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível detectar os rostos automaticamente: use Rostos nas fotos para cobri-los antes de compartilhar." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
+    setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível localizar os rostos automaticamente: as fotos entraram pixeladas para ninguém ser identificado. Use Rostos nas fotos para marcar os rostos e as fotos voltam ao normal com os rostos cobertos." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
     $("tech").scrollIntoView({behavior: "smooth", block: "start"});
     if (mapGerado) autoExibir();
   }catch(e){ handleErr(e); }
@@ -6237,7 +6278,7 @@ function saveSoon(delay = 800){
       const au = []; for (const a of audios.filter(a => a.info || a.err)) au.push({name: a.name, from: a.from, dur: a.dur, blob: await B(a.blob), info: a.info, err: a.err, status: a.status});
       const dc = []; for (const d of docs.filter(d => !d.err)){ const im = []; for (const b of d.images || []){ const x = await B(b); if (x) im.push(x); } dc.push({name: d.name, kind: d.kind, note: d.note, text: d.text, images: im}); }
       const al = []; for (const h of history){ const x = await B(h.blob); if (x) al.push({t: h.t.getTime(), blob: x, data: h.data, msgs: h.msgs || []}); }
-      await idbPut({t: Date.now(), ctx: $("ctx").value, frames: fr.map(x => x[0]), usos: fr.map(x => x[1]), capas: fr.map(x => x[2]), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faces: report.faces || null} : null,
+      await idbPut({t: Date.now(), ctx: $("ctx").value, frames: fr.map(x => x[0]), usos: fr.map(x => x[1]), capas: fr.map(x => x[2]), lastData, report: report ? {R: report.R, meta: report.meta, edited: report.edited || null, faceWarn: !!report.faceWarn, faces: report.faces || null} : null,
         audios: au, docs: dc, docInfo, alerts: al, mapGerado, mapData: mapData ? {riscos: mapData.riscos, foto: mapData.foto, fotos: mapData.fotos} : null, mapFoto});
     }catch(e){ console.warn("não foi possível salvar a inspeção", e); }
   }, delay);
@@ -6265,7 +6306,7 @@ async function restoreSession(){
     if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
     if (s.mapData){ mapData = {...s.mapData, sig: mapSig()}; mapFoto = Math.min(Math.max(0, s.mapFoto || 0), Math.max(0, mapF().length - 1)); drawMapThumbs(); drawMapPrev(); }
     mapGerado = !!s.mapGerado && mapF().length > 0;
-    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; }
+    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, faceWarn: !!s.report.faceWarn, photos: await Promise.all(blobs.map((b, i) => s.report.faceWarn ? pixelPhoto(b) : maskPhoto(b, faces[i])))}; }
     if (!curRender) renderEmpty(); else drawExibir();
     setTimeout(autoExibir, 300);
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}).${perdidos ? ` ${perdidos} foto(s)/áudio(s) guardado(s) não puderam ser lidos pelo navegador e foram retirados: anexe-os de novo.` : ""} Para começar do zero, clique em Limpar tudo.`, !!perdidos);
