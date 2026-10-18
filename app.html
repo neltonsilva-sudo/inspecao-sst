@@ -392,9 +392,9 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .nrd-off.on button{border-color:#c62828;color:#c62828}
 @media (max-width:560px){.nrd-off{grid-template-columns:minmax(0,1fr)}}
 #lvDlg{width:min(960px,calc(100vw - 24px))}
-#tech .rep [data-fig]:not(.editing [data-fig]){cursor:zoom-in}
-#tech .rep [data-fig]:not(.editing [data-fig]):hover{background:#fff4cc!important;box-shadow:inset 3px 0 0 #f5a623}
-#tech .rep li[data-fig]:not(.editing li)::after,#tech .rep tr[data-fig]:not(.editing tr)>td:nth-child(2)::after{content:" 🔍";font-size:.85em;opacity:.7}
+a.lupa{text-decoration:none!important;margin-left:3px;font-size:.9em;cursor:zoom-in;border-radius:4px;padding:0 2px;color:inherit}
+a.lupa:hover{background:#fff1b8}
+.editing a.lupa{pointer-events:none}
 .figdlg{width:min(980px,calc(100vw - 24px))}
 .pickdlg{width:min(1100px,calc(100vw - 24px))}
 .pickdlg .fd-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}.pickdlg .fd-h h2{margin:0;flex:1;font:700 19px var(--f-display);text-transform:uppercase}
@@ -735,6 +735,7 @@ button.sm{padding:6px 12px;font-size:13px}
 .rep .signs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;margin-top:40px}
 .rep .signs .sign{margin:0;max-width:none}
 /* padrão visual do modelo institucional: páginas claras, azul-marinho, laranja e tabelas com cabeçalho creme */
+.rep a.lupa{text-decoration:none;margin-left:3px;font-size:.9em;color:inherit}
 .rep{--nv:#0d3b72;--or:#f5a623;--or2:#f26b1d;--cr:#fdebd0;--bl:#1d5fa8;font:14.5px/1.5 "Times New Roman",Times,Georgia,serif;color:#1a1a1a}
 .rep p{max-width:none}
 .rep h2{display:flex;align-items:center;gap:0;padding:0 14px 0 0;margin:30px 0 4px;border:0;background:var(--nv);color:#fff;font:700 14.5px/1.2 "Times New Roman",Times,serif;letter-spacing:.02em;text-transform:uppercase;min-height:28px}
@@ -1064,7 +1065,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v151</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v152</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1308,7 +1309,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v151</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v152</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1874,7 +1875,7 @@ function render(d, isExample){
     return `<li class="ri ${L.k}"><span class="n">${i+1}</span>
       <div class="pg">${esc(txt(r.perigo)) || "Perigo não descrito"}</div>
       <span class="lc ${L.k}"><i></i>${L.t}<b title="Severidade × Probabilidade">${L.r}</b></span>
-      <div class="tags">${nr ? `<span class="nr">${esc(nr)}${item ? `<small>${esc(item)}</small>` : ""}</span>` : ""}${cat ? `<span class="cat">${esc(cat)}</span>` : ""}<span class="sp" title="Severidade × Probabilidade">S${clamp(r.severidade,1,5)} × P${clamp(r.probabilidade,1,5)}</span></div>
+      <div class="tags">${nr ? `<span class="nr">${esc(nr)}${item ? `<small>${esc(item)}</small>` : ""}</span>` : ""}${cat ? `<span class="cat">${esc(cat)}</span>` : ""}${Number(r.figura) >= 1 && !isExample ? `<span class="cat">Figura ${Math.round(Number(r.figura))}</span>` : ""}<span class="sp" title="Severidade × Probabilidade">S${clamp(r.severidade,1,5)} × P${clamp(r.probabilidade,1,5)}</span></div>
       ${med ? `<div class="med"><span>Medida de controle</span>${esc(med)}</div>` : ""}</li>`;
   }).join("");
   const nrs = [...new Set(riscos.map(r => txt(r.nr)).filter(Boolean))];
@@ -2072,6 +2073,7 @@ function render(d, isExample){
     </section>
 
     <p class="limit"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4.5M8 4.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span><b>Limitações:</b> ${esc(txt(d.limitacoes))} Análise por imagem apoia, mas não substitui, a inspeção de campo e a avaliação do profissional de SST.</span></p>`;
+  if (!isExample) lupas($("report"), relF().length, false);
   drawExibir();
 }
 
@@ -3570,7 +3572,7 @@ function reportHTML(R, photos, meta){
     <div class="sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
     ${firstPar ? `<p>${esc(firstPar)}</p>` : ""}
     <div class="two">
-      <div><h4>Principais riscos${top3.length > 3 ? ` (${top3.length} mais graves)` : ""}</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
+      <div><h4>Principais riscos${top3.length > 3 ? ` (${top3.length} mais graves)` : ""}</h4><ul class="lst">${top3.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span> ${esc(r.perigo)}${figRef(r, photos.length)} <span class="num">(${esc(r.nr || "—")})</span></li>`; }).join("") || "<li>Nenhum risco identificado nas imagens.</li>"}</ul></div>
       <div><h4>Ações prioritárias</h4><ol class="lst">${top5.map(a => `<li><b>${esc(a.acao)}</b>${a.quem || a.quando ? ` <span class="cap">· ${esc(a.quem || "")}${a.quem && a.quando ? " · " : ""}${esc(a.quando || "")}</span>` : ""}</li>`).join("") || "<li>—</li>"}</ol></div>
     </div>
     ${DR.length ? `<p><b>Documentos e registros:</b> ${DR.length} indicado(s) para o setor: ${DR.filter(x => x.k === "crit").length} a implantar, ${DR.filter(x => x.k === "high").length} a atualizar e ${DR.filter(x => x.k === "warn").length} a verificar.${SG.length ? ` Foram feitas ${SG.length} sugestões de melhoria com fundamentação legal.` : ""}</p>` : ""}
@@ -3591,7 +3593,7 @@ function reportHTML(R, photos, meta){
   ${para(R.metodologia)}
   <ul><li>Inspeção visual por registro fotográfico, conforme a Metodologia de Análise SST.</li><li>Matriz de risco severidade × probabilidade, conforme o GRO/PGR da NR-01.</li><li>Diagrama de Ishikawa (6M) para análise de causas.</li><li>Matriz GUT para priorização dos problemas e matriz REI (esforço × impacto) para priorização das ações.</li><li>Avaliação 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), com nota de 0 a 5 por senso.</li><li>Levantamento dos documentos e registros de evidências de SST exigidos pelas NRs para as atividades observadas.</li><li>Verificação das pessoas visíveis: exposição a riscos, uso de EPI (NR-06) e uso de adornos (NR-10, NR-12 e NR-32), sem identificação individual.</li><li>Verificação do descarte de resíduos: segregação, cor dos coletores (CONAMA 275/2001) e classe dos resíduos (NBR 10004).</li><li>Verificação do armazenamento e acondicionamento de materiais (NR-11, NR-20, NR-23 e NR-26).</li><li>Avaliação do layout: fluxo de materiais e pessoas, circulação, rotas de fuga e ergonomia, com proposta de melhoria baseada em princípios Lean.</li><li>Avaliação das condições da edificação: piso, paredes, teto, cobertura e pintura (NR-08, NR-24 e NR-26).</li><li>Checklist de conformidade por Norma Regulamentadora aplicável, com itens conformes, não conformes e não verificáveis.</li><li>Levantamento de fatores de riscos psicossociais a partir de relatos, documentos e contexto (NR-01, NR-17 e NR-05), sem identificação individual.</li><li>Proteção de imagem: os rostos das pessoas nas fotos foram cobertos para impedir a identificação.</li><li>Varredura sistemática de cada imagem, área por área, registrando cada constatação com sua localização.</li>${meta.docs?.length ? `<li>Análise documental de ${meta.docs.length} documento(s) do setor, confrontada com as imagens.</li>` : ""}${meta.audios?.length ? `<li>Relatos em áudio (${meta.audios.length}) transcritos e analisados conforme a Metodologia de Análise SST.</li>` : ""}<li>Plano de ação 5W2H.</li></ul>
   ${H("Caracterização do ambiente e registro fotográfico", "Descrição do ambiente e registro das condições observadas.")}${para(R.descricao_ambiente)}
-  <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
+  <div class="figs${photos.length > 8 ? " many" : ""}">${photos.map((src, i) => `<figure id="fig-${i+1}"><img src="${src}" alt="Figura ${i+1}"><figcaption><b>Figura ${i+1}</b> – ${esc(String(fotos[i]?.legenda || "Ambiente inspecionado").replace(/^\s*figura\s*\d+\s*[:.\-–]\s*/i, ""))}${fotos[i]?.observacoes ? ". " + esc(fotos[i].observacoes) : ""}</figcaption></figure>`).join("")}</div>
   ${(() => {
     const AD = R.analise_documental || {}, dl = asList(AD.documentos), cv = asList(AD.convergencias), dv = asList(AD.divergencias), pd = asList(AD.pendencias_documentais);
     const names = meta.docs || [];
@@ -3605,7 +3607,7 @@ function reportHTML(R, photos, meta){
   %%T:Relatos em áudio e informações de SST extraídas%%<div class="tw"><table><thead><tr><th style="width:20%">Relato</th><th>Resumo</th><th>Informações de SST</th></tr></thead><tbody>${meta.audios.map(a => `<tr><td><b>${esc(a.nome)}</b><div class="cap" style="margin:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · ${fmtDur(a.dur)}</div></td><td>${esc(a.resumo || "—")}</td><td>${asList(a.informacoes_sst).length ? `<ul class="lst">${asList(a.informacoes_sst).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "—"}</td></tr>`).join("")}</tbody></table></div>` : ""}
   ${H("Identificação e avaliação dos riscos", "Perigos classificados pela matriz severidade × probabilidade da NR-01.")}
   %%T:Inventário de perigos e riscos identificados%%<div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
-  ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
+  ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}${figRef(r, photos.length)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
   </tbody></table></div>
   <div class="two">
     <div><h3>Matriz de risco (NR-01)</h3><div class="fig"><div class="ax-x top">Probabilidade →</div><div class="mxw"><span class="ax-y">Severidade →</span><div class="mx">${mx}</div></div><div class="mxl">${["ok","warn","high","crit"].map((k, i) => `<span><i style="background:${MXC[k]}"></i>${LV[k][0]} ${["1–4","5–9","10–14","15–25"][i]} pts</span>`).join("")}</div><p class="mxn">Círculo numerado = risco identificado (item da tabela). Quadrado em cor forte = tem risco; quadrado claro = vazio, sem risco. Pontos = severidade × probabilidade.</p></div>%%F:Matriz de risco severidade × probabilidade (círculos = riscos da tabela)%%</div>
@@ -3738,8 +3740,31 @@ function reportHTML(R, photos, meta){
     return cur ? `<h3><span class="n">${cur}.${++sub}</span>` : m;
   });
   let nt = 0, nf = photos.length;
-  return out.replace("%%TOC%%", toc.join("")).replace(/%%([TF]):(.*?)%%/g, (m, k, t) => k === "T" ? `<div class="tcap"><b>Tabela ${++nt}</b> – ${t}</div>` : `<div class="fcap"><b>Figura ${++nf}</b> – ${t}</div>`);
+  return lupasHTML(out.replace("%%TOC%%", toc.join("")).replace(/%%([TF]):(.*?)%%/g, (m, k, t) => k === "T" ? `<div class="tcap"><b>Tabela ${++nt}</b> – ${t}</div>` : `<div class="fcap"><b>Figura ${++nf}</b> – ${t}</div>`), photos.length);
 }
+// "(Figura N)" junto do risco quando a análise indicou a foto e o texto não cita
+function figRef(r, max){ const n = Math.round(Number(r?.figura)); return n >= 1 && n <= max && !/figura\s*\d/i.test(String(r.perigo || "")) ? ` <span class="cap">(Figura ${n})</span>` : ""; }
+// 🔍 depois de cada "Figura N" que é uma foto da inspeção: na tela abre a foto numa janela; no PDF leva até a foto
+const LUPA_PULA = "figure, figcaption, .figs, .toc, nav, svg, script, style, a, button, textarea, .fcap, .tcap, .lupa, title, head";
+function lupas(root, max, href = true){
+  if (!root || !max) return;
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => /figuras?\s*\d/i.test(n.nodeValue) && !n.parentElement?.closest(LUPA_PULA) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+  const nodes = []; while (tw.nextNode()) nodes.push(tw.currentNode);
+  nodes.forEach(node => {
+    const txt = node.nodeValue, rx = /figuras?\s*((?:\d+\s*(?:,|e|a|-|–)?\s*)+)/gi; let m, last = 0, frag = null;
+    while ((m = rx.exec(txt))){
+      const f = figsDe(m[0], max); if (!f.length) continue;
+      frag = frag || document.createDocumentFragment();
+      const fim = m.index + m[0].replace(/[\s,–-]+$/, "").length;
+      frag.append(txt.slice(last, m.index));
+      const nw = document.createElement("span"); nw.style.whiteSpace = "nowrap"; nw.append(txt.slice(m.index, fim)); // "Figura N 🔍" na mesma linha
+      const a = document.createElement("a"); a.className = "lupa"; a.dataset.fig = f.join(","); a.title = `Ver a Figura ${f.join(", ")}`; a.textContent = "🔍"; if (href) a.href = "#fig-" + f[0]; else a.setAttribute("role", "button");
+      nw.append(a); frag.append(nw); last = fim;
+    }
+    if (frag){ frag.append(txt.slice(last)); node.replaceWith(frag); }
+  });
+}
+function lupasHTML(html, max){ if (!max) return html; const t = document.createElement("template"); t.innerHTML = html; lupas(t.content, max); return t.innerHTML; }
 
 function exportDoc(){
   const css = [...document.querySelectorAll("style")].map(x => x.textContent).join("\n");
@@ -3856,11 +3881,21 @@ ul{margin:4px 0 6px;padding-left:18px}li{margin:2px 0}
   <div class="signs"><div>${esc(elabOf(meta))}<small>Elaborado por</small></div><div>${esc(revOf(meta))}<small>Revisado por</small></div><div>${esc(aprovOf(meta) || "A confirmar")}<small>Aprovado por</small></div></div>
   </main></body></html>`;
 }
+// relatório sintético: 🔍 nas citações de figura e, no fim, as fotos citadas (o 🔍 leva até elas no PDF)
+function synthFotos(html){
+  const ph = report.photos || [], t = document.createElement("template"); if (!ph.length) return html;
+  const i0 = html.indexOf("<main"), i1 = html.lastIndexOf("</main>"); if (i0 < 0 || i1 < 0) return html;
+  t.innerHTML = html.slice(i0, i1 + 7); lupas(t.content, ph.length);
+  const cit = [...new Set([...t.content.querySelectorAll("a.lupa")].flatMap(a => a.dataset.fig.split(",").map(Number)))].sort((a, b) => a - b);
+  const main = t.content.querySelector("main");
+  if (main && cit.length) main.insertAdjacentHTML("beforeend", `<section style="break-before:page"><h2>Fotos citadas</h2><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">${cit.map(n => `<figure id="fig-${n}" style="margin:0;break-inside:avoid"><img src="${ph[n - 1]}" alt="Figura ${n}" style="width:100%;height:auto;border-radius:6px;display:block"><figcaption style="font-size:11px;margin-top:3px"><b>Figura ${n}</b></figcaption></figure>`).join("")}</div></section>`);
+  return html.slice(0, i0) + t.innerHTML + html.slice(i1 + 7);
+}
 function printSynth(){
   const extra = `<style>@media screen{body{background:#fff!important;padding:0!important}.sy{box-shadow:none!important;padding:0!important}}#prep{font:16px system-ui,sans-serif;color:#444;text-align:center;padding:80px 20px}</style>
 <script>window.PagedConfig = {auto: true, before: () => { document.getElementById("prep")?.remove(); }, after: () => { setTimeout(() => window.print(), 500); }};<\/script>
 <script src="${PAGED_JS}"><\/script>`;
-  const html = synthHTML(report.R, report.meta).replace("</head>", extra + "</head>").replace("<body>", '<body><div id="prep">Preparando o relatório sintético para impressão…</div>');
+  const html = synthFotos(synthHTML(report.R, report.meta)).replace("</head>", extra + "</head>").replace("<body>", '<body><div id="prep">Preparando o relatório sintético para impressão…</div>');
   const url = URL.createObjectURL(new Blob([html], {type: "text/html"}));
   const w = window.open(url, "_blank");
   if (!w){ URL.revokeObjectURL(url); setStatus("Permita janelas pop-up para abrir o relatório sintético.", true); return; }
@@ -4110,40 +4145,40 @@ function showReport(){
   $("dlPptx").onclick = () => downloadPptx(false);
   $("toCanva").onclick = () => downloadPptx(true);
   $("closeRep").onclick = () => { t.hidden = true; };
-  marcaFiguras(t.querySelector(".rep"));
+  const art = t.querySelector(".rep"); if (art && !art.querySelector("a.lupa")) lupas(art, (report.photos || []).length); // relatório editado antes do 🔍
 }
 // relatório na tela: linhas e itens que citam uma figura abrem a foto numa janela (sem sair do relatório)
-function figsDe(txt){
+function figsDe(txt, max){
   const out = [];
   for (const m of String(txt || "").matchAll(/figuras?\s*((?:\d+\s*(?:,|e|a|-|–)?\s*)+)/gi)){
     const nums = m[1].match(/\d+/g) || [];
     if (/\d+\s*(?:a|-|–)\s*\d+/.test(m[1]) && nums.length === 2) for (let k = +nums[0]; k <= +nums[1] && k - nums[0] < 20; k++) out.push(k);
     else nums.forEach(n => out.push(+n));
   }
-  return [...new Set(out)].filter(n => n >= 1 && n <= (report?.photos?.length || 0));
+  return [...new Set(out)].filter(n => n >= 1 && n <= (max ?? report?.photos?.length ?? 0));
 }
-function marcaFiguras(art){
-  if (!art) return;
-  art.querySelectorAll("tbody tr, li, .call, p").forEach(el => {
-    if (el.closest("figure, .figs, .toc, nav, [data-fig] ") && !el.matches("tbody tr")) return;
-    if (el.matches("li, p, .call") && el.closest("tbody tr")) return;
-    const f = figsDe(el.textContent); if (f.length) el.dataset.fig = f.join(",");
-  });
-}
-function abreFigura(lista, txt, i = 0){
+function abreFigura(lista, txt, i = 0, fotos = report?.photos || []){
   const d = $("figDlg"), n = lista[i];
   $("figDlgT").textContent = lista.length > 1 ? `Figura ${n} (${i + 1} de ${lista.length})` : `Figura ${n}`;
   $("figDlgP").textContent = String(txt || "").replace(/\s+/g, " ").trim().slice(0, 320);
-  $("figDlgImg").src = report.photos[n - 1]; $("figDlgImg").alt = "Figura " + n;
+  $("figDlgImg").src = fotos[n - 1] || ""; $("figDlgImg").alt = "Figura " + n;
   $("figDlgNav").innerHTML = lista.length > 1 ? lista.map((x, k) => `<button type="button" class="sm${k === i ? " on" : ""}" data-k="${k}">Figura ${x}</button>`).join("") : "";
-  $("figDlgNav").querySelectorAll("button").forEach(b => b.onclick = () => abreFigura(lista, txt, +b.dataset.k));
+  $("figDlgNav").querySelectorAll("button").forEach(b => b.onclick = () => abreFigura(lista, txt, +b.dataset.k, fotos));
   if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
 }
+// texto do item onde está o 🔍 (a célula, o item da lista ou o parágrafo)
+const lupaTxt = a => {
+  const c = a.closest("li.ri, li.pp"); if (c) return (c.querySelector(".pg, .pp-h b")?.textContent || "") + (a.closest(".med") ? " – " + a.closest(".med").textContent : "");
+  return (a.closest("td, li, p, .call, .med, dd, div") || a.parentElement).textContent;
+};
 $("tech").addEventListener("click", e => {
-  const el = e.target.closest(".rep [data-fig]"); if (!el || el.closest(".editing") || e.target.closest("a, button, input")) return;
-  // texto do problema: na tabela, a célula que cita a figura (ou a 2ª coluna)
-  const cel = el.matches("tr") ? [...el.cells].map(c => c.textContent.trim()) : null;
-  abreFigura(el.dataset.fig.split(",").map(Number), cel ? (cel.find(x => /figura/i.test(x)) || cel[1] || cel[0]) : el.textContent);
+  const a = e.target.closest(".rep a.lupa"); if (!a) return; e.preventDefault(); if (a.closest(".editing")) return;
+  abreFigura(a.dataset.fig.split(",").map(Number), lupaTxt(a).replace(/🔍/g, ""));
+});
+// diagnóstico do ambiente (painel): 🔍 abre a foto da inspeção
+$("report").addEventListener("click", e => {
+  const a = e.target.closest("a.lupa"); if (!a) return; e.preventDefault();
+  abreFigura(a.dataset.fig.split(",").map(Number), lupaTxt(a).replace(/🔍/g, ""), 0, relF().map(f => f.url));
 });
 $("figDlgX").onclick = () => $("figDlg").close();
 $("figDlg").addEventListener("click", e => { if (e.target === $("figDlg")) $("figDlg").close(); });
