@@ -306,6 +306,8 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .report .matrix .c{position:relative;aspect-ratio:1;min-width:0;border-radius:4px;background:var(--lcell);display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:2px;padding:3px}
 .report .matrix .c em{position:absolute;right:4px;bottom:2px;font:600 10px var(--f-mono);font-style:normal;color:#fff;opacity:.85}
 .report .matrix .c.has{box-shadow:inset 0 0 0 2px rgba(0,0,0,.45)}
+.report .matrix .c[data-s]{cursor:pointer;transition:transform .12s,filter .12s}.report .matrix .c[data-s]:hover{filter:brightness(1.06);transform:scale(1.03)}.report .matrix .c[data-s]:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.report .matrix .c.has:hover{transform:scale(1.05)}
 /* cores fortes e intensas, iguais no tema claro e escuro */
 .report .matrix .c.crit{background:#ec9a9a}.report .matrix .c.high{background:#f6b98c}.report .matrix .c.warn{background:#f7d977}.report .matrix .c.ok{background:#9fd3b1}
 .report .matrix .c.has.crit{background:#d32f2f}.report .matrix .c.has.high{background:#f57c00}.report .matrix .c.has.warn{background:#fbc02d}.report .matrix .c.has.ok{background:#2e9e5b}
@@ -987,7 +989,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v108</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v109</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1186,14 +1188,14 @@ api:
   <section class="tech" id="tech" hidden></section>
   <dialog id="faceDlg" class="nrdlg facedlg" aria-label="Rostos nas fotos do relatório"><div class="nrd-in"><h2 style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">Rostos nas fotos</h2><div id="faceBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="faceOk" class="accent">Concluir</button></div></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
-  <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkPhotos" class="accent">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
+  <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkFix" class="accent">Corrigir inconsistências</button><button type="button" id="chkPhotos">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
   <dialog id="nrDlg" class="nrdlg" aria-labelledby="nrDlgT"><div class="nrd-in"><div id="nrDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="nrDlgX">Fechar</button></div></div></dialog>
 </div>
 
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v108</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v109</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1674,7 +1676,7 @@ function render(d, isExample){
     for (let p = 1; p <= 5; p++){
       const L = level(s,p);
       const dots = riscos.map((r,i) => (clamp(r.severidade,1,5)===s && clamp(r.probabilidade,1,5)===p) ? `<span class="dot" title="${i+1}. ${esc(txt(r.perigo))}">${i+1}</span>` : "").join("");
-      mx += `<div class="c ${L.k}${dots ? " has" : ""}" title="S${s} × P${p} = ${L.r} pontos (${L.t})${dots ? "" : " · sem risco identificado"}">${dots}${dots ? `<em>${L.r} pts</em>` : ""}</div>`;
+      mx += `<div class="c ${L.k}${dots ? " has" : ""}" data-s="${s}" data-p="${p}" role="button" tabindex="0" title="S${s} × P${p} = ${L.r} pontos (${L.t})${dots ? " · clique para ver os riscos" : " · sem risco identificado"}">${dots}${dots ? `<em>${L.r} pts</em>` : ""}</div>`;
     }
   }
 
@@ -1784,7 +1786,7 @@ function render(d, isExample){
         <div class="mwrap">
           <p class="kt">Matriz de risco <span>NR-01 · GRO/PGR</span></p>
           <div class="matrix" role="img" aria-label="Matriz severidade por probabilidade com ${riscos.length} risco(s) posicionados">${mx}</div>
-          <p class="mxh">Cada <span class="dot">1</span> é um <b>risco identificado</b> (o número é o item da lista). Só os quadrados em <b>cor forte</b> têm risco; os quadrados claros estão vazios e mostram apenas a faixa de nível. Pontos = severidade × probabilidade.</p>
+          <p class="mxh">Cada <span class="dot">1</span> é um <b>risco identificado</b> (o número é o item da lista). Só os quadrados em <b>cor forte</b> têm risco; os quadrados claros estão vazios e mostram apenas a faixa de nível. Pontos = severidade × probabilidade. <b>Clique em um quadrante</b> para ver os riscos dele.</p>
           <ul class="legend">${LV.map(([k,t,rg]) => `<li class="${k}"><i></i><span>${t}<small>${rg} pts</small></span><b title="Riscos identificados neste nível">${counts[k]}</b></li>`).join("")}</ul>
         </div>
         ${rows ? `<ol class="rlist">${rows}</ol>` : '<p class="empty">Nenhum risco visível identificado.</p>'}
@@ -2282,14 +2284,18 @@ $("nrDlgBody").addEventListener("click", e => {
 });
 $("report").addEventListener("click", e => { const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
 // cards "Riscos por nível": tela com os riscos daquele nível
-function openLevel(k){
+let lvCell = null; // quadrante da matriz aberto (severidade, probabilidade) ou null para o nível inteiro
+function openLevel(k, cell){
+  if (cell !== undefined) lvCell = cell;
   const LVT = {crit: ["Crítico", "15–25"], high: ["Alto", "10–14"], warn: ["Moderado", "5–9"], ok: ["Baixo", "1–4"]}, [t, rg] = LVT[k];
-  const list = curRiscos.map(r => ({r, L: level(r.severidade, r.probabilidade)})).filter(x => x.L.k === k).sort((a, b) => b.L.r - a.L.r);
-  let h = `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Riscos de nível ${t.toLowerCase()}</h2><div class="hint" style="margin:0">Severidade × probabilidade de ${rg} (matriz de risco da NR-01)</div></div></div>`;
+  const inCell = r => !lvCell || (clamp(r.severidade, 1, 5) === lvCell[0] && clamp(r.probabilidade, 1, 5) === lvCell[1]);
+  const list = curRiscos.map(r => ({r, L: level(r.severidade, r.probabilidade)})).filter(x => x.L.k === k && inCell(x.r)).sort((a, b) => b.L.r - a.L.r);
+  let h = lvCell ? `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Quadrante S${lvCell[0]} × P${lvCell[1]}</h2><div class="hint" style="margin:0">Severidade ${lvCell[0]} × probabilidade ${lvCell[1]} = ${lvCell[0] * lvCell[1]} pontos · nível ${t.toLowerCase()} (${rg}) · ${list.length ? list.length + " risco(s) neste quadrante" : "nenhum risco neste quadrante"}</div></div></div>`
+    : `<div class="lvd-h ${k}"><span class="lvd-n">${list.length}</span><div><h2 id="lvDlgT">Riscos de nível ${t.toLowerCase()}</h2><div class="hint" style="margin:0">Severidade × probabilidade de ${rg} (matriz de risco da NR-01)</div></div></div>`;
   // análise feita antes de a IA informar a foto de cada risco: localiza só as fotos, sem refazer a análise
   const semFoto = curRiscos.some(r => r.figura === undefined), podeLoc = semFoto && frames.length && curRender && !curRender.isExample;
   if (podeLoc) h += `<div class="lvd-loc"><span>${locBusy ? "Inserindo a foto correspondente a cada problema (o sistema localiza a foto e a área de cada risco)…" : locErr ? `<b class="err">${esc(locErr)}</b>` : "Não foi possível inserir as fotos automaticamente. Clique para tentar de novo."}</span><button type="button" id="lvLoc" class="accent"${locBusy ? " disabled" : ""}>${locBusy ? "Localizando…" : "Localizar as fotos dos riscos"}</button></div>`;
-  if (!list.length) h += `<p class="hint">Nenhum risco classificado neste nível na análise atual.</p>`;
+  if (!list.length) h += `<p class="hint">${lvCell ? "Nenhum risco identificado com esta combinação de severidade e probabilidade. A cor mostra apenas a faixa de nível do quadrante." : "Nenhum risco classificado neste nível na análise atual."}</p>`;
   else h += `<ol class="lvd-list ${k}">${list.map(({r, L}) => {
     const S = clamp(r.severidade, 1, 5), P = clamp(r.probabilidade, 1, 5), n = nrNum(r.nr);
     const hasRes = r.severidade_residual != null && r.severidade_residual !== "" && r.probabilidade_residual != null && r.probabilidade_residual !== "";
@@ -2335,7 +2341,11 @@ Responda SOMENTE com JSON: {"riscos":[{"i":1,"figura":1,"area":[ymin,xmin,ymax,x
   }catch(e){ locErr = e?.message ? "Não foi possível localizar agora: " + e.message + "." : "Não foi possível localizar agora. Tente de novo."; }
   finally{ locBusy = false; if ($("lvDlg").open) openLevel(k); }
 }
-$("report").addEventListener("click", e => { const b = e.target.closest(".lv [data-lv]"); if (b) openLevel(b.dataset.lv); });
+$("report").addEventListener("click", e => { const b = e.target.closest(".lv [data-lv]"); if (b) openLevel(b.dataset.lv, null); });
+// quadrante da matriz de risco: tela com os riscos daquela combinação de severidade e probabilidade
+const openCell = c => { const sv = Number(c.dataset.s), pv = Number(c.dataset.p); openLevel(level(sv, pv).k, [sv, pv]); };
+$("report").addEventListener("click", e => { const c = e.target.closest(".matrix .c[data-s]"); if (c) openCell(c); });
+$("report").addEventListener("keydown", e => { const c = e.target.closest(".matrix .c[data-s]"); if (c && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); openCell(c); } });
 $("lvDlgX").onclick = () => $("lvDlg").close();
 $("lvDlg").addEventListener("click", e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 $("nrDlgX").onclick = () => $("nrDlg").close();
@@ -3120,7 +3130,7 @@ function mergeRiscos(rep, an){
   });
   return out;
 }
-const riscosOf = R => asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], lastData?.riscos);
+const riscosOf = R => asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], asList(lastData?.riscos).filter(a => !asList(R.__semEvid).some(t => chkSame(a?.perigo, t))));
 function gutAll(R, riscos){
   const gut = asList(R.gut).filter(g => g && g.problema).map(g => ({...g, G: clamp(g.g,1,5), U: clamp(g.u,1,5), T: clamp(g.t,1,5)}));
   const words = t => normTxt(t).split(/[^a-z0-9]+/).filter(w => w.length > 3);
@@ -3535,7 +3545,8 @@ function checkLocal(){
   const repR = riscosOf(R).filter(r => r && typeof r === "object" && r.perigo && !nrOff()[nrNum(r.nr)]);
   const anR = asList(an.riscos).filter(r => r && typeof r === "object" && r.perigo && !nrOff()[nrNum(r.nr)]);
   let okR = 0;
-  anR.forEach(a => {
+  const semEv = asList(R.__semEvid);
+  anR.filter(a => !semEv.some(t => chkSame(a.perigo, t))).forEach(a => {
     const m = repR.find(r => chkSame(a.perigo, r.perigo));
     if (!m) return add("crit", "Riscos", `Risco da análise das fotos ausente no relatório: "${txtOf(a.perigo)}".`, "Gere o relatório de novo ou inclua o risco.");
     const La = level(a.severidade, a.probabilidade), Lr = level(m.severidade, m.probabilidade);
@@ -3544,7 +3555,7 @@ function checkLocal(){
   });
   repR.filter(r => !anR.some(a => chkSame(a.perigo, r.perigo))).forEach(r => add("warn", "Riscos", `Risco no relatório sem correspondência na análise das fotos: "${txtOf(r.perigo)}".`, "Confira se há evidência na foto; se não houver, retire."));
   if (anR.length && /nenhum risco (visível )?identificado/i.test(texto)) add("crit", "Riscos", 'O texto diz "nenhum risco identificado", mas a análise das fotos encontrou ' + anR.length + " risco(s).");
-  if (okR && okR === anR.length) add("ok", "Riscos", `${okR} risco(s) do relatório coerentes com a análise das fotos (mesmo perigo e classificação).`);
+  if (okR && okR === anR.filter(a => !semEv.some(t => chkSame(a.perigo, t))).length) add("ok", "Riscos", `${okR} risco(s) do relatório coerentes com a análise das fotos (mesmo perigo e classificação).`);
   // 2. figuras citadas que não existem
   const figs = [...new Set([...rjson.matchAll(/figura\s*(\d+)/gi)].map(m => Number(m[1])))].filter(n => n > nFotos);
   if (figs.length) add("crit", "Fotos", `O texto cita ${figs.map(n => "Figura " + n).join(", ")}, mas a inspeção tem ${nFotos} foto(s).`, "Corrija a referência ou retire a constatação.");
@@ -3590,13 +3601,13 @@ const txtOf = x => String(x == null ? "" : typeof x === "object" ? Object.values
 // conferência com as fotos: cada constatação do relatório é verificada nas imagens
 function chkClaims(){
   const R = report.R || {}, an = lastData || {}, n = (report.photos || []).length, items = [];
-  const push = (tipo, t, fig) => { t = txtOf(t); if (t) items.push({id: tipo[0] + (items.length + 1), tipo, texto: t.slice(0, 220), figura: fig ? txtOf(fig) : ""}); };
-  riscosOf(R).filter(r => r && r.perigo).forEach(r => push("Risco", r.perigo + (r.nr ? ` (${txtOf(r.nr)})` : ""), r.figura));
-  pessoasOf(R.pessoas ? R : an, n).lista.forEach(o => { if (o.epiF.length) push("Pessoa", `${o.pessoa}: sem ${o.epiF.map(e => e.epi).join(", ")}`, o.figura); if (o.ad.length) push("Pessoa", `${o.pessoa}: usando ${o.ad.map(a => a.adorno).join(", ")}`, o.figura); });
-  residuosOf(R.residuos ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Resíduo", `${o.mat}: ${o.prob || o.onde}`, o.fig));
-  armOf(R.armazenamento ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Armazenamento", `${o.mat}: ${o.prob || o.local}`, o.fig));
-  edifOf(R.edificacao ? R : an).filter(x => !x.nv && x.k !== "ok").forEach(x => x.cons.forEach(c => push("Edificação", `${x.el}: ${c}`)));
-  (layoutOf(R.layout ? R : an)?.probs || []).forEach(x => push("Layout", x.p + (x.local ? ` (${x.local})` : "")));
+  const push = (tipo, t, fig, ref) => { t = txtOf(t); if (t) items.push({id: tipo[0] + (items.length + 1), tipo, texto: t.slice(0, 220), figura: fig ? txtOf(fig) : "", ref}); };
+  riscosOf(R).filter(r => r && r.perigo).forEach(r => push("Risco", r.perigo + (r.nr ? ` (${txtOf(r.nr)})` : ""), r.figura, {k: "risco", v: txtOf(r.perigo)}));
+  pessoasOf(R.pessoas ? R : an, n).lista.forEach(o => { if (o.epiF.length) push("Pessoa", `${o.pessoa}: sem ${o.epiF.map(e => e.epi).join(", ")}`, o.figura, {k: "epi", v: o.pessoa}); if (o.ad.length) push("Pessoa", `${o.pessoa}: usando ${o.ad.map(a => a.adorno).join(", ")}`, o.figura, {k: "adorno", v: o.pessoa}); });
+  residuosOf(R.residuos ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Resíduo", `${o.mat}: ${o.prob || o.onde}`, o.fig, {k: "residuos", v: o.mat}));
+  armOf(R.armazenamento ? R : an).lista.filter(o => o.k !== "ok").forEach(o => push("Armazenamento", `${o.mat}: ${o.prob || o.local}`, o.fig, {k: "armazenamento", v: o.mat}));
+  edifOf(R.edificacao ? R : an).filter(x => !x.nv && x.k !== "ok").forEach(x => x.cons.forEach(c => push("Edificação", `${x.el}: ${c}`, "", {k: "edif", v: c})));
+  (layoutOf(R.layout ? R : an)?.probs || []).forEach(x => push("Layout", x.p + (x.local ? ` (${x.local})` : ""), "", {k: "layout", v: x.p}));
   const S5 = prep5S(R); if (S5) S5.rows.filter(r => r.nota !== null && r.constatacao).forEach(r => push("5S", `${r.jp} (nota ${r.nota}/5): ${r.constatacao}`));
   return items.slice(0, 60);
 }
@@ -3631,6 +3642,7 @@ function renderCheck(){
   const IC = {crit: "Corrigir", warn: "Atenção", ok: "OK"};
   let h = `<div class="chk-h"><div><h2 id="chkDlgT">Conferência de coerência</h2><div class="hint" style="margin:0">Relatório comparado com a análise das fotos, os anexos e as regras do documento.</div></div></div>
     <div class="chk-sum"><span class="crit">${nC} a corrigir</span><span class="warn">${nW} de atenção</span><span class="ok">${nO} coerente(s)</span></div>
+    ${chkState.fix ? `<div class="chk-g">Correções aplicadas</div><ul class="chk-l">${chkState.fix.feito.map(t => li("ok", "Corrigido", t)).join("") || li("ok", "OK", "Nada precisou ser corrigido automaticamente.")}${chkState.fix.manual.map(t => li("warn", "Fazer", t)).join("")}</ul>` : ""}
     <div class="chk-g">1. Checagem automática</div><ul class="chk-l">${[...L].sort((a, b) => ({crit: 0, warn: 1, ok: 2}[a.k] - {crit: 0, warn: 1, ok: 2}[b.k])).map(x => li(x.k, IC[x.k], `${x.area}: ${x.msg}`, x.det)).join("")}</ul>
     <div class="chk-g">2. Conferência com as fotos</div>`;
   if (chkState.busy) h += `<p class="hint">Conferindo cada constatação do relatório nas fotos… isso leva alguns segundos.</p>`;
@@ -3643,7 +3655,9 @@ function renderCheck(){
     if (F.faltou.length) h += `<div class="chk-g">Visível nas fotos, mas fora do relatório</div><ul class="chk-l">${F.faltou.map(x => li("warn", "Faltou", txtOf(x.descricao), [x.figura ? "Figura " + txtOf(x.figura) : "", txtOf(x.nr)].filter(Boolean).join(" · "))).join("")}</ul>`;
   }
   $("chkBody").innerHTML = h;
-  $("chkPhotos").disabled = !!chkState.busy;
+  $("chkPhotos").disabled = !!chkState.busy; $("chkFix").disabled = !!chkState.busy;
+  const auto = L.filter(x => x.k !== "ok" && !["Controle", "Pessoas"].includes(x.area)).length + fI.filter(x => x.status === "sem_evidencia").length + (F?.faltou?.length || 0);
+  $("chkFix").hidden = !(chkState.fix ? auto : nC + nW);
   $("chkPhotos").textContent = F && !F.erro ? "Conferir de novo com as fotos" : "Conferir com as fotos";
 }
 function openCheck(){
@@ -3653,6 +3667,91 @@ function openCheck(){
   const dlg = $("chkDlg"); if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
   dlg.querySelector(".nrd-in").scrollTop = 0;
 }
+
+// correção das inconsistências: aplica no relatório o que pode ser corrigido com segurança e lista o que depende do usuário
+const DOC_RX = /documentos?\s+(anexad|analisad|fornecid|apresentad|do setor (anexad|analisad))|an[áa]lise documental/i, AUD_RX = /relatos?\s+(em\s+)?[áa]udio|relato\s+\d|transcri[çc]/i;
+const TXT_KEYS = ["introducao", "objetivo", "justificativa", "metodologia", "descricao_ambiente", "consideracoes_finais"];
+async function fixReport(){
+  if (!report || !chkState || chkState.busy) return;
+  if (report.edited && !confirm("O relatório tem edições feitas à mão. A correção refaz o texto a partir dos dados corrigidos e essas edições serão perdidas. Continuar?")) return;
+  chkState.busy = true; renderCheck(); $("chkFix").disabled = true;
+  const R = JSON.parse(JSON.stringify(report.R || {})), meta = report.meta || {}, an = lastData || {}, feito = [], manual = [];
+  const nFotos = (report.photos || []).length, temDoc = (meta.docs || []).length, temAud = (meta.audios || []).length;
+  const clone = x => JSON.parse(JSON.stringify(x || null));
+  const sentencas = (t, bad) => String(t || "").split(/\n/).map(par => (par.match(/[^.!?]+[.!?]*\s*/g) || [par]).filter(x => !bad(x)).join("").trim()).filter(Boolean).join("\n");
+  // riscos: a base é a análise das fotos
+  R.riscos = mergeRiscos(riscosOf(R), asList(an.riscos).filter(a => !asList(R.__semEvid).some(t => chkSame(a?.perigo, t))));
+  let nCls = 0;
+  R.riscos.forEach(r => { const a = asList(an.riscos).find(x => x && chkSame(x.perigo, r.perigo)); if (a && level(a.severidade, a.probabilidade).r !== level(r.severidade, r.probabilidade).r){ r.severidade = a.severidade; r.probabilidade = a.probabilidade; nCls++; } });
+  if (nCls) feito.push(`${nCls} risco(s) com a classificação igualada à da análise das fotos.`);
+  // constatações sem evidência nas fotos: retiradas do relatório
+  const F = chkState.fotos && chkState.fotos.itens ? chkState.fotos : null;
+  if (F){
+    const sem = F.itens.filter(i => i.status === "sem_evidencia" && i.ref);
+    sem.forEach(i => {
+      const {k, v} = i.ref;
+      if (k === "risco"){ R.riscos = R.riscos.filter(r => !chkSame(r.perigo, v)); R.__semEvid = [...asList(R.__semEvid), v]; R.gut = asList(R.gut).filter(g => !chkSame(g?.problema, v)); }
+      else if (k === "epi" || k === "adorno"){ R.pessoas = R.pessoas || clone(an.pessoas) || {}; asList(R.pessoas.observacoes).forEach(o => { if (o && txtOf(o.pessoa) === v){ if (k === "epi") o.epis_faltantes = []; else o.adornos = []; } }); }
+      else if (k === "residuos" || k === "armazenamento"){ R[k] = R[k] || clone(an[k]) || {}; if (R[k].observacoes) R[k].observacoes = asList(R[k].observacoes).filter(o => !(o && txtOf(o.material) === v)); }
+      else if (k === "edif"){ R.edificacao = R.edificacao || clone(an.edificacao) || []; asList(R.edificacao).forEach(x => { if (x) x.constatacoes = asList(x.constatacoes).filter(c => txtOf(c) !== v); }); }
+      else if (k === "layout"){ R.layout = R.layout || clone(an.layout); if (R.layout) R.layout.problemas = asList(R.layout.problemas).filter(x => txtOf(x && typeof x === "object" ? x.problema : x) !== v); }
+    });
+    if (sem.length) feito.push(`${sem.length} constatação(ões) sem evidência nas fotos retirada(s) do relatório.`);
+    F.itens.filter(i => i.status === "divergente").forEach(i => manual.push(`Revise "${i.texto}": ${txtOf(i.comentario) || "descrição diferente do que aparece na foto"}.`));
+  }
+  // figuras inexistentes, documentos e relatos citados sem anexo
+  const badFig = x => [...x.matchAll(/figura\s*(\d+)/gi)].some(m => Number(m[1]) > nFotos);
+  const bad = x => badFig(x) || (!temDoc && DOC_RX.test(x)) || (!temAud && AUD_RX.test(x));
+  let nTxt = 0;
+  TXT_KEYS.forEach(k => { if (typeof R[k] === "string"){ const t = sentencas(R[k], bad); if (t !== R[k]){ R[k] = t; nTxt++; } } });
+  if (R.parecer && typeof R.parecer.texto === "string"){ const t = sentencas(R.parecer.texto, bad); if (t !== R.parecer.texto){ R.parecer.texto = t; nTxt++; } }
+  if (!temDoc && R.analise_documental){ delete R.analise_documental; nTxt++; }
+  if (Array.isArray(R.psicossociais)){ const antes = R.psicossociais.length; R.psicossociais = R.psicossociais.filter(x => !(x && ((!temDoc && /documento/i.test(txtOf(x.fonte))) || (!temAud && /relato|[áa]udio/i.test(txtOf(x.fonte)))))); if (R.psicossociais.length !== antes) nTxt++; }
+  if (nTxt) feito.push(`${nTxt} trecho(s) com figura inexistente ou citação de documento ou áudio não anexado retirado(s).`);
+  // parecer coerente com os riscos
+  const graves = R.riscos.filter(r => ["crit", "high"].includes(level(r.severidade, r.probabilidade).k));
+  R.parecer = R.parecer && typeof R.parecer === "object" ? R.parecer : {situacao: String(R.parecer || "")};
+  if (/^\s*conforme/i.test(String(R.parecer.situacao || "")) && graves.length){ R.parecer.situacao = "Não conforme"; feito.push(`Parecer alterado para "Não conforme" (${graves.length} risco(s) alto(s) ou crítico(s)).`); }
+  // ação no plano para cada risco alto ou crítico
+  const S5a = prep5S(R), planoAt = (S5a ? S5a.plano : asList(R.plano_acao)).filter(a => a && a.acao);
+  const semAcao = graves.filter(r => !planoAt.some(a => chkSame(r.perigo, [a.acao, a.por_que, a.como].join(" ")) || (r.medida && chkSame(r.medida, [a.acao, a.como].join(" ")))));
+  if (semAcao.length){
+    R.plano_acao = asList(R.plano_acao).concat(semAcao.map(r => { const L = level(r.severidade, r.probabilidade); return {acao: txtOf(r.medida) || `Eliminar ou controlar: ${txtOf(r.perigo)}`, por_que: `${txtOf(r.perigo)} (risco ${L.t.toLowerCase()}, ${L.r} pontos)`, onde: r.figura ? `Local da Figura ${txtOf(r.figura)}` : "Setor inspecionado", quem: "Gestor do setor e SST", quando: L.k === "crit" ? "Imediato" : "30 dias", como: txtOf(r.medida) || "Aplicar a hierarquia de controles: eliminação, engenharia, administrativo e EPI", quanto: "A orçar", prioridade: "Alta", ferramenta: txtOf(r.nr) ? "NR" : "Gestão"}; }));
+    feito.push(`${semAcao.length} ação(ões) incluída(s) no plano 5W2H para riscos altos e críticos sem ação.`);
+  }
+  // notas 5S iguais às da análise das fotos
+  if (R.cinco_s && an.cinco_s){ let n5 = 0; S5DEF.forEach(([k]) => { const v = R.cinco_s[k], a = an.cinco_s[k], na = Number(a && typeof a === "object" ? a.nota : a); if (v && typeof v === "object" && isFinite(na) && Math.abs(na - Number(v.nota)) >= 2){ v.nota = na; if (v.nota_apos != null && Number(v.nota_apos) < na) v.nota_apos = na; n5++; } }); if (n5) feito.push(`${n5} nota(s) do 5S igualada(s) às da análise das fotos.`); }
+  // redação: inteligência artificial e nomes
+  let Rs = scrubAI(R); const nomeRx = /\b(Sr|Sra|Srta)\.?\s+[A-ZÁÉÍÓÚÂÊÔÃÕ][a-zà-ú]+(\s+[A-ZÁÉÍÓÚÂÊÔÃÕ][a-zà-ú]+)?/g;
+  const tira = x => typeof x === "string" ? x.replace(nomeRx, "o trabalhador") : Array.isArray(x) ? x.map(tira) : x && typeof x === "object" ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, tira(v)])) : x;
+  const antesTxt = JSON.stringify(R); Rs = tira(Rs); if (JSON.stringify(Rs) !== antesTxt) feito.push("Redação ajustada: sem menção a inteligência artificial e sem nomes de pessoas.");
+  // problemas visíveis que faltaram: classificados pela análise das fotos e incluídos como riscos
+  const falt = F ? asList(F.faltou) : [];
+  const blobs = report.blobs || frames.map(f => f.blob);
+  if (falt.length && blobs.length && ($("apiKey").value.trim() || sample)){
+    try{
+      const r = await callAI(`Você é técnico de SST. Para cada problema abaixo, visível nas ${blobs.length} imagem(ns) anexadas (Figura 1 = primeira), classifique pela matriz da NR-01 (severidade 1-5, probabilidade 1-5) e indique a medida de controle pela hierarquia de controles. Só inclua o que for realmente visível; descarte o que não conseguir confirmar. Nunca escreva nomes de pessoas nem traços físicos.
+Problemas:
+${falt.map((x, i) => `${i + 1}. ${txtOf(x.descricao)}${x.figura ? ` (Figura ${txtOf(x.figura)})` : ""}${x.nr ? ` – ${txtOf(x.nr)}` : ""}`).join("\n")}
+Responda SOMENTE com JSON: {"riscos":[{"perigo":"","categoria":"Físico|Químico|Biológico|Ergonômico|Acidente","nr":"NR-12","item":"","severidade":1,"probabilidade":1,"medida":"","figura":1}]}`, blobs, undefined, {fast: true});
+      const novos = asList(r && r.riscos).filter(x => x && x.perigo && !Rs.riscos.some(y => chkSame(y.perigo, x.perigo)));
+      if (novos.length){ Rs.riscos = Rs.riscos.concat(novos); feito.push(`${novos.length} problema(s) visível(is) nas fotos incluído(s) como risco(s).`); }
+    }catch(e){ manual.push("Não foi possível classificar os problemas que faltaram no relatório; inclua-os manualmente ou tente de novo."); }
+  } else if (falt.length) manual.push("Há problemas visíveis nas fotos fora do relatório; informe a chave da API para incluí-los automaticamente.");
+  // rostos: nova detecção quando há pessoas e nenhum rosto coberto
+  const PPa = pessoasOf(an, nFotos);
+  if (PPa.total && !(report.faces || []).some(x => x.length) && blobs.length){
+    try{ const fc = await detectFaces(blobs); if (fc && fc.some(x => x.length)){ report.faces = fc; report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, fc[i]))); feito.push(`${fc.reduce((t, x) => t + x.length, 0)} rosto(s) coberto(s) nas fotos.`); } else manual.push("Nenhum rosto foi detectado automaticamente: cubra-os pelo botão Rostos nas fotos."); }
+    catch(e){ manual.push("Não foi possível detectar os rostos agora: use o botão Rostos nas fotos."); }
+  }
+  if (!meta.elab) manual.push('Preencha o campo "Elaborado por".');
+  if (!meta.resp) manual.push('Preencha o campo "Responsável técnico".');
+  report.R = Rs; report.edited = null; saveSoon(); showReport();
+  chkState = {local: checkLocal(), fotos: null, busy: false, fix: {feito, manual}};
+  renderCheck(); $("chkFix").disabled = false;
+  setStatus(feito.length ? `Relatório corrigido: ${feito.length} tipo(s) de correção aplicados. Confira de novo com as fotos para confirmar.` : "Nenhuma correção automática necessária.");
+}
+$("chkFix").onclick = fixReport;
 $("chkPhotos").onclick = checkPhotos;
 $("chkX").onclick = () => $("chkDlg").close();
 function showReport(){
