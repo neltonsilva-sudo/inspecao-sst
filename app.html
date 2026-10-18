@@ -414,6 +414,7 @@ button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
 button.sm{padding:6px 12px;font-size:13px}
 .mapsel{display:grid;gap:6px}
+.mapclr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mapclr span{width:100%;font-size:12.5px;font-weight:700;color:var(--muted)}
 .usosel{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .usosel span{font-weight:700;width:100%}.usosel label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
 .usosel label:has(input:checked){border-color:var(--ink);background:var(--signal);color:var(--signal-ink);font-weight:700}.usosel input{accent-color:var(--ink);margin:0}
@@ -1017,7 +1018,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v131</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v132</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1234,6 +1235,8 @@ api:
         <p class="hint" style="margin:-4px 0 0">Grupos: físico, químico, biológico, ergonômico ou acidentes. Intensidade: alto, médio ou baixo (sem informar, fica médio; sem o grupo, ele é deduzido pelo nome do risco).</p>
         <div class="mapsel"><p class="label" style="margin:0">Foto que vai compor o mapa</p><div class="mapthumbs" id="mapThumbs"></div><p class="hint" id="mapThumbHint" style="margin:0">Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.</p></div>
         <button id="mapRun" type="button">Analisar fotos, áudios e documentos para o mapa</button>
+        <div class="mapclr"><span>Limpar o que foi anexado para o mapa:</span>
+          <button type="button" class="sm" id="mClrFotos">Fotos do mapa</button><button type="button" class="sm" id="mClrDocs">Documentos</button><button type="button" class="sm" id="mClrAud">Áudios</button><button type="button" class="sm newrep" id="mClrTudo">Limpar tudo do mapa</button></div>
         <div class="status" id="mapStatus" role="status"></div>
         <div class="mapprev" id="mapPrev" hidden></div>
         <button class="primary" id="mapBtn" type="button">Gerar mapa de risco (PDF)</button>
@@ -1254,7 +1257,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v131</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v132</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4037,6 +4040,14 @@ Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonom
   finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; $("mapRun").textContent = "Analisar fotos, áudios e documentos para o mapa"; }
 }
 $("mapRun").onclick = mapAnalyze;
+// limpeza do que foi anexado para o mapa: fotos só do mapa saem; fotos de relatório e mapa passam a ser só do relatório
+function limparFotosMapa(){ for (let i = frames.length - 1; i >= 0; i--){ const f = frames[i]; if (f.uso === "mapa"){ URL.revokeObjectURL(f.url); frames.splice(i, 1); } else if ((f.uso || "ambos") === "ambos") f.uso = "rel"; } mapFoto = 0; mapFotoMan = false; mapData = null; refreshThumbs(); drawMapPrev(); }
+function limparDocs(){ docs.length = 0; docInfo = null; mapData = null; drawDocs(); drawDocInfo(); drawMapPrev(); }
+function limparAudios(){ audios.forEach(a => a.url && URL.revokeObjectURL(a.url)); audios.length = 0; mapData = null; drawAudios(); drawMapPrev(); saveSoon(); }
+$("mClrFotos").onclick = () => { if (!mapF().length) return mapMsg("Não há fotos marcadas para o mapa."); if (!confirm(`Tirar as ${mapF().length} foto(s) do mapa de risco?\n\nFotos só do mapa (M) serão apagadas; fotos do relatório e do mapa (R+M) continuam no relatório técnico.`)) return; limparFotosMapa(); mapMsg("Fotos retiradas do mapa de risco."); };
+$("mClrDocs").onclick = () => { if (!docs.length) return mapMsg("Não há documentos anexados."); if (!confirm(`Remover os ${docs.length} documento(s) anexado(s)?\n\nEles também deixam de ser usados na análise e no relatório técnico.`)) return; limparDocs(); mapMsg("Documentos removidos."); };
+$("mClrAud").onclick = () => { if (!audios.length) return mapMsg("Não há áudios anexados."); if (!confirm(`Remover os ${audios.length} áudio(s) e as transcrições?\n\nEles também deixam de ser usados na análise e no relatório técnico.`)) return; limparAudios(); mapMsg("Áudios removidos."); };
+$("mClrTudo").onclick = () => { if (!confirm("Limpar tudo do mapa de risco?\n\nRemove as fotos do mapa (as de relatório e mapa ficam só no relatório), os documentos, os áudios com as transcrições, os riscos digitados e o resultado da análise do mapa. Os campos Setor, Elaboração, Revisão, Aprovação, Ano de vigência e a logo são mantidos.")) return; limparFotosMapa(); limparDocs(); limparAudios(); $("mExtra").value = ""; store("sst_mExtra", null); mapData = null; drawMapPrev(); mapMsg("Mapa de risco limpo: fotos, documentos, áudios e riscos digitados removidos."); };
 $("mExtra").addEventListener("input", () => drawMapPrev());
 
 const MAPA_GR = [["fis", "Risco físico", "#7dd956"], ["qui", "Risco químico", "#ff3130"], ["erg", "Risco ergonômico", "#ffde59"], ["bio", "Risco biológico", "#984808"], ["aci", "Risco de acidentes", "#3399ff"]]; // cores tiradas do modelo de mapa de risco
