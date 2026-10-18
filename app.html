@@ -989,7 +989,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v109</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v110</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1195,7 +1195,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v109</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v110</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1476,7 +1476,7 @@ function psiOf(d){
 }
 
 // regra principal: só o que há nas fontes da inspeção (sem suposições)
-const soEvid = n => `REGRA PRINCIPAL – SOMENTE EVIDÊNCIAS: registre apenas riscos, problemas, pessoas e constatações que aparecem nas ${n} imagem(ns) (Figura 1 a Figura ${n}), nas transcrições de áudio, nos documentos anexados ou no contexto digitado pelo usuário que estiverem nesta mensagem. Não faça suposições e não complete com o que é "comum" nesse tipo de setor; se não há evidência, não inclua o item (deixe a lista vazia). Pessoas: registre SOMENTE se estiverem claramente visíveis nas imagens; se nenhuma pessoa aparece, use "total":0 e lista vazia. Nunca cite figura inexistente (o maior número é Figura ${n}). Riscos psicossociais e análise documental: somente se houver relatos em áudio, documentos ou contexto digitado com essa informação. Não mencione inteligência artificial, IA, Gemini nem Claude no texto.
+const soEvid = n => `REGRA PRINCIPAL – SOMENTE EVIDÊNCIAS: registre apenas riscos, problemas, pessoas e constatações que aparecem nas ${n} imagem(ns) (Figura 1 a Figura ${n}), nas transcrições de áudio, nos documentos anexados ou no contexto digitado pelo usuário que estiverem nesta mensagem. Não faça suposições e não complete com o que é "comum" nesse tipo de setor; se não há evidência, não inclua o item (deixe a lista vazia). IMPORTANTE: todo problema que você registrar em qualquer seção (pessoa sem EPI ou com adorno, armazenamento, resíduos, edificação, layout, item não conforme de NR) É evidência e DEVE aparecer também em "riscos", com severidade e probabilidade; a lista de riscos só pode ficar vazia se nenhuma seção tiver não conformidade. Pessoas: registre SOMENTE se estiverem claramente visíveis nas imagens; se nenhuma pessoa aparece, use "total":0 e lista vazia. Nunca cite figura inexistente (o maior número é Figura ${n}). Riscos psicossociais e análise documental: somente se houver relatos em áudio, documentos ou contexto digitado com essa informação. Não mencione inteligência artificial, IA, Gemini nem Claude no texto.
 `;
 function buildPrompt(ctx, n = 1){
   return `Você é um engenheiro de segurança do trabalho e consultor de gestão industrial no Brasil.
@@ -2535,7 +2535,7 @@ async function analyze(blobs, label, extra = "", opts = {}){
   const prompt = buildPrompt($("ctx").value.trim(), blobs.length) + extra;
   try{
     const data = await callAI(prompt, blobs, ctl.signal, opts);
-    render(data, false); lastData = data; locTried = false; saveSoon();
+    completeRiscos(data, frames.length); render(data, false); lastData = data; locTried = false; saveSoon();
     setStatus(`Concluído às ${new Date().toLocaleTimeString("pt-BR")} em ${Math.round((Date.now()-t0)/1000)} s.`);
     return data;
   }catch(e){
@@ -2866,7 +2866,7 @@ Ferramentas da qualidade obrigatórias:
 - Matriz REI, relação esforço × impacto (1 a 5 cada), para cada ação proposta.
 - Avaliação 5S (Seiri/utilização, Seiton/organização, Seiso/limpeza, Seiketsu/padronização, Shitsuke/disciplina): nota de 0 a 5 por senso, com constatação baseada no que é visível e ação recomendada. "necessario" = true se algum senso tiver nota 3 ou menor.
 - Projeção após o plano de ação: para cada risco, informe severidade_residual e probabilidade_residual (1 a 5) esperadas depois de implantadas as medidas, de forma realista (a severidade só cai se a medida eliminar ou reduzir o perigo; EPI e sinalização reduzem pouco). Para cada senso do 5S, informe nota_apos (0 a 5) esperada após a implantação.
-- Plano de ação 5W2H com prioridade coerente com a GUT. Informe a "ferramenta" de origem de cada ação (NR, 5S, Ergonomia, Kaizen, Gestão visual etc.).
+- Plano de ação 5W2H com prioridade coerente com a GUT, com pelo menos uma ação de segurança para CADA risco da lista de riscos (a medida de controle pela hierarquia de controles: eliminação, substituição, engenharia, administrativa e EPI), com responsável (função), prazo e "ferramenta" com a NR do risco. Informe a "ferramenta" de origem de cada ação (NR, 5S, Ergonomia, Kaizen, Gestão visual etc.).
 - Plano de ação 5S (melhorias detalhadas): em "acoes" de CADA senso com nota 3 ou menor, liste de 4 a 6 ações de melhoria concretas; senso com nota 4, de 1 a 2 ações para chegar a 5; senso com nota 5, "acoes" vazio. Cada ação deve tratar um problema constatado nas figuras, relatos ou documentos ("problema": cite a figura e o local) ou ser etapa do método 5S necessária para corrigi-lo (treinamento, auditoria, padrão) — nunca invente problemas. Em "como", descreva o passo a passo numerado (1) … 2) … 3) …) com materiais, quantidades e método; informe responsável (função, nunca nome), prazo, evidência de conclusão e "ganho" (benefício esperado para segurança, organização ou produtividade). Exemplos por senso — Seiri: triagem com etiqueta vermelha, área de descarte temporária, destinação (descarte, doação, almoxarifado) e critério de frequência de uso; Seiton: quadro de sombras, demarcação de piso (NR-26), identificação de prateleiras e caixas, endereçamento e itens de uso frequente junto ao posto; Seiso: limpeza de 5 min por turno, mapa de limpeza com responsáveis, kit de limpeza no posto e eliminação das fontes de sujeira (vazamentos, cavacos, poeira); Seiketsu: fotos do "como deve ficar", checklist do posto, cores e etiquetas padronizadas e procedimento do setor; Shitsuke: auditoria 5S com pontuação, quadro de resultados, responsáveis por área, treinamento e reconhecimento da melhor área. Em "implantacao", informe as etapas em ordem (lançamento/treinamento, dia D de triagem, organização, limpeza, padronização, auditorias), a auditoria (frequência, quem e como) e indicadores com meta (ex.: nota 5S ≥ 80/100 em 60 dias).
 - Se a implantação do 5S for necessária, inclua no plano de ação ações específicas de implantação do 5S para os sensos deficientes (ex.: triagem com etiqueta vermelha e descarte, definição de layout e demarcação de áreas, local identificado para cada item, cronograma e checklist de limpeza, padrões visuais e procedimento do setor, auditorias 5S periódicas e treinamento da equipe), com "ferramenta":"5S".
 
@@ -3117,6 +3117,32 @@ function flowSVG(steps){
 const ctlRows = (meta, emis) => [["Elaboração", meta.elab || "", emis], ["Revisão", meta.rev || "", emis], ["Aprovação", aprovOf(meta), emis], ["Responsável técnico", meta.resp || "", emis]].map(([e, n, d]) => [e, n || (e === "Elaboração" || e === "Responsável técnico" ? "Não informado" : "A confirmar"), n ? d : "—"]);
 const elabOf = meta => meta.elab || "Não informado", revOf = meta => meta.rev || "A confirmar", aprovOf = meta => meta.aprov || meta.resp || "";
 const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+// riscos a partir das não conformidades registradas nas outras seções da análise (pessoas, armazenamento, resíduos,
+// edificação, layout e checklist das NRs), quando a lista de riscos não as trouxe; classificação padrão por tipo
+function riscosDerivados(d, nF){
+  if (!d || typeof d !== "object") return [];
+  const out = [], t = txtOf, add = (perigo, cat, nr, S, P, medida, figura) => { perigo = t(perigo); if (perigo) out.push({perigo, categoria: cat, nr: t(nr), item: "", severidade: S, probabilidade: P, medida: t(medida), figura: figura ? Number(String(figura).match(/\d+/)?.[0]) || undefined : undefined, origem: "derivado"}); };
+  pessoasOf(d, nF).lista.forEach(o => {
+    o.epiF.forEach(e => add(`Trabalhador sem ${e.epi}${o.atividade ? " durante " + o.atividade : ""}`, "Acidente", e.nr || "NR-06", 3, 4, `Fornecer, treinar e exigir o uso de ${e.epi} com CA válido (NR-06)`, o.figura));
+    o.ad.forEach(a => add(`Trabalhador usando ${a.adorno}${a.risco ? " – " + a.risco : ""}`, "Acidente", a.nr || "NR-12", 3, 3, "Proibir adornos na atividade e orientar a equipe", o.figura));
+  });
+  armOf(d).lista.filter(o => o.k === "crit").forEach(o => add(`${o.mat}: ${o.prob || o.local}`, "Acidente", o.norma || "NR-11", /extintor|sa[íi]da|quadro|el[ée]tric|inflam|cilindro/i.test(o.prob + " " + o.local) ? 4 : 3, 3, o.rec || o.certo, o.fig));
+  residuosOf(d).lista.filter(o => o.k === "crit").forEach(o => add(`Descarte incorreto: ${o.mat}${o.prob ? " – " + o.prob : ""}`, /classe\s*i(?!i)|perigos/i.test(o.classe) ? "Químico" : "Acidente", o.norma || "NR-25", /classe\s*i(?!i)|perigos/i.test(o.classe) ? 3 : 2, 3, o.rec || ("Descartar em " + (o.dest || "recipiente correto")), o.fig));
+  edifOf(d).filter(x => !x.nv && x.k !== "ok").forEach(x => add(`${x.el}: ${x.cons[0] || x.est}${x.risco ? " – " + x.risco : ""}`, "Acidente", x.norma || "NR-08", x.k === "crit" ? 3 : 2, 3, x.rec, (x.cons.join(" ").match(/figura\s*\d+/i) || [""])[0]));
+  (layoutOf(d)?.probs || []).forEach(x => add(`${x.p}${x.local ? " (" + x.local + ")" : ""}`, x.imp && /ergon/i.test(x.imp) ? "Ergonômico" : "Acidente", x.norma || "NR-12", 2, 3, x.sug, (x.local.match(/figura\s*\d+/i) || [""])[0]));
+  asList(d.checklist_nrs).filter(m => m && m.aplicavel !== false).forEach(m => asList(m.itens).filter(i => i && /n[ãa]o\s*conforme/i.test(t(i.situacao))).forEach(i => add(`${t(i.requisito)}${i.evidencia ? " – " + t(i.evidencia) : ""}`, "Acidente", m.nr, 3, 3, i.acao, (t(i.evidencia).match(/figura\s*\d+/i) || [""])[0])));
+  const uniq = [];
+  out.forEach(r => { if (!uniq.some(u => chkSame(u.perigo, r.perigo))) uniq.push(r); });
+  return uniq;
+}
+// completa a lista de riscos da análise com as não conformidades das outras seções que ficaram de fora
+function completeRiscos(d, nF){
+  if (!d || typeof d !== "object") return d;
+  const base = asList(d.riscos).filter(r => r && typeof r === "object" && r.perigo);
+  const novos = riscosDerivados(d, nF).filter(r => !base.some(b => chkSame(b.perigo, r.perigo) || (r.medida && b.medida && chkSame(b.medida, r.medida) && nrNum(b.nr) === nrNum(r.nr))));
+  if (novos.length) d.riscos = base.concat(novos);
+  return d;
+}
 // riscos do relatório: a lista redigida + qualquer risco da análise que tenha ficado de fora (a matriz do painel
 // vem da análise; o relatório nunca pode mostrar menos riscos que ela)
 function mergeRiscos(rep, an){
@@ -3129,6 +3155,17 @@ function mergeRiscos(rep, an){
     if (!same) out.push({...a});
   });
   return out;
+}
+// plano de ação do relatório: ações redigidas + uma ação de segurança para cada risco que ficou sem ação
+function planoSeg(plano, riscos){
+  const pl = asList(plano).filter(a => a && a.acao).slice();
+  riscos.filter(r => r && r.perigo).forEach((r, i) => {
+    const tem = pl.some(a => chkSame(r.perigo, [a.acao, a.por_que, a.como].join(" ")) || (r.medida && chkSame(r.medida, [a.acao, a.como].join(" "))));
+    if (tem) return;
+    const L = level(r.severidade, r.probabilidade), nr = txtOf(r.nr);
+    pl.push({acao: txtOf(r.medida) || `Eliminar ou controlar: ${txtOf(r.perigo)}`, por_que: `${txtOf(r.perigo)} (risco ${L.t.toLowerCase()}, ${L.r} pontos${nr ? ", " + nr : ""})`, onde: r.figura ? `Local da Figura ${txtOf(r.figura)}` : "Setor inspecionado", quem: "Gestor do setor e SST", quando: {crit: "Imediato", high: "15 dias", warn: "30 dias", ok: "60 dias"}[L.k], como: txtOf(r.medida) ? `${txtOf(r.medida).replace(/[.;:\s]+$/, "")}, seguindo a hierarquia de controles e registrando a evidência de conclusão` : "Aplicar a hierarquia de controles: eliminação, engenharia, medidas administrativas e EPI", quanto: "A orçar", prioridade: L.k === "crit" || L.k === "high" ? "Alta" : L.k === "warn" ? "Média" : "Baixa", ferramenta: nr || "Segurança", seg: true});
+  });
+  return pl;
 }
 const riscosOf = R => asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], asList(lastData?.riscos).filter(a => !asList(R.__semEvid).some(t => chkSame(a?.perigo, t))));
 function gutAll(R, riscos){
@@ -3166,7 +3203,7 @@ function reportHTML(R, photos, meta){
   const SC = scores(riscos, S5);
   const ctile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-l"><span>hoje</span><span>após o plano</span></div><div class="nt-k"><span style="color:${classe(a)[1]}">${classe(a)[0]}</span> → <span style="color:${classe(b)[1]}">${classe(b)[0]}</span></div></div>`;
   const tile = (t, a, b) => `<div class="nt"><div class="nt-t">${t}</div><div class="nt-v"><b style="color:${classe(a)[1]}">${a}</b><span>→</span><b style="color:${classe(b)[1]}">${b}</b></div><div class="nt-c">${classe(a)[0]} → ${classe(b)[0]}</div></div>`;
-  const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const plano = planoSeg(S5 ? S5.plano : asList(R.plano_acao), riscos).sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const fotos = asList(R.fotos);
   const PP = pessoasOf(R.pessoas ? R : (lastData || {}), photos.length);
   const RS = residuosOf(R.residuos ? R : (lastData || {}));
@@ -3378,7 +3415,7 @@ function reportHTML(R, photos, meta){
   </tbody></table></div>` : ""}
   ${H("Plano de ação (5W2H)", "Ações, responsáveis e prazos para tratar os desvios encontrados.")}
   %%T:Plano de ação 5W2H%%<div class="tw"><table class="w2h"><thead><tr><th>Prioridade</th><th>Ferramenta</th><th>O quê<small>What</small></th><th>Por quê<small>Why</small></th><th>Onde<small>Where</small></th><th>Quem<small>Who</small></th><th>Quando<small>When</small></th><th>Como<small>How</small></th><th>Quanto<small>How much<small>(Estimativa)</small></th></tr></thead><tbody>
-  ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
+  ${plano.map(a => { const pr = String(a.prioridade || ""); const c = /alta/i.test(pr) ? LV.crit[2] : /m[ée]dia/i.test(pr) ? LV.warn[2] : LV.ok[2]; return `<tr><td><span class="lv" style="background:${c}">${esc(pr || "—")}</span></td><td class="num">${esc(a.ferramenta || "—")}</td><td><b>${esc(a.acao)}</b>${a.auto ? '<div class="cap" style="margin:0">Ação padrão de implantação do 5S</div>' : a.seg ? '<div class="cap" style="margin:0">Ação de segurança para o risco identificado</div>' : ""}</td><td>${esc(a.por_que)}</td><td>${esc(a.onde)}</td><td>${esc(a.quem)}</td><td>${esc(a.quando)}</td><td>${esc(a.como)}</td><td>${esc(a.quanto)}</td></tr>`; }).join("") || '<tr><td colspan="9">—</td></tr>'}
   </tbody></table></div>
   ${H("Considerações finais", "Síntese e encaminhamentos.")}${para(R.consideracoes_finais)}
   ${meta.audios?.length ? `${H("Anexo – Transcrições dos relatos em áudio", "Transcrições automáticas, sujeitas a revisão.")}${meta.audios.map((a, i) => `<h3>${esc(a.nome)}</h3><p class="cap" style="margin-top:0">${esc(a.origem === "celular" ? "Gravado no celular" : "Computador")} · duração ${fmtDur(a.dur)} · transcrição automática, sujeita a revisão</p><p class="transc">${esc(String(a.transcricao || "").slice(0, 6000))}</p>`).join("")}` : ""}
@@ -3448,7 +3485,7 @@ function synthHTML(R, meta){
   const P = R.parecer || {}, sit = String(P.situacao || "Verificar em campo");
   const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LV.crit[1] : /parcial/i.test(sit) ? "#a87f00" : /conforme/i.test(sit) ? LV.ok[1] : "#a87f00";
   const ord = {alta:0, "média":1, media:1, baixa:2}, prOf = a => ord[String(a.prioridade || "").toLowerCase()] ?? 3;
-  const plano = (S5 ? S5.plano : asList(R.plano_acao)).filter(a => a && a.acao).slice().sort((a, b) => prOf(a) - prOf(b));
+  const plano = planoSeg(S5 ? S5.plano : asList(R.plano_acao), riscos).sort((a, b) => prOf(a) - prOf(b));
   const princ = plano.filter(a => prOf(a) <= 1).slice(0, 20), resto = plano.length - princ.length;
   const DR = docRegOf(R.documentos_registros ? R : (lastData || {})).filter(x => x.k === "crit" || x.k === "high");
   const code = "RS-SST-" + String(meta.iso || "").replace(/-/g, "") + "-" + ((meta.setor || "SETOR").normalize("NFD").replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase() || "SETOR");
@@ -4092,7 +4129,7 @@ async function buildPptx(R, photos, meta){
   const gut = gutAll(R, riscos);
   const rei = asList(R.rei).map(a => ({...a, e: clamp(a.esforco,1,5), i: clamp(a.impacto,1,5)}));
   const ord = {alta: 0, "média": 1, media: 1, baixa: 2};
-  const plano = (S5 ? S5.plano : asList(R.plano_acao)).slice().sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
+  const plano = planoSeg(S5 ? S5.plano : asList(R.plano_acao), riscos).sort((a, b) => (ord[String(a.prioridade).toLowerCase()] ?? 3) - (ord[String(b.prioridade).toLowerCase()] ?? 3));
   const Pa = R.parecer || {}, sit = String(Pa.situacao || "Verificar em campo");
   const sitC = /n[ãa]o\s*conforme/i.test(sit) ? LVC.crit : /parcial/i.test(sit) ? LVC.warn : /conforme/i.test(sit) ? LVC.ok : LVC.warn;
   const tmp = document.createElement("div"); tmp.innerHTML = reportHTML(R, photos, meta);
@@ -5346,7 +5383,7 @@ async function restoreSession(){
     (s.frames || []).forEach(b => frames.push({blob: b, url: URL.createObjectURL(b)})); refreshThumbs();
     (s.audios || []).forEach(a => audios.push({id: rnd(8), name: a.name, from: a.from, dur: a.dur, blob: a.blob, url: a.blob ? URL.createObjectURL(a.blob) : "", info: a.info, err: a.err, status: a.status || (a.info ? "transcrito" : "")})); drawAudios();
     (s.docs || []).forEach(d => docs.push(d)); docInfo = s.docInfo || null; drawDocs(); drawDocInfo();
-    if (s.lastData){ lastData = s.lastData; render(lastData, false); }
+    if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
     if (s.report){ const blobs = frames.map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; showReport(); }
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}). Para começar do zero, clique em Gerar novo relatório.`);
   }catch(e){ console.warn(e); }
