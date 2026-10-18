@@ -412,6 +412,11 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .lvd-res{margin-top:6px;font-size:13px;color:var(--muted)}
 button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
+button.sm{padding:6px 12px;font-size:13px}
+.report .rtools{display:flex;justify-content:flex-end;margin:-4px 0 8px}
+.report .empty-st{display:grid;justify-items:center;text-align:center;gap:8px;padding:48px 20px;color:var(--muted)}
+.report .empty-st h2{margin:4px 0 0;font:700 20px var(--f-display);text-transform:uppercase;letter-spacing:.03em;color:var(--ink)}
+.report .empty-st p{margin:0;max-width:440px;line-height:1.5}
 #newRep{width:100%;margin-top:10px}
 .lvd-loc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px;padding:12px 14px;border:1px solid #f5c98a;background:#fff7ea;border-radius:10px;font-size:13.5px}
 .lvd-loc span{flex:1;min-width:220px}.lvd-loc .err{color:var(--crit)}
@@ -993,7 +998,7 @@ button.newrep:hover{background:var(--crit);color:#fff}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v111</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v112</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1157,7 +1162,7 @@ api:
           <p class="hint" id="keyHint">Gemini gratuito: crie a chave em aistudio.google.com/apikey. Sem "Lembrar", a chave vale só enquanto esta aba estiver aberta (use em computador compartilhado).</p>
         </div>
         <button class="primary" id="goBtn" type="button" disabled>Analisar ambiente</button>
-        <button id="newInsp" type="button" class="newrep">Gerar novo relatório (apagar tudo)</button>
+        <button id="newInsp" type="button" class="newrep">Limpar tudo e começar novo relatório</button>
         <div class="row" id="stopRow" hidden><button id="stopBtn" type="button">Parar</button></div>
         <div class="status" id="status" role="status"></div>
       </div>
@@ -1199,7 +1204,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v111</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v112</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1624,6 +1629,14 @@ function store(k, v){ try{ v==null ? localStorage.removeItem(k) : localStorage.s
 function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 
 /* ---------- render do relatório ---------- */
+// painel sem análise: nada da inspeção anterior aparece; o exemplo só abre se o usuário pedir
+function renderEmpty(){
+  curRender = null; curRiscos = []; curNR = {};
+  $("report").innerHTML = `<div class="empty-st"><svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    <h2>Nenhuma análise nesta inspeção</h2><p>Adicione as fotos do setor (câmera, galeria ou celular) e clique em <b>Analisar ambiente</b>. O diagnóstico, a matriz de risco e o relatório aparecem aqui.</p>
+    <button type="button" class="sm" data-act="example">Ver um relatório de exemplo</button></div>`;
+}
+$("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "example") render(EXAMPLE, true); else if (a === "noex") renderEmpty(); });
 function render(d, isExample){
   d = d && typeof d === "object" ? d : {};
   curRender = {d, isExample};
@@ -1748,7 +1761,7 @@ function render(d, isExample){
       <p>${counts.crit} risco(s) crítico(s): ${esc(txt(top.perigo))}${txt(top.nr) ? ` (${esc(txt(top.nr))})` : ""}</p>
       ${txt(top.medida) ? `<small><strong>Ação imediata:</strong> ${esc(txt(top.medida))}</small>` : ""}
     </div>` : ""}
-    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Capture imagens e clique em Analisar para gerar o seu.</span></div>' : ""}
+    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><button type="button" class="sm" data-act="noex" style="margin-left:auto">Fechar exemplo</button></div>' : '<div class="rtools"><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar tudo (novo relatório)</button></div>'}
 
     <header class="head">
       <p class="eyebrow">Diagnóstico do ambiente</p>
@@ -5416,7 +5429,7 @@ async function restoreSession(){
 }
 // "Gerar novo relatório": apaga tudo da inspeção atual, desconecta o celular e recomeça do zero
 async function newInspection(){
-  if (!confirm("Gerar um novo relatório?\n\nIsto apaga TUDO da inspeção atual: fotos, áudios, documentos anexados, contexto, análise, validações das NRs e o relatório. Celulares conectados serão desconectados.\n\nOs campos do relatório (empresa, setor, responsável técnico, elaborado e revisado por) e a logo da empresa também serão limpos.")) return;
+  if (!confirm("Limpar tudo e começar um novo relatório?\n\nIsto apaga TUDO da inspeção atual: fotos, áudios, documentos anexados, contexto, análise, validações das NRs e o relatório. Celulares conectados serão desconectados.\n\nOs campos do relatório (empresa, setor, responsável técnico, elaborado e revisado por) e a logo da empresa também serão limpos.")) return;
   try{ ctl?.abort(); }catch(e){}
   if (qr) qrStop(); // desconecta o celular (ele recebe o aviso de sessão encerrada)
   try{ if (mon) stopMon(); }catch(e){}
@@ -5432,7 +5445,7 @@ async function newInspection(){
   store("sst_logo", null); drawLogo();
   $("rData").value = new Date().toISOString().slice(0, 10);
   ["lvDlg", "nrDlg", "faceDlg"].forEach(id => { try{ $(id)?.open && $(id).close(); }catch(e){} });
-  refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); render(EXAMPLE, true); updateGo();
+  refreshThumbs(); drawAudios(); drawDocs(); drawDocInfo(); renderEmpty(); updateGo();
   try{ await idbDel(); }catch(e){}
   qrMsg("");
   setStatus("Novo relatório iniciado: tudo da inspeção anterior foi apagado. Adicione as fotos do novo setor.");
@@ -5443,7 +5456,7 @@ async function newInspection(){
 function setMode(txt){ $("mode").innerHTML = "Modo: <b>" + esc(txt) + "</b>"; }
 async function init(){
   if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
-  render(EXAMPLE, true); refreshThumbs();
+  renderEmpty(); refreshThumbs();
   $("newInsp").onclick = newInspection; $("newRep").onclick = newInspection;
   $("ctx").addEventListener("input", () => saveSoon());
   if (inViewer){
