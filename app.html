@@ -413,6 +413,8 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 button.newrep{border-color:var(--crit);color:var(--crit);font-weight:700}
 button.newrep:hover{background:var(--crit);color:#fff}
 button.sm{padding:6px 12px;font-size:13px}
+.audlist li.novo{animation:audNovo 1.2s ease-in-out 4;border-color:var(--signal)}
+@keyframes audNovo{50%{box-shadow:0 0 0 4px var(--signal);background:var(--cell-warn)}}
 .report .rtools{display:flex;justify-content:flex-end;margin:-4px 0 8px}
 .report .empty-st{display:grid;justify-items:center;text-align:center;gap:8px;padding:48px 20px;color:var(--muted)}
 .report .empty-st h2{margin:4px 0 0;font:700 20px var(--f-display);text-transform:uppercase;letter-spacing:.03em;color:var(--ink)}
@@ -998,7 +1000,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v119</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v120</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1204,7 +1206,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v119</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v120</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5259,7 +5261,7 @@ function audioReady(){ return !sample && !inViewer && provider() === "gemini" &&
 function drawAudios(){
   const ul = $("audList"); if (!ul) return; ul.innerHTML = "";
   audios.forEach(a => {
-    const li = document.createElement("li"); if (a.err) li.className = "err";
+    const li = document.createElement("li"); if (a.err) li.className = "err"; else if (a.novo) li.className = "novo";
     const top = document.createElement("div"); top.className = "aud-top";
     const sp = document.createElement("span"); sp.textContent = `${a.from === "celular" ? "Celular" : "Computador"} · ${a.name}`; sp.title = a.name;
     const sm = document.createElement("small"); sm.textContent = (a.dur ? fmtDur(a.dur) + " · " : "") + a.status;
@@ -5321,6 +5323,8 @@ Responda SOMENTE com um objeto JSON:
 function addAudio(blob, name, from){
   const a = {id: rnd(8), name: name || ("audio-" + new Date().toLocaleTimeString("pt-BR").replace(/:/g, "") + ".webm"), blob, from, url: URL.createObjectURL(blob), status: "na fila", dur: 0};
   audios.push(a); drawAudios(); processAudios();
+  // áudio vindo do celular: mostra onde ele ficou (quadro 3, Documentos e áudios do setor)
+  if (from === "celular"){ a.novo = true; drawAudios(); const li = $("audList").lastElementChild; li?.scrollIntoView({behavior: "smooth", block: "center"}); setTimeout(() => { a.novo = false; drawAudios(); }, 6000); }
   return a;
 }
 // gravação de áudio no próprio computador
