@@ -428,7 +428,8 @@ button.sm{padding:6px 12px;font-size:13px}
 .mapprev{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px}
 .mapprev .mc{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center}
 .mapprev .mc i{display:block;border-radius:50%;border:1px solid rgba(0,0,0,.4);margin:auto}
-.mapprev .mc b{display:block;font-size:12.5px}.mapprev .mc small{color:var(--muted)}
+.mapprev .mc b{display:block;font-size:12.5px}
+.mapvis summary{cursor:pointer;font-weight:700;font-size:12.5px;color:var(--muted)}.mapvis ol{margin:6px 0 2px;padding-left:18px;display:grid;gap:3px}.mapprev .mc small{color:var(--muted)}
 .audlist li.novo{animation:audNovo 1.2s ease-in-out 4;border-color:var(--signal)}
 @keyframes audNovo{50%{box-shadow:0 0 0 4px var(--signal);background:var(--cell-warn)}}
 .report .rtools{display:flex;justify-content:flex-end;margin:-4px 0 8px}
@@ -1016,7 +1017,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v130</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v131</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1233,6 +1234,7 @@ api:
         <p class="hint" style="margin:-4px 0 0">Grupos: físico, químico, biológico, ergonômico ou acidentes. Intensidade: alto, médio ou baixo (sem informar, fica médio; sem o grupo, ele é deduzido pelo nome do risco).</p>
         <div class="mapsel"><p class="label" style="margin:0">Foto que vai compor o mapa</p><div class="mapthumbs" id="mapThumbs"></div><p class="hint" id="mapThumbHint" style="margin:0">Adicione as fotos do setor no quadro 2 e clique na foto que vai aparecer no mapa.</p></div>
         <button id="mapRun" type="button">Analisar fotos, áudios e documentos para o mapa</button>
+        <div class="status" id="mapStatus" role="status"></div>
         <div class="mapprev" id="mapPrev" hidden></div>
         <button class="primary" id="mapBtn" type="button">Gerar mapa de risco (PDF)</button>
         <div class="row"><button id="mapDocx" type="button">Baixar Word (.docx)</button><button id="mapCanva" type="button" class="accent">Abrir no Canva</button></div>
@@ -1252,7 +1254,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v130</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v131</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3995,18 +3997,22 @@ function mapCircles(){
 function drawMapPrev(){
   const el = $("mapPrev"); if (!el) return;
   const cs = mapCircles(), NVT = {3: "alto", 2: "médio", 1: "baixo"}, SZp = {3: 30, 2: 22, 1: 15};
-  if (!cs.length){ el.hidden = true; return; }
+  const vistas = mapData?.fotos?.length ? `<details class="mapvis"${cs.length ? "" : " open"}><summary>O que foi visto em cada foto (${mapData.fotos.length})</summary><ol>${mapData.fotos.map(f => `<li><b>Imagem ${esc(txtOf(f.figura))}:</b> ${esc(txtOf(f.descricao))}</li>`).join("")}</ol></details>` : "";
+  if (!cs.length){ el.hidden = !vistas; el.innerHTML = vistas; return; }
   // (inclui os riscos digitados no campo do quadro 5)
   el.hidden = false;
-  el.innerHTML = `<b>${mapData ? "Riscos do mapa (fotos, áudios e documentos do setor; ✍ = digitado por você)" : "Riscos do mapa (da análise geral; clique em Analisar para o mapa para a análise própria)"}</b>` + cs.map(c => `<div class="mc"><i style="width:${SZp[c.nv]}px;height:${SZp[c.nv]}px;background:${c.cor}"></i><div><b>${c.nome} · risco ${NVT[c.nv]}</b><small>${c.rs.map(r => esc(r.t) + (r.manual ? " ✍" : "")).join(" · ")}</small></div></div>`).join("");
+  el.innerHTML = `<b>${mapData ? "Riscos do mapa (fotos, áudios e documentos do setor; ✍ = digitado por você)" : "Riscos do mapa (da análise geral; clique em Analisar para o mapa para a análise própria)"}</b>` + vistas + cs.map(c => `<div class="mc"><i style="width:${SZp[c.nv]}px;height:${SZp[c.nv]}px;background:${c.cor}"></i><div><b>${c.nome} · risco ${NVT[c.nv]}</b><small>${c.rs.map(r => esc(r.t) + (r.manual ? " ✍" : "")).join(" · ")}</small></div></div>`).join("");
 }
+// mensagem no próprio quadro 5 (e na barra de status)
+function mapMsg(t, err){ const el = $("mapStatus"); if (el){ el.textContent = t || ""; el.classList.toggle("err", !!err); } setStatus(t, err); }
 async function mapAnalyze(){
-  if (mapBusy || !mapF().length) return false;
-  if (!sample && !$("apiKey").value.trim()){ setStatus("Informe a chave da API para analisar as fotos do mapa de risco.", true); return false; }
-  mapBusy = true; $("mapRun").disabled = true;
+  if (mapBusy) return false;
+  if (!mapF().length){ mapMsg(frames.length ? "Nenhuma foto marcada para o mapa (M ou R+M). No quadro 2, toque na etiqueta das fotos para incluí-las." : "Adicione as fotos do setor no quadro 2.", true); return false; }
+  if (!sample && !$("apiKey").value.trim()){ mapMsg("Informe a chave da API (quadro 4) para analisar as fotos do mapa de risco.", true); return false; }
+  mapBusy = true; $("mapRun").disabled = true; $("mapRun").textContent = "Analisando…";
   try{ await prepFontes(); }catch(e){}
   const t0 = Date.now();
-  const tick = setInterval(() => setStatus(`Analisando ${mapF().length} foto(s) para o mapa de risco… ${Math.round((Date.now() - t0) / 1000)} s${busyNote}`), 1000);
+  const tick = setInterval(() => mapMsg(`Analisando ${mapF().length} foto(s)${audios.some(a => a.info) ? ", áudios" : ""}${docInfo ? " e documentos" : ""} para o mapa de risco… ${Math.round((Date.now() - t0) / 1000)} s${busyNote}`), 1000);
   const n = mapF().length;
   const prompt = `Você é engenheiro(a) de segurança do trabalho no Brasil e vai elaborar o MAPA DE RISCO do setor (NR-05, CIPA; grupos de risco da Portaria 25/1994) a partir das ${n} imagem(ns) anexada(s) do mesmo setor (Figura 1 a Figura ${n}).
 ${soEvid(n)}${RIGOR}${$("ctx").value.trim() ? "Contexto informado pelo usuário: " + $("ctx").value.trim() + "\n" : ""}${docBlock()}${mapExtras().length ? "Riscos já informados pelo usuário (entram no mapa exatamente como escritos; NÃO os repita): " + mapExtras().map(e => e.t).join("; ") + "\n" : ""}Para o mapa: examine TODAS as imagens e também os relatos em áudio transcritos e os documentos acima (quando houver) e identifique cada risco ocupacional presente — nas imagens ou relatado —, classificando-o em um dos 5 grupos:
@@ -4015,17 +4021,20 @@ ${soEvid(n)}${RIGOR}${$("ctx").value.trim() ? "Contexto informado pelo usuário:
 - biologico (marrom): vírus, bactérias, fungos, parasitas, contato com esgoto, lixo, animais;
 - ergonomico (amarelo): postura inadequada, levantamento e transporte de peso, repetitividade, ritmo excessivo, mobiliário e posto inadequados, iluminação deficiente, jornada e pressão (fatores psicossociais);
 - acidentes (azul): arranjo físico inadequado, máquinas e equipamentos sem proteção, eletricidade, incêndio e explosão, queda de mesmo nível ou de altura, batida contra, ferramentas inadequadas, armazenamento inadequado, animais peçonhentos.
-Intensidade (tamanho do círculo), pela exposição do trabalhador e pelo dano possível à saúde: "alto" (exposição frequente ou contínua e dano grave ou irreversível), "medio" (exposição eventual ou dano moderado e reversível), "baixo" (exposição rara e dano leve). Seja rigoroso: registre cada risco visível, mesmo pequeno, sem inventar o que não aparece. Nome do risco curto, no padrão de mapa de risco (ex.: "Queda de mesmo nível", "Batida contra", "Postura inadequada", "Ruído", "Choque elétrico"). Indique também a imagem que melhor mostra o setor como um todo, para compor o mapa.
-Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonomico|acidentes","risco":"nome curto","fonte":"o que gera o risco e onde (Figura N, Relato N ou Documento)","figura":1,"intensidade":"alto|medio|baixo","justificativa":"exposição e dano, em até 15 palavras"}],"foto_setor":1}`;
+Intensidade (tamanho do círculo), pela exposição do trabalhador e pelo dano possível à saúde: "alto" (exposição frequente ou contínua e dano grave ou irreversível), "medio" (exposição eventual ou dano moderado e reversível), "baixo" (exposição rara e dano leve). Seja rigoroso: registre cada risco visível, mesmo pequeno, sem inventar o que não aparece. Nome do risco curto, no padrão de mapa de risco (ex.: "Queda de mesmo nível", "Batida contra", "Postura inadequada", "Ruído", "Choque elétrico"). Descreva em "fotos" o que você viu em CADA imagem (uma frase por imagem, sem identificar pessoas), para comprovar a análise de todas. Se uma imagem não mostrar ambiente de trabalho, diga isso na descrição dela. Indique também a imagem que melhor mostra o setor como um todo, para compor o mapa.
+Responda SOMENTE com JSON: {"riscos":[{"grupo":"fisico|quimico|biologico|ergonomico|acidentes","risco":"nome curto","fonte":"o que gera o risco e onde (Figura N, Relato N ou Documento)","figura":1,"intensidade":"alto|medio|baixo","justificativa":"exposição e dano, em até 15 palavras"}],"fotos":[{"figura":1,"descricao":"o que aparece na imagem"}],"foto_setor":1}`;
   try{
     const r = await callAI(prompt, mapF().map(f => f.blob), undefined, {}) || {};
-    mapData = {sig: mapSig(), riscos: asList(r.riscos).filter(x => x && x.risco), foto: Math.round(Number(r.foto_setor)) - 1};
+    // aceita variações de nome dos campos na resposta
+    const lst = asList(r.riscos || r.riscos_ocupacionais || r.mapa || r.itens).filter(x => x && typeof x === "object").map(x => ({...x, risco: txtOf(x.risco || x.nome || x.perigo || x.descricao || x.agente), grupo: txtOf(x.grupo || x.categoria || x.tipo), intensidade: txtOf(x.intensidade || x.nivel || x.grau || "medio")})).filter(x => x.risco);
+    lst.forEach(x => { if (!/fisic|quimic|biolog|ergon|acident|psicoss/i.test(normTxt(x.grupo))) x.grupo = {fis: "fisico", qui: "quimico", bio: "biologico", erg: "ergonomico", aci: "acidentes"}[grupoPorNome(x.risco)]; });
+    mapData = {sig: mapSig(), riscos: lst, foto: Math.round(Number(r.foto_setor)) - 1, fotos: asList(r.fotos).filter(x => x && x.descricao)};
     if (!mapFotoMan && mapData.foto >= 0 && mapData.foto < mapF().length) mapFoto = mapData.foto;
     drawMapThumbs(); drawMapPrev();
-    setStatus(`Mapa de risco: ${mapData.riscos.length} risco(s) identificado(s) nas ${n} foto(s) do setor.`);
+    mapMsg(lst.length ? `Análise concluída: ${lst.length} risco(s) identificado(s) em ${n} foto(s)${audios.some(a => a.info) ? ", nos áudios" : ""}${docInfo ? " e nos documentos" : ""}. Confira abaixo e gere o mapa.` : `Análise concluída em ${n} foto(s), mas nenhum risco ocupacional foi identificado. Veja abaixo o que foi visto em cada foto; se faltou algo, escreva no campo "Riscos para incluir no mapa".`, !lst.length);
     return true;
-  }catch(e){ handleErr(e); return false; }
-  finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; }
+  }catch(e){ handleErr(e); mapMsg("Não foi possível analisar as fotos para o mapa: " + ($("status").textContent || e?.message || "erro"), true); return false; }
+  finally{ clearInterval(tick); mapBusy = false; $("mapRun").disabled = false; $("mapRun").textContent = "Analisar fotos, áudios e documentos para o mapa"; }
 }
 $("mapRun").onclick = mapAnalyze;
 $("mExtra").addEventListener("input", () => drawMapPrev());
