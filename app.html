@@ -399,6 +399,18 @@ a.lupa:hover{background:#fff1b8}
 .editing a.lupa{pointer-events:none}
 .figdlg{width:min(980px,calc(100vw - 24px))}
 .pickdlg{width:min(1100px,calc(100vw - 24px))}
+.alrepdlg{width:min(1000px,calc(100vw - 24px))}
+.alrepdlg .fd-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.alrepdlg .fd-h h2{margin:0;flex:1;font:700 19px var(--f-display);text-transform:uppercase}
+.alrepdlg .fd-h button{width:auto}
+.alr{max-height:calc(100vh - 150px);overflow:auto}
+.alr-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.alr-k div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}.alr-k b{display:block;font:700 22px var(--f-display)}.alr-k span{font-size:12px;color:var(--muted)}
+.alr table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px}.alr th,.alr td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}.alr th{background:var(--surface-2)}
+.alr ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.alr ol>li{display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px;border:1px solid var(--line);border-left:4px solid var(--crit);border-radius:10px;padding:10px}
+.alr ol>li>img{width:100%;border-radius:8px;display:block;cursor:zoom-in}
+.alr li h3{margin:0 0 4px;font-size:14px}.alr li ul{margin:0;padding-left:18px;font-size:13px;line-height:1.45}
+@media (max-width:640px){.alr li{grid-template-columns:minmax(0,1fr)}}
 .pickdlg .fd-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}.pickdlg .fd-h h2{margin:0;flex:1;font:700 19px var(--f-display);text-transform:uppercase}
 .pickdlg .fd-p{margin:0 0 12px;color:var(--muted);font-size:14px}
 .pickgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;max-height:calc(100vh - 190px);overflow:auto;padding:2px}
@@ -1067,7 +1079,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v156</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v157</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1147,7 +1159,7 @@ api:
           <details class="mon-dd"><summary><span>Situações monitoradas</span> <b id="monAlN"></b></summary>
             <fieldset class="mon-al" id="monAl"><legend>Alertar também quando houver:</legend></fieldset>
           </details>
-          <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button></div>
+          <div class="row al-save"><button type="button" id="alDir">📁 Salvar alertas em Downloads › Fotos Inspeção SST</button><button type="button" id="alDl">⬇ Baixar fotos dos alertas</button><button type="button" id="alRep">📋 Ver relatório de alertas</button></div>
           <p class="hint" id="alDirInfo" style="margin:0">As fotos com alerta podem ser gravadas automaticamente na pasta "Fotos Inspeção SST" dentro de Downloads (foto .jpg + .txt com data, hora e situações).</p>
           <p class="hint" id="monInfo">Ligue a câmera e informe a chave (Gemini ou Claude). A cada intervalo, um quadro é capturado e analisado. Risco crítico (e as situações marcadas acima) toca um alerta sonoro. As pessoas não são identificadas.</p>
         </div>
@@ -1303,6 +1315,7 @@ api:
   <dialog id="exDlg" class="nrdlg exdlg" aria-labelledby="exDlgT"><div class="nrd-in"><h2 id="exDlgT" style="margin:0 0 6px;font:700 19px var(--f-display);text-transform:uppercase">O que deseja exibir?</h2><p style="margin:0 0 14px;color:var(--muted)">O relatório técnico e o mapa de risco desta inspeção estão prontos.</p>
     <div class="exopts"><button type="button" class="primary" data-ex="ver-ambos">Relatório técnico e mapa de risco</button><button type="button" data-ex="ver-rel">Só o relatório técnico</button><button type="button" data-ex="ver-mapa">Só o mapa de risco</button></div></div></dialog>
   <dialog id="pickDlg" class="nrdlg pickdlg" aria-labelledby="pickDlgT"><div class="nrd-in"><div class="fd-h"><h2 id="pickDlgT">Escolher foto</h2><button type="button" id="pickDlgX">Fechar ✕</button></div><p class="fd-p" id="pickDlgP"></p><div class="pickgrid" id="pickGrid"></div></div></dialog>
+  <dialog id="alRepDlg" class="nrdlg alrepdlg" aria-labelledby="alRepT"><div class="nrd-in"><div class="fd-h"><h2 id="alRepT">Relatório de alertas</h2><button type="button" id="alRepPdf">📄 Imprimir / salvar PDF</button><button type="button" id="alRepX">Fechar ✕</button></div><div id="alRepBody"></div></div></dialog>
   <dialog id="figDlg" class="nrdlg figdlg" aria-labelledby="figDlgT"><div class="nrd-in"><div class="fd-h"><h2 id="figDlgT">Figura</h2><button type="button" id="figDlgX">Fechar ✕</button></div><p class="fd-p" id="figDlgP"></p><div class="fd-nav" id="figDlgNav"></div><img id="figDlgImg" alt=""></div></dialog>
   <dialog id="lvDlg" class="nrdlg" aria-labelledby="lvDlgT"><div class="nrd-in"><div id="lvDlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="lvDlgX">Fechar</button></div></div></dialog>
   <dialog id="chkDlg" class="nrdlg" aria-labelledby="chkDlgT"><div class="nrd-in"><div id="chkBody"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" id="chkFix" class="accent">Corrigir inconsistências</button><button type="button" id="chkPhotos">Conferir com as fotos</button><button type="button" id="chkX">Fechar</button></div></div></dialog>
@@ -1312,7 +1325,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v156</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v157</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2859,6 +2872,36 @@ $("alDl").onclick = async () => {
 setTimeout(() => idbKV("pasta").then(h => { if (h && h.kind === "directory"){ alDir = h; alBtn(); alInfo(`Pasta escolhida: "${h.name}". Se o navegador pedir, clique no botão da pasta para autorizar de novo.`); } }).catch(() => {}), 0); // depois que o banco do navegador estiver pronto
 // guarda só os quadros em que houve alerta (até 100, salvos no navegador com a inspeção)
 let monCount = 0;
+// relatório de alertas do monitoramento: resumo por situação e a lista com data, hora, situações e foto (rostos cobertos)
+function alSit(m){ return String(m).split(":")[0].trim(); }
+function alRepConteudo(fotos){
+  const L = history.slice().sort((a, b) => a.t - b.t), cont = {};
+  L.forEach(h => (h.msgs || []).forEach(m => { const k = alSit(m); cont[k] = (cont[k] || 0) + 1; }));
+  const dt = d => d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR");
+  const top = Object.entries(cont).sort((a, b) => b[1] - a[1]);
+  return `<div class="alr-k"><div><b>${L.length}</b><span>alerta(s) registrado(s)</span></div><div><b>${top.length}</b><span>tipo(s) de situação</span></div><div><b style="font-size:14px">${L.length ? dt(L[0].t) : "—"}</b><span>primeiro alerta</span></div><div><b style="font-size:14px">${L.length ? dt(L.at(-1).t) : "—"}</b><span>último alerta</span></div></div>
+  ${top.length ? `<table><thead><tr><th>Situação de risco</th><th style="width:110px">Ocorrências</th></tr></thead><tbody>${top.map(([k, n]) => `<tr><td>${esc(k)}</td><td>${n}</td></tr>`).join("")}</tbody></table>` : ""}
+  <ol>${L.slice().reverse().map(h => `<li><img src="${fotos(h)}" data-hid="${history.indexOf(h)}" alt="Quadro da câmera no alerta de ${esc(dt(h.t))}"><div><h3>⚠ ${esc(dt(h.t))}</h3><ul>${(h.msgs || []).map(m => `<li>${esc(m)}</li>`).join("")}</ul></div></li>`).join("")}</ol>`;
+}
+function abrirAlRep(){
+  $("alRepT").textContent = `Relatório de alertas (${history.length})`; $("alRepPdf").hidden = !history.length;
+  $("alRepBody").innerHTML = history.length ? `<div class="alr">${alRepConteudo(h => h.url)}</div>` : `<p class="hint">Nenhum alerta registrado pelo monitoramento ainda. Quando uma situação de risco for detectada, ela aparece aqui com data, hora, situações e a foto (com os rostos cobertos).</p>`;
+  $("alRepBody").querySelectorAll("img[data-hid]").forEach(im => { const h = history[+im.dataset.hid]; imgSegura(im, h?.blob); im.onclick = () => { $("alRepDlg").close(); openAlert(h); }; });
+  const d = $("alRepDlg"); if (!d.open){ try{ d.showModal(); }catch(e){ d.setAttribute("open", ""); } }
+}
+async function pdfAlRep(){
+  const w = window.open("", "_blank"); if (w) w.document.write('<p style="font:16px system-ui;padding:40px;text-align:center;color:#444">Preparando o relatório de alertas (cobrindo os rostos das fotos)…</p>');
+  const fotos = new Map(); await Promise.all(history.map(async h => fotos.set(h, (await mascarar(h.blob)) || await pixelPhoto(h.blob))));
+  const css = `body{font:13px Arial,sans-serif;color:#1c2328;margin:24px}h1{font-size:20px;margin:0 0 4px}.sub{color:#666;margin:0 0 14px}.alr-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.alr-k div{border:1px solid #ccd;border-radius:8px;padding:8px}.alr-k b{display:block;font-size:20px}.alr-k span{font-size:11px;color:#666}table{width:100%;border-collapse:collapse;margin-bottom:14px}th,td{border:1px solid #ccd;padding:5px 7px;text-align:left}th{background:#f1f3f5}ol{list-style:none;padding:0;margin:0}ol>li{display:grid;grid-template-columns:200px 1fr;gap:12px;border:1px solid #ccd;border-left:4px solid #c62828;border-radius:8px;padding:8px;margin-bottom:8px;break-inside:avoid}ol>li img{width:100%;border-radius:6px}h3{margin:0 0 4px;font-size:13px}ul{margin:0;padding-left:16px}@page{size:A4;margin:14mm}`;
+  const emp = $("rEmp").value.trim(), setor = $("rSetor").value.trim();
+  const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório de alertas do monitoramento</title><style>${css}</style></head><body><h1>Relatório de alertas do monitoramento</h1><p class="sub">${esc([emp, setor].filter(Boolean).join(" · ") || "Inspeção SST")} · emitido em ${new Date().toLocaleString("pt-BR")} · rostos cobertos nas fotos</p>${alRepConteudo(h => fotos.get(h))}<script>addEventListener("load", () => setTimeout(() => print(), 400));<\/script></body></html>`;
+  if (!w){ setStatus("Permita janelas pop-up para abrir o relatório de alertas.", true); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+$("alRep").onclick = abrirAlRep;
+$("alRepPdf").onclick = pdfAlRep;
+$("alRepX").onclick = () => $("alRepDlg").close();
+$("alRepDlg").addEventListener("click", e => { if (e.target === $("alRepDlg")) $("alRepDlg").close(); });
 function addHistory(blob, data, msgs = [], t = new Date()){
   const url = URL.createObjectURL(blob);
   history.unshift({t, url, data, blob, msgs});
