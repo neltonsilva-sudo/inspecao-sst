@@ -1083,7 +1083,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v158</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v159</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1329,7 +1329,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v158</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v159</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5308,10 +5308,17 @@ async function maskPhoto(blob, faces){
   const im = new Image(); im.src = url; await im.decode();
   const W = im.naturalWidth, H = im.naturalHeight, c = document.createElement("canvas"); c.width = W; c.height = H;
   const g = c.getContext("2d"); g.drawImage(im, 0, 0);
+  // círculo só sobre o rosto, translúcido: por baixo, o rosto vai pixelado em blocos grandes (ninguém é identificado)
+  // e uma camada cinza semitransparente; o resto da pessoa e do ambiente continua visível
   faces.forEach(f => {
-    const r = Math.max(10, Math.max(f.w * W, f.h * H) * 0.66);
-    g.beginPath(); g.arc(f.cx * W, f.cy * H, r, 0, Math.PI * 2);
-    g.fillStyle = "#5f6b73"; g.fill(); g.lineWidth = Math.max(2, r * 0.06); g.strokeStyle = "rgba(255,255,255,.9)"; g.stroke();
+    const cx = f.cx * W, cy = f.cy * H, r = Math.max(8, Math.max(f.w * W, f.h * H) * 0.56);
+    const x0 = Math.max(0, cx - r), y0 = Math.max(0, cy - r), d = Math.min(W - x0, H - y0, 2 * r);
+    const px = document.createElement("canvas"); px.width = px.height = 7; // 7×7 blocos no rosto inteiro
+    px.getContext("2d").drawImage(c, x0, y0, d, d, 0, 0, 7, 7);
+    g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.clip();
+    g.imageSmoothingEnabled = false; g.drawImage(px, 0, 0, 7, 7, x0, y0, d, d);
+    g.fillStyle = "rgba(95,107,115,.55)"; g.fillRect(cx - r, cy - r, 2 * r, 2 * r); g.restore();
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.lineWidth = Math.max(1.5, r * 0.05); g.strokeStyle = "rgba(255,255,255,.85)"; g.stroke();
   });
   return c.toDataURL("image/jpeg", 0.9);
 }
