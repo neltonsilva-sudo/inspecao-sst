@@ -1087,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v175</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v176</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v175</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v176</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -5299,6 +5299,45 @@ function imgSegura(im, blob){
 // rostos: uma imagem por pedido (em lote o modelo pode pular ou trocar imagens) e, se não achar nenhum rosto,
 // uma segunda busca insistente. Resultado por imagem: lista de rostos, ou null quando não foi possível garantir
 // (sem resposta, ou pessoa esperada na foto e nenhum rosto encontrado) → a foto entra pixelada / desfocada.
+// contorno do rosto no próprio navegador (MediaPipe Face Landmarker): a linha que margeia o rosto (testa, têmporas,
+// bochechas e queixo) serve de referência e o círculo é desenhado envolvendo esse contorno, com pequena folga
+const MP_BASE = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14", MP_MODEL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+let mpFL = null, mpFalhou = false, mpProm = null;
+function mpFace(){
+  if (mpFL || mpFalhou) return Promise.resolve(mpFL);
+  return mpProm = mpProm || (async () => {
+    try{
+      const V = await import(MP_BASE + "/vision_bundle.mjs"), fs = await V.FilesetResolver.forVisionTasks(MP_BASE + "/wasm");
+      const mk = d => V.FaceLandmarker.createFromOptions(fs, {baseOptions: {modelAssetPath: MP_MODEL, delegate: d}, runningMode: "IMAGE", numFaces: 12, minFaceDetectionConfidence: 0.35, minFacePresenceConfidence: 0.35});
+      try{ mpFL = await mk("GPU"); }catch(e){ mpFL = await mk("CPU"); }
+      mpFL.__oval = [...new Set(V.FaceLandmarker.FACE_LANDMARKS_FACE_OVAL.flatMap(c => [c.start, c.end]))];
+    }catch(e){ console.warn("contorno do rosto indisponível", e); mpFalhou = true; }
+    return mpFL;
+  })();
+}
+// rostos pelo contorno: imagem inteira e, em fotos grandes, também os quatro quadrantes ampliados (rostos menores, mais distantes)
+async function rostosContorno(blob){
+  const fl = await mpFace(); if (!fl) return null;
+  let bmp; try{ bmp = await createImageBitmap(blob); }catch(e){ return null; }
+  const W = bmp.width, H = bmp.height, out = [];
+  const roda = (sx, sy, sw, sh) => {
+    const k = Math.min(1, 1280 / Math.max(sw, sh)) * (sw < W ? 2 : 1), c = document.createElement("canvas"); c.width = Math.round(sw * Math.min(k, 1600 / Math.max(sw, sh))); c.height = Math.round(sh * c.width / sw);
+    c.getContext("2d").drawImage(bmp, sx, sy, sw, sh, 0, 0, c.width, c.height);
+    let r; try{ r = fl.detect(c); }catch(e){ return; }
+    (r.faceLandmarks || []).forEach(pts => {
+      const o = fl.__oval.map(i => pts[i]).filter(Boolean).map(p => [sx + p.x * sw, sy + p.y * sh]); if (o.length < 8) return;
+      const xs = o.map(p => p[0]), ys = o.map(p => p[1]);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+      const rad = Math.max(...o.map(p => Math.hypot(p[0] - cx, p[1] - cy))) * 1.07; // círculo que envolve o contorno, com folga
+      if (out.some(f => Math.hypot(f.px - cx, f.py - cy) < Math.max(f.pr, rad) * 0.6)) return; // mesmo rosto achado de novo
+      out.push({px: cx, py: cy, pr: rad});
+    });
+  };
+  roda(0, 0, W, H);
+  if (Math.max(W, H) >= 900){ const ox = W * .1, oy = H * .1, hw = W / 2, hh = H / 2; [[0, 0], [hw - ox, 0], [0, hh - oy], [hw - ox, hh - oy]].forEach(([x, y]) => roda(x, y, hw + ox, hh + oy)); }
+  try{ bmp.close?.(); }catch(e){}
+  return out.map(f => ({cx: f.px / W, cy: f.py / H, w: 2 * f.pr / W, h: 2 * f.pr / H, oval: true}));
+}
 const FACE_JSON = `Responda SOMENTE com JSON: {"rostos":[{"box_2d":[ymin,xmin,ymax,xmax]}]}, coordenadas inteiras normalizadas de 0 a 1000; lista vazia se não houver nenhum rosto.`;
 async function detectFaces1(blob, signal, insiste){
   const prompt = insiste
@@ -5316,9 +5355,16 @@ async function detectFaces1(blob, signal, insiste){
 async function detectFaces(blobs, signal, pessoas = []){
   const out = new Array(blobs.length).fill(null); let k = 0;
   const um = async i => {
-    let f = null;
+    let f = null, cont = null;
+    try{ cont = await rostosContorno(blobs[i]); }catch(e){ cont = null; }
     for (let t = 0; t < 2 && f === null; t++){ try{ f = await detectFaces1(blobs[i], signal, false); }catch(e){ if (e?.name === "AbortError" || e?.code === "cancelled") throw e; } }
-    if (f && !f.length){ try{ const g = await detectFaces1(blobs[i], signal, true); f = g.length ? g : (pessoas[i] ? null : f); }catch(e){ f = pessoas[i] ? null : f; } }
+    if (f && !f.length && !(cont && cont.length)){ try{ const g = await detectFaces1(blobs[i], signal, true); f = g.length ? g : (pessoas[i] ? null : f); }catch(e){ f = pessoas[i] ? null : f; } }
+    if (cont && cont.length){
+      // o contorno manda: das caixas da análise, ficam só as de rostos que o contorno não achou e que tenham tamanho de rosto
+      const maior = Math.max(...cont.map(c => Math.max(c.w, c.h)));
+      const extra = (f || []).filter(b => !cont.some(c => Math.hypot(b.cx - c.cx, b.cy - c.cy) < Math.max(c.w, c.h) * 0.75) && Math.max(b.w, b.h) <= maior * 1.6);
+      f = cont.concat(extra);
+    }
     out[i] = f;
   };
   await Promise.all(Array.from({length: Math.min(3, blobs.length)}, async () => { while (k < blobs.length) await um(k++); }));
@@ -5349,8 +5395,9 @@ async function maskPhoto(blob, faces){
     // só o rosto: caixa muito alta (a pessoa inteira ou cabeça + tronco) vira a parte de cima, no formato de um rosto;
     // caixa muito larga vira um quadrado no centro. Círculo pequeno, do tamanho do rosto
     let fw = f.w * W, fh = f.h * H, cx = f.cx * W, cy = f.cy * H;
-    if (fh > fw * 1.45){ const top = cy - fh / 2; fw *= 0.5; fh = fw * 1.3; cy = top + fh / 2; } // caixa da pessoa: a cabeça fica no alto, com ~metade da largura dos ombros
-    if (fw > fh * 1.45) fw = fh * 1.1;
+    if (f.oval){ fw = fh = Math.max(fw, fh) / 0.56 / 2; } // contorno do rosto: o raio já é o do círculo que o envolve
+    else if (fh > fw * 1.45){ const top = cy - fh / 2; fw *= 0.5; fh = fw * 1.3; cy = top + fh / 2; } // caixa da pessoa: a cabeça fica no alto, com ~metade da largura dos ombros
+    if (!f.oval && fw > fh * 1.45) fw = fh * 1.1;
     const r = Math.max(8, Math.max(fw, fh) * 0.56);
     const x0 = Math.max(0, cx - r), y0 = Math.max(0, cy - r), d = Math.min(W - x0, H - y0, 2 * r);
     const px = document.createElement("canvas"); px.width = px.height = 7; // 7×7 blocos no rosto inteiro
@@ -5389,7 +5436,7 @@ async function openFaces(){
     const im = new Image(); im.src = await blobToDataURL(blobs[i]); await im.decode();
     const k = Math.min(1, 900 / im.naturalWidth); cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
     const draw = () => { const g = cv.getContext("2d"); g.drawImage(im, 0, 0, cv.width, cv.height);
-      (report.faces[i] || []).forEach(f => { const r = Math.max(6, Math.max(f.w * cv.width, f.h * cv.height) * 0.66); g.beginPath(); g.arc(f.cx * cv.width, f.cy * cv.height, r, 0, Math.PI * 2); g.fillStyle = "rgba(95,107,115,.92)"; g.fill(); g.lineWidth = 2; g.strokeStyle = "#fff"; g.stroke(); });
+      (report.faces[i] || []).forEach(f => { const r = Math.max(6, f.oval ? Math.max(f.w * cv.width, f.h * cv.height) / 2 : Math.max(f.w * cv.width, f.h * cv.height) * 0.66); g.beginPath(); g.arc(f.cx * cv.width, f.cy * cv.height, r, 0, Math.PI * 2); g.fillStyle = "rgba(95,107,115,.92)"; g.fill(); g.lineWidth = 2; g.strokeStyle = "#fff"; g.stroke(); });
       cap.textContent = report.faces[i] ? `Figura ${i + 1} · ${report.faces[i].length} rosto(s) coberto(s)` : `Figura ${i + 1} · rosto não localizado: a foto sai pixelada até você tocar em cada rosto (ou em Sem rostos)`; };
     draw();
     cv.onclick = e => {
