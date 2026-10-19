@@ -366,6 +366,7 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .report .nrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:5px}
 .report .nrc{display:grid;grid-template-columns:minmax(0,1fr);justify-content:stretch;align-content:start;gap:0;justify-items:start;text-align:left;padding:5px 7px 6px;min-height:0;min-width:0;border-radius:6px;border:1px solid var(--line);border-top:3px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font:inherit;line-height:1.25}
 .report .nrc b{font:700 12px var(--f-mono)}
+.nrupd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 0;padding:8px 10px;border:1px solid #9cc3e6;background:#eef6fd;border-radius:8px;font-size:13px;color:#1f3d5a}.nrupd span{flex:1 1 260px}.nrupd button{white-space:nowrap}
 .report .nrc small{font-size:10px;line-height:1.25;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .report .nrc .st{margin-top:1px;font:700 9.5px var(--f-mono);letter-spacing:-.02em;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .report .nrc:hover:not(:disabled){border-color:var(--line-strong);transform:translateY(-1px)}
@@ -1091,7 +1092,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v191</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v192</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1337,7 +1338,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v191</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v192</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2027,6 +2028,7 @@ function render(d, isExample){
       <div class="nrgrid">${NR_LIST.map(([n, curto, , rev]) => { const m = NRC[n]; const off = (d.__nrOff || {})[n]; const k = rev ? "rev" : off ? "off" : m ? m.k : "na";
         const st = rev ? "Revogada" : off ? "Fora do rel." : !m || !m.aplic ? "N/A" : m.itens.length ? [m.nc ? m.nc + "NC" : "", m.c + "C", m.nv ? m.nv + "?" : ""].filter(Boolean).join("·") : "Aplicável";
         return `<button type="button" class="nrc ${k}" data-nr="${n}"${rev ? " disabled" : ""} title="NR-${String(n).padStart(2, "0")} – ${curto}" aria-label="NR-${String(n).padStart(2, "0")} ${curto}: ${st}"><b>NR-${String(n).padStart(2, "0")}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
+      ${(() => { const pd = isExample ? [] : nrPend(d); return pd.length ? `<div class="nrupd"><span><b>${pd.map(x => nrTxt(nrNum(x.nr))).join(", ")}</b> incluída(s) por você e ainda fora do diagnóstico. Clique em <b>Atualizar</b> para incluir os itens não conformes nos riscos, no plano de ação e no relatório.</span><button type="button" id="nrUpd" class="accent">Atualizar diagnóstico e relatório</button></div>` : ""; })()}
       <p class="hint" style="margin:6px 0 0;font-size:12px">Clique em uma NR para ver o checklist. C = conforme · NC = não conforme · ? = não verificável · N/A = não aplicável.</p>
     </section>
 
@@ -2500,6 +2502,7 @@ function openNR(n){
   } else if (!m || !m.aplic){
     h += `<p class="hint">Nada nas imagens indica atividades ou condições cobertas por esta norma. Se o setor tiver atividades desse tipo fora das fotos, inclua imagens delas ou informe no contexto.</p>`;
   }
+  if (!busy && curRender && !curRender.isExample && nrPend(curRender.d).some(x => nrNum(x.nr) === n)) h += `<div class="nrupd"><span>Esta NR ainda não está no diagnóstico nem no relatório.</span><button type="button" class="accent nrUpd1">Atualizar diagnóstico e relatório</button></div>`;
   if (rel.length) h += `<h3 class="nrd-s">Riscos relacionados</h3><ul class="nrd-r">${rel.map(r => { const L = level(r.severidade, r.probabilidade); return `<li><span class="lc ${L.k}"><i></i>${L.t} ${L.r}</span> ${esc(r.perigo)}</li>`; }).join("")}</ul>`;
   $("nrDlgBody").innerHTML = h; $("nrDlgBody").dataset.nr = n;
   const dlg = $("nrDlg"); if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
@@ -2517,6 +2520,40 @@ Responda SOMENTE com um objeto JSON: {"nr":"${code}","aplicavel":true,"justifica
   const itens = asList(r && r.itens).filter(i => i && typeof i === "object" && i.requisito);
   if (!itens.length) throw new Error("vazio");
   return {nr: code, aplicavel: true, justificativa: String(r.justificativa || (d && asList(d.checklist_nrs).find(x => x && nrNum(x.nr) === n)?.justificativa) || "Incluída pelo responsável técnico."), itens, padrao: 2};
+}
+// NR incluída pelo responsável técnico (Sim no card) que ainda não entrou no diagnóstico e no relatório
+const nrPend = d => asList(d && d.checklist_nrs).filter(x => x && x.manual && !x.integrada && nrNum(x.nr) && !((d.__nrOff || {})[nrNum(x.nr)]) && asList(x.itens).length);
+// botão Atualizar: os não conformes do checklist viram riscos (painel, matriz, 5W2H) e entram no relatório (riscos e fundamentação)
+function integrarNRs(){
+  if (!curRender || curRender.isExample) return;
+  const d = curRender.d, pend = nrPend(d); if (!pend.length) return;
+  const rej = d.__rej || {}, t = x => txtOf(x), novos = [], fund = [];
+  d.riscos = asList(d.riscos);
+  pend.forEach(x => {
+    const n = nrNum(x.nr), code = nrTxt(n);
+    asList(x.itens).filter(i => i && typeof i === "object" && /n[ãa]o\s*conforme/i.test(t(i.situacao)) && !rej[nrKey(n, t(i.requisito))]).forEach(i => {
+      const perigo = t(i.analise) || t(i.requisito), fg = Number((t(i.evidencia).match(/figura\s*(\d+)/i) || [])[1]);
+      fund.push({nr: code, item: /confirmar/i.test(t(i.item)) ? "" : t(i.item), constatacao: perigo, exigencia: t(i.requisito)});
+      if (d.riscos.some(r => r && nrNum(r.nr) === n && chkSame(r.perigo, perigo))) return;
+      const r = {perigo, categoria: "Acidente", nr: code, item: t(i.item) || "confirmar item", severidade: 3, probabilidade: 3, medida: t(i.acao) || `Adequar ao requisito da ${code}: ${t(i.requisito)}`, fonte: "Checklist da " + code};
+      if (fg >= 1 && fg <= relF().length) r.figura = fg;
+      d.riscos.push(r); novos.push(r);
+    });
+    x.integrada = true;
+  });
+  const y = scrollY; render(d, curRender.isExample); scrollTo(0, y); lastData = d;
+  let noRel = "";
+  if (report && report.R){
+    const R = report.R; R.riscos = mergeRiscos(asList(R.riscos), novos);
+    R.parecer = R.parecer && typeof R.parecer === "object" ? R.parecer : {};
+    R.parecer.fundamentacao = asList(R.parecer.fundamentacao).concat(fund.filter(f => !asList(R.parecer.fundamentacao).some(g => g && nrNum(g.nr) === nrNum(f.nr) && chkSame(g.constatacao, f.constatacao))));
+    if (report.edited){ report.edited = null; noRel = " As edições manuais de texto do relatório foram descartadas."; }
+    if (!$("tech").hidden) showReport();
+    noRel = " e no relatório (checklist, riscos e fundamentação normativa)." + noRel;
+  } else noRel = ". Ao gerar o relatório ela já entra nele.";
+  if ($("nrDlg").open) openNR(Number($("nrDlgBody").dataset.nr));
+  saveSoon();
+  setStatus(`${pend.map(x => nrTxt(nrNum(x.nr))).join(", ")} incluída(s) no diagnóstico${novos.length ? ` (${novos.length} risco(s) novo(s))` : ""}${noRel}`);
 }
 // implementar NR no relatório: Sim inclui (e, se preciso, a IA monta o checklist); Não exclui
 let nrBusy = 0, nrErr = null;
@@ -2552,6 +2589,7 @@ async function setNR(n, yes){
 
 // validação: o item clicado deixa de ir para o relatório (e volta com novo clique)
 $("nrDlgBody").addEventListener("click", e => {
+  if (e.target.closest(".nrUpd1")){ integrarNRs(); return; }
   if ((e.target.closest("#nrYes") || e.target.closest("#nrNo")) && curRender){
     const n = Number($("nrDlgBody").dataset.nr);
     if (e.target.closest("#nrNo")) setNR(n, false); else setNR(n, true);
@@ -2565,7 +2603,7 @@ $("nrDlgBody").addEventListener("click", e => {
   openNR(n);
   refreshReport(d);
 });
-$("report").addEventListener("click", e => { const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
+$("report").addEventListener("click", e => { if (e.target.closest("#nrUpd")){ integrarNRs(); return; } const b = e.target.closest(".nrc"); if (b && !b.disabled) openNR(Number(b.dataset.nr)); });
 // cards "Riscos por nível": tela com os riscos daquele nível
 let lvCell = null; // quadrante da matriz aberto (severidade, probabilidade) ou null para o nível inteiro
 function openLevel(k, cell){
