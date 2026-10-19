@@ -1095,7 +1095,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v201</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v202</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1341,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v201</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v202</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3173,8 +3173,10 @@ $("goBtn").onclick = async () => {
     try{
       setStatus("Conferindo se cada foto citada mostra a situação descrita…");
       const inv = await inventarioFotos(bl, undefined, x => setStatus(x), d), m = await conferirFiguras(d, inv);
+      setStatus("Conferindo se algum risco moderado, alto ou crítico ficou fora do diagnóstico…");
+      let falt = []; try{ falt = await completarRiscos(d, inv); }catch(e){}
       completeRiscos(d, bl.length); render(d, false); lastData = d; saveSoon();
-      if (m) setStatus(`Concluído. ${m} foto(s) citada(s) corrigida(s) para a figura em que a situação aparece.`);
+      if (m || falt.length) setStatus(`Concluído.${m ? ` ${m} foto(s) citada(s) corrigida(s) para a figura em que a situação aparece.` : ""}${falt.length ? ` ${falt.length} risco(s) que tinham ficado de fora foram incluídos.` : ""}`);
     }catch(e){}
   }
   if (d) setStatus(`${$("status").textContent} Analisado: ${F.entra}.${F.fora}`, !!F.fora);
@@ -4627,7 +4629,7 @@ $("chkPhotos").onclick = checkPhotos;
 $("chkX").onclick = () => $("chkDlg").close();
 function showReport(){
   const t = $("tech"); t.hidden = false; setTimeout(drawExibir);
-  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="figConfBtn" title="Confere se cada foto citada (🔍) mostra a situação descrita e corrige o número da figura">Conferir fotos citadas</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + (x ? x.length : 0), 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button><button type="button" id="synBtn" title="Resumo com a situação, os riscos e as principais ações do relatório técnico">Relatório sintético (PDF)</button>'}<button type="button" id="chkBtn" title="Compara o relatório com a análise das fotos e os anexos e aponta divergências">Conferir coerência</button><button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
+  t.innerHTML = `<div class="techbar"><h2 style="margin:0;flex:1">Relatório técnico</h2><button type="button" id="editRep">Editar texto</button><button type="button" id="figConfBtn" title="Confere se cada foto citada (🔍) mostra a situação descrita e se algum risco moderado, alto ou crítico ficou fora do diagnóstico">Conferir fotos e riscos</button><button type="button" id="faceBtn">Rostos nas fotos (${(report.faces || []).reduce((t, x) => t + (x ? x.length : 0), 0)})</button><button type="button" id="undoEdit"${report.edited ? "" : " hidden"}>Desfazer edições</button>${inViewer ? "" : '<button type="button" id="prtBtn">Imprimir / salvar PDF</button><button type="button" id="synBtn" title="Resumo com a situação, os riscos e as principais ações do relatório técnico">Relatório sintético (PDF)</button>'}<button type="button" id="chkBtn" title="Compara o relatório com a análise das fotos e os anexos e aponta divergências">Conferir coerência</button><button type="button" id="toCanva" class="accent">Abrir no Canva</button><button type="button" id="dlPptx">Baixar apresentação (.pptx)</button><button type="button" id="dlDocx">Baixar Word (.docx)</button><button type="button" id="dlRep">Baixar HTML</button><button type="button" id="closeRep">Fechar</button></div><p class="hint edit-tip" id="editTip" hidden>Modo de edição: clique em qualquer texto do relatório e corrija. Ao terminar, clique em <b>Concluir edição</b>. As edições valem para o PDF, o Word e o HTML; a apresentação usa os dados da análise.</p>` + (report.edited || reportHTML(report.R, report.photos, report.meta));
   $("editRep").onclick = () => {
     const art = t.querySelector(".rep"), on = art.isContentEditable;
     if (!on){ art.contentEditable = "true"; art.classList.add("editing"); $("editRep").textContent = "Concluir edição"; $("editRep").classList.add("accent"); $("editTip").hidden = false; art.focus(); return; }
@@ -5961,6 +5963,23 @@ Responda SOMENTE com JSON: {"c":[{"n":1,"figuras":[3]}]}`;
   D.__figConf = {em: Date.now(), ajustes: mud};
   return mud;
 }
+// nenhum risco moderado, alto ou crítico fora do diagnóstico: o inventário foto a foto é comparado com a lista de riscos
+async function completarRiscos(d, inv, signal){
+  if (!d || !inv.some(l => l.length)) return [];
+  const riscos = asList(d.riscos).filter(r => r && typeof r === "object" && r.perigo);
+  const invTxt = inv.map((l, i) => `Figura ${i + 1}: ${l.length ? l.join("; ") : "(sem descrição)"}`).join("\n");
+  const prompt = `Você é auditor(a) de segurança do trabalho no Brasil. Abaixo está o INVENTÁRIO de cada foto de uma inspeção (descrita foto por foto) e a LISTA DE RISCOS do diagnóstico. Encontre TODA situação de risco visível no inventário, de nível MODERADO, ALTO ou CRÍTICO (severidade × probabilidade de 5 a 25, matriz 5×5 da NR-01), que NÃO esteja coberta por nenhum risco da lista. Coberta = o mesmo perigo, no mesmo objeto e na mesma foto. Perigos diferentes no mesmo objeto são riscos diferentes (ex.: "cilindro de oxigênio sem corrente" e "oxigênio armazenado junto do acetileno" são dois riscos; "conjunto de oxicorte montado fora de uso" é um terceiro). Classifique com rigor: oxigênio junto de gás combustível, eletricidade exposta, máquina sem proteção de partes móveis e trabalho em altura sem proteção costumam ser críticos. Use SOMENTE o que está no inventário; não invente. Se nada faltar, responda lista vazia.
+INVENTÁRIO:
+${invTxt}
+LISTA DE RISCOS DO DIAGNÓSTICO:
+${riscos.map((r, i) => `${i + 1}. ${txtOf(r.perigo)}${Math.round(Number(r.figura)) >= 1 ? ` (Figura ${Math.round(Number(r.figura))})` : ""}`).join("\n") || "(vazia)"}
+Responda SOMENTE com JSON: {"faltantes":[{"perigo":"situação de risco, específica, com a figura","categoria":"Acidente|Físico|Químico|Biológico|Ergonômico","nr":"NR-xx","item":"confirmar item","severidade":1,"probabilidade":1,"medida":"medida de controle pela hierarquia de controles","figura":1}]}`;
+  const r = await callAI(prompt, [], signal);
+  const novos = asList(r && r.faltantes).filter(x => x && typeof x === "object" && txtOf(x.perigo)).map(x => ({perigo: txtOf(x.perigo), categoria: txtOf(x.categoria) || "Acidente", nr: txtOf(x.nr), item: txtOf(x.item) || "confirmar item", severidade: clamp(x.severidade, 1, 5), probabilidade: clamp(x.probabilidade, 1, 5), medida: txtOf(x.medida), figura: Math.round(Number(x.figura)) >= 1 && Math.round(Number(x.figura)) <= inv.length ? Math.round(Number(x.figura)) : undefined, origem: "conferencia"}))
+    .filter(x => level(x.severidade, x.probabilidade).r >= 5 && !riscos.some(b => txtOf(b.perigo).toLowerCase() === x.perigo.toLowerCase()));
+  if (novos.length) d.riscos = riscos.concat(novos);
+  return novos;
+}
 // botão do relatório: confere as fotos citadas na análise e no relatório já prontos
 let figBusy = false;
 async function conferirFotosAgora(){
@@ -5974,12 +5993,15 @@ async function conferirFotosAgora(){
     setStatus("Conferindo cada constatação com a foto citada…");
     let n = await conferirFiguras(lastData, inv);
     if (report && report.R) n += await conferirFiguras(report.R, inv);
+    setStatus("Conferindo se algum risco moderado, alto ou crítico ficou fora do diagnóstico…");
+    const falt = await completarRiscos(lastData, inv);
+    if (falt.length && report && report.R) report.R.riscos = asList(report.R.riscos).concat(falt.map(x => ({...x})));
     const y = scrollY; render(lastData, false); scrollTo(0, y);
     if (report){ report.edited = null; showReport(); }
     saveSoon();
-    setStatus(n ? `Fotos conferidas: ${n} citação(ões) apontavam para a foto errada e foram corrigidas.` : "Fotos conferidas: todas as citações conferem com o conteúdo das fotos.");
+    setStatus(`${n ? `Fotos conferidas: ${n} citação(ões) apontavam para a foto errada e foram corrigidas.` : "Fotos conferidas: todas as citações conferem com o conteúdo das fotos."} ${falt.length ? `${falt.length} risco(s) que tinham ficado de fora foram incluídos no diagnóstico e no relatório: ${falt.map(x => x.perigo).join("; ")}.` : "Nenhum risco moderado, alto ou crítico ficou de fora."}`);
   }catch(e){ handleErr(e); }
-  finally{ figBusy = false; const b2 = $("figConfBtn"); if (b2){ b2.disabled = false; b2.textContent = "Conferir fotos citadas"; } }
+  finally{ figBusy = false; const b2 = $("figConfBtn"); if (b2){ b2.disabled = false; b2.textContent = "Conferir fotos e riscos"; } }
 }
 async function generateReport(){
   const blobs = relF().length ? relF().map(f => f.blob) : (history[0] ? [history[0].blob] : []);
