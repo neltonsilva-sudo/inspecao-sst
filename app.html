@@ -1095,7 +1095,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v202</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v203</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1341,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v202</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v203</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2006,7 +2006,7 @@ function autoExibir(){
   else if (report || mapGerado) exibir(report ? "ver-rel" : "ver-mapa");
 }
 $("exDlg").addEventListener("click", e => { const b = e.target.closest("[data-ex]"), d = $("exDlg"); if (b){ d.close(); exibir(b.dataset.ex); } else if (e.target === d) d.close(); });
-$("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "noex") renderEmpty(); else if (/^ver-/.test(a)) exibir(a); });
+$("report").addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (!b) return; const a = b.dataset.act; if (a === "clear") newInspection(); else if (a === "upd") conferirFotosAgora(); else if (a === "noex") renderEmpty(); else if (/^ver-/.test(a)) exibir(a); });
 function render(d, isExample){
   d = d && typeof d === "object" ? d : {};
   curRender = {d, isExample};
@@ -2164,7 +2164,7 @@ function render(d, isExample){
       <p>${counts.crit} risco(s) crítico(s): ${esc(txt(top.perigo))}${txt(top.nr) ? ` (${esc(txt(top.nr))})` : ""}</p>
       ${txt(top.medida) ? `<small><strong>Ação imediata:</strong> ${esc(txt(top.medida))}</small>` : ""}
     </div>` : ""}
-    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="sm" data-act="noex">Fechar exemplo</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></span></div>' : '<div class="rtools"><div class="exibir" hidden></div><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></div>'}
+    ${isExample ? '<div class="banner"><b>Relatório de exemplo</b><span>Exemplo ilustrativo, sem relação com a sua inspeção. Capture imagens e clique em Analisar para gerar o seu.</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="sm" data-act="noex">Fechar exemplo</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></span></div>' : '<div class="rtools"><div class="exibir" hidden></div><button type="button" class="sm accent" id="diagUpd" data-act="upd" title="Confere as fotos citadas, inclui os riscos moderados, altos e críticos que ficaram de fora e as NRs incluídas por você, e atualiza o relatório">Atualizar diagnóstico</button><button type="button" class="newrep sm" data-act="clear" title="Apaga fotos, áudios, documentos, análise e relatório desta inspeção">Limpar todas as informações</button></div>'}
 
     <header class="head">
       <p class="eyebrow">Diagnóstico do ambiente</p>
@@ -5987,7 +5987,9 @@ async function conferirFotosAgora(){
   const blobs = relF().map(f => f.blob); if (!blobs.length) return;
   if (!(sample || (!inViewer && $("apiKey").value.trim()))){ setStatus("Informe a chave da API para conferir as fotos citadas.", true); return; }
   if (report && report.edited && !confirm("O relatório tem edições feitas à mão. A conferência das fotos refaz o relatório a partir dos dados e essas edições serão perdidas. Continuar?")) return;
-  figBusy = true; const b = $("figConfBtn"); if (b){ b.disabled = true; b.textContent = "Conferindo…"; }
+  const BT = [["figConfBtn", "Conferir fotos e riscos"], ["diagUpd", "Atualizar diagnóstico"]], botoes = on => BT.forEach(([id, tx]) => { const b = $(id); if (b){ b.disabled = on; b.textContent = on ? "Atualizando…" : tx; } });
+  figBusy = true; botoes(true);
+  if (curRender && !curRender.isExample && nrPend(curRender.d).length) try{ integrarNRs(); }catch(e){} // NRs incluídas por você entram junto
   try{
     const inv = await inventarioFotos(blobs, undefined, x => setStatus(x), lastData);
     setStatus("Conferindo cada constatação com a foto citada…");
@@ -5996,12 +5998,13 @@ async function conferirFotosAgora(){
     setStatus("Conferindo se algum risco moderado, alto ou crítico ficou fora do diagnóstico…");
     const falt = await completarRiscos(lastData, inv);
     if (falt.length && report && report.R) report.R.riscos = asList(report.R.riscos).concat(falt.map(x => ({...x})));
+    completeRiscos(lastData, blobs.length);
     const y = scrollY; render(lastData, false); scrollTo(0, y);
     if (report){ report.edited = null; showReport(); }
     saveSoon();
     setStatus(`${n ? `Fotos conferidas: ${n} citação(ões) apontavam para a foto errada e foram corrigidas.` : "Fotos conferidas: todas as citações conferem com o conteúdo das fotos."} ${falt.length ? `${falt.length} risco(s) que tinham ficado de fora foram incluídos no diagnóstico e no relatório: ${falt.map(x => x.perigo).join("; ")}.` : "Nenhum risco moderado, alto ou crítico ficou de fora."}`);
   }catch(e){ handleErr(e); }
-  finally{ figBusy = false; const b2 = $("figConfBtn"); if (b2){ b2.disabled = false; b2.textContent = "Conferir fotos e riscos"; } }
+  finally{ figBusy = false; botoes(false); }
 }
 async function generateReport(){
   const blobs = relF().length ? relF().map(f => f.blob) : (history[0] ? [history[0].blob] : []);
