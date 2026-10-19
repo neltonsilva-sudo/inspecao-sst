@@ -384,8 +384,8 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .nrd-yn{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
 .nrd-yn button{border:0;border-radius:0;min-width:64px;font-weight:700;background:var(--panel)}
 .nrd-yn button+button{border-left:1px solid var(--line-strong)}
-.nrd-imp.yes #nrYes{background:#2e9e5b;color:#fff}
-.nrd-imp.no #nrNo{background:#c62828;color:#fff}
+.nrd-imp.yes #nrYes,.nrd-imp.yes #nhoYes{background:#2e9e5b;color:#fff}
+.nrd-imp.no #nrNo,.nrd-imp.no #nhoNo{background:#c62828;color:#fff}
 .nrd-imp.yes{border-color:#2e9e5b;background:color-mix(in srgb,#2e9e5b 8%,var(--panel))}
 .nrd-imp.no{border-color:var(--line-strong)}
 .nrd-imp.busy{border-style:dashed}
@@ -1095,7 +1095,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v198</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v199</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1341,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v198</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v199</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1604,7 +1604,6 @@ const NR_LIST = [[1,"Disposições gerais e GRO/PGR","Disposições Gerais e Ger
 // Normas de Higiene Ocupacional da Fundacentro (NHO): métodos de avaliação dos agentes
 const NHO_LIST = [[1,"Ruído","Avaliação da exposição ocupacional ao ruído"],[2,"Solventes em colas e tintas","Análise qualitativa da fração volátil (vapores orgânicos) em colas, tintas e vernizes por cromatografia gasosa"],[3,"Aerodispersóides (gravimetria)","Análise gravimétrica de aerodispersóides sólidos coletados sobre filtros de membrana"],[4,"Fibras","Coleta e análise de fibras em locais de trabalho – microscopia óptica de contraste de fase"],[5,"Raios X","Avaliação da exposição ocupacional aos raios X nos serviços de radiologia"],[6,"Calor","Avaliação da exposição ocupacional ao calor"],[7,"Calibração de bombas","Calibração de bombas de amostragem individual pelo método da bolha de sabão"],[8,"Material particulado","Coleta de material particulado sólido suspenso no ar de ambientes de trabalho"],[9,"Vibração de corpo inteiro","Avaliação da exposição ocupacional a vibrações de corpo inteiro"],[10,"Vibração em mãos e braços","Avaliação da exposição ocupacional a vibrações em mãos e braços"],[11,"Iluminamento","Avaliação dos níveis de iluminamento em ambientes internos de trabalho"]];
 const nhoTxt = n => "NHO-" + String(n).padStart(2, "0");
-const NHO_REGRAS = `Normas de Higiene Ocupacional da Fundacentro (NHO) (obrigatório): para cada NHO cujo agente aparece nas imagens, relatos ou documentos — ruído de máquinas, esmerilhadeiras, serras, compressores, prensas → NHO-01; colas, tintas, vernizes, solventes → NHO-02; poeiras, fumos metálicos de solda, névoas → NHO-08 (coleta), NHO-03 (análise gravimétrica) e NHO-07 (calibração das bombas de amostragem); fibras (amianto, lã de vidro, lã de rocha) → NHO-04; raios X → NHO-05; fontes de calor (fornos, fundição, solda, caldeiras, trabalho ao sol) → NHO-06; empilhadeiras, veículos e máquinas móveis → NHO-09; ferramentas manuais vibratórias (esmerilhadeira, lixadeira, furadeira, martelete) → NHO-10; iluminação do ambiente interno → NHO-11 — monte um checklist de 3 a 8 itens com: "item" = seção da NHO somente com certeza (senão "confirmar item"); "requisito" = o que a NHO estabelece (critério de avaliação, instrumento, estratégia de amostragem, nível de ação ou limite de exposição, registro), fiel, sem inventar números; "analise" = como a situação encontrada se relaciona com o requisito. As NHOs são métodos de avaliação quantitativa: a imagem não mede, então use "Não verificável" quando depender de medição ou laudo; "Não conforme" só quando o documento anexado, o relato ou a imagem mostrarem claramente o descumprimento (ex.: fonte de ruído evidente sem avaliação no PGR anexado; laudo sem a metodologia da NHO); "Conforme" só com evidência. NUNCA invente valores medidos. COERÊNCIA: a justificativa e cada análise devem citar SOMENTE constatações do agente daquela NHO (ex.: NHO-01 só fontes de ruído, como esmerilhadeira ou compressor em uso; nunca piso molhado, cabo elétrico ou organização), com a figura. NHO sem agente observado: "aplicavel": false. A ação típica é a avaliação quantitativa conforme a NHO, por profissional habilitado, com registro no inventário de riscos do PGR.`;
 const NHO_JSON = `"checklist_nhos":[{"nho":"NHO-01","aplicavel":true,"justificativa":"agente presente e onde (figura)","itens":[{"item":"confirmar item","requisito":"o que a NHO estabelece (fiel)","analise":"como a situação encontrada se relaciona com o requisito","situacao":"Conforme|Não conforme|Não verificável","evidencia":"Figura 1, …","acao":""}]}]`;
 // NHOs sugeridas para análises feitas antes das NHOs (o agente aparece nos riscos ou nas observações)
 // agente de cada NHO: termos procurados como palavra inteira (evita "obstruído" virar "ruído"), com o rótulo usado na justificativa
@@ -1620,17 +1619,54 @@ const NHO_SUG = [
   [10, "ferramenta manual vibratória", "vibração em mãos e braços", nhoRx("esmerilhadeiras?(?!\\p{L})|lixadeiras?(?!\\p{L})|furadeiras?(?!\\p{L})|martelete|parafusadeiras?(?!\\p{L})|rompedor\\p{L}*|vibra[çc]\\p{L}*")],
   [11, "condição de iluminação", "iluminamento (lux)", nhoRx("ilumina\\p{L}*|lumin[áa]rias?(?!\\p{L})|l[âa]mpadas?(?!\\p{L})|escuro(?!\\p{L})|penumbra|pouca luz")]];
 // checklist padrão de cada NHO (requisitos gerais da norma, sem números) usado quando a análise constata o agente
+// checklist padrão de cada NHO: [seção da NHO (conferida no texto da Fundacentro), requisito, tipo de análise]
 const NHO_PAD = {
-  1: ["Avaliar a exposição ocupacional ao ruído de forma quantitativa, preferencialmente por dosimetria, representativa da jornada de trabalho", "Usar dosímetro ou medidor de nível de pressão sonora que atenda às especificações da norma, com a calibração verificada antes e depois das medições", "Comparar o resultado com o critério de referência e o nível de ação da norma e adotar as medidas preventivas e corretivas indicadas", "Registrar a avaliação: condições de trabalho, instrumentos, resultados e conclusão"],
-  2: ["Coletar amostras das colas, tintas e vernizes usados no setor", "Identificar os solventes da fração volátil por cromatografia gasosa, conforme o método da norma", "Usar o resultado para definir a avaliação quantitativa dos agentes químicos identificados", "Registrar os produtos analisados e os solventes identificados"],
-  4: ["Coletar as fibras em filtro com bomba de amostragem calibrada, conforme a estratégia de amostragem da norma", "Analisar por microscopia óptica de contraste de fase, conforme o método da norma", "Comparar o resultado com o limite de exposição aplicável", "Registrar a avaliação e os resultados"],
-  5: ["Avaliar a exposição aos raios X com monitoração individual, conforme a norma", "Verificar as condições de blindagem e de operação dos equipamentos", "Comparar os resultados com os limites aplicáveis", "Registrar a avaliação e os resultados"],
-  6: ["Avaliar a exposição ao calor de forma quantitativa pelo índice IBUTG, representativa das situações térmicas da jornada", "Usar o conjunto de medição previsto na norma (termômetros de globo, de bulbo úmido natural e de bulbo seco) com verificação de funcionamento", "Determinar a taxa metabólica das atividades e comparar o resultado com o limite de exposição e o nível de ação", "Registrar a avaliação: ciclos de exposição, instrumentos, resultados e conclusão"],
-  8: ["Coletar o material particulado na zona respiratória do trabalhador com bomba de amostragem individual e porta-filtro adequado (fração inalável, respirável ou fumos)", "Seguir a estratégia de amostragem representativa da jornada e das atividades, conforme a norma", "Calibrar as bombas de amostragem antes e depois da coleta (NHO-07) e analisar os filtros por gravimetria (NHO-03) ou pelo método do agente", "Registrar a amostragem, os resultados e a comparação com os limites de exposição"],
-  9: ["Avaliar a exposição à vibração de corpo inteiro de forma quantitativa, representativa da jornada", "Usar acelerômetro e medidor que atendam às especificações da norma", "Comparar a exposição diária com o limite de exposição e o nível de ação da norma", "Registrar a avaliação e os resultados"],
-  10: ["Avaliar a exposição à vibração em mãos e braços de forma quantitativa, representativa do uso das ferramentas na jornada", "Usar acelerômetro e medidor que atendam às especificações da norma, com fixação adequada na empunhadura", "Comparar a exposição diária com o limite de exposição e o nível de ação da norma", "Registrar a avaliação e os resultados"],
-  11: ["Medir o iluminamento no plano de trabalho com luxímetro calibrado", "Seguir a malha de pontos e as condições de medição da norma", "Comparar os resultados com os níveis de iluminamento de referência para a atividade", "Registrar a avaliação e os resultados"]
+  1: [["6.1", "Abordagem dos locais e das condições de trabalho: reconhecer as fontes de ruído, as atividades e os trabalhadores expostos", "aval"],
+      ["6.2", "Equipamentos de medição: medidores integradores (de uso pessoal ou portados pelo avaliador) e calibradores acústicos com as especificações mínimas da norma, aferidos e certificados (6.2.3)", "instr"],
+      ["6.4", "Procedimentos específicos de medição do ruído contínuo ou intermitente (medidor integrador de uso pessoal, portado pelo avaliador ou de leitura instantânea)", "med"],
+      ["6.6.1.3", "Interpretação dos resultados: comparar a dose diária ou o nível de exposição normalizado com os critérios da norma (item 5) e aplicar o critério de julgamento e tomada de decisão", "crit"],
+      ["7", "Relatório da avaliação", "reg"]],
+  2: [["12", "Coleta da amostra e transporte dos produtos (colas, tintas e vernizes)", "amostr"],
+      ["13", "Procedimento de análise da fração volátil por cromatografia gasosa", "lab"],
+      ["14", "Expressão dos resultados: identificação dos solventes presentes nos produtos", "reg"]],
+  4: [["Anexo E", "Estratégia de amostragem das fibras", "amostr"],
+      ["17", "Procedimento de coleta das fibras em filtro", "med"],
+      ["20", "Procedimento de análise por microscopia óptica de contraste de fase", "lab"],
+      ["21 e 22", "Cálculo da concentração de cada amostra e expressão dos resultados", "reg"]],
+  5: [["5.1 e 5.2", "Material necessário (instrumento de medida e acessórios) e calibração", "instr"],
+      ["5.6", "Procedimentos de medidas: radiação primária, secundária e de fuga", "med"],
+      ["5.8 e 5.9", "Cálculo da dose equivalente e comparação com os limites de dose equivalente", "crit"],
+      ["6", "Relatório da avaliação", "reg"]],
+  6: [["6.2", "Abordagem do ambiente e das condições de exposição: fontes de calor, ciclos de exposição e Grupos de Exposição Similar (6.1)", "aval"],
+      ["7.1 e 7.2", "Equipamentos de medição das temperaturas de globo, de bulbo úmido natural e de bulbo seco, com montagem e posicionamento", "instr"],
+      ["8", "Procedimentos de medição e cálculos do IBUTG", "med"],
+      ["9.1", "Interpretação dos resultados: comparar o IBUTG, considerando a taxa metabólica, com os limites de exposição (item 5.3) e aplicar o critério de julgamento e tomada de decisão", "crit"],
+      ["11", "Relatório da avaliação", "reg"]],
+  8: [["7.1", "Reconhecimento de riscos: informações do ambiente, do processo de trabalho e dos trabalhadores expostos", "aval"],
+      ["7.3", "Planejamento da coleta: tipo de coleta (individual ou de área), tempo, número de amostras, materiais, equipamentos e laboratório", "amostr"],
+      ["7.4", "Coleta das amostras com bombas de amostragem calibradas (NHO-07, item 7) e análise dos filtros pelo método do agente (ex.: gravimetria, NHO-03, item 14)", "med"],
+      ["7.5", "Cálculos: volume de ar amostrado e concentração média ponderada pelo tempo, para comparação com o limite de exposição aplicável", "crit"],
+      ["9", "Relatório da avaliação", "reg"]],
+  9: [["6.1 e 6.2", "Abordagem dos locais e das condições de trabalho e análise preliminar da exposição", "aval"],
+      ["6.3.2 a 6.3.4", "Sistemas de medição, calibradores para vibração e calibração dos equipamentos", "instr"],
+      ["6.3.6", "Procedimentos de medição: localização e fixação dos transdutores e medição da aceleração", "med"],
+      ["6.5.1", "Interpretação dos resultados: comparar a aceleração resultante de exposição normalizada (aren) e o valor da dose de vibração resultante (VDVR) com o critério da norma (item 5) e aplicar o critério de julgamento e tomada de decisão", "crit"],
+      ["7", "Relatório da avaliação", "reg"]],
+  10: [["6.1 e 6.2", "Abordagem dos locais e das condições de trabalho e análise preliminar da exposição", "aval"],
+      ["6.3.2 a 6.3.4", "Sistemas de medição, calibradores para vibração e calibração dos equipamentos", "instr"],
+      ["6.3.6", "Procedimentos de medição: localização e fixação dos transdutores e medição dos valores de aceleração", "med"],
+      ["6.5.1", "Interpretação dos resultados: comparar a exposição diária (item 6.4) com o critério da norma (item 5) e aplicar o critério de julgamento e tomada de decisão", "crit"],
+      ["7", "Relatório da avaliação", "reg"]],
+  11: [["6.1 e 6.2", "Avaliação preliminar e abordagem dos locais e das condições de trabalho", "aval"],
+      ["6.3", "Equipamentos de medição: luxímetro com as características da norma e calibrado", "instr"],
+      ["6.4", "Procedimento de medição (determinação da iluminância média, Anexo 1)", "med"],
+      ["5.1", "Critério de avaliação: comparar com a escala de iluminância mínima e os níveis mínimos da norma (item 9)", "crit"],
+      ["8", "Relatório da avaliação", "reg"]]
 };
+// seções das NHOs que só entram por indicação da análise (métodos de laboratório e calibração)
+const NHO_COD_EXTRA = "NHO-03: 14 procedimento (pesagem dos filtros), 15 expressão dos resultados; NHO-07: 7 procedimentos de calibração (7.4 medição de vazão, 7.5 cálculo da vazão)";
+const NHO_CODS = Object.entries(NHO_PAD).map(([n, l]) => `${nhoTxt(Number(n))}: ` + l.map(x => `${x[0]} ${x[1].split(":")[0].toLowerCase()}`).join("; ")).join(" | ") + " | " + NHO_COD_EXTRA;
+const NHO_REGRAS = `Normas de Higiene Ocupacional da Fundacentro (NHO) (obrigatório): para cada NHO cujo agente aparece nas imagens, relatos ou documentos — ruído de máquinas, esmerilhadeiras, serras, compressores, prensas → NHO-01; colas, tintas, vernizes, solventes → NHO-02; poeiras, fumos metálicos de solda, névoas → NHO-08 (coleta), NHO-03 (análise gravimétrica) e NHO-07 (calibração das bombas de amostragem); fibras (amianto, lã de vidro, lã de rocha) → NHO-04; raios X → NHO-05; fontes de calor (fornos, fundição, solda, caldeiras, trabalho ao sol) → NHO-06; empilhadeiras, veículos e máquinas móveis → NHO-09; ferramentas manuais vibratórias (esmerilhadeira, lixadeira, furadeira, martelete) → NHO-10; iluminação do ambiente interno → NHO-11 — monte um checklist de 3 a 8 itens com: "item" = seção da NHO (use a numeração conferida: ${NHO_CODS}; fora dela, "confirmar item"); "requisito" = o que a NHO estabelece (critério de avaliação, instrumento, estratégia de amostragem, nível de ação ou limite de exposição, registro), fiel, sem inventar números; "analise" = como a situação encontrada se relaciona com o requisito. As NHOs são métodos de avaliação quantitativa: a imagem não mede, então use "Não verificável" quando depender de medição ou laudo; "Não conforme" só quando o documento anexado, o relato ou a imagem mostrarem claramente o descumprimento (ex.: fonte de ruído evidente sem avaliação no PGR anexado; laudo sem a metodologia da NHO); "Conforme" só com evidência. NUNCA invente valores medidos. COERÊNCIA: a justificativa e cada análise devem citar SOMENTE constatações do agente daquela NHO (ex.: NHO-01 só fontes de ruído, como esmerilhadeira ou compressor em uso; nunca piso molhado, cabo elétrico ou organização), com a figura. NHO sem agente observado: "aplicavel": false. A ação típica é a avaliação quantitativa conforme a NHO, por profissional habilitado, com registro no inventário de riscos do PGR.`;
 const NHO_ACAO = {1: "Realizar dosimetria de ruído conforme a NHO-01 e registrar no inventário de riscos do PGR", 2: "Analisar os produtos conforme a NHO-02 e avaliar os solventes identificados", 4: "Avaliar fibras conforme a NHO-04 e registrar no PGR", 5: "Avaliar a exposição a raios X conforme a NHO-05", 6: "Avaliar o calor (IBUTG) conforme a NHO-06 e registrar no PGR", 8: "Avaliar poeiras e fumos conforme a NHO-08 (coleta), NHO-07 (calibração) e NHO-03 (gravimetria) e registrar no PGR", 9: "Avaliar a vibração de corpo inteiro conforme a NHO-09 e registrar no PGR", 10: "Avaliar a vibração em mãos e braços conforme a NHO-10 e registrar no PGR", 11: "Medir o iluminamento conforme a NHO-11 e corrigir os pontos abaixo do nível de referência"};
 // o que a análise constatou (texto e figura) para indicar as NHOs
 function nhoAchados(d){
@@ -1668,11 +1704,15 @@ function nhoChecks(d, validOnly){
       const ev = hit.slice(0, 4).map(a => `${a.termo} – ${limpa(a.t)}${a.f ? ` (Figura ${a.f})` : ""}`);
       const figs = [...new Set(hit.map(a => a.f).filter(f => f > 0))].slice(0, 4), fgs = figs.map(f => "Figura " + f).join(", ");
       const Rot = rot.charAt(0).toUpperCase() + rot.slice(1);
-      const an = [`${Rot} constatada: ${ev.join("; ")}. A ${grand} a que os trabalhadores ficam expostos não foi avaliada quantitativamente nas fontes analisadas; a imagem não substitui a medição.`,
-        `Não há nas fontes analisadas registro do instrumento nem da medição da ${grand}; a conformidade deste requisito só pode ser verificada na avaliação em campo.`,
-        `Sem resultado de medição da ${grand}, não é possível comparar a exposição com o critério da norma; depende da avaliação quantitativa.`,
-        `Não há registro de avaliação da ${grand} nas fontes analisadas (relatos, documentos e contexto).`];
-      map[n] = {n, aplic: true, auto: true, just: `${Rot} constatada na inspeção: ${ev.join("; ")}.`, itens: NHO_PAD[n].map((x, i) => (x = Array.isArray(x) ? x : ["confirmar item", x], {item: x[0], req: x[1], an: an[Math.min(i, 3)], sit: "Não verificável", k: "warn", ev: fgs, acao: i === 0 ? NHO_ACAO[n] : "", key: nhoKey(n, x[1])}))};
+      const AN = {aval: `${Rot} constatada: ${ev.join("; ")}. A exposição dos trabalhadores (${grand}) não foi avaliada quantitativamente nas fontes analisadas; a imagem não substitui a medição.`,
+        instr: `Não há nas fontes analisadas registro do instrumento de medição (${grand}) nem de sua calibração; verificar na avaliação em campo.`,
+        med: `Não há nas fontes analisadas registro de medição (${grand}); a imagem não substitui a medição.`,
+        amostr: `Não há nas fontes analisadas plano de amostragem nem registro de coleta (${grand}).`,
+        lab: `Não há nas fontes analisadas laudo de análise laboratorial (${grand}).`,
+        crit: `Sem resultado de medição (${grand}), não é possível comparar a exposição com o critério da norma; depende da avaliação quantitativa.`,
+        reg: `Não há nas fontes analisadas (relatos, documentos e contexto) relatório de avaliação (${grand}).`};
+      if (!NHO_PAD[n][0] || NHO_PAD[n][0][2] !== "aval") AN[NHO_PAD[n][0][2]] = AN.aval.replace(/\. A exposição .*$/, ". ") + AN[NHO_PAD[n][0][2]];
+      map[n] = {n, aplic: true, auto: true, just: `${Rot} constatada na inspeção: ${ev.join("; ")}.`, itens: NHO_PAD[n].map((x, i) => ({item: x[0], req: x[1], an: AN[x[2]], sit: "Não verificável", k: "warn", ev: fgs, acao: i === 0 ? NHO_ACAO[n] : "", key: nhoKey(n, x[1])}))};
     });
   }
   Object.values(map).forEach(m => {
@@ -1809,7 +1849,7 @@ const EXAMPLE = {
     {perigo:"Ruído da esmerilhadeira sem protetor auricular visível",categoria:"Físico",nr:"NR-15",item:"Anexo 1",severidade:3,probabilidade:3,medida:"Avaliar dose (NHO-01); fornecer protetor com CA válido (NR-06)"},
     {perigo:"Extintor sem sinalização de piso",categoria:"Acidente",nr:"NR-23",item:"",severidade:2,probabilidade:2,medida:"Sinalizar e desobstruir conforme NR-26 e norma estadual"}
   ],
-  checklist_nhos:[{nho:"NHO-01",aplicavel:true,justificativa:"Esmerilhadeira em operação (Figura 1) é fonte de ruído.",itens:[{item:"confirmar item",requisito:"Avaliar a exposição ao ruído por dosimetria representativa da jornada, com critério de referência e nível de ação definidos na norma",analise:"Há fonte de ruído evidente e não há avaliação quantitativa entre os documentos.",situacao:"Não verificável",evidencia:"Figura 1",acao:"Realizar dosimetria de ruído conforme a NHO-01 e registrar no PGR"}]},{nho:"NHO-11",aplicavel:true,justificativa:"Ambiente interno de trabalho.",itens:[{item:"confirmar item",requisito:"Medir o iluminamento no plano de trabalho com luxímetro calibrado, conforme a malha de pontos da norma",analise:"A iluminação aparenta ser suficiente, mas não houve medição.",situacao:"Não verificável",evidencia:"Figura 1",acao:"Medir o iluminamento conforme a NHO-11"}]}],
+  checklist_nhos:[{nho:"NHO-01",aplicavel:true,justificativa:"Esmerilhadeira em operação (Figura 1) é fonte de ruído.",itens:[{item:"6.4",requisito:"Avaliar a exposição ao ruído por dosimetria representativa da jornada, com critério de referência e nível de ação definidos na norma",analise:"Há fonte de ruído evidente e não há avaliação quantitativa entre os documentos.",situacao:"Não verificável",evidencia:"Figura 1",acao:"Realizar dosimetria de ruído conforme a NHO-01 e registrar no PGR"}]},{nho:"NHO-11",aplicavel:true,justificativa:"Ambiente interno de trabalho.",itens:[{item:"6.4",requisito:"Medir o iluminamento no plano de trabalho com luxímetro calibrado, conforme a malha de pontos da norma",analise:"A iluminação aparenta ser suficiente, mas não houve medição.",situacao:"Não verificável",evidencia:"Figura 1",acao:"Medir o iluminamento conforme a NHO-11"}]}],
   cinco_s:{seiri:{nota:2,obs:"Sucata misturada a peças úteis"},seiton:{nota:2,obs:"Ferramentas sem quadro de sombra"},seiso:{nota:3,obs:"Piso com limalha junto à bancada"},seiketsu:{nota:2,obs:"Sem padrão visual de áreas"},shitsuke:{nota:2,obs:"Verificar em campo: auditorias 5S"}},
   melhorias:[
     {titulo:"Quadro de sombras para ferramentas",metodologia:"Gestão visual / 5S",descricao:"Cada ferramenta com silhueta pintada; falta fica evidente.",fundamentacao:"NR-12 (organização e áreas de trabalho) – confirmar item na redação vigente"},
@@ -2696,7 +2736,7 @@ async function setNHO(n, yes){
     const fontes = [$("ctx").value.trim() ? "Contexto: " + $("ctx").value.trim() : "", docInfo ? "Documentos: " + JSON.stringify(docInfo).slice(0, 4000) : "", audios.filter(a => a.info).length ? "Relatos: " + audios.filter(a => a.info).map(a => txtOf(a.info.informacoes_sst || a.info.resumo)).join(" | ").slice(0, 3000) : ""].filter(Boolean).join("\n");
     const prompt = `Você é higienista ocupacional no Brasil. Avalie a ${code} – ${def[2]} (Fundacentro) para este setor, com base nas imagens anexadas${fontes ? " e nas informações abaixo" : ""}. Riscos já identificados: ${rel.join("; ") || "nenhum"}.
 ${fontes}
-Monte o checklist desta NHO com 3 a 8 itens. Em cada item: "item" = seção da NHO somente com certeza (senão "confirmar item"); "requisito" = o que a NHO estabelece (critério, instrumento, estratégia de amostragem, nível de ação ou limite, registro), fiel, sem inventar números; "analise" = como a situação encontrada se relaciona com o requisito; "situacao" = "Não verificável" quando depende de medição ou laudo, "Não conforme" só quando documento, relato ou imagem mostram claramente o descumprimento, "Conforme" só com evidência; "evidencia" = o que se vê e em qual figura; "acao" = o que fazer (em geral, avaliação quantitativa conforme a NHO por profissional habilitado e registro no PGR). A justificativa e cada análise devem citar SOMENTE constatações do agente desta NHO (com a figura); não use situações de outros riscos (piso, eletricidade, organização). Se o agente desta NHO não existir no setor, responda "aplicavel": false. Nunca invente valores medidos. Português do Brasil.
+Monte o checklist desta NHO com 3 a 8 itens. Em cada item: "item" = seção da NHO (numeração conferida: ${NHO_CODS}; fora dela, "confirmar item"); "requisito" = o que a NHO estabelece (critério, instrumento, estratégia de amostragem, nível de ação ou limite, registro), fiel, sem inventar números; "analise" = como a situação encontrada se relaciona com o requisito; "situacao" = "Não verificável" quando depende de medição ou laudo, "Não conforme" só quando documento, relato ou imagem mostram claramente o descumprimento, "Conforme" só com evidência; "evidencia" = o que se vê e em qual figura; "acao" = o que fazer (em geral, avaliação quantitativa conforme a NHO por profissional habilitado e registro no PGR). A justificativa e cada análise devem citar SOMENTE constatações do agente desta NHO (com a figura); não use situações de outros riscos (piso, eletricidade, organização). Se o agente desta NHO não existir no setor, responda "aplicavel": false. Nunca invente valores medidos. Português do Brasil.
 Responda SOMENTE com JSON: {"nho":"${code}","aplicavel":true,"justificativa":"agente presente e onde (figura)","itens":[{"item":"","requisito":"","analise":"","situacao":"Conforme|Não conforme|Não verificável","evidencia":"","acao":""}]}`;
     const r = await callAI(prompt, blobs, undefined);
     const itens = asList(r && r.itens).filter(i => i && typeof i === "object" && i.requisito);
