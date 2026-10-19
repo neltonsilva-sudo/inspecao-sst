@@ -1087,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v182</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v183</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v182</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v183</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2842,11 +2842,42 @@ function fontesInfo(fotos, outras){
   return {entra, fora: fora.length ? " Ficou de fora: " + fora.join("; ") + "." : ""};
 }
 // Analisar: usa as fotos, os documentos e os relatos em áudio
+// varredura foto a foto: antes da análise geral, as fotos são examinadas em grupos pequenos (atenção total a cada
+// imagem) e cada situação de risco visível é listada por figura; a análise geral é obrigada a incluir todas
+const varCache = new Map(); // foto → situações (reaproveitadas numa nova análise)
+async function varreduraFotos(blobs, signal){
+  const fila = blobs.map((b, i) => i).filter(i => !varCache.has(blobs[i])), LOTE = 4, lotes = [];
+  for (let k = 0; k < fila.length; k += LOTE) lotes.push(fila.slice(k, k + LOTE));
+  let feitos = 0;
+  const roda = async idx => {
+    const prompt = `Você é auditor(a) de segurança do trabalho. Examine com atenção TOTAL cada uma das ${idx.length} imagens anexadas (na ordem: ${idx.map(i => "Figura " + (i + 1)).join(", ")}), área por área — primeiro plano, fundo, cantos, chão, paredes, bancadas, carrinhos, prateleiras — e liste TODAS as situações de risco ou não conformidades visíveis em cada uma, inclusive as pequenas, ao fundo ou parcialmente visíveis. Uma imagem pode ter várias situações: liste todas, separadamente (ex.: piso molhado E um conjunto de cilindros montado ao fundo são duas situações). Para cilindros de gases, descreva cada conjunto (quantidade, gases, se está montado com reguladores/mangueiras, fixação, junto de outro gás). Não descreva traços físicos de pessoas. Só o que é visível; não suponha.
+Responda SOMENTE com JSON: {"figuras":[{"figura":${idx[0] + 1},"situacoes":[{"o_que":"situação de risco, curta e específica","onde":"onde na imagem","nr":"NR aplicável","gravidade":"alta|media|baixa"}]}]}`;
+    try{
+      const r = await callAI(prompt, idx.map(i => blobs[i]), signal, {fast: true});
+      const lst = asList(r && r.figuras);
+      idx.forEach((i, k) => { const f = lst.find(x => Number(x && x.figura) === i + 1) || lst[k]; varCache.set(blobs[i], asList(f && f.situacoes).filter(x => x && x.o_que).map(x => ({o_que: txtOf(x.o_que), onde: txtOf(x.onde), nr: txtOf(x.nr), gravidade: txtOf(x.gravidade)}))); });
+    }catch(e){ if (e?.name === "AbortError" || e?.code === "cancelled") throw e; }
+    feitos += idx.length; setStatus(`Examinando as fotos uma a uma… ${Math.min(feitos, fila.length)} de ${fila.length}`);
+  };
+  let k = 0; await Promise.all(Array.from({length: Math.min(2, lotes.length)}, async () => { while (k < lotes.length) await roda(lotes[k++]); }));
+  const linhas = blobs.map((b, i) => { const s = varCache.get(b); return s && s.length ? `Figura ${i + 1}: ${s.map(x => `${x.o_que}${x.onde ? " (" + x.onde + ")" : ""}${x.nr ? " [" + x.nr + "]" : ""}${x.gravidade ? " {" + x.gravidade + "}" : ""}`).join("; ")}` : ""; }).filter(Boolean);
+  return linhas.length ? `\nINVENTÁRIO FOTO A FOTO (feito imagem por imagem, com atenção total a cada uma). OBRIGATÓRIO: cada situação abaixo deve aparecer em "riscos" (como risco próprio, com a figura indicada), salvo se a imagem claramente a contrariar; acrescente as que faltarem:\n${linhas.join("\n")}\n` : "";
+}
 $("goBtn").onclick = async () => {
   if (!relF().length || ctl){ if (frames.length && !relF().length) setStatus("Nenhuma foto marcada para o relatório técnico (R ou R+M). Toque na etiqueta das fotos para incluí-las.", true); return; }
   await prepFontes();
   const so = frames.length - relF().length, F = fontesInfo(relF().length, so ? `${so} foto(s) marcada(s) só para o mapa (M)` : "");
-  const d = await analyze(relF().map(f => f.blob), `Analisando ${F.entra}`);
+  let inv = ""; try{ setStatus("Examinando as fotos uma a uma…"); inv = await varreduraFotos(relF().map(f => f.blob)); }catch(e){ inv = ""; }
+  const d = await analyze(relF().map(f => f.blob), `Analisando ${F.entra}`, inv);
+  // garantia: situação da varredura que a análise deixou de fora entra como risco, com a figura
+  if (d){ const bl = relF().map(f => f.blob), base = asList(d.riscos); let n = 0;
+    bl.forEach((b, i) => asList(varCache.get(b)).forEach(x => {
+      if (base.some(r => r && (Number(r.figura) === i + 1 || !r.figura) && chkSame(r.perigo, x.o_que))) return;
+      const g = /alta/i.test(x.gravidade) ? 4 : /baixa/i.test(x.gravidade) ? 2 : 3;
+      base.push({perigo: x.o_que + (x.onde ? ` (${x.onde})` : ""), categoria: "Acidente", nr: x.nr || "", item: "", severidade: g, probabilidade: 3, medida: "Corrigir a situação e confirmar em campo, seguindo a hierarquia de controles", figura: i + 1}); n++;
+    }));
+    if (n){ d.riscos = base; render(d, false); lastData = d; saveSoon(); }
+  }
   if (d) setStatus(`${$("status").textContent} Analisado: ${F.entra}.${F.fora}`, !!F.fora);
 };
 
