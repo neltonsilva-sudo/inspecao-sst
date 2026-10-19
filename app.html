@@ -1095,7 +1095,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v196</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v197</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1341,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v196</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v197</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1607,7 +1607,33 @@ const nhoTxt = n => "NHO-" + String(n).padStart(2, "0");
 const NHO_REGRAS = `Normas de Higiene Ocupacional da Fundacentro (NHO) (obrigatório): para cada NHO cujo agente aparece nas imagens, relatos ou documentos — ruído de máquinas, esmerilhadeiras, serras, compressores, prensas → NHO-01; colas, tintas, vernizes, solventes → NHO-02; poeiras, fumos metálicos de solda, névoas → NHO-08 (coleta), NHO-03 (análise gravimétrica) e NHO-07 (calibração das bombas de amostragem); fibras (amianto, lã de vidro, lã de rocha) → NHO-04; raios X → NHO-05; fontes de calor (fornos, fundição, solda, caldeiras, trabalho ao sol) → NHO-06; empilhadeiras, veículos e máquinas móveis → NHO-09; ferramentas manuais vibratórias (esmerilhadeira, lixadeira, furadeira, martelete) → NHO-10; iluminação do ambiente interno → NHO-11 — monte um checklist de 3 a 8 itens com: "item" = seção da NHO somente com certeza (senão "confirmar item"); "requisito" = o que a NHO estabelece (critério de avaliação, instrumento, estratégia de amostragem, nível de ação ou limite de exposição, registro), fiel, sem inventar números; "analise" = como a situação encontrada se relaciona com o requisito. As NHOs são métodos de avaliação quantitativa: a imagem não mede, então use "Não verificável" quando depender de medição ou laudo; "Não conforme" só quando o documento anexado, o relato ou a imagem mostrarem claramente o descumprimento (ex.: fonte de ruído evidente sem avaliação no PGR anexado; laudo sem a metodologia da NHO); "Conforme" só com evidência. NUNCA invente valores medidos. NHO sem agente observado: "aplicavel": false. A ação típica é a avaliação quantitativa conforme a NHO, por profissional habilitado, com registro no inventário de riscos do PGR.`;
 const NHO_JSON = `"checklist_nhos":[{"nho":"NHO-01","aplicavel":true,"justificativa":"agente presente e onde (figura)","itens":[{"item":"confirmar item","requisito":"o que a NHO estabelece (fiel)","analise":"como a situação encontrada se relaciona com o requisito","situacao":"Conforme|Não conforme|Não verificável","evidencia":"Figura 1, …","acao":""}]}]`;
 // NHOs sugeridas para análises feitas antes das NHOs (o agente aparece nos riscos ou nas observações)
-const NHO_SUG = [[1, /ru[íi]do|esmeril|serra\b|serra |compressor|prensa|martel|policorte/i], [2, /solvente|tinta|cola\b|verniz|thinner/i], [4, /fibra|amianto|l[ãa] de (vidro|rocha)/i], [5, /raios?[ -]?x|radiolog/i], [6, /calor|forno|fundi[çc]|solda|ma[çc]arico|caldeira|chama/i], [8, /poeira|fumos?\b|part[íi]cula|aerodispers|n[ée]voa|esmeril|lixa|solda/i], [9, /empilhadeira|ve[íi]culo|trator|vibra[çc][ãa]o de corpo/i], [10, /vibra|esmerilhadeira|lixadeira|furadeira|martelete|parafusadeira/i], [11, /ilumina|lumin[áa]ria|l[âa]mpada|escuro|penumbra/i]];
+const NHO_SUG = [[1, /ru[íi]do|esmeril|serra\b|serras?\s|policorte|compressor|prensa|martel|lixadeira|corte de (metal|chapa)|barulh/i], [2, /solvente|tinta|cola\b|colas\b|verniz|thinner|pintura a pistola/i], [4, /fibra|amianto|l[ãa] de (vidro|rocha)/i], [5, /raios?[ -]?x|radiolog/i], [6, /calor|forno|fundi[çc]|caldeira|ma[çc]arico|estufa|alta temperatura|metal (fundido|aquecido)/i], [8, /poeira|\bp[óo] d[eo]|fumos?\b|fuligem|part[íi]cula|aerodispers|n[ée]voa|esmeril|lixa|solda/i], [9, /empilhadeira|ve[íi]culo|trator|vibra[çc][ãa]o de corpo/i], [10, /vibra|esmerilhadeira|lixadeira|furadeira|martelete|parafusadeira|rompedor/i], [11, /ilumina|lumin[áa]ria|l[âa]mpada|escuro|penumbra|pouca luz/i]];
+// checklist padrão de cada NHO (requisitos gerais da norma, sem números) usado quando a análise constata o agente
+const NHO_PAD = {
+  1: ["Avaliar a exposição ocupacional ao ruído de forma quantitativa, preferencialmente por dosimetria, representativa da jornada de trabalho", "Usar dosímetro ou medidor de nível de pressão sonora que atenda às especificações da norma, com a calibração verificada antes e depois das medições", "Comparar o resultado com o critério de referência e o nível de ação da norma e adotar as medidas preventivas e corretivas indicadas", "Registrar a avaliação: condições de trabalho, instrumentos, resultados e conclusão"],
+  2: ["Coletar amostras das colas, tintas e vernizes usados no setor", "Identificar os solventes da fração volátil por cromatografia gasosa, conforme o método da norma", "Usar o resultado para definir a avaliação quantitativa dos agentes químicos identificados", "Registrar os produtos analisados e os solventes identificados"],
+  4: ["Coletar as fibras em filtro com bomba de amostragem calibrada, conforme a estratégia de amostragem da norma", "Analisar por microscopia óptica de contraste de fase, conforme o método da norma", "Comparar o resultado com o limite de exposição aplicável", "Registrar a avaliação e os resultados"],
+  5: ["Avaliar a exposição aos raios X com monitoração individual, conforme a norma", "Verificar as condições de blindagem e de operação dos equipamentos", "Comparar os resultados com os limites aplicáveis", "Registrar a avaliação e os resultados"],
+  6: ["Avaliar a exposição ao calor de forma quantitativa pelo índice IBUTG, representativa das situações térmicas da jornada", "Usar o conjunto de medição previsto na norma (termômetros de globo, de bulbo úmido natural e de bulbo seco) com verificação de funcionamento", "Determinar a taxa metabólica das atividades e comparar o resultado com o limite de exposição e o nível de ação", "Registrar a avaliação: ciclos de exposição, instrumentos, resultados e conclusão"],
+  8: ["Coletar o material particulado na zona respiratória do trabalhador com bomba de amostragem individual e porta-filtro adequado (fração inalável, respirável ou fumos)", "Seguir a estratégia de amostragem representativa da jornada e das atividades, conforme a norma", "Calibrar as bombas de amostragem antes e depois da coleta (NHO-07) e analisar os filtros por gravimetria (NHO-03) ou pelo método do agente", "Registrar a amostragem, os resultados e a comparação com os limites de exposição"],
+  9: ["Avaliar a exposição à vibração de corpo inteiro de forma quantitativa, representativa da jornada", "Usar acelerômetro e medidor que atendam às especificações da norma", "Comparar a exposição diária com o limite de exposição e o nível de ação da norma", "Registrar a avaliação e os resultados"],
+  10: ["Avaliar a exposição à vibração em mãos e braços de forma quantitativa, representativa do uso das ferramentas na jornada", "Usar acelerômetro e medidor que atendam às especificações da norma, com fixação adequada na empunhadura", "Comparar a exposição diária com o limite de exposição e o nível de ação da norma", "Registrar a avaliação e os resultados"],
+  11: ["Medir o iluminamento no plano de trabalho com luxímetro calibrado", "Seguir a malha de pontos e as condições de medição da norma", "Comparar os resultados com os níveis de iluminamento de referência para a atividade", "Registrar a avaliação e os resultados"]
+};
+const NHO_ACAO = {1: "Realizar dosimetria de ruído conforme a NHO-01 e registrar no inventário de riscos do PGR", 2: "Analisar os produtos conforme a NHO-02 e avaliar os solventes identificados", 4: "Avaliar fibras conforme a NHO-04 e registrar no PGR", 5: "Avaliar a exposição a raios X conforme a NHO-05", 6: "Avaliar o calor (IBUTG) conforme a NHO-06 e registrar no PGR", 8: "Avaliar poeiras e fumos conforme a NHO-08 (coleta), NHO-07 (calibração) e NHO-03 (gravimetria) e registrar no PGR", 9: "Avaliar a vibração de corpo inteiro conforme a NHO-09 e registrar no PGR", 10: "Avaliar a vibração em mãos e braços conforme a NHO-10 e registrar no PGR", 11: "Medir o iluminamento conforme a NHO-11 e corrigir os pontos abaixo do nível de referência"};
+// o que a análise constatou (texto e figura) para indicar as NHOs
+function nhoAchados(d){
+  const t = x => x == null ? "" : typeof x === "object" ? asList(x).map(t).filter(Boolean).join(" · ") : String(x).trim();
+  const out = [], fg = x => { const m = String(x || "").match(/figura\s*(\d+)/i); return m ? Number(m[1]) : Math.round(Number(x)) || 0; };
+  asList(d?.riscos).forEach(r => { if (r && typeof r === "object" && t(r.perigo)) out.push({t: t(r.perigo), x: `${t(r.perigo)} ${t(r.medida)}`, f: fg(r.figura)}); });
+  pessoasOf(d, 0).lista.forEach(o => { if (o.atividade) out.push({t: o.atividade, x: `${o.atividade} ${t(o.riscos)}`, f: fg(o.figura)}); });
+  edifOf(d).forEach(x => x.cons.forEach(c => out.push({t: c, x: `${c} ${x.risco}`, f: fg(c)})));
+  armOf(d).lista.forEach(x => out.push({t: `${x.mat}: ${x.prob}`, x: `${x.mat} ${x.prob} ${x.risco}`, f: fg(x.fig)}));
+  const cs = d?.cinco_s && typeof d.cinco_s === "object" ? d.cinco_s : {};
+  Object.values(cs).forEach(v => v && typeof v === "object" && asList(v.nc).concat(v.obs ? [v.obs] : []).map(t).forEach(c => c && out.push({t: c, x: c, f: fg(c)})));
+  if (t(d?.ambiente)) out.push({t: t(d.ambiente), x: t(d.ambiente), f: 0});
+  return out;
+}
 const nhoNum = x => { const m = String(x || "").match(/NHO\s*-?\s*(\d{1,2})/i) || String(x || "").match(/^\s*(\d{1,2})\s*$/); return m ? Number(m[1]) : 0; };
 const nhoKey = (n, req) => "nho" + n + "|" + String(req || "").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, " ").trim().slice(0, 90);
 function nhoChecks(d, validOnly){
@@ -1621,10 +1647,16 @@ function nhoChecks(d, validOnly){
     });
     map[n] = {n, aplic: x.aplicavel !== false && !/n[ãa]o/i.test(String(x.aplicavel)), just: t(x.justificativa), itens};
   });
-  // análise feita antes das NHOs: indica as que o agente observado sugere (o checklist é montado ao clicar em Sim)
-  if (d && !Array.isArray(d.checklist_nhos)){
-    const txt = asList(d.riscos).map(r => r && typeof r === "object" ? `${t(r.perigo)} ${t(r.categoria)} ${t(r.medida)}` : "").join(" ") + " " + asList(d.fotos).map(t).join(" ");
-    NHO_SUG.forEach(([n, rx]) => { if (!map[n] && rx.test(txt)) map[n] = {n, aplic: false, sug: true, just: "", itens: []}; });
+  // mesmo padrão das NRs: agente constatado na análise (riscos, pessoas, edificação, 5S…) → NHO habilitada com o checklist padrão
+  if (d){
+    const ach = nhoAchados(d);
+    NHO_SUG.forEach(([n, rx]) => {
+      if (map[n] && (map[n].itens.length || map[n].manualNao)) return;
+      const hit = ach.filter(a => rx.test(a.x)); if (!hit.length) return;
+      const ev = hit.slice(0, 4).map(a => a.t.replace(/\s*\(?figura\s*\d+\)?/ig, "").trim() + (a.f ? ` (Figura ${a.f})` : "")).filter((x, i, l) => l.indexOf(x) === i);
+      const figs = [...new Set(hit.map(a => a.f).filter(f => f > 0))].slice(0, 4);
+      map[n] = {n, aplic: true, auto: true, just: `Constatado na inspeção: ${ev.join("; ")}.`, itens: NHO_PAD[n].map((req, i) => ({item: "confirmar item", req, an: i === 0 ? `Agente constatado: ${ev.join("; ")}. A exposição não foi avaliada quantitativamente nas fontes analisadas; a imagem não substitui a medição.` : i === NHO_PAD[n].length - 1 ? "Não há registro de avaliação desse agente nas fontes analisadas." : "Depende da avaliação quantitativa em campo.", sit: "Não verificável", k: "warn", ev: figs.length ? figs.map(f => "Figura " + f).join(", ") : "", acao: i === 0 ? NHO_ACAO[n] : "", key: nhoKey(n, req)}))};
+    });
   }
   Object.values(map).forEach(m => {
     m.itens.forEach(i => { i.rej = !!rej[i.key]; });
@@ -2056,7 +2088,7 @@ function render(d, isExample){
   });
   // higiene ocupacional: avaliação/ação de cada NHO aplicável que não está conforme
   nhoRel(d).forEach(m => m.itens.filter(i => i.k !== "ok" && i.acao).forEach(i => {
-    if (w2hList.some(a => chkSame(txt(a.what), i.acao))) return;
+    if (w2hList.some(a => txt(a.what) === `${nhoTxt(m.n)}: ${i.acao}`)) return;
     w2hList.push({what: `${nhoTxt(m.n)}: ${i.acao}`, why: `${i.req}${i.an ? " – " + i.an : ""}`, where: i.ev && /figura/i.test(i.ev) ? `Local da ${i.ev.match(/figura\s*\d+/i)[0]}` : "Setor inspecionado", who: "SST / higienista ocupacional", when: i.k === "crit" ? "Em até 30 dias" : "Em até 60 dias", how: `Conforme a ${nhoTxt(m.n)} (Fundacentro), por profissional habilitado, com registro no PGR`, how_much: "Avaliação quantitativa", _pr: i.k === "crit" ? 2 : 3, _pts: -2});
   }));
   w2hList.sort((a, b) => a._pr - b._pr || b._pts - a._pts);
@@ -2109,11 +2141,11 @@ function render(d, isExample){
         const st = rev ? "Revogada" : off ? "Fora do rel." : !m || !m.aplic ? "N/A" : m.itens.length ? [m.nc ? m.nc + "NC" : "", m.c + "C", m.nv ? m.nv + "?" : ""].filter(Boolean).join("·") : "Aplicável";
         return `<button type="button" class="nrc ${k}" data-nr="${n}"${rev ? " disabled" : ""} title="NR-${String(n).padStart(2, "0")} – ${curto}" aria-label="NR-${String(n).padStart(2, "0")} ${curto}: ${st}"><b>NR-${String(n).padStart(2, "0")}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
       ${(() => { const pd = isExample ? [] : nrPend(d); return pd.length ? `<div class="nrupd"><span><b>${pd.map(x => nrTxt(nrNum(x.nr))).join(", ")}</b> incluída(s) por você e ainda fora do diagnóstico. Clique em <b>Atualizar</b> para incluir os itens não conformes nos riscos, no plano de ação e no relatório.</span><button type="button" id="nrUpd" class="accent">Atualizar diagnóstico e relatório</button></div>` : ""; })()}
-      <div class="sh nhosh"><h3>Normas de Higiene Ocupacional (NHO – Fundacentro)</h3><span class="meta">${(() => { const v = Object.values(NHC).filter(m => m.aplic && !(d.__nhoOff || {})[m.n]); const sg = Object.values(NHC).filter(m => m.sug).length; return `${v.length} aplicável(is)${sg ? ` · ${sg} sugerida(s)` : ""}`; })()}</span></div>
+      <div class="sh nhosh"><h3>Normas de Higiene Ocupacional (NHO – Fundacentro)</h3><span class="meta">${(() => { const v = Object.values(NHC).filter(m => m.aplic && !(d.__nhoOff || {})[m.n]); const sg = Object.values(NHC).filter(m => m.sug).length; return `${v.length} aplicável(is)`; })()}</span></div>
       <div class="nrgrid nhogrid">${NHO_LIST.map(([n, curto]) => { const m = NHC[n], off = (d.__nhoOff || {})[n], k = off ? "off" : m ? m.k : "na";
         const st = off ? "Fora do rel." : m && m.sug ? "Sugerida" : !m || !m.aplic ? "N/A" : m.itens.length ? [m.nc ? m.nc + "NC" : "", m.c + "C", m.nv ? m.nv + "?" : ""].filter(Boolean).join("·") : "Aplicável";
         return `<button type="button" class="nrc nhoc ${k}" data-nho="${n}" title="${nhoTxt(n)} – ${curto}" aria-label="${nhoTxt(n)} ${curto}: ${st}"><b>${nhoTxt(n)}</b><small>${curto}</small><span class="st">${st}</span></button>`; }).join("")}</div>
-      <p class="hint" style="margin:6px 0 0;font-size:12px">Clique em uma NR ou NHO para ver o checklist. C = conforme · NC = não conforme · ? = não verificável · N/A = não aplicável · Sugerida = o agente aparece na inspeção; clique para avaliar.</p>
+      <p class="hint" style="margin:6px 0 0;font-size:12px">Clique em uma NR ou NHO para ver o checklist. C = conforme · NC = não conforme · ? = não verificável · N/A = não aplicável.</p>
     </section>
 
     <section class="sec">
@@ -2612,7 +2644,7 @@ function openNHO(n){
   const d = curRender.d, m = nhoChecks(d)[n], code = nhoTxt(n), keepScroll = $("nrDlg").open ? $("nrDlg").querySelector(".nrd-in").scrollTop : 0;
   const off = !!((d.__nhoOff || {})[n]), incl = !off && !!(m && m.aplic && m.itens.length), busy = nhoBusy === n;
   const ic = k => k === "ok" ? "✓" : k === "crit" ? "✗" : "?";
-  let h = `<div class="nrd-h"><span class="nr big">${code}</span><div><h2 id="nrDlgT">${esc(def[2])}</h2><div class="nrd-ap ${m && m.aplic ? "y" : "n"}">${m && m.aplic ? "Aplicável a este setor" : m && m.sug ? "Sugerida: o agente aparece na inspeção" : "Agente não observado nas imagens"}</div></div></div>`;
+  let h = `<div class="nrd-h"><span class="nr big">${code}</span><div><h2 id="nrDlgT">${esc(def[2])}</h2><div class="nrd-ap ${m && m.aplic ? "y" : "n"}">${m && m.aplic ? (m.auto ? "Aplicável: o agente foi constatado na análise" : "Aplicável a este setor") : "Agente não constatado na análise"}</div></div></div>`;
   h += `<div class="nrd-imp ${busy ? "busy" : incl ? "yes" : "no"}"><b>Incluir esta NHO no diagnóstico e no relatório?</b>
     <div class="nrd-yn" role="group" aria-label="Incluir ${code}"><button type="button" id="nhoYes" aria-pressed="${incl}"${busy || curRender.isExample ? " disabled" : ""}>Sim</button><button type="button" id="nhoNo" aria-pressed="${!incl && !busy}"${busy || curRender.isExample ? " disabled" : ""}>Não</button></div>
     <span>${busy ? `Montando o checklist da ${code} a partir das fotos, relatos e documentos…` : incl ? `<b>Sim:</b> o checklist desta NHO aparece abaixo e entra no relatório.` : off ? `<b>Não:</b> ${code} fica fora do relatório.` : `Marque <b>Sim</b> para avaliar esta NHO e incluí-la no relatório.`}</span>
@@ -2637,6 +2669,7 @@ async function setNHO(n, yes){
   d.checklist_nhos = asList(d.checklist_nhos);
   const ent = d.checklist_nhos.find(x => x && nhoNum(x.nho) === n);
   if (ent && asList(ent.itens).length){ ent.aplicavel = true; refreshNHO(n); return; }
+  if (nhoChecks(d)[n]?.itens.length){ refreshNHO(n); return; } // já habilitada pelo que a análise constatou
   const blobs = relF().length ? relF().map(f => f.blob) : (history[0] ? [history[0].blob] : []);
   const def = NHO_LIST.find(x => x[0] === n), code = nhoTxt(n);
   if (!(sample || (!inViewer && $("apiKey").value.trim())) || !blobs.length){ nhoErr = {n, msg: !blobs.length ? "Capture ou envie fotos do setor para montar o checklist." : "Informe a chave da API para montar o checklist desta NHO."}; refreshNHO(n); return; }
