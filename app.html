@@ -1087,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v177</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v178</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v177</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v178</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2901,7 +2901,7 @@ function abrirAlRep(){
 }
 async function pdfAlRep(){
   const w = window.open("", "_blank"); if (w) w.document.write('<p style="font:16px system-ui;padding:40px;text-align:center;color:#444">Preparando o relatório de alertas (cobrindo os rostos das fotos)…</p>');
-  const fotos = new Map(); await Promise.all(history.map(async h => fotos.set(h, (await mascarar(h.blob)) || await pixelPhoto(h.blob))));
+  const fotos = new Map(); await Promise.all(history.map(async h => fotos.set(h, (await mascarar(h.blob)) || await maskPhoto(h.blob, []))));
   const css = `body{font:13px Arial,sans-serif;color:#1c2328;margin:24px}h1{font-size:20px;margin:0 0 4px}.sub{color:#666;margin:0 0 14px}.alr-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.alr-k div{border:1px solid #ccd;border-radius:8px;padding:8px}.alr-k b{display:block;font-size:20px}.alr-k span{font-size:11px;color:#666}table{width:100%;border-collapse:collapse;margin-bottom:14px}th,td{border:1px solid #ccd;padding:5px 7px;text-align:left}th{background:#f1f3f5}ol{list-style:none;padding:0;margin:0}ol>li{display:grid;grid-template-columns:200px 1fr;gap:12px;border:1px solid #ccd;border-left:4px solid #c62828;border-radius:8px;padding:8px;margin-bottom:8px;break-inside:avoid}ol>li img{width:100%;border-radius:6px}h3{margin:0 0 4px;font-size:13px}ul{margin:0;padding-left:16px}@page{size:A4;margin:14mm}`;
   const emp = $("rEmp").value.trim(), setor = $("rSetor").value.trim();
   const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório de alertas do monitoramento</title><style>${css}</style></head><body><h1>Relatório de alertas do monitoramento</h1><p class="sub">${esc([emp, setor].filter(Boolean).join(" · ") || "Inspeção SST")} · emitido em ${new Date().toLocaleString("pt-BR")} · rostos cobertos nas fotos</p>${alRepConteudo(h => fotos.get(h))}<script>addEventListener("load", () => setTimeout(() => print(), 400));<\/script></body></html>`;
@@ -4216,7 +4216,7 @@ Responda SOMENTE com JSON: {"riscos":[{"perigo":"","categoria":"Físico|Químico
   } else if (falt.length) manual.push("Há problemas visíveis nas fotos fora do relatório; informe a chave da API para incluí-los automaticamente.");
   // rostos: nova detecção quando há pessoas e nenhum rosto coberto
   const PPa = pessoasOf(an, nFotos);
-  if (PPa.total && !(report.faces || []).some(x => x && x.length) && blobs.length){
+  if ((PPa.total && !(report.faces || []).some(x => x && x.length) || report.faceWarn) && blobs.length){
     try{ const pes = figsComPessoa(), fc = await detectFaces(blobs, undefined, blobs.map((b, i) => pes.has(i))); if (fc && (fc.some(x => x && x.length) || report.faceWarn)){ report.faces = fc; report.faceWarn = fc.some(x => x === null); report.photos = await Promise.all(blobs.map((b, i) => maskPhoto(b, fc[i]))); feito.push(fc.some(x => x && x.length) ? `${fc.reduce((t, x) => t + (x ? x.length : 0), 0)} rosto(s) coberto(s) nas fotos.` : "Rostos verificados: nenhum rosto nas fotos; as fotos voltaram ao normal."); } else manual.push(fc ? "Nenhum rosto foi detectado automaticamente: se houver, cubra-os pelo botão Rostos nas fotos." : "Não foi possível localizar os rostos automaticamente: cubra-os pelo botão Rostos nas fotos."); }
     catch(e){ manual.push("Não foi possível detectar os rostos agora: use o botão Rostos nas fotos."); }
   }
@@ -4435,7 +4435,7 @@ async function mapaDados(){
   const grupos = mapCircles().map(c => ({cor: c.cor, nv: c.nv, rs: c.rs.map((r, k, a) => r.manual ? {perigo: r.t, manual: true} : {perigo: r.t.replace(/[;.]\s*$/, "") + (a.length > 1 && k === a.length - 1 ? "" : ";")})}));
   const MF = mapF(), fi = Math.min(mapFoto, Math.max(0, MF.length - 1));
   let foto = "";
-  if (MF[fi]){ if (mapFotoCache.url === MF[fi].url) foto = mapFotoCache.foto; else { let ok = false; try{ const ri = relF().indexOf(MF[fi]), fc = await detectFaces([MF[fi].blob], undefined, [ri >= 0 && figsComPessoa().has(ri)]); ok = !!fc; foto = fc && fc[0] ? await maskPhoto(MF[fi].blob, fc[0]) : ""; }catch(e){ foto = ""; } if (ok) mapFotoCache = {url: MF[fi].url, foto}; } } // foto com pessoa sem rosto localizado: fica fora do mapa
+  if (MF[fi]){ if (mapFotoCache.url === MF[fi].url) foto = mapFotoCache.foto; else { let ok = false; try{ const ri = relF().indexOf(MF[fi]), fc = await detectFaces([MF[fi].blob], undefined, [ri >= 0 && figsComPessoa().has(ri)]); ok = !!fc; foto = await maskPhoto(MF[fi].blob, fc && fc[0] ? fc[0] : []); }catch(e){ foto = ""; } if (ok) mapFotoCache = {url: MF[fi].url, foto}; } } // sem rosto localizado: a foto entra normal
   return {grupos, foto, logo: load("sst_mlogo") || MAPA_LOGO_SENAI, emp: $("rEmp").value.trim(), setor: $("mSetor").value.trim() || $("rSetor").value.trim(), vig: $("mVig").value.trim(), elab: $("mElab").value.trim() || "—", rev: $("mRev").value.trim() || "—", aprov: $("mAprov").value.trim() || "—"};
 }
 // logo do SENAI e emblema da CIPA recortados do modelo de mapa de risco enviado (logo padrão do cabeçalho; pode ser trocada no quadro 5)
@@ -5291,7 +5291,7 @@ async function rodaMasc(){
   const lote = mascFila.splice(0, 6);
   try{
     const fc = await detectFaces(lote.map(x => x.blob), undefined, lote.map(x => x.pessoa));
-    for (let k = 0; k < lote.length; k++) lote[k].res(fc && fc[k] ? await maskPhoto(lote[k].blob, fc[k]) : null);
+    for (let k = 0; k < lote.length; k++) lote[k].res(await maskPhoto(lote[k].blob, fc && fc[k] ? fc[k] : []));
     lote.forEach((x, k) => { if (!fc || !fc[k]) mascCache.delete(x.blob); });
   }catch(e){ lote.forEach(x => { x.res(null); mascCache.delete(x.blob); }); }
   mascBusy = false; if (mascFila.length) rodaMasc();
@@ -5299,7 +5299,7 @@ async function rodaMasc(){
 function imgSegura(im, blob){
   if (!im || !blob) return;
   im.classList.remove("mask-fail"); im.classList.add("mask-wait"); im.title = "Cobrindo os rostos…";
-  mascarar(blob).then(u => { if (!im.isConnected && !im.closest) return; if (u){ im.src = u; im.classList.remove("mask-wait"); im.title = ""; } else { im.classList.replace("mask-wait", "mask-fail"); im.title = "Não foi possível cobrir os rostos automaticamente (confira a chave da API). A foto fica desfocada."; } });
+  mascarar(blob).then(u => { if (!im.isConnected && !im.closest) return; if (u) im.src = u; im.classList.remove("mask-wait", "mask-fail"); im.title = ""; });
 }
 // rostos: uma imagem por pedido (em lote o modelo pode pular ou trocar imagens) e, se não achar nenhum rosto,
 // uma segunda busca insistente. Resultado por imagem: lista de rostos, ou null quando não foi possível garantir
@@ -5358,37 +5358,30 @@ async function detectFaces1(blob, signal, insiste){
   return out;
 }
 async function detectFaces(blobs, signal, pessoas = []){
-  const out = new Array(blobs.length).fill(null); let k = 0;
+  const out = new Array(blobs.length).fill(null); let k = 0, falhas = 0;
   const um = async i => {
-    let f = null, cont = null;
-    try{ cont = await rostosContorno(blobs[i]); }catch(e){ cont = null; }
-    for (let t = 0; t < 2 && f === null; t++){ try{ f = await detectFaces1(blobs[i], signal, false); }catch(e){ if (e?.name === "AbortError" || e?.code === "cancelled") throw e; } }
-    if (f && !f.length && !(cont && cont.length)){ try{ const g = await detectFaces1(blobs[i], signal, true); f = g.length ? g : (pessoas[i] ? null : f); }catch(e){ f = pessoas[i] ? null : f; } }
-    if (cont && cont.length){
-      // o contorno manda: das caixas da análise, ficam só as de rostos que o contorno não achou e que tenham tamanho de rosto
-      const maior = Math.max(...cont.map(c => Math.max(c.w, c.h)));
-      const extra = (f || []).filter(b => !cont.some(c => Math.hypot(b.cx - c.cx, b.cy - c.cy) < Math.max(c.w, c.h) * 0.75) && Math.max(b.w, b.h) <= maior * 1.6);
-      f = cont.concat(extra);
+    // 1º o contorno do rosto, no próprio navegador (preciso e sem gastar a chave)
+    let cont = null; try{ cont = await rostosContorno(blobs[i]); }catch(e){ cont = null; }
+    if (cont){ out[i] = cont; return; } // achou rostos: círculo pelo contorno; não achou: a foto fica normal
+    // contorno indisponível neste navegador: a análise localiza os rostos (com novas tentativas)
+    let f = null;
+    for (let t = 0; t < 2 && f === null; t++){
+      try{ f = await detectFaces1(blobs[i], signal, false); }
+      catch(e){ if (e?.name === "AbortError" || e?.code === "cancelled") throw e; if (e?.status === 429) await new Promise(r => setTimeout(r, 3000)); }
     }
-    out[i] = f;
+    if (f === null) falhas++;
+    // não encontrou rosto (ou não houve resposta): a foto fica normal; o círculo vai só onde um rosto foi achado
+    out[i] = f || [];
   };
   await Promise.all(Array.from({length: Math.min(3, blobs.length)}, async () => { while (k < blobs.length) await um(k++); }));
-  return out.every(x => x === null) ? null : out;
+  if (falhas === blobs.length) return null;
+  out.falhas = falhas; return out; // falhas: fotos em que não foi possível procurar rostos (ficam normais; o relatório avisa para conferir)
 }
 // figuras em que a análise viu pessoas (Figura N → índice N-1): nelas é obrigatório achar o rosto
 function figsComPessoa(){ const s = new Set(); try{ pessoasOf(report?.R?.pessoas ? report.R : (lastData || {}), relF().length).lista.forEach(o => { const n = Number(String(o.figura || "").match(/\d+/)?.[0]); if (n) s.add(n - 1); }); }catch(e){} return s; }
-// sem conseguir localizar os rostos: a foto entra pixelada (ninguém é identificado) até os rostos serem marcados em "Rostos nas fotos"
-async function pixelPhoto(blob){
-  const url = await blobToDataURL(blob); const im = new Image(); im.src = url; await im.decode();
-  const W = im.naturalWidth, H = im.naturalHeight, k = 24 / Math.max(W, H), sm = document.createElement("canvas"); sm.width = Math.max(1, Math.round(W * k)); sm.height = Math.max(1, Math.round(H * k));
-  sm.getContext("2d").drawImage(im, 0, 0, sm.width, sm.height);
-  const c = document.createElement("canvas"), sc = Math.min(1, 1600 / Math.max(W, H)); c.width = Math.round(W * sc); c.height = Math.round(H * sc);
-  const g = c.getContext("2d"); g.imageSmoothingEnabled = false; g.drawImage(sm, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.85);
-}
 // desenha a foto com um círculo opaco sobre cada rosto (cobre a cabeça inteira com folga)
 async function maskPhoto(blob, faces){
-  if (!Array.isArray(faces)) return pixelPhoto(blob); // não deu para garantir os rostos: ninguém fica exposto
+  if (!Array.isArray(faces)) faces = []; // sem rosto localizado: a foto fica normal (nunca a foto inteira pixelada)
   const url = await blobToDataURL(blob);
   if (!faces.length) return url;
   const im = new Image(); im.src = url; await im.decode();
@@ -5498,12 +5491,12 @@ async function generateReport(){
     setStatus("Cobrindo os rostos das pessoas nas fotos…");
     let faces = await facesP;
     if (!faces) faces = await detectFaces(blobs, ctl.signal, blobs.map((b, i) => pes.has(i))).catch(() => null); // segunda tentativa antes de desistir
-    report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => faces ? maskPhoto(b, faces[i]) : pixelPhoto(b)))};
-    report.faceWarn = !faces || faces.some(x => x === null);
+    report = {R, meta, edited: null, blobs, faces: faces || blobs.map(() => []), photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces ? faces[i] : [])))};
+    report.faceWarn = !faces || faces.falhas > 0;
     saveSoon();
     showReport();
     const nF = report.faces.reduce((t, x) => t + (x ? x.length : 0), 0);
-    setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível localizar os rostos automaticamente: as fotos entraram pixeladas para ninguém ser identificado. Use Rostos nas fotos para marcar os rostos e as fotos voltam ao normal com os rostos cobertos." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
+    setStatus(report.faceWarn ? "Relatório pronto, mas não foi possível localizar os rostos automaticamente. Confira as fotos em Rostos nas fotos e toque em cada rosto para cobri-lo antes de compartilhar." : `Relatório pronto em ${Math.round((Date.now()-t0)/1000)} s. ${nF ? nF + " rosto(s) coberto(s) nas fotos. " : ""}Revise antes de assinar.`, !!report.faceWarn);
     $("tech").scrollIntoView({behavior: "smooth", block: "start"});
     if (mapGerado) autoExibir();
   }catch(e){ handleErr(e); }
@@ -6526,7 +6519,7 @@ async function restoreSession(){
     if (s.lastData){ lastData = completeRiscos(s.lastData, (s.frames || []).length); render(lastData, false); }
     if (s.mapData){ mapData = {...s.mapData, sig: mapSig()}; mapFoto = Math.min(Math.max(0, s.mapFoto || 0), Math.max(0, mapF().length - 1)); drawMapThumbs(); drawMapPrev(); }
     mapGerado = !!s.mapGerado && mapF().length > 0;
-    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, faceWarn: !!s.report.faceWarn, photos: await Promise.all(blobs.map((b, i) => s.report.faceWarn ? pixelPhoto(b) : maskPhoto(b, faces[i])))}; }
+    if (s.report){ const blobs = relF().map(f => f.blob), faces = s.report.faces || blobs.map(() => []); report = {R: s.report.R, meta: s.report.meta, edited: s.report.edited, blobs, faces, faceWarn: !!s.report.faceWarn, photos: await Promise.all(blobs.map((b, i) => maskPhoto(b, faces[i])))}; }
     if (!curRender) renderEmpty(); else drawExibir();
     setTimeout(autoExibir, 300);
     setStatus(`Inspeção anterior restaurada (salva em ${new Date(s.t).toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"})}).${perdidos ? ` ${perdidos} foto(s)/áudio(s) guardado(s) não puderam ser lidos pelo navegador e foram retirados: anexe-os de novo.` : ""} Para começar do zero, clique em Limpar tudo.`, !!perdidos);
