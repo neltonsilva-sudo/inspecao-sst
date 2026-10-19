@@ -1087,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v179</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v180</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v179</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v180</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1957,6 +1957,18 @@ function render(d, isExample){
     if (!txt(r.perigo) || w2hList.some(a => chkSame(r.perigo, txtA(a)) || (txt(r.medida) && chkSame(txt(r.medida), txtA(a))))) return;
     const L = level(r.severidade, r.probabilidade), nr = txt(r.nr), fg = Math.round(Number(r.figura));
     w2hList.push({what: txt(r.medida) || `Eliminar ou controlar: ${txt(r.perigo)}`, why: `${txt(r.perigo)} (risco ${L.t.toLowerCase()}, ${L.r} pontos${nr ? ", " + nr : ""})`, where: fg >= 1 ? `Local da Figura ${fg}` : "Setor inspecionado", who: "Gestor do setor e SST", when: {crit: "Imediato (até 24 horas)", high: "Em até 7 dias", warn: "Em até 30 dias", ok: "Em até 60 dias"}[L.k], how: "Aplicar a hierarquia de controles (eliminação, engenharia, medidas administrativas e EPI) e registrar a evidência de conclusão", how_much: "A orçar", _pr: PRK[L.k], _pts: L.r});
+  });
+  // ações de 5S: uma para cada senso com nota 3 ou menor (a não ser que o plano já trate dele)
+  const S5ACAO = {seiri: ["Separar e descartar o que não é necessário no posto (sucatas, sobras e itens sem uso)", "Triagem com etiqueta vermelha: retirar o que não é usado, destinar sucata e sobras e manter só o necessário"],
+    seiton: ["Definir e identificar um local para cada item (demarcação, quadro de sombras, corredores livres)", "Demarcar piso e áreas de estocagem, identificar prateleiras e ferramentas e manter os corredores desobstruídos"],
+    seiso: ["Limpar piso, máquinas e bancadas e criar rotina de limpeza com responsável", "Limpeza geral com eliminação das fontes de sujeira (óleo, cavaco, poeira) e checklist diário de limpeza"],
+    seiketsu: ["Padronizar a identificação visual e o procedimento do posto", "Padronizar etiquetas, cores e sinalização e afixar o procedimento e o padrão visual do posto"],
+    shitsuke: ["Implantar auditoria 5S periódica com checklist e devolutiva à equipe", "Auditoria quinzenal com pontuação por senso, metas e reconhecimento da equipe; treinar novos integrantes"]};
+  S5.forEach(([k, jp, pt], i) => {
+    const v = s5v[i], e = cs[k]; if (!e || v > 3) return;
+    if (w2hList.some(a => new RegExp(jp, "i").test(txtA(a)))) return;
+    const obs = typeof e === "object" ? txt(e.obs) : "", fg = (obs.match(/figuras?\s*\d+(?:\s*(?:,|e)\s*\d+)*/i) || [""])[0];
+    w2hList.push({what: `5S – ${jp} (${pt}): ${S5ACAO[k][0]}`, why: `${jp} com nota ${v}/5${obs ? ": " + obs : ""}`, where: fg ? `Local da ${fg}` : "Setor inspecionado", who: "Líder do setor e equipe", when: v <= 2 ? "Em até 15 dias" : "Em até 30 dias", how: S5ACAO[k][1], how_much: "Baixo custo", _pr: v <= 2 ? 3 : 4, _pts: -1});
   });
   w2hList.sort((a, b) => a._pr - b._pr || b._pts - a._pts);
   const w2h = w2hList.map((a,i) => `<tr>${W.map(([k,l]) => {
