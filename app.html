@@ -1095,7 +1095,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v203</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v204</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1341,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v203</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v204</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1411,7 +1411,8 @@ api:
     <div class="ph-done-ic" aria-hidden="true"><svg viewBox="0 0 48 48" width="44" height="44"><g fill="none" stroke="currentColor" stroke-width="2.6"><rect x="6" y="6" width="13" height="13" rx="2.5"/><rect x="29" y="6" width="13" height="13" rx="2.5"/><rect x="6" y="29" width="13" height="13" rx="2.5"/></g><g fill="currentColor"><rect x="10.5" y="10.5" width="4" height="4" rx=".8"/><rect x="33.5" y="10.5" width="4" height="4" rx=".8"/><rect x="10.5" y="33.5" width="4" height="4" rx=".8"/><rect x="29" y="29" width="5" height="5" rx="1"/><rect x="37" y="29" width="5" height="5" rx="1"/><rect x="33" y="33" width="5" height="5" rx="1"/><rect x="29" y="37" width="5" height="5" rx="1"/><rect x="37" y="37" width="5" height="5" rx="1"/></g></svg></div>
     <h2 id="phDoneT">Desconectado</h2>
     <p id="phDoneP"></p>
-    <p class="label">Para conectar de novo</p>
+    <button type="button" id="phRetry" class="accent" hidden style="width:100%;min-height:52px;font-size:17px;margin:4px 0 8px">Tentar reconectar</button>
+    <p class="label" id="phDoneL">Para conectar de novo</p>
     <ol class="ph-steps">
       <li><b>No computador, gere o QR code</b><span>No painel "Celular como câmera", clique em Gerar QR code.</span></li>
       <li><b>Leia o código com este celular</b><span>Aponte a câmera do celular para o QR code na tela.</span></li>
@@ -6349,9 +6350,9 @@ function onPhoneConn(peer, conn){
     qr.conn = null;
     qr.drops = (qr.drops || []).filter(t => Date.now() - t < 180000); qr.drops.push(Date.now());
     const chrome = /Chrome\//.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
-    qrMsg(qr.drops.length >= 2 && chrome ? "A conexão com o celular está instável neste Chrome. O celular vai reconectar por retransmissão (estável, sem vídeo ao vivo). Para o vídeo ao vivo estável: no Chrome, clique no ícone ao lado do endereço › Configurações do site › permita \"Rede local\" (dispositivos na rede local) e desative a Economia de memória para este site; ou abra a plataforma no Safari." : "A conexão com o celular oscilou. Aguardando reconexão automática…");
+    qrMsg(qr.drops.length >= 2 && chrome ? "A conexão com o celular está instável neste Chrome. O celular vai reconectar por retransmissão (estável, sem vídeo ao vivo). Para o vídeo ao vivo estável: no Chrome, clique no ícone ao lado do endereço › Configurações do site › permita \"Rede local\" (dispositivos na rede local) e desative a Economia de memória para este site; ou abra a plataforma no Safari." : "A conexão com o celular oscilou. Aguardando o celular reconectar sozinho (até 10 minutos)…");
     clearTimeout(qr.grace);
-    qr.grace = setTimeout(() => { if (qr && !qr.conn) phoneGone("O celular não reconectou."); }, 90000);
+    qr.grace = setTimeout(() => { if (qr && !qr.conn) phoneGone("O celular não reconectou em 10 minutos."); }, 600000); // tempo para o celular voltar (ex.: foi ao app Câmera, tela bloqueada, rede caiu)
   });
 }
 function phoneGone(text){ qrStop(); qrMsg(text + " Para conectar de novo, gere e leia um novo QR code."); }
@@ -6395,7 +6396,7 @@ function phoneMode(id, k){
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
   let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
   let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null, relay = false, asked = false, drops = [];
-  const MAX_TRIES = 8;
+  const MAX_TRIES = 8, JANELA = 600000; let dropT0 = 0; // reconecta sozinho por até 10 minutos (o computador espera o mesmo tempo)
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
   const live = () => !!conn?.open && !!resumeKey;
@@ -6413,6 +6414,7 @@ function phoneMode(id, k){
   function ensurePeer(){
     if (peer && !peer.destroyed && peer.open) return Promise.resolve(peer);
     if (peerReady) return peerReady;
+    if (peer && !peer.destroyed && !peer.open){ const velho = peer; peer = null; try{ velho.destroy(); }catch(e){} } // sinalização perdida: começa do zero
     peerReady = loadScript(PEER_JS).then(() => new Promise((res, rej) => {
       const p = new Peer(PEER_OPTS); peer = p;
       const keyP = relayKey(k);
@@ -6423,7 +6425,7 @@ function phoneMode(id, k){
       p.on("error", e => {
         if (p !== peer) return;
         if (e.type === "peer-unavailable"){
-          if (resumeKey) done("Sessão encerrada", "O computador encerrou a inspeção. Para conectar de novo, leia o novo QR code na tela do computador.");
+          if (resumeKey){ why = "computador fora do ar"; lost(why); } // o computador pode ter perdido a rede: espera ele voltar
           else done("QR code expirado", "Esta sessão não existe mais. Leia o QR code que está na tela do computador agora.");
         } else if (!p.open){ rej(e); }
         else if (!ended){ why = e.type || "erro"; if (resumeKey || asked) lost(why); }
@@ -6443,6 +6445,7 @@ function phoneMode(id, k){
     try{ st?.getTracks().forEach(t => t.stop()); }catch(e){}
     try{ wake?.release(); }catch(e){}
     $("phDoneT").textContent = title; $("phDoneP").textContent = text + (why ? " (motivo técnico: " + why + ")" : ""); show("phDone");
+    const rb = $("phRetry"); if (rb){ rb.hidden = !(resumeKey && /Desconectado/.test(title) && !/Você desconectou/.test(text)); $("phDoneL").textContent = rb.hidden ? "Para conectar de novo" : "Ou leia o QR code de novo"; }
   }
   // zoom: usa o zoom da própria câmera quando o aparelho permite (Android); senão, zoom digital (recorte do centro)
   // e avisa o computador, que mostra e captura a mesma área ampliada
@@ -6503,17 +6506,18 @@ function phoneMode(id, k){
   function lost(reason){
     if (ended || retryT) return;
     if (!resumeKey && !asked){ done("Desconectado", "A conexão com o computador terminou. Para conectar de novo, leia o QR code na tela do computador."); return; }
-    if (tries >= MAX_TRIES){ done("Desconectado", "A rede oscilou e não foi possível reconectar. Leia o QR code na tela do computador de novo."); return; }
+    if (!dropT0) dropT0 = Date.now();
+    if (Date.now() - dropT0 > JANELA){ done("Desconectado", "A conexão não voltou em 10 minutos. Toque em Tentar reconectar ou leia o QR code na tela do computador de novo."); return; }
     tries++;
     // a rede bloqueou a conexão direta (negotiation-failed, ICE) ou ela já caiu antes: reconecta pela retransmissão do servidor, que funciona em qualquer rede
     drops = drops.filter(t => Date.now() - t < 180000); drops.push(Date.now());
     // conexão direta instável (caiu 3 vezes em 3 min, comum com o computador no Chrome): fica na retransmissão até o fim da sessão
     if (!relay && (/negotiation|ice/i.test(String(reason || "")) || tries >= 3 || drops.length >= 3)){ relay = true; try{ mcall?.close(); }catch(e){} }
     $("phShot").disabled = true; $("phRec").textContent = "● RECONECTANDO";
-    msg(`A rede oscilou${reason ? " (" + reason + ")" : ""}. Reconectando… ${tries}/${MAX_TRIES}`, true);
+    msg(`A conexão caiu${reason ? " (" + reason + ")" : ""}. Reconectando sozinho… tentativa ${tries}${navigator.onLine === false ? " · sem internet no celular" : ""}`, true);
     closeLinks();
     if (document.visibilityState !== "visible") return; // reconecta quando a pessoa voltar para a página
-    retryT = setTimeout(() => { retryT = null; if (!ended) connect(); }, Math.min(1000 * tries, 5000));
+    retryT = setTimeout(() => { retryT = null; if (!ended) connect(); }, Math.min(1000 * tries, 8000));
   }
   async function connect(){
     let p;
@@ -6548,7 +6552,7 @@ function phoneMode(id, k){
       if (!d || typeof d !== "object" || c !== conn) return;
       if (d.type === "ok"){
         if (d.r) resumeKey = String(d.r);
-        tries = 0;
+        tries = 0; dropT0 = 0;
         msg(!st ? "Conectado. Enviando os arquivos escolhidos…" : c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
         $("phRec").textContent = c.relay ? "● CONECTADO" : "● TRANSMITINDO"; $("phShot").disabled = false;
         if (!c.relay) startCall(); keepAwake(); setZoom(zoom);
@@ -6720,14 +6724,22 @@ function phoneMode(id, k){
       if (sender) await sender.replaceTrack(st.getVideoTracks()[0]);
     }catch(e){ msg("Não foi possível trocar a câmera.", true); }
   };
+  // depois de desistir por tempo, ainda dá para retomar a mesma sessão (o computador continua aguardando)
+  if ($("phRetry")) $("phRetry").onclick = async () => {
+    ended = false; why = ""; tries = 0; dropT0 = Date.now(); peer = null; show("phLive"); msg("Reconectando…", true);
+    try{ await cam(); }catch(e){}
+    connect();
+  };
   $("phEnd").onclick = () => { why = ""; try{ conn?.open && conn.send({type: "bye"}); }catch(e){} setTimeout(() => done("Desconectado", "Você desconectou este celular. Para conectar de novo, leia o QR code na tela do computador."), 200); };
   // ao voltar para a página (depois de trocar de app ou desbloquear), retoma câmera e conexão
   document.addEventListener("visibilitychange", () => {
     if (ended || document.visibilityState !== "visible" || $("phLive").hidden) return;
     keepAwake();
     if (st && st.getVideoTracks()[0]?.readyState !== "live") reviveCam();
-    if (resumeKey && !conn?.open && !retryT){ tries = Math.min(tries, MAX_TRIES - 3); connect(); }
+    if (resumeKey && !conn?.open){ clearTimeout(retryT); retryT = null; tries = 0; dropT0 = Date.now(); connect(); } // voltou para a página: tenta na hora
   });
+  // a internet do celular voltou: reconecta na hora
+  addEventListener("online", () => { if (!ended && resumeKey && !conn?.open){ clearTimeout(retryT); retryT = null; connect(); } });
   // conexão caiu enquanto aguardava a autorização (ex.: a página ficou em segundo plano): reconecta ao voltar
   document.addEventListener("visibilitychange", () => { if (!ended && !resumeKey && asked && document.visibilityState === "visible" && !conn?.open && !retryT){ tries = Math.min(tries, MAX_TRIES - 3); connect(); } });
   addEventListener("pagehide", e => { if (e.persisted) return; try{ conn?.open && conn.send({type: "bye"}); }catch(x){} try{ peer?.destroy(); }catch(x){} });
