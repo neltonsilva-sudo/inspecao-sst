@@ -332,6 +332,8 @@ button.watch.on{background:var(--panel);color:var(--crit)}
 .report .mxh b{color:var(--ink)}
 .report .matrix .c.warn em{color:#3a2c00}
 .report .matrix .dot{background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.45);width:24px;height:24px;font-size:12px;font-weight:700}
+.report .matrix .c{container-type:inline-size;overflow:hidden;padding:3px 3px 15px;align-content:center}
+.report .matrix .dot{--dz:min(24px,calc((100cqw - 20px) / var(--cols,3) - 2px));width:var(--dz);height:var(--dz);min-width:0;font-size:min(12px,calc(var(--dz) * .5));letter-spacing:-.03em;flex:none}
 .report .dot{width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font:600 10px var(--f-mono);position:relative}
 .report .legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);list-style:none;font-size:12px}
 .report .legend li{display:flex;align-items:center;gap:8px;min-width:0;padding:6px 8px;border-radius:6px;background:var(--panel);border:1px solid var(--line)}
@@ -671,6 +673,9 @@ button.sm{padding:6px 12px;font-size:13px}
 .rep .mx .c{aspect-ratio:1;border-radius:2px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:1px}
 .rep .mx .ax{display:grid;place-items:center;color:#5b6770}
 .rep .mx .d{width:17px;height:17px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-size:10px;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.rep .mx .c{container-type:inline-size;overflow:hidden;padding:2px}
+.rep .two.mxgrande{grid-template-columns:minmax(0,1fr)}.rep .two.mxgrande .mxn{max-width:none}
+.rep .mx .d{--dz:min(17px,calc((100cqw - 6px) / var(--cols,3) - 1px));width:var(--dz);height:var(--dz);font-size:min(10px,calc(var(--dz) * .52));letter-spacing:-.04em;flex:none}
 .rep .dr{display:grid;grid-template-columns:72px minmax(0,1fr) 24px;gap:8px;align-items:center;margin:5px 0;font-size:12.5px}
 .rep .db{height:14px;background:#eef1f3;border-radius:0 4px 4px 0}
 .rep .db i{display:block;height:100%;border-radius:0 4px 4px 0}
@@ -1095,7 +1100,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v204</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v205</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1341,7 +1346,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v204</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v205</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -2211,7 +2216,7 @@ function render(d, isExample){
       <div class="risk">
         <div class="mwrap">
           <p class="kt">Matriz de risco <span>NR-01 · GRO/PGR</span></p>
-          <div class="matrix" role="img" aria-label="Matriz severidade por probabilidade com ${riscos.length} risco(s) posicionados">${mx}</div>
+          <div class="matrix" style="--cols:${mxCols(riscos)};max-width:${Math.max(560, 5 * (mxCols(riscos) * 26 + 20) + 50)}px" role="img" aria-label="Matriz severidade por probabilidade com ${riscos.length} risco(s) posicionados">${mx}</div>
           <p class="mxh">Cada <span class="dot">1</span> é um <b>risco identificado</b> (o número é o item da lista). Só os quadrados em <b>cor forte</b> têm risco; os quadrados claros estão vazios e mostram apenas a faixa de nível. Pontos = severidade × probabilidade. <b>Clique em um quadrante</b> para ver os riscos dele.</p>
           <ul class="legend">${LV.map(([k,t,rg]) => `<li class="${k}"><i></i><span>${t}<small>${rg} pts</small></span><b title="Riscos identificados neste nível">${counts[k]}</b></li>`).join("")}</ul>
         </div>
@@ -3878,6 +3883,8 @@ const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u
 // edificação, layout e checklist das NRs), quando a lista de riscos não as trouxe; classificação padrão por tipo
 // oxigênio junto de acetileno (ou outro gás combustível): risco crítico de incêndio e explosão que nunca pode ficar de fora
 const OX_RX = /oxig[êe]nio|(?<!\p{L})O2(?!\p{L})|O₂/iu, COMB_RX = /acetil\p{L}*|g[áa]s combust[íi]vel|(?<!\p{L})GLP(?!\p{L})|propano/iu;
+// matriz de risco: todos os quadrados do mesmo tamanho; os círculos diminuem para caber o quadrado mais cheio
+const mxCols = riscos => { const n = {}; riscos.forEach(r => { const k = clamp(r.severidade, 1, 5) + "x" + clamp(r.probabilidade, 1, 5); n[k] = (n[k] || 0) + 1; }); return Math.max(3, Math.ceil(Math.sqrt(Math.max(0, ...Object.values(n))))); };
 function riscoCilindros(D){
   if (!D || typeof D !== "object") return [];
   const t = txtOf, txts = [], fg = x => { const m = String(x ?? "").match(/figura\s*(\d+)/i) || String(x ?? "").match(/^\s*(\d+)\s*$/); return m ? Number(m[1]) : 0; };
@@ -4097,8 +4104,8 @@ function reportHTML(R, photos, meta){
   %%T:Inventário de perigos e riscos identificados%%<div class="tw"><table><thead><tr><th>#</th><th>Perigo / risco</th><th>Tipo</th><th>NR</th><th>S×P</th><th>Nível</th><th>Medida de controle</th></tr></thead><tbody>
   ${riscos.map((r, i) => { const L = level(r.severidade, r.probabilidade); return `<tr><td class="num">${i+1}</td><td>${esc(r.perigo)}${figRef(r, photos.length)}</td><td>${esc(r.categoria)}</td><td class="num">${esc(r.nr)}${r.item ? " · " + esc(r.item) : ""}</td><td class="num">${clamp(r.severidade,1,5)}×${clamp(r.probabilidade,1,5)}=${L.r}</td><td><span class="lv" style="background:${LV[L.k][2]}">${LV[L.k][0]}</span></td><td>${esc(r.medida)}</td></tr>`; }).join("") || '<tr><td colspan="7">Nenhum risco identificado nas imagens.</td></tr>'}
   </tbody></table></div>
-  <div class="two">
-    <div><h3>Matriz de risco (NR-01)</h3><div class="fig"><div class="ax-x top">Probabilidade →</div><div class="mxw"><span class="ax-y">Severidade →</span><div class="mx">${mx}</div></div><div class="mxl">${["ok","warn","high","crit"].map((k, i) => `<span><i style="background:${MXC[k]}"></i>${LV[k][0]} ${["1–4","5–9","10–14","15–25"][i]} pts</span>`).join("")}</div><p class="mxn">Círculo numerado = risco identificado (item da tabela). Quadrado em cor forte = tem risco; quadrado claro = vazio, sem risco. Pontos = severidade × probabilidade.</p></div>%%F:Matriz de risco severidade × probabilidade (círculos = riscos da tabela)%%</div>
+  <div class="two${mxCols(riscos) > 3 ? " mxgrande" : ""}">
+    <div><h3>Matriz de risco (NR-01)</h3><div class="fig"><div class="ax-x top">Probabilidade →</div><div class="mxw"><span class="ax-y">Severidade →</span><div class="mx" style="--cols:${mxCols(riscos)};max-width:${Math.max(330, 5 * (mxCols(riscos) * 19 + 8) + 30)}px">${mx}</div></div><div class="mxl">${["ok","warn","high","crit"].map((k, i) => `<span><i style="background:${MXC[k]}"></i>${LV[k][0]} ${["1–4","5–9","10–14","15–25"][i]} pts</span>`).join("")}</div><p class="mxn">Círculo numerado = risco identificado (item da tabela). Quadrado em cor forte = tem risco; quadrado claro = vazio, sem risco. Pontos = severidade × probabilidade.</p></div>%%F:Matriz de risco severidade × probabilidade (círculos = riscos da tabela)%%</div>
     <div><h3>Distribuição dos riscos por nível</h3>${["crit","high","warn","ok"].map(k => `<div class="dr"><span>${LV[k][0]}</span><div class="db"><i style="width:${counts[k]/maxC*100}%;background:${LV[k][1]}"></i></div><b class="num">${counts[k]}</b></div>`).join("")}<p class="cap">Total de ${riscos.length} risco(s) identificado(s).</p>%%F:Distribuição dos riscos por nível%%</div>
   </div>
   ${NRA.length ? `${H("Checklist de conformidade por NR", "Requisitos de cada Norma Regulamentadora aplicável, verificados nas imagens.")}
