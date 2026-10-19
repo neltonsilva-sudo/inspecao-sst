@@ -1087,7 +1087,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v178</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v179</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v178</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v179</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1943,9 +1943,24 @@ function render(d, isExample){
       <div class="it-h"><span>${String(i+1).padStart(2,"0")}</span>${txt(m.metodologia) ? `<span class="tag">${esc(txt(m.metodologia))}</span>` : ""}</div>
       <b>${esc(txt(m.titulo)) || "Melhoria"}</b>${txt(m.descricao) ? `<p>${esc(txt(m.descricao))}</p>` : ""}${txt(m.fundamentacao || m.fundamentacao_legal) ? `<p class="fund"><span>Base legal</span>${esc(txt(m.fundamentacao || m.fundamentacao_legal))}</p>` : ""}</article>`).join("") || '<p class="empty">Nenhuma sugestão.</p>';
 
-  const W = [["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto (estimativa)"]];
-  const w2hList = asList(d.plano_5w2h).map(a => rec(a, "what")).filter(Boolean);
+  const W = [["pr","Prioridade"],["what","O quê"],["why","Por quê"],["where","Onde"],["who","Quem"],["when","Quando"],["how","Como"],["how_much","Quanto (estimativa)"]];
+  // plano completo: as ações redigidas + uma ação para cada risco que ficou sem ação; tudo em ordem de prioridade
+  // (nível do risco ligado à ação: crítico → alto → moderado → baixo; empate: maior pontuação primeiro)
+  const PRK = {crit: 1, high: 2, warn: 3, ok: 4}, PRL = {1: ["crit", "Crítica"], 2: ["high", "Alta"], 3: ["warn", "Média"], 4: ["ok", "Baixa"]};
+  const txtA = a => [a.what, a.why, a.how].map(txt).join(" ");
+  const w2hList = asList(d.plano_5w2h).map(a => rec(a, "what")).filter(Boolean).map(a => {
+    const r = riscos.find(r => chkSame(r.perigo, txtA(a)) || (txt(r.medida) && chkSame(txt(r.medida), txtA(a))));
+    const L = r ? level(r.severidade, r.probabilidade) : null, pt = String(a.prioridade || "").toLowerCase();
+    return {...a, _pr: L ? PRK[L.k] : /cr[ií]t|imediat/.test(pt) ? 1 : /alta/.test(pt) ? 2 : /baixa/.test(pt) ? 4 : 3, _pts: L ? L.r : 0};
+  });
+  riscos.forEach(r => {
+    if (!txt(r.perigo) || w2hList.some(a => chkSame(r.perigo, txtA(a)) || (txt(r.medida) && chkSame(txt(r.medida), txtA(a))))) return;
+    const L = level(r.severidade, r.probabilidade), nr = txt(r.nr), fg = Math.round(Number(r.figura));
+    w2hList.push({what: txt(r.medida) || `Eliminar ou controlar: ${txt(r.perigo)}`, why: `${txt(r.perigo)} (risco ${L.t.toLowerCase()}, ${L.r} pontos${nr ? ", " + nr : ""})`, where: fg >= 1 ? `Local da Figura ${fg}` : "Setor inspecionado", who: "Gestor do setor e SST", when: {crit: "Imediato (até 24 horas)", high: "Em até 7 dias", warn: "Em até 30 dias", ok: "Em até 60 dias"}[L.k], how: "Aplicar a hierarquia de controles (eliminação, engenharia, medidas administrativas e EPI) e registrar a evidência de conclusão", how_much: "A orçar", _pr: PRK[L.k], _pts: L.r});
+  });
+  w2hList.sort((a, b) => a._pr - b._pr || b._pts - a._pts);
   const w2h = w2hList.map((a,i) => `<tr>${W.map(([k,l]) => {
+      if (k === "pr"){ const [c, t] = PRL[a._pr] || PRL[3]; return `<td data-l="${l}"><span class="lc ${c}"><i></i>${t}</span></td>`; }
       const v = esc(txt(a[k]));
       if (k === "what") return `<td class="what" data-l="${l}"><span class="n">${i+1}</span><b>${v || "Ação"}</b></td>`;
       return `<td data-l="${l}"${k === "when" ? ' class="when"' : ""}>${v || '<span class="empty">—</span>'}</td>`;
