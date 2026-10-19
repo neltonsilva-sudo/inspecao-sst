@@ -1094,7 +1094,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v193</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v194</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1340,7 +1340,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v193</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v194</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1576,7 +1576,7 @@ function s5NCs(d){
   const comFig = (txt, fig) => fig && !/figura/i.test(txt) ? `${txt} (${/figura/i.test(fig) ? fig : "Figura " + fig})` : txt;
   S5_KEYS.forEach(k => { const e = cs[k] && typeof cs[k] === "object" ? cs[k] : {}; out[k] = {obs: t(e.obs), l: []}; });
   const semFig = x => String(x || "").replace(/\(?\s*figuras?\s*\d+[^),;]*\)?/gi, " "), igual = (a, b) => chkSame(semFig(a), semFig(b));
-  const add = (k, txt) => { txt = String(txt || "").trim().replace(/\s*[.;]\s*$/, "").replace(/^(figuras?\s*\d+(?:\s*(?:e|a)\s*\d+)?)\s*[,:–-]\s*(.+)$/i, (m, f, r) => r.charAt(0).toUpperCase() + r.slice(1) + ` (${f})`); if (!txt) return; const o = out[k]; if ((o.obs && igual(o.obs, txt) && txt.length < o.obs.length + 10) || o.l.some(x => igual(x, txt))) return; o.l.push(txt); };
+  const add = (k, txt) => { txt = String(txt || "").trim().replace(/\s*[.;]\s*$/, "").replace(/^(figuras?\s*\d+(?:\s*(?:e|a)\s*\d+)?)\s*[,:–-]\s*(.+)$/i, (m, f, r) => r.charAt(0).toUpperCase() + r.slice(1) + ` (${f})`); if (!txt) return; const o = out[k]; if ((o.obs && igual(o.obs, txt) && txt.length < o.obs.length + 10) || S5_KEYS.some(q => out[q].l.some(x => igual(x, txt)))) return; o.l.push(txt); };
   S5_KEYS.forEach(k => asList(cs[k] && cs[k].nc).map(t).forEach(x => add(k, x)));
   residuosOf(d).lista.filter(x => x.k !== "ok").forEach(x => add("seiri", comFig(`${x.mat}${x.onde ? " – " + x.onde : ""}${x.prob ? ": " + x.prob : ""}`, x.fig)));
   armOf(d).lista.filter(x => x.k !== "ok").forEach(x => add(/sucata|sem uso|descart|sobra|inserv|obsolet/i.test(x.mat + " " + x.prob) ? "seiri" : "seiton", comFig(`${x.mat}${x.local ? " – " + x.local : ""}${x.prob ? ": " + x.prob : ""}`, x.fig)));
@@ -1585,6 +1585,16 @@ function s5NCs(d){
     if (/suj|óleo|oleo|poeira|p[óo] |lixo|fuligem|poça|po[çc]a|barr|cavaco|limalha|graxa|esc[óo]ria|encardid/i.test(c)) add("seiso", c);
     else if (/demarca|pintura|sinaliza|faixa|identifica/i.test(x.el + " " + c)) add("seiketsu", c);
   }));
+  // riscos já identificados nas fotos que são também desvio de 5S (sem limite de quantidade)
+  const S5RX = [["seiso", /suj|[óo]leo|poeira|fuligem|po[çc]a|molhad|graxa|limalha|cavaco|esc[óo]ria|encardid|res[íi]duo no piso|lama|barr/i],
+    ["seiri", /sucata|sem uso|desnecess|sobra|entulho|inserv[íi]v|obsolet|garrafa|copo|retalho/i],
+    ["seiketsu", /sinaliza|demarca|identifica|etiqueta|r[óo]tul|desbotad|sem padr/i],
+    ["seiton", /desorganiz|solt[oa]s?\b|espalhad|empilh|amontoad|obstru|corredor|mangueira|pendurad|fora do lugar|sem local|armazen|estoque|guardad|apoiad|improvis/i],
+    ["shitsuke", /descart\w* (incorret|indevid|irregular)|lixo comum|misturad|gambiarra|n[ãa]o cumpr/i]];
+  asList(d && d.riscos).filter(r => r && typeof r === "object" && r.perigo).forEach(r => {
+    const txt = t(r.perigo), hit = S5RX.find(([, rx]) => rx.test(txt)); if (!hit) return;
+    const fg = Math.round(Number(r.figura)); add(hit[0], comFig(txt, fg >= 1 ? "Figura " + fg : ""));
+  });
   return out;
 }
 
