@@ -1103,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v210</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v211</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1349,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v210</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v211</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3812,14 +3812,16 @@ function prep5S(R){
   return {rows, total, max, pct, necessario, justificativa: cs.justificativa || "", plano, implantacao, classe: pct >= 80 ? ["Bom", "#2e8b57"] : pct >= 60 ? ["Regular", "#a87f00"] : ["Insatisfatório", "#c62828"]};
 }
 // notas de 0 a 100, regra fixa e transparente: SST desconta por risco; 5S = % dos sensos; geral = média
-const PEN = {crit: 20, high: 12, warn: 6, ok: 2};
+const PEN = {crit: 90, high: 65, warn: 40, ok: 15}; // perda de cada nível de risco (0 a 100)
+// nota de SST: 100 − média das perdas dos riscos (não zera só porque há muitos riscos); risco crítico limita a nota a 59 (Ruim) e risco alto a 74 (Regular)
+const notaSST = ks => { if (!ks.length) return 100; const m = ks.reduce((t, k) => t + PEN[k], 0) / ks.length; let n = Math.round(100 - m); if (ks.includes("crit")) n = Math.min(n, 59); else if (ks.includes("high")) n = Math.min(n, 74); return Math.max(0, n); };
 // explicação das notas da capa: de onde vem o desconto da nota de SST
 function scoreWhy(SC){
   const c = {crit: 0, high: 0, warn: 0, ok: 0}; SC.res.forEach(x => c[x.a.k]++);
   const nm = {crit: ["crítico", "críticos"], high: ["alto", "altos"], warn: ["moderado", "moderados"], ok: ["baixo", "baixos"]};
-  const parts = Object.keys(c).filter(k => c[k]).map(k => `${c[k]} ${nm[k][c[k] > 1 ? 1 : 0]} (−${c[k] * PEN[k]})`);
-  const tot = Object.keys(c).reduce((t, k) => t + c[k] * PEN[k], 0);
-  return {parts, tot, txt: parts.length ? `Hoje: ${parts.join(", ")} = −${tot} ponto(s)${tot >= 100 ? ", por isso a nota chega a 0" : ""}.` : "Nenhum risco identificado."};
+  const parts = Object.keys(c).filter(k => c[k]).map(k => `${c[k]} ${nm[k][c[k] > 1 ? 1 : 0]}`);
+  const n = SC.res.length, tot = n ? Math.round(Object.keys(c).reduce((t, k) => t + c[k] * PEN[k], 0) / n) : 0;
+  return {parts, tot, txt: parts.length ? `Hoje: ${parts.join(", ")} — perda média ${tot}, nota ${SC.sstA}${c.crit && 100 - tot > 59 ? " (limitada a 59 pelos riscos críticos)" : !c.crit && c.high && 100 - tot > 74 ? " (limitada a 74 pelos riscos altos)" : ""}.` : "Nenhum risco identificado."};
 }
 const classe = n => n >= 75 ? ["Ótimo", "#2e8b57"] : n >= 60 ? ["Regular", "#a87f00"] : ["Ruim", "#c62828"]; // faixas: 75–100 Ótimo · 60–74 Regular · < 60 Ruim
 function scores(riscos, S5){
@@ -3829,8 +3831,7 @@ function scores(riscos, S5){
     const p1 = r.probabilidade_residual != null && r.probabilidade_residual !== "" ? Math.min(p0, clamp(r.probabilidade_residual,1,5)) : Math.max(1, p0 - 2);
     return {r, a: level(s0, p0), b: level(s1, p1), s1, p1};
   });
-  const sstA = Math.max(0, 100 - res.reduce((t, x) => t + PEN[x.a.k], 0));
-  const sstB = Math.max(0, 100 - res.reduce((t, x) => t + PEN[x.b.k], 0));
+  const sstA = notaSST(res.map(x => x.a.k)), sstB = notaSST(res.map(x => x.b.k));
   let s5A = null, s5B = null;
   if (S5){
     const av = S5.rows.filter(x => x.nota !== null);
@@ -4093,7 +4094,7 @@ function reportHTML(R, photos, meta){
         <div class="cv-bx"><div class="cv-sit" style="color:${sitC}">Situação: ${esc(sit)}</div>
           <div class="notas" aria-label="Notas de avaliação: hoje e após o plano de ação">${ctile("SST (NRs)", SC.sstA, SC.sstB)}${SC.s5A !== null ? ctile("5S", SC.s5A, SC.s5B) : ""}${ctile("Geral", SC.gA, SC.gB)}</div>
           <div class="cv-exp"><b>Como ler:</b> notas de 0 a 100. O 1º número é a situação <b>hoje</b>; o 2º, a nota <b>prevista se o plano de ação for cumprido</b>. Faixas: 75–100 Ótimo · 60–74 Regular · abaixo de 60 Ruim.
-            <ul><li><b>SST (NRs):</b> parte de 100 e desconta cada risco encontrado: crítico −20, alto −12, moderado −6, baixo −2 (mínimo 0). ${scoreWhy(SC).txt}</li>${SC.s5A !== null ? "<li><b>5S:</b> soma das notas dos 5 sensos (0 a 5 cada), convertida para 0 a 100.</li>" : ""}<li><b>Geral:</b> ${SC.s5A !== null ? "média das notas de SST e 5S" : "igual à nota de SST"}.</li></ul></div></div>
+            <ul><li><b>SST (NRs):</b> 100 menos a perda média dos riscos encontrados (crítico 90, alto 65, moderado 40, baixo 15); com risco crítico a nota fica no máximo 59 (Ruim) e com risco alto no máximo 74 (Regular). A nota após o plano usa a classificação residual de cada risco. ${scoreWhy(SC).txt}</li>${SC.s5A !== null ? "<li><b>5S:</b> soma das notas dos 5 sensos (0 a 5 cada), convertida para 0 a 100.</li>" : ""}<li><b>Geral:</b> ${SC.s5A !== null ? "média das notas de SST e 5S" : "igual à nota de SST"}.</li></ul></div></div>
       </div>
       <dl class="meta">
         <div><dt>Empresa / unidade</dt><dd>${esc(meta.emp || "Não informado")}</dd></div>
