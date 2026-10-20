@@ -1072,6 +1072,9 @@ button.sm{padding:6px 12px;font-size:13px}
 .aud-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .audlist audio{width:100%;height:34px}
 .aud-sum{font-size:12.5px;color:var(--muted)}
+.aud-tr{margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.aud-tr summary{cursor:pointer;padding:6px 10px;font:600 12.5px var(--f-body);color:var(--ink)}
+.aud-tx{padding:2px 10px 10px;font-size:13px;line-height:1.5;color:var(--ink);white-space:pre-wrap;max-height:320px;overflow:auto}
 .doclist li small{font:500 11px var(--f-mono);color:var(--muted);white-space:nowrap}
 .doclist li.err small{color:var(--crit)}
 .docsum{border:1px solid var(--line);border-left:4px solid var(--info);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;display:grid;gap:6px;background:var(--surface-2)}
@@ -1100,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v207</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v208</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1346,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v207</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v208</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1473,8 +1476,9 @@ const relNome = a => "Relato " + (audios.filter(x => x.info).indexOf(a) + 1);
 function relatosBlock(){
   const ok = audios.filter(a => a.info);
   if (!ok.length) return "";
-  const data = ok.map(a => anonInfo({nome: relNome(a), origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, riscos_psicossociais: a.info.riscos_psicossociais, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 5000)}));
-  return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 40000) +
+  const data = ok.map(a => anonInfo({nome: relNome(a), origem: a.from, duracao_s: Math.round(a.dur || 0), resumo: a.info.resumo, informacoes_sst: a.info.informacoes_sst, riscos_relatados: a.info.riscos_relatados, riscos_psicossociais: a.info.riscos_psicossociais, sugestoes: a.info.sugestoes, pessoas_funcoes: a.info.pessoas_funcoes, transcricao: String(a.info.transcricao || "").slice(0, 20000)}));
+  return "Relatos em áudio transcritos (entrevistas com trabalhadores ou observações faladas durante a inspeção): " + JSON.stringify(data).slice(0, 60000) +
+    "\nExamine MINUCIOSAMENTE a transcrição completa de cada relato, frase por frase: toda situação de risco, condição ou ato inseguro, acidente ou quase acidente, máquina ou equipamento com defeito, falta de EPI, treinamento, procedimento ou documento, e todo fator psicossocial citado deve entrar no diagnóstico (riscos com a NR, checklists das NRs, psicossociais, documentos e registros e plano de ação). O que não aparece nas fotos entra como \"verificar em campo\", com a classificação coerente com o perigo relatado." +
     "\nUse as informações dos relatos SOMENTE para embasar o diagnóstico: confirme ou confronte com as imagens e os documentos e use-as nos riscos, nos fatores psicossociais, no plano de ação e nos documentos e registros. NÃO reproduza os depoimentos: não transcreva, não cite trechos nem falas, não use expressões como \"segundo relato\", \"o trabalhador afirmou\" ou \"conforme entrevista\"; redija cada constatação de forma técnica e impessoal, como constatação da inspeção.\n";
 }
 function docBlock(){
@@ -6813,6 +6817,13 @@ function drawAudios(){
     const au = document.createElement("audio"); au.controls = true; au.preload = "none"; au.src = a.url;
     li.append(top, au);
     if (a.info?.resumo){ const r = document.createElement("div"); r.className = "aud-sum"; r.textContent = a.info.resumo; li.append(r); }
+    // transcrição completa do áudio, logo abaixo do player (sem nomes de pessoas)
+    if (a.info && String(a.info.transcricao || "").trim()){
+      const det = document.createElement("details"); det.className = "aud-tr"; det.open = true;
+      const sm2 = document.createElement("summary"); sm2.textContent = "Transcrição completa do áudio";
+      const tx = document.createElement("div"); tx.className = "aud-tx"; tx.textContent = String(a.info.transcricao).trim();
+      det.append(sm2, tx); li.append(det);
+    } else if (a.working || /transcrev/i.test(a.status || "")){ const w = document.createElement("div"); w.className = "aud-sum"; w.textContent = "A transcrição completa aparecerá aqui assim que terminar."; li.append(w); }
     ul.append(li);
   });
   $("audClr").hidden = !audios.length;
