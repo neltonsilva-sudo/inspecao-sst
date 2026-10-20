@@ -1103,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v211</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v212</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1349,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v211</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v212</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -4010,6 +4010,17 @@ function planoSeg(plano, riscos){
 const riscosOf = R => {
   const semEv = r => !asList(R.__semEvid).some(t => chkSame(r?.perigo, t));
   const s5 = so5sSet(), ehNR = r => riscoNR(r) && !s5.has(txtOf(r.perigo).toLowerCase());
+  // a lista de riscos do relatório é a MESMA do diagnóstico (mesma quantidade, numeração e classificação);
+  // do texto do relatório vem só a projeção residual de cada risco (nota após o plano)
+  const an = asList(lastData?.riscos).filter(r => r && typeof r === "object" && r.perigo);
+  if (an.length){
+    const rr = asList(R.riscos).filter(r => r && typeof r === "object" && r.perigo);
+    return an.filter(ehNR).filter(semEv).map(r => {
+      if (r.severidade_residual != null && r.severidade_residual !== "") return r;
+      const m = rr.find(x => normRisco(x.perigo) === normRisco(r.perigo)) || rr.find(x => chkSame(x.perigo, r.perigo) && (!x.figura || !r.figura || Math.round(+x.figura) === Math.round(+r.figura)));
+      return m && m.severidade_residual != null && m.severidade_residual !== "" ? {...r, severidade_residual: m.severidade_residual, probabilidade_residual: m.probabilidade_residual} : r;
+    });
+  }
   const base = (asList(R.riscos).some(r => r && typeof r === "object") ? asList(R.riscos) : mergeRiscos([], asList(lastData?.riscos).filter(semEv))).filter(ehNR);
   let der = []; try{ der = riscosDerivados(R, report?.blobs?.length || relF().length).filter(semEv); }catch(e){}
   if (!asList(R.riscos).some(r => r && OX_RX.test(txtOf(r.perigo)) && COMB_RX.test(txtOf(r.perigo)))) der = der.concat(riscoCilindros(lastData).filter(semEv)); // oxigênio + acetileno visto na análise
@@ -6079,6 +6090,9 @@ async function generateReport(){
     const pes = figsComPessoa(), facesP = detectFaces(blobs, ctl.signal, blobs.map((b, i) => pes.has(i))).catch(() => null); // rostos cobertos nas fotos do relatório
     const parts = await Promise.all(REP_PARTS.map((k, i) => part(k, i + 1)));
     const R = Object.assign({}, ...parts);
+    // risco que só o relatório trouxe entra também no diagnóstico (painel e relatório com a mesma lista)
+    { const an = asList(lastData?.riscos), ext = asList(R.riscos).filter(x => x && typeof x === "object" && x.perigo && riscoNR(x) && !an.some(r => r && (normRisco(r.perigo) === normRisco(x.perigo) || chkSame(r.perigo, x.perigo))));
+      if (lastData && ext.length){ lastData.riscos = an.concat(ext.map(x => ({...x, origem: "relatorio"}))); render(lastData, false); } }
     R.riscos = mergeRiscos(R.riscos, validatedData(lastData)?.riscos); // nenhum risco da análise fica fora do relatório
     setStatus("Conferindo os itens das NRs citados com a redação vigente…");
     try{ await conferirItensNR(R, ctl.signal); }catch(e){ if (e?.name === "AbortError" || e?.code === "cancelled") throw e; }
