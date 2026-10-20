@@ -1103,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v212</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v213</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1349,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v212</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v213</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -1386,7 +1386,7 @@ api:
     <button id="phCamOn" class="btn ph-gal" type="button" hidden>Ligar a câmera para fotografar</button>
     <div class="ph-cam" id="phBox">
       <video id="phVideo" playsinline muted autoplay></video>
-      <span class="rec" id="phRec">● AGUARDANDO</span>
+      <span class="rec" id="phRec">● AGUARDANDO</span><span class="rec" id="phEco" hidden title="Sem toque na tela por 1 minuto: vídeo em ritmo reduzido para poupar bateria e evitar aquecimento. Toque na tela para voltar ao normal.">ECONOMIA</span>
       <span class="ph-badge" id="phBadge" aria-label="Fotos capturadas">0</span>
       <div class="ph-zoom" id="phZoom" role="group" aria-label="Zoom da câmera"><button type="button" data-z="1" class="on">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="3">3×</button><button type="button" data-z="5">5×</button></div>
       <div class="ph-bar">
@@ -6531,15 +6531,31 @@ function phoneMode(id, k){
   }
   async function cam(){
     const old = st;
-    st = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: facing}, width: {ideal: 1920}}}); // sem impor formato: não corta a imagem
+    // 15 quadros/s (em vez de 30): metade do trabalho da câmera e do codificador, o celular esquenta bem menos; a nitidez da foto não muda
+    st = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: facing}, width: {ideal: 1920}, frameRate: {ideal: FPS_ATIVO, max: 20}}}); // sem impor formato: não corta a imagem
     old?.getTracks().forEach(t => t.stop());
     const tr0 = st.getVideoTracks()[0];
     try{ tr0.contentHint = "detail"; }catch(e){}
     // o iOS pode encerrar a câmera (ligação, outro app): reabre sozinho quando a página estiver visível
     tr0.addEventListener("ended", () => { if (!ended && document.visibilityState === "visible") reviveCam(); });
     $("phVideo").srcObject = st; await $("phVideo").play().catch(() => {});
-    zoomCaps(); setZoom(zoom, false); ajustaQuadro();
+    zoomCaps(); setZoom(zoom, false); ajustaQuadro(); fpsAtual = 0; ritmo(true);
   }
+  // economia de bateria: sem toque na tela por 1 minuto, o vídeo cai para 5 quadros/s (o monitoramento e as capturas continuam);
+  // qualquer toque volta ao normal
+  const FPS_ATIVO = 15, FPS_ECO = 5; let fpsAtual = 0, ecoT = null;
+  function ritmo(ativo){
+    clearTimeout(ecoT); if (ended) return;
+    const f = ativo ? FPS_ATIVO : FPS_ECO;
+    if (f !== fpsAtual){
+      fpsAtual = f;
+      try{ st?.getVideoTracks()[0]?.applyConstraints({frameRate: {ideal: f, max: ativo ? 20 : f}}).catch(() => {}); }catch(e){}
+      try{ const snd = mcall?.peerConnection?.getSenders().find(x => x.track?.kind === "video"); if (snd){ const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxFramerate = f; snd.setParameters(prm).catch(() => {}); } }catch(e){}
+      $("phEco") && ($("phEco").hidden = ativo);
+    }
+    if (ativo) ecoT = setTimeout(() => ritmo(false), 60000);
+  }
+  ["pointerdown", "touchstart", "keydown"].forEach(ev => addEventListener(ev, () => { if (fpsAtual !== FPS_ATIVO) ritmo(true); else { clearTimeout(ecoT); ecoT = setTimeout(() => ritmo(false), 60000); } }, {passive: true}));
   // o quadro assume a proporção do vídeo (retrato ou paisagem), para a imagem ocupar todo o espaço
   // ajuste automático: o quadro ocupa a largura toda e a altura do vídeo, até caber na tela (descontada a barra do navegador);
   // se o vídeo for mais alto que isso, a imagem preenche o quadro (corta só um pouco em cima e embaixo na prévia; a foto sai inteira)
@@ -6570,7 +6586,7 @@ function phoneMode(id, k){
     // se só o vídeo cair, refaz o vídeo sem derrubar a sessão
     c.on("close", () => { if (c === mcall && live() && !ended) setTimeout(() => { if (c === mcall && live()) startCall(); }, 1000); });
     // vídeo até 1,5 Mbps (mais estável em redes oscilantes e no Chrome), ajustando-se à rede
-    setTimeout(() => { try{ const snd = c.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 1500000; prm.degradationPreference = "balanced"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
+    setTimeout(() => { try{ const snd = c.peerConnection.getSenders().find(x => x.track?.kind === "video"); const prm = snd.getParameters(); if (!prm.encodings?.length) prm.encodings = [{}]; prm.encodings[0].maxBitrate = 1000000; prm.encodings[0].maxFramerate = fpsAtual || FPS_ATIVO; prm.degradationPreference = "balanced"; snd.setParameters(prm).catch(() => {}); }catch(e){} }, 1500);
   }
   // queda inesperada: reconecta na mesma sessão (o computador continua aberto e já autorizou)
   function lost(reason){
