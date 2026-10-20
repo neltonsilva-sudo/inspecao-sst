@@ -1103,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v209</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v210</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1349,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v209</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v210</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -3029,9 +3029,10 @@ async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   blobs = await fitBudget(blobs, 13.5e6); // ~18 MB depois de virar base64
   const parts = [];
   for (const b of blobs) parts.push({inline_data:{mime_type: (b.type && !/octet/.test(b.type)) ? b.type : "image/jpeg", data: await blobToB64(b)}});
-  parts.push({text: prompt});
+  const tent = opts._try || 0; // nova tentativa depois de resposta fora do formato: muda a semente (senão vem a mesma resposta) e reforça o formato
+  parts.push({text: (tent ? "IMPORTANTE: responda APENAS com um objeto JSON válido (aspas duplas, sem comentários, sem texto antes ou depois, sem repetir itens).\n" : "") + prompt});
   let think = !!opts.fast;
-  const body = m => { const gc = {responseMimeType:"application/json", seed:20260}; if (!/gemini-3/.test(m)){ gc.temperature = 0; gc.topP = 0.1; } /* mesma entrada → mesma resposta; o Gemini 3 pede a temperatura padrão e usa só a semente fixa */ const tc = think && thinkCfg(m, opts.budget || 0); if (tc) gc.thinkingConfig = tc; return JSON.stringify({contents:[{role:"user", parts}], generationConfig: gc}); };
+  const body = m => { const gc = {responseMimeType:"application/json", seed: tent ? 1000 + Math.floor(Math.random() * 1e6) : 20260}; if (!/gemini-3/.test(m)){ gc.temperature = tent ? 0.5 : 0; if (!tent) gc.topP = 0.1; } /* mesma entrada → mesma resposta; o Gemini 3 pede a temperatura padrão e usa só a semente fixa */ const tc = think && thinkCfg(m, opts.budget || 0); if (tc) gc.thinkingConfig = tc; return JSON.stringify({contents:[{role:"user", parts}], generationConfig: gc}); };
   // Gemini sobrecarregado (503/500/504): tenta de novo com pausas e, se continuar, usa outro modelo
   // ordem: principal → outros modelos (em pico costumam estar livres) → principal de novo após uma pausa maior
   const alt = geminiAlt.filter(m => m !== model), tries = [model, ...alt, model, model];
@@ -3058,8 +3059,8 @@ async function viaGemini(prompt, blobs, signal, again = true, opts = {}){
   if (!text) throw fin === "MAX_TOKENS" ? {code:"http", status:0, message: cut} : (/SAFETY|RECITATION|PROHIBITED|BLOCK/.test(fin) ? {code:"refused"} : {code:"http", status:0, message: "o Gemini não devolveu resposta (" + (fin || "vazia") + "). Tente de novo"});
   const out = await parseLoose(text); if (out) return out;
   if (fin === "MAX_TOKENS") throw {code:"http", status:0, message: cut};
-  if (again) return viaGemini(prompt, blobs, signal, false, opts); // refaz uma vez sozinho
-  throw {code:"http", status:0, message: "a análise respondeu fora do formato esperado duas vezes. Clique em Analisar de novo"};
+  if (again && tent < 2) return viaGemini(prompt, blobs, signal, true, {...opts, _try: tent + 1}); // refaz sozinho até 2 vezes, com outra semente
+  throw {code:"http", status:0, message: "a análise respondeu fora do formato esperado três vezes. Clique em Analisar de novo"};
 }
 
 const ERR = {
