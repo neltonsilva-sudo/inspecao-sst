@@ -1103,7 +1103,7 @@ button.sm{padding:6px 12px;font-size:13px}
       <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--signal-ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--signal-ink)"/></svg>
       <div>
         <h1>Inspeção SST por Câmera</h1>
-        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v213</span></div>
+        <div class="sub">Riscos pelas NRs, 5S, PDCA e plano 5W2H a partir de imagens do ambiente · <span class="ver">v214</span></div>
         <div class="by">Por: Nelton Silva</div>
       </div>
     </div>
@@ -1349,7 +1349,7 @@ api:
 <section class="phone" id="phone" hidden>
   <header class="ph-top">
     <svg class="tri" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 2 38 34H2Z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="18.4" y="12" width="3.2" height="12" rx="1.2" fill="var(--ink)"/><circle cx="20" cy="28.5" r="1.9" fill="var(--ink)"/></svg>
-    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v213</span></div></div>
+    <div><h1>Inspeção SST</h1><div class="sub">Câmera do celular · <span class="ver">v214</span></div></div>
     <span class="ph-lock"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Criptografada</span></span>
   </header>
   <div id="phAsk" class="stack ph-ask">
@@ -6250,6 +6250,54 @@ function relayConn(peer, dst, keyP){
   const dog = setInterval(() => { if (seen && Date.now() - seen > 20000) c.close(); }, 3000);
   return c;
 }
+// rede restrita (ex.: Wi-Fi corporativo ou de escola que bloqueia o servidor do QR code e o WebRTC): a conexão segue por
+// HTTPS comum, por um serviço público de mensagens (ntfy.sh), cifrada com AES-GCM a partir da chave do QR (o serviço só vê dados cifrados)
+const NTFY = params.get("ntfyhost") ? "http://" + params.get("ntfyhost").replace(/[^\w.:-]/g, "") : "https://ntfy.sh";
+const ntfyTopic = async (id, k, lado) => "sst" + [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`sst-http:${id}:${k}:${lado}`)))].slice(0, 20).map(x => x.toString(16).padStart(2, "0")).join("");
+const pausa = ms => new Promise(r => setTimeout(r, ms));
+function ntfyListen(topic, onPayload){
+  let es = null, closed = false, lastId = "", hq = Promise.resolve(); const seen = new Set();
+  const handle = m => { hq = hq.then(async () => {
+    if (!m || m.event !== "message" || !m.id || seen.has(m.id)) return; seen.add(m.id); lastId = m.id;
+    let t = m.message; if (m.attachment?.url){ try{ t = await (await fetch(m.attachment.url)).text(); }catch(e){ return; } }
+    try{ onPayload(JSON.parse(t)); }catch(e){}
+  }).catch(() => {}); };
+  const abre = () => { if (closed) return; try{ es = new EventSource(`${NTFY}/${topic}/sse?since=${lastId || "3m"}`); es.onmessage = e => { try{ handle(JSON.parse(e.data)); }catch(x){} }; es.onerror = () => { if (es && es.readyState === 2){ es = null; setTimeout(abre, 3000); } }; }catch(e){ setTimeout(abre, 5000); } };
+  abre();
+  // se a rede não deixar a conexão contínua (SSE) ficar aberta, consulta de tempos em tempos
+  const poll = setInterval(async () => { if (closed || (es && es.readyState === 1)) return; try{ const r = await fetch(`${NTFY}/${topic}/json?poll=1&since=${lastId || "3m"}`); (await r.text()).split("\n").filter(Boolean).forEach(l => { try{ handle(JSON.parse(l)); }catch(e){} }); }catch(e){} }, 8000);
+  return {close(){ closed = true; clearInterval(poll); try{ es?.close(); }catch(e){} }};
+}
+function httpConn(topicOut, keyP, me, them){
+  const ev = {}, emit = (n, x) => (ev[n] || []).forEach(f => { try{ f(x); }catch(e){} });
+  let sq = Promise.resolve(), rq = Promise.resolve(), seen = Date.now();
+  const c = {
+    relay: true, http: true, peer: them || "pc", open: true, peerConnection: null, dataChannel: {bufferedAmount: 0},
+    on(n, f){ (ev[n] = ev[n] || []).push(f); return c; },
+    send(obj){
+      if (!c.open) return;
+      sq = sq.then(async () => {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const d = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv}, await keyP, new TextEncoder().encode(JSON.stringify(obj))));
+        const body = JSON.stringify({s: me, t: them || "", iv: u8b64(iv), d: u8b64(d)}), big = body.length > 3800;
+        for (let a = 0; a < 5 && c.open; a++){
+          try{ const r = await fetch(`${NTFY}/${topicOut}`, {method: big ? "PUT" : "POST", body, headers: big ? {"Filename": "m.txt"} : undefined}); if (r.ok) return; await pausa(r.status === 429 ? 6000 : 1500); }
+          catch(e){ await pausa(2000); }
+        }
+      }).catch(() => {});
+    },
+    close(){ if (!c.open) return; c.open = false; clearInterval(dog); emit("close"); },
+    push(p){
+      rq = rq.then(async () => {
+        const t = await crypto.subtle.decrypt({name: "AES-GCM", iv: b64u8(p.iv)}, await keyP, b64u8(p.d));
+        if (!c.open) return; seen = Date.now(); emit("data", JSON.parse(new TextDecoder().decode(t)));
+      }).catch(() => {});
+    }
+  };
+  // por HTTPS o sinal de vida vai a cada 25 s: sem notícias por 90 s, considera a ligação caída
+  const dog = setInterval(() => { if (Date.now() - seen > 90000) c.close(); }, 5000);
+  return c;
+}
 let qr = null, remoteOn = false, remZoom = 1;
 function aplicaRemZoom(){ const v = $("video"); if (v) v.style.transform = remoteOn && remZoom > 1 ? `scale(${remZoom})` : ""; }
 function loadScript(src){
@@ -6308,6 +6356,18 @@ async function qrStart(){
   peer.on("open", () => { if (qr?.peer === peer) showQR(); });
   peer.on("connection", conn => onPhoneConn(peer, conn));
   const relays = {}, keyP = relayKey(k);
+  // caminho por HTTPS (rede restrita): sempre ouvindo, para o celular que não alcança o servidor do QR code
+  (async () => {
+    const up = await ntfyTopic(id, k, "up"), dn = await ntfyTopic(id, k, "dn"); if (qr?.peer !== peer) return;
+    const hc = {};
+    qr.http = ntfyListen(up, p => {
+      if (qr?.peer !== peer || !p || !p.s || !p.iv) return;
+      let c = hc[p.s]; if (!c || !c.open){ c = hc[p.s] = httpConn(dn, keyP, "pc", p.s); c.push(p); onPhoneConn(peer, c); return; }
+      c.push(p);
+    });
+  })();
+  // o servidor do QR code não respondeu (rede bloqueia): mostra o QR assim mesmo, com o celular indo direto pelo HTTPS
+  setTimeout(() => { if (qr?.peer === peer && !peer.open && !$("qrLink")){ qr.httpOnly = true; showQR(); } }, 8000);
   peer.socket.on("message", m => {
     if (!isRelayMsg(m) || !qr || qr.peer !== peer) return;
     let c = relays[m.src];
@@ -6320,10 +6380,18 @@ async function qrStart(){
     qr.call = call; call.answer(); call.on("stream", s => { if (qr?.call === call) useRemote(s); });
   });
   peer.on("disconnected", () => { if (qr?.peer === peer && !peer.destroyed) try{ peer.reconnect(); }catch(e){} });
-  peer.on("error", e => { if (qr?.peer === peer && e.type !== "peer-unavailable") qrMsg("Falha na conexão (" + (e.type || "erro") + "). Gere um novo QR code.", true); });
+  peer.on("error", e => {
+    if (qr?.peer !== peer || e.type === "peer-unavailable") return;
+    if (/network|server-error|socket-error|socket-closed|unavailable-id/.test(e.type || "")){ // rede bloqueia o servidor do QR code: segue pelo HTTPS
+      if (!qr.httpOnly){ qr.httpOnly = true; if (!qr.ok) showQR(); }
+      qrMsg(qr.ok ? "Rede restrita: a conexão com o celular segue por HTTPS (fotos chegam um pouco mais devagar)." : "Rede restrita: o servidor do QR code está bloqueado nesta rede. O celular vai se conectar por HTTPS (envio um pouco mais lento). Leia o QR code.");
+      return;
+    }
+    qrMsg("Falha na conexão (" + (e.type || "erro") + "). Gere um novo QR code.", true);
+  });
 }
 function showQR(){
-  const url = location.origin + location.pathname + "?conectar=" + qr.id + "&k=" + qr.k + (PEER_OPTS.host ? "&peerhost=" + params.get("peerhost") : "");
+  const url = location.origin + location.pathname + "?conectar=" + qr.id + "&k=" + qr.k + (qr.httpOnly ? "&h=1" : "") + (PEER_OPTS.host ? "&peerhost=" + params.get("peerhost") : "") + (params.get("ntfyhost") ? "&ntfyhost=" + params.get("ntfyhost") : "");
   const q = qrcode(0, "M"); q.addData(url); q.make();
   $("qrArea").innerHTML = q.createSvgTag({cellSize: 4, margin: 3, scalable: true, alt: "QR code de acesso pelo celular"}) + `<span class="qrlink" id="qrLink">${esc(url)}</span>
     <div class="qr-alt"><span>A câmera do celular não lê o QR?</span><a class="btn" id="qrWa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Abra este link no celular para conectar à inspeção SST: " + url)}">Enviar link por WhatsApp</a><button type="button" id="qrCopy">Copiar link</button></div>`;
@@ -6429,7 +6497,7 @@ function phoneGone(text){ qrStop(); qrMsg(text + " Para conectar de novo, gere e
 function qrStop(){
   if (!qr) return;
   const q = qr; qr = null;
-  clearTimeout(q.grace); try{ q.unlock?.(); }catch(e){}
+  clearTimeout(q.grace); try{ q.unlock?.(); }catch(e){} try{ q.http?.close(); }catch(e){}
   try{ q.conn?.open && q.conn.send({type: "bye"}); }catch(e){}
   setTimeout(() => { try{ q.call?.close(); }catch(e){} try{ q.conn?.close(); }catch(e){} try{ q.peer.destroy(); }catch(e){} }, 300);
   $("qrArea").hidden = true; $("qrAsk").hidden = true; $("qrEnd").hidden = true; $("qrBtn").textContent = "Gerar QR code";
@@ -6461,12 +6529,13 @@ function deviceName(){
   if (/Android/.test(u)){ const m = u.match(/Android[^;)]*;\s*([^;)]+)/); return m ? m[1].replace(/\s*Build.*$/, "").trim() || "Celular Android" : "Celular Android"; }
   return "Celular";
 }
-function phoneMode(id, k){
+function phoneMode(id, k, h0){
   document.querySelector(".wrap").hidden = true; $("phone").hidden = false; document.title = "Inspeção SST · Celular";
   try{ window.history.replaceState(null, "", location.pathname); }catch(e){} // "history" local é o histórico do monitoramento
   let peer = null, conn = null, mcall = null, st = null, facing = "environment", sent = 0, ended = false, why = "";
   let resumeKey = "", tries = 0, ping = null, retryT = null, wake = null, auto = null, peerReady = null, relay = false, asked = false, drops = [];
   const MAX_TRIES = 8, JANELA = 600000; let dropT0 = 0; // reconecta sozinho por até 10 minutos (o computador espera o mesmo tempo)
+  let http = !!h0, httpSub = null, falhaSrv = 0, httpOk = false; const eu = rnd(10); // http: rede restrita, conexão por HTTPS
   const show = w => ["phAsk","phLive","phDone"].forEach(x => { $(x).hidden = x !== w; });
   const msg = (t, err) => { $("phStatus").textContent = t; $("phStatus").classList.toggle("err", !!err); };
   const live = () => !!conn?.open && !!resumeKey;
@@ -6511,7 +6580,7 @@ function phoneMode(id, k){
   function done(title, text){
     if (ended) return; ended = true;
     clearTimeout(retryT); setAuto(false); closeLinks();
-    try{ peer?.destroy(); }catch(e){}
+    try{ peer?.destroy(); }catch(e){} try{ httpSub?.close(); }catch(e){} httpSub = null;
     try{ st?.getTracks().forEach(t => t.stop()); }catch(e){}
     try{ wake?.release(); }catch(e){}
     $("phDoneT").textContent = title; $("phDoneP").textContent = text + (why ? " (motivo técnico: " + why + ")" : ""); show("phDone");
@@ -6599,16 +6668,33 @@ function phoneMode(id, k){
     drops = drops.filter(t => Date.now() - t < 180000); drops.push(Date.now());
     // conexão direta instável (caiu 3 vezes em 3 min, comum com o computador no Chrome): fica na retransmissão até o fim da sessão
     if (!relay && (/negotiation|ice/i.test(String(reason || "")) || tries >= 3 || drops.length >= 3)){ relay = true; try{ mcall?.close(); }catch(e){} }
+    // o servidor do QR code caiu de novo (rede que bloqueia WebSocket, ex.: Wi-Fi corporativo): passa para o HTTPS
+    if (!http && /network|server-error|socket|sinaliza|retransmiss/i.test(String(reason || "")) && ++falhaSrv >= 2){ http = true; relay = true; try{ peer?.destroy(); }catch(e){} peer = null; }
+    else if (http && !h0 && !httpOk){ http = false; falhaSrv = 0; } // o HTTPS nunca funcionou nesta rede: volta a tentar o servidor do QR code
     $("phShot").disabled = true; $("phRec").textContent = "● RECONECTANDO";
     msg(`A conexão caiu${reason ? " (" + reason + ")" : ""}. Reconectando sozinho… tentativa ${tries}${navigator.onLine === false ? " · sem internet no celular" : ""}`, true);
     closeLinks();
     if (document.visibilityState !== "visible") return; // reconecta quando a pessoa voltar para a página
     retryT = setTimeout(() => { retryT = null; if (!ended) connect(); }, Math.min(1000 * tries, 8000));
   }
+  // rede restrita: conexão por HTTPS comum (passa onde o servidor do QR code e o WebRTC são bloqueados)
+  async function conectaHttp(){
+    const up = await ntfyTopic(id, k, "up"), dn = await ntfyTopic(id, k, "dn"), keyP = relayKey(k);
+    if (ended) return;
+    if (!httpSub) httpSub = ntfyListen(dn, p => { if (!p || p.t !== eu || !p.iv) return; if (conn?.http && conn.open) conn.push(p); });
+    const c = conn = httpConn(up, keyP, eu, "");
+    wire(c);
+    // o HTTPS também não respondeu (sem retorno do computador): fecha e tenta de novo (alternando com o servidor do QR code)
+    setTimeout(() => { if (conn === c && c.open && !c._ok) c.close(); }, resumeKey ? 20000 : 120000);
+    c.send({type: "hello", k, r: resumeKey || undefined, device: deviceName()}); asked = true;
+    clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 25000);
+    msg(resumeKey ? "Reconectando pela rede restrita (HTTPS)…" : "Rede restrita: conectando por HTTPS. Aguardando autorização no computador…");
+  }
   async function connect(){
+    if (http){ try{ await conectaHttp(); }catch(e){ lost("https"); } return; }
     let p;
     try{ p = await ensurePeer(); }
-    catch(e){ why = (e && e.type) || "sinalização"; if (resumeKey) lost(why); else msg("Sem conexão com o servidor. Verifique a internet.", true); return; }
+    catch(e){ why = (e && e.type) || "sinalização"; if (++falhaSrv >= 2 || /network|server|socket/.test(why)){ http = true; why = ""; msg("O servidor do QR code está bloqueado nesta rede. Conectando por HTTPS…"); connect(); return; } if (resumeKey) lost(why); else msg("Sem conexão com o servidor. Verifique a internet.", true); return; }
     if (ended) return;
     if (relay){
       // modo retransmissão: a ligação já está aberta pelo servidor; o sinal a cada 4 s mantém a sessão viva no computador
@@ -6638,15 +6724,15 @@ function phoneMode(id, k){
       if (!d || typeof d !== "object" || c !== conn) return;
       if (d.type === "ok"){
         if (d.r) resumeKey = String(d.r);
-        tries = 0; dropT0 = 0;
-        msg(!st ? "Conectado. Enviando os arquivos escolhidos…" : c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
+        tries = 0; dropT0 = 0; c._ok = true; if (c.http) httpOk = true;
+        msg(!st ? "Conectado. Enviando os arquivos escolhidos…" : c.http ? "Conectado pela rede restrita (HTTPS). Toque no botão redondo para fotografar; cada foto leva alguns segundos para chegar ao computador." : c.relay ? "Conectado por retransmissão. Toque no botão redondo para fotografar: a foto vai para o computador." : "Conectado. Toque no botão redondo ou no vídeo para capturar.");
         $("phRec").textContent = c.relay ? "● CONECTADO" : "● TRANSMITINDO"; $("phShot").disabled = false;
         if (!c.relay) startCall(); keepAwake(); setZoom(zoom);
           if (!$("phMenu")?.dataset.seen){ $("phMenu").dataset.seen = "1"; showScreen("phMenu"); }
           document.querySelectorAll(".ph-back").forEach(b => { b.hidden = false; });
           queue.forEach(x => { if (x.state === "sent") x.state = "wait"; });
           drawQueue(); setTimeout(pump, 400);
-        clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, 4000);
+        clearInterval(ping); ping = setInterval(() => { try{ c.open && c.send({type: "ping"}); }catch(e){} }, c.http ? 25000 : 4000);
       }
       else if (d.type === "deny") done("Acesso negado", (d.reason ? d.reason + " " : "") + "Leia o QR code de novo para pedir acesso.");
       else if (d.type === "bye") done("Sessão encerrada", "O computador encerrou a conexão. Para conectar de novo, leia o novo QR code na tela do computador.");
@@ -6686,7 +6772,7 @@ function phoneMode(id, k){
     try{
       const blob = q.kind === "photo" ? await (q.prep || (q.prep = shrinkPhoto(q.blob))) : q.blob;
       const nx = queue.find(x => x.state === "wait" && x.kind === "photo" && !x.prep); if (nx) nx.prep = shrinkPhoto(nx.blob);
-      const b64 = await blobToB64(blob), CH = 16000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
+      const b64 = await blobToB64(blob), CH = c.http ? 1e8 : 16000, n = Math.ceil(b64.length / CH), fid = q.id + "-" + Date.now().toString(36);
       const act = queue.filter(x => x.state !== "bad"), pos = act.filter(x => x.state === "done" || x.state === "sent").length + 1;
       c.send({type: "file_start", fid, kind: q.kind, name: q.name, mime: blob.type || q.mime, n, pos, tot: Math.max(pos, act.length), pre: q.kind === "photo" ? 1 : 0});
       for (let i = 0; i < n; i++){
@@ -7200,7 +7286,7 @@ async function newInspection(){
 /* ---------- modo ---------- */
 function setMode(txt){ $("mode").innerHTML = "Modo: <b>" + esc(txt) + "</b>"; }
 async function init(){
-  if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k")); return; }
+  if (!inViewer && params.get("conectar") && params.get("k")){ phoneMode(params.get("conectar"), params.get("k"), params.get("h") === "1"); return; }
   renderEmpty(); refreshThumbs();
   $("newInsp").onclick = newInspection; $("newRep").onclick = newInspection;
   $("ctx").addEventListener("input", () => saveSoon());
